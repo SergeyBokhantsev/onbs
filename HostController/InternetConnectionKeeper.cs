@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Interfaces;
+using System.IO;
 
 namespace HostController
 {
@@ -61,13 +62,13 @@ namespace HostController
                 {
                     OnInternetConnectionStatus(connected = false);
 
-                    if (!initialDelayExecuted)
-                    {
-                        Thread.Sleep(config.GetInt(ConfigNames.InetKeeperCheckInitialDelayMs));
-                        initialDelayExecuted = true;
-                    }
-
-                    Connect();
+//                    if (!initialDelayExecuted)
+//                    {
+//                        Thread.Sleep(config.GetInt(ConfigNames.InetKeeperCheckInitialDelayMs));
+//                        initialDelayExecuted = true;
+//                    }
+//
+//                    Connect();
                 }
                 else
                 {
@@ -75,7 +76,7 @@ namespace HostController
                     OnInternetConnectionStatus(connected = true);
                 }
 
-                Wait(30000);
+                Wait(10000);
             }
         }
 
@@ -130,37 +131,45 @@ namespace HostController
         {
             try
             {
-                var request = WebRequest.Create(config.GetString
-				                                (ConfigNames.InetKeeperCheckUrl)) as HttpWebRequest;
-                request.Method = config.GetString(ConfigNames.InetKeeperCheckMethod);
+				if (!Directory.Exists("/home/linaro/inetstatus/up"))
+					return false;
 
-                using (var response = request.GetResponse() as HttpWebResponse)
-                {
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        if (InternetTime != null)
-                        {
-                            try
-                            {
-                                var date = response.Headers[HttpResponseHeader.Date];
-                                var dateTime = DateTime.Parse(date);
-                                OnInternetTime(dateTime.ToUniversalTime());
-                            }
-                            catch (Exception ex)
-                            {
-                                logger.Log(this, "Exception trying to get internet datetime.", LogLevels.Warning);
-                                logger.Log(this, ex);
-                            }
-                        }
+				if (InternetTime != null)
+				{
+	                var request = WebRequest.Create(config.GetString
+					                                (ConfigNames.InetKeeperCheckUrl)) as HttpWebRequest;
+	                request.Method = config.GetString(ConfigNames.InetKeeperCheckMethod);
 
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
+	                using (var response = request.GetResponse() as HttpWebResponse)
+	                {
+	                    if (response.StatusCode == HttpStatusCode.OK)
+	                    {
+	                        if (InternetTime != null)
+	                        {
+	                            try
+	                            {
+	                                var date = response.Headers[HttpResponseHeader.Date];
+	                                var dateTime = DateTime.Parse(date);
+	                                OnInternetTime(dateTime.ToUniversalTime());
+	                            }
+	                            catch (Exception ex)
+	                            {
+	                                logger.Log(this, "Exception trying to get internet datetime.", LogLevels.Warning);
+	                                logger.Log(this, ex);
+	                            }
+	                        }
+
+	                        return true;
+	                    }
+	                    else
+	                    {
+	                        return false;
+	                    }
+	                }
+				}
+				else 
+					return true;
+			}
             catch (WebException)
             {
                 return false;

@@ -1,12 +1,13 @@
 ﻿<Properties StartupItem="HostController\HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/InternetConnectionKeeper.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/Configuration.cs">
     <Files>
-      <File FileName="HostController/InternetConnectionKeeper.cs" Line="85" Column="10" />
+      <File FileName="HostController/InternetConnectionKeeper.cs" Line="70" Column="33" />
       <File FileName="HttpClient/Client.cs" Line="1" Column="1" />
       <File FileName="TravelsClient/Client.cs" Line="1" Column="1" />
       <File FileName="TravelController/TravelController.cs" Line="1" Column="1" />
       <File FileName="HostController/App.config" Line="1" Column="1" />
+      <File FileName="HostController/Configuration.cs" Line="43" Column="10" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
