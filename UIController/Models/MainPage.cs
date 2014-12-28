@@ -35,7 +35,7 @@ namespace UIController.Models
 			SetProperty(ModelNames.ButtonF8Label, "Configuration");
             SetProperty(ModelNames.ButtonCancelLabel, "Power");
 
-			SetProperty("time_valid", "0");
+			SetProperty("time_valid", "1");
 			SetProperty("time", null);
 
             timer = new Timer(1000);

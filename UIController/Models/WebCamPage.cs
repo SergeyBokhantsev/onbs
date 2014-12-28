@@ -15,8 +15,11 @@ namespace UIController.Models
         private const string WebcamControlCommand = "WebcamControlCommand";
         private const string WebcamControlColorArgs = "WebcamControlColorArgs";
         private const string WebcamControlContrastArgs = "WebcamControlContrastArgs";
+		private const string WebcamControlBrightArgs = "WebcamControlBrightArgs";
         private const string WebcamControlColor = "WebcamControlColor";
         private const string WebcamControlContrast = "WebcamControlContrast";
+		private const string WebcamControlBright = "WebcamControlBright";
+
 
         private readonly IHostController hc;
         private readonly object locker = new object();
@@ -59,6 +62,24 @@ namespace UIController.Models
             }
         }
 
+		private int Bright
+		{
+			get
+			{
+				return hc.Config.GetInt(WebcamControlBright);
+			}
+			set
+			{
+				if (value > 100)
+					value = 100;
+				else if (value < 0)
+					value = 0;
+
+				hc.Config.Set<int>(WebcamControlBright, value);
+				configDirty = true;
+			}
+		}
+
         public WebCamPage(IHostController hostController, string webcamAppKey)
             :base(typeof(ExternalApplicationPage).Name, 
             hostController.ProcessRunnerFactory.Create(webcamAppKey),
@@ -74,7 +95,7 @@ namespace UIController.Models
         {
             base.Run();
 
-            Thread.Sleep(300);
+            Thread.Sleep(3000);
 
             UpdateColor();
             UpdateContrast();
@@ -100,27 +121,24 @@ namespace UIController.Models
         private void UpdateContrast()
         {
             var command = hc.Config.GetString(WebcamControlCommand);
-            var arg = string.Format(hc.Config.GetString(WebcamControlColorArgs), Color);
+            var arg = string.Format(hc.Config.GetString(WebcamControlContrastArgs), Contrast);
             hc.ProcessRunnerFactory.Create(command, arg, true, false).Run();
             Thread.Sleep(300);
         }
+
+		private void UpdateBright()
+		{
+			var command = hc.Config.GetString(WebcamControlCommand);
+			var arg = string.Format(hc.Config.GetString(WebcamControlBrightArgs), Bright);
+			hc.ProcessRunnerFactory.Create(command, arg, true, false).Run();
+			Thread.Sleep(300);
+		}
 
         protected override void DoAction(PageModelActionEventArgs args)
         {
             switch (args.ActionName)
             {
                 case ModelNames.ButtonF1:
-                    if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
-                    {
-                        lock (locker)
-                        {
-                            Color = Color - 10;
-                            UpdateColor();
-                        }
-                    }
-                    break;
-
-                case ModelNames.ButtonF2:
                     if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
                     {
                         lock (locker)
@@ -136,7 +154,18 @@ namespace UIController.Models
                     {
                         lock (locker)
                         {
-                            Contrast = Contrast - 10;
+                            Color = Color - 10;
+                            UpdateColor();
+                        }
+                    }
+                    break;
+
+                case ModelNames.ButtonF2:
+                    if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
+                    {
+                        lock (locker)
+                        {
+                            Contrast = Contrast + 10;
                             UpdateContrast();
                         }
                     }
@@ -147,11 +176,33 @@ namespace UIController.Models
                     {
                         lock (locker)
                         {
-                            Contrast = Contrast + 10;
+                            Contrast = Contrast - 10;
                             UpdateContrast();
                         }
                     }
                     break;
+
+			case ModelNames.ButtonF3:
+				if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
+				{
+					lock (locker)
+					{
+						Bright = Bright + 10;
+						UpdateBright();
+					}
+				}
+				break;
+
+				case ModelNames.ButtonF7:
+				if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
+				{
+					lock (locker)
+					{
+						Bright = Bright - 10;
+						UpdateBright();
+					}
+				}
+				break;
 
                 default:
                     base.DoAction(args);
