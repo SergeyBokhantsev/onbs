@@ -33,7 +33,10 @@ namespace UIController.Models
 
             SetProperty(ModelNames.ButtonF1Label, "Navigation");
             SetProperty(ModelNames.ButtonF2Label, "Camera");
-            SetProperty(ModelNames.ButtonF8Label, "Configuration");
+			SetProperty (ModelNames.ButtonF3Label, "Set time test");
+			SetProperty(ModelNames.ButtonF8Label, "Configuration");
+			SetProperty("time_valid", "0");
+			SetProperty("time", null);
         }
 
         private void TimerCallback(object state)
@@ -101,6 +104,17 @@ namespace UIController.Models
                         }
                     }
                     break;
+
+			case ModelNames.ButtonF3:
+				{
+					if (args.State == ButtonStates.Press) {
+						var pr = hostController.ProcessRunnerFactory.Create ("settime");
+						pr.Run ();
+						
+					}
+				}
+				break;
+
 
                 case ModelNames.ButtonF8:
                     {

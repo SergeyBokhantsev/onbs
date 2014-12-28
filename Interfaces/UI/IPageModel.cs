@@ -46,8 +46,8 @@ namespace Interfaces.UI
         public const string ButtonF7 = "F7";
         public const string ButtonF8 = "F8";
 
-		public const string ButtonAcceptLabel = "ACCEPT_label";
-		public const string ButtonCancelLabel = "CANCEL_label";
+		public const string ButtonAcceptLabel = "Accept_label";
+		public const string ButtonCancelLabel = "Cancel_label";
 		public const string ButtonF1Label = "F1_label";
 		public const string ButtonF2Label = "F2_label";
 		public const string ButtonF3Label = "F3_label";

@@ -88,24 +88,21 @@ namespace GtkApplication.Pages
         }
 
         public override void Update(object value)
-        {
-            var key = value as string;
+		{
+			var key = value as string;
 
-            if (colorMap.ContainsKey(key))
-            {
-                var color = colorMap[key];
+			if (colorMap.ContainsKey (key)) 
+			{
+				var color = colorMap [key];
 
-                if (IsOpaque(color))
-                {
-                    box.VisibleWindow = false;
-                }
-                else
-                {
-                    box.VisibleWindow = true;
-                    box.ModifyBg(StateType.Normal, color);
-                }
-            }
-        }
+				if (IsOpaque (color)) {
+					box.VisibleWindow = false;
+				} else {
+					box.VisibleWindow = true;
+					box.ModifyBg (StateType.Normal, color);
+				}
+			}
+		}
     }
 
     internal class ButtonLabelBinding : Binding

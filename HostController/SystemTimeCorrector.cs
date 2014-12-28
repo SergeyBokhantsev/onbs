@@ -15,7 +15,7 @@ namespace HostController
         private readonly IProcessRunnerFactory processRunnerFactory;
         private readonly ILogger logger;
 
-        private readonly object locker;
+        private readonly object locker = new object();
         private bool timeValid;
 
         public SystemTimeCorrector(IConfig config, IProcessRunnerFactory processRunnerFactory, ILogger logger)
@@ -43,10 +43,11 @@ namespace HostController
                 {
                     logger.Log(this, "Updating system time...", LogLevels.Info);
 
-                    var pr = processRunnerFactory.Create(setTimeCommand, validTime.ToString("MMDDhhmmyyyy.ss"), true, false);
+                    var pr = processRunnerFactory.Create(setTimeCommand, validTime.ToString("O"), true, false);
                     pr.Run();
 
-                    return false;
+					timeValid = true;
+					return true;
                 }
                 else
                 {
