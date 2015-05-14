@@ -13,13 +13,7 @@ namespace HostController
     {
         public static void Main (string[] args)
         {
-            var ass = Assembly.LoadFrom("GtkApplication.dll");
-            var appType = ass.GetType("GtkApplication.App");
-            var appConstructor = appType.GetConstructor(new Type[] { typeof(IHostController) });
-
-            var hostController = new HostController();
-
-            var ui = appConstructor.Invoke(new object[] { hostController });
+            new HostController();
         }
     }
 }

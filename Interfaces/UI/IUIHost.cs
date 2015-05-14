@@ -8,6 +8,7 @@ namespace Interfaces.UI
 {
     public interface IUIHost
     {
+        void Run();
         void ShowPage(IPageModel model);
     }
 }

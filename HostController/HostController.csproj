@@ -43,6 +43,10 @@
       <Project>{3F066CD9-3523-4248-B37C-3378B44C426A}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UIController\UIController.csproj">
+      <Project>{1e7b884f-479a-4562-bb89-445786fec998}</Project>
+      <Name>UIController</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

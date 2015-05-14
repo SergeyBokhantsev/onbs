@@ -8,6 +8,7 @@ namespace Interfaces.UI
 {
     public interface IPageModel : IDisposable
     {
+        event EventHandler Disposing;
         string Name { get; }
     }
 }

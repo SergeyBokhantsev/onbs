@@ -8,36 +8,53 @@ namespace GtkApplication
 {
 	public class App : IUIHost
 	{
-        private IHostController controller;
-        private MainWindow win;
-
-        public App(IHostController controller)
+        private class ShowPageEventArgs : EventArgs
         {
-            this.controller = controller;
-            Run();
+            public IPageModel Model { get; private set; }
+
+            public ShowPageEventArgs(IPageModel model)
+            {
+                Model = model;
+            }
         }
 
-		private void Run()
+        private ILogger logger;
+        private MainWindow win;
+
+        public App(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
+		public void Run()
 		{
-			Application.Init ();
-			win = new MainWindow(controller);
+			Application.Init();
+			win = new MainWindow(logger);
 			win.Show();
 			Application.Run();
 		}
 
-        public void ShowPage(IPageModel model)
+        private void ShowPage(object sender, EventArgs args)
         {
-            Contract.Requires(model != null);
+            var showPageArgs = args as ShowPageEventArgs;
 
-            switch (model.Name)
+            if (showPageArgs == null || showPageArgs.Model == null)
+                throw new ArgumentException("model");
+
+            switch (showPageArgs.Model.Name)
             {
                 case "MainPage":
-                    win.ch
+                    //win.ch
                     break;
 
                 default:
-                    throw new NotImplementedException(model.Name);
+                    throw new NotImplementedException(showPageArgs.Model.Name);
             }
+        }
+
+        public void ShowPage(IPageModel model)
+        {
+            Application.Invoke(null, new ShowPageEventArgs(model), ShowPage);
         }
     }
 }

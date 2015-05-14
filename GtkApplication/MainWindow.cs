@@ -4,12 +4,12 @@ using Interfaces;
 
 public partial class MainWindow: Gtk.Window
 {
-	public MainWindow (IHostController controller) 
+	public MainWindow (ILogger logger) 
         : base (Gtk.WindowType.Toplevel)
 	{
 		Build();
 
-        controller.Logger.Log("MainWindow created", Interfaces.LogLevels.Debug);
+        logger.Log("MainWindow created", Interfaces.LogLevels.Debug);
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)

@@ -18,6 +18,7 @@ namespace HostController
 		{
             Logger = new ConsoleLoggerWrapper();
 
+            uiController = new UIController.UIController("GtkApplication.dll", "GtkApplication.App", Logger);
             uiController.ShowMainPage();
 		}
 
