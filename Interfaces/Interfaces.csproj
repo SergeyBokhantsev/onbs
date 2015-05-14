@@ -42,8 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IController.cs" />
     <Compile Include="IHostController.cs" />
-    <Compile Include="IUIHost.cs" />
+    <Compile Include="ILogger.cs" />
+    <Compile Include="IUIController.cs" />
+    <Compile Include="UI\IPageModel.cs" />
+    <Compile Include="UI\IUIHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

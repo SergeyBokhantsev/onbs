@@ -1,15 +1,15 @@
 ﻿using System;
 using Gtk;
-using HostController;
+using Interfaces;
 
 public partial class MainWindow: Gtk.Window
 {
-	public MainWindow () : base (Gtk.WindowType.Toplevel)
+	public MainWindow (IHostController controller) 
+        : base (Gtk.WindowType.Toplevel)
 	{
-		Build ();
+		Build();
 
-        var host = new HostController.HostController();
-        host.foo();
+        controller.Logger.Log("MainWindow created", Interfaces.LogLevels.Debug);
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)

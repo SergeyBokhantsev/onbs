@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Interfaces
+namespace Interfaces.UI
 {
-    public interface IHostController
+    public interface IPageModel : IDisposable
     {
-        ILogger Logger { get; }
-        T GetController<T>() where T : IController;
+        string Name { get; }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Interfaces.UI;
 
 namespace HostController
 {
@@ -15,8 +16,10 @@ namespace HostController
             var ass = Assembly.LoadFrom("GtkApplication.dll");
             var appType = ass.GetType("GtkApplication.App");
             var appConstructor = appType.GetConstructor(new Type[] { typeof(IHostController) });
-            var ui = appConstructor.Invoke(new object[] { new HostController() });
-            ((IUIHost)ui).Run();
+
+            var hostController = new HostController();
+
+            var ui = appConstructor.Invoke(new object[] { hostController });
         }
     }
 }

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Interfaces.UI;
 
 namespace Interfaces
 {
-    public interface IHostController
+    public interface IUIController : IController
     {
-        ILogger Logger { get; }
-        T GetController<T>() where T : IController;
+        void ShowMainPage();
     }
 }

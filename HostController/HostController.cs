@@ -6,18 +6,27 @@ namespace HostController
 {
 	public class HostController : IHostController
 	{
-		public HostController()
-		{
-		}
+        private readonly IUIController uiController;
 
-        public void foo()
+        public ILogger Logger
         {
-            internal_foo();
+            get;
+            private set;
         }
 
-        private async void internal_foo()
+		public HostController()
+		{
+            Logger = new ConsoleLoggerWrapper();
+
+            uiController.ShowMainPage();
+		}
+
+        public T GetController<T>() where T : IController
         {
-            await Task.Delay(1000);
+            if (typeof(T).Equals(typeof(IUIController)))
+                return (T)uiController;
+            else
+                throw new NotImplementedException(typeof(T).ToString());
         }
     }
 }

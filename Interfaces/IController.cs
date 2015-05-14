@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
-    public interface IHostController
+    public interface IController
     {
-        ILogger Logger { get; }
-        T GetController<T>() where T : IController;
     }
 }
