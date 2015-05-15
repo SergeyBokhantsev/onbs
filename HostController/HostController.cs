@@ -48,7 +48,7 @@ namespace HostController
 
         private void Initialize(object sender, EventArgs args)
         {
-            uiController = new UIController.UIController("GtkApplication.dll", "GtkApplication.App", Logger);
+            uiController = new UIController.UIController("GtkApplication.dll", "GtkApplication.App", Logger, Dispatcher);
             uiController.ShowMainPage();
         }
     }

@@ -65,32 +65,38 @@ namespace HostController
         {
             while (!exit)
             {
-                mre.WaitOne();
-                InvokeItem itemToInvoke = null;
-
-                lock (invokeItems)
+                if (mre.WaitOne(10000))
                 {
-                    if (invokeItems.Any())
+                    InvokeItem itemToInvoke = null;
+
+                    lock (invokeItems)
                     {
-                        itemToInvoke = invokeItems.Dequeue();
+                        if (invokeItems.Any())
+                        {
+                            itemToInvoke = invokeItems.Dequeue();
+                        }
+
+                        if (!invokeItems.Any())
+                            mre.Reset();
                     }
 
-                    if (!invokeItems.Any())
-                        mre.Reset();
+                    if (itemToInvoke != null)
+                    {
+                        try
+                        {
+                            itemToInvoke.Invoke();
+                            logger.Log(string.Format("Invoke handler '{0}' executed", itemToInvoke), LogLevels.Debug);
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Log(string.Format("Invoke handler '{0}' throw exeption", itemToInvoke), LogLevels.Debug);
+                            logger.Log(ex);
+                        }
+                    }
                 }
-
-                if (itemToInvoke != null)
+                else
                 {
-                    try
-                    {
-                        itemToInvoke.Invoke();
-                        logger.Log(string.Format("Invoke handler '{0}' executed", itemToInvoke), LogLevels.Debug);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.Log(string.Format("Invoke handler '{0}' throw exeption", itemToInvoke), LogLevels.Debug);
-                        logger.Log(ex);
-                    }
+                    logger.Log("Dispatcher heartbeat", LogLevels.Debug);
                 }
             }
         }

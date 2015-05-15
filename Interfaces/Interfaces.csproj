@@ -46,6 +46,7 @@
     <Compile Include="IDispatcher.cs" />
     <Compile Include="IHostController.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="Input\Buttons.cs" />
     <Compile Include="IUIController.cs" />
     <Compile Include="UI\IPageModel.cs" />
     <Compile Include="UI\IUIHost.cs" />

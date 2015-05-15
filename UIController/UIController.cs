@@ -17,11 +17,16 @@ namespace UIController
         private ManualResetEvent hostWaiter = new ManualResetEvent(false);
         private IUIHost uiHost;
         private IPageModel current;
+        private readonly IDispatcher dispatcher;
+        private readonly ILogger logger;
 
-        public UIController(string uiHostAssemblyPath, string uiHostClassName, ILogger logger)
+        public UIController(string uiHostAssemblyPath, string uiHostClassName, ILogger logger, IDispatcher dispatcher)
         {
+            this.dispatcher = dispatcher;
+            this.logger = logger;
+
             var uit = new Thread(() => UIThread(uiHostAssemblyPath, uiHostClassName, logger));
-            uit.IsBackground = false;
+            uit.IsBackground = true;
             uit.Name = "UI";
             uit.Start();
 
@@ -37,11 +42,12 @@ namespace UIController
             uiHost = appConstructor.Invoke(new object[] { logger }) as IUIHost;
             hostWaiter.Set();
             uiHost.Run();
+            logger.Log("UI Host has exited", LogLevels.Info);
         }
 
         public void ShowMainPage()
         {
-            ShowPage(new MainPage());
+            ShowPage(new MainPage(dispatcher, logger));
         }
 
         private void ShowPage(IPageModel model)

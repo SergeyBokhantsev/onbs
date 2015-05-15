@@ -10,6 +10,8 @@ namespace HostController
 {
     public class ConsoleLoggerWrapper : ILogger
     {
+        private readonly object locker = new object();
+
         public LogLevels Level
         {
             get { return LogLevels.Debug; }
@@ -23,7 +25,10 @@ namespace HostController
         {
             if (level <= this.Level)
             {
-                Console.WriteLine(string.Concat(DateTime.Now, " | ", level, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message));
+                lock (locker)
+                {
+                    Console.WriteLine(string.Concat(DateTime.Now, " | ", level, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message));
+                }
             }
         }
 

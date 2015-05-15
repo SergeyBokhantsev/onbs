@@ -4,26 +4,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Interfaces;
 
 namespace UIController.Models
 {
-    public class MainPage : IPageModel
+    public class MainPage : ModelBase
     {
-        public event EventHandler Disposing;
-
-        public string Name
+        public MainPage(IDispatcher dispatcher, ILogger logger)
+            :base(typeof(MainPage).Name, dispatcher, logger)
         {
-            get
+            SetProperty("welcome", "Welcome!");
+        }
+
+        protected override void DoAction(PageModelActionEventArgs actionArgs)
+        {
+            switch (actionArgs.ActionName)
             {
-                return this.GetType().Name;
+                case "start":
+                    SetProperty("welcome", Guid.NewGuid().ToString());
+                    break;
             }
         }
-        
-        public void Dispose()
+
+        protected override void OnAcceptButton(Interfaces.Input.ButtonSates state)
         {
-            var handler = Disposing;
-            if (handler != null)
-                handler(null, null);       
+            SetProperty("welcome", Guid.NewGuid().ToString());
         }
     }
 }
