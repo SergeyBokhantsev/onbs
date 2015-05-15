@@ -9,6 +9,7 @@ namespace Interfaces
     public interface IHostController
     {
         ILogger Logger { get; }
+        IDispatcher Dispatcher { get ; }
         T GetController<T>() where T : IController;
     }
 }

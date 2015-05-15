@@ -13,7 +13,7 @@ namespace HostController
     {
         public static void Main (string[] args)
         {
-            new HostController();
+            new HostController().Run();
         }
     }
 }

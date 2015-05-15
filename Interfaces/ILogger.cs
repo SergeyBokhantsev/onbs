@@ -19,5 +19,6 @@ namespace Interfaces
     {
         LogLevels Level { get; }
         void Log(string message, LogLevels level);
+        void Log(Exception ex);
     }
 }

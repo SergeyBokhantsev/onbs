@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IController.cs" />
+    <Compile Include="IDispatcher.cs" />
     <Compile Include="IHostController.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IUIController.cs" />

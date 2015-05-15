@@ -6,21 +6,24 @@ namespace HostController
 {
 	public class HostController : IHostController
 	{
-        private readonly IUIController uiController;
+        private IUIController uiController;
 
         public ILogger Logger
         {
             get;
             private set;
         }
+        public IDispatcher Dispatcher
+        {
+            get;
+            private set;
+        }
 
-		public HostController()
-		{
-            Logger = new ConsoleLoggerWrapper();
-
-            uiController = new UIController.UIController("GtkApplication.dll", "GtkApplication.App", Logger);
-            uiController.ShowMainPage();
-		}
+        public void Run()
+        {
+            CreateLogger();
+            RunDispatcher();
+        }
 
         public T GetController<T>() where T : IController
         {
@@ -28,6 +31,25 @@ namespace HostController
                 return (T)uiController;
             else
                 throw new NotImplementedException(typeof(T).ToString());
+        }
+
+        private void CreateLogger()
+        {
+            Logger = new ConsoleLoggerWrapper();
+            Logger.Log("--- Logging initiated ---", LogLevels.Info);
+        }
+
+        private void RunDispatcher()
+        {
+            Dispatcher = new Dispatcher(Logger);
+            Dispatcher.Invoke(null, null, Initialize);
+            Dispatcher.Run();
+        }
+
+        private void Initialize(object sender, EventArgs args)
+        {
+            uiController = new UIController.UIController("GtkApplication.dll", "GtkApplication.App", Logger);
+            uiController.ShowMainPage();
         }
     }
 }
