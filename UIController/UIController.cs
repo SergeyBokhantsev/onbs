@@ -1,4 +1,5 @@
 ﻿using Interfaces;
+using Interfaces.Input;
 using Interfaces.UI;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace UIController
         private readonly IDispatcher dispatcher;
         private readonly ILogger logger;
 
-        public UIController(string uiHostAssemblyPath, string uiHostClassName, ILogger logger, IDispatcher dispatcher)
+        public UIController(string uiHostAssemblyPath, string uiHostClassName, IInputController inputController, ILogger logger, IDispatcher dispatcher)
         {
             this.dispatcher = dispatcher;
             this.logger = logger;
@@ -29,9 +30,19 @@ namespace UIController
             uit.IsBackground = true;
             uit.Name = "UI";
             uit.Start();
-
+            
             if (!hostWaiter.WaitOne(10000) || uiHost == null)
                 throw new Exception("Unable to start UI host.");
+
+            inputController.ButtonPressed += ButtonPressed;
+        }
+
+        private void ButtonPressed(Buttons button, ButtonStates state)
+        {
+            var page = current;
+
+            if (page != null)
+                page.Button(button, state);
         }
 
         private void UIThread(string uiHostAssemblyPath, string uiHostClassName, ILogger logger)

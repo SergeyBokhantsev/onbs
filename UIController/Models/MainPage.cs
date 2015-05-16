@@ -26,7 +26,7 @@ namespace UIController.Models
             }
         }
 
-        protected override void OnAcceptButton(Interfaces.Input.ButtonSates state)
+        protected override void OnAcceptButton(Interfaces.Input.ButtonStates state)
         {
             SetProperty("welcome", Guid.NewGuid().ToString());
         }

@@ -65,7 +65,11 @@ namespace UIController.Models
                 throw new ArgumentNullException("actionArgs");
 
             logger.Log(string.Format("Performing PageModel action '{0}'", actionArgs.ActionName), LogLevels.Debug);
-            dispatcher.Invoke(null, null, new EventHandler((s, a) => DoAction(actionArgs)));
+
+            if (dispatcher.Check())
+                DoAction(actionArgs);
+            else
+                dispatcher.Invoke(null, null, new EventHandler((s, a) => DoAction(actionArgs)));
         }
 
         /// <summary>
@@ -101,12 +105,15 @@ namespace UIController.Models
                 handler(name);
         }
 
-        public void Button(Buttons button, ButtonSates state)
+        public void Button(Buttons button, ButtonStates state)
         {
             switch (button)
             {
                 case Buttons.Accept:
-                    dispatcher.Invoke(null, null, new EventHandler((s, a) => OnAcceptButton(state)));
+                    if (dispatcher.Check())
+                        OnAcceptButton(state);
+                    else
+                        dispatcher.Invoke(null, null, new EventHandler((s, a) => OnAcceptButton(state)));
                     break;
 
                 default:
@@ -114,7 +121,7 @@ namespace UIController.Models
             }
         }
 
-        protected virtual void OnAcceptButton(ButtonSates state)
+        protected virtual void OnAcceptButton(ButtonStates state)
         {
         }
     }

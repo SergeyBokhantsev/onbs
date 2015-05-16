@@ -8,5 +8,5 @@ namespace Interfaces.Input
 {
     public enum Buttons { Accept }
 
-    public enum ButtonSates { Press, Hold, Release }
+    public enum ButtonStates { Press, Hold, Release }
 }

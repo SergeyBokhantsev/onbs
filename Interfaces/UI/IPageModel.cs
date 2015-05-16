@@ -28,6 +28,6 @@ namespace Interfaces.UI
         void SetProperty(string name, object value);
         void RefreshAllProps();
         void Action(PageModelActionEventArgs actionArgs);
-        void Button(Buttons button, ButtonSates state);
+        void Button(Buttons button, ButtonStates state);
     }
 }

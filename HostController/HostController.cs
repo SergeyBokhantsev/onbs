@@ -7,6 +7,7 @@ namespace HostController
 	public class HostController : IHostController
 	{
         private IUIController uiController;
+        private IInputController inputController;
 
         public ILogger Logger
         {
@@ -48,7 +49,9 @@ namespace HostController
 
         private void Initialize(object sender, EventArgs args)
         {
-            uiController = new UIController.UIController("GtkApplication.dll", "GtkApplication.App", Logger, Dispatcher);
+            inputController = new InputController.InputController(Logger);
+
+            uiController = new UIController.UIController("GtkApplication.dll", "GtkApplication.App", inputController, Logger, Dispatcher);
             uiController.ShowMainPage();
         }
     }

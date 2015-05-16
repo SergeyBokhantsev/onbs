@@ -40,11 +40,13 @@ namespace HostController
         private readonly ManualResetEvent mre = new ManualResetEvent(false);
         private readonly Queue<InvokeItem> invokeItems = new Queue<InvokeItem>();
         private readonly ILogger logger;
+        private readonly int threadId;
 
         private bool exit;
                 
         public Dispatcher(ILogger logger)
         {
+            this.threadId = Thread.CurrentThread.ManagedThreadId;
             this.logger = logger;
 
             logger.Log("Dispatcher created", LogLevels.Debug);
@@ -105,6 +107,11 @@ namespace HostController
         {
             exit = true;
             mre.Set();
+        }
+
+        public bool Check()
+        {
+            return Thread.CurrentThread.ManagedThreadId == threadId;
         }
     }
 }
