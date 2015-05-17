@@ -1,4 +1,5 @@
-﻿using Interfaces.SerialTransportProtocol;
+﻿using Interfaces;
+using Interfaces.SerialTransportProtocol;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,11 +25,11 @@ namespace SerialTransportProtocol
 
         // System.Text.StringBuilder dump = new System.Text.StringBuilder();
 
-        public List<STPFrame> Decode(Stream stream)
+        public List<STPFrame> Decode(IPort port)
         {
             List<STPFrame> res = null;
 
-            var readed = stream.Read(tempBufer, 0, tempBufer.Length);
+            var readed = port.Read(tempBufer, 0, tempBufer.Length);
 
             //if (dump.Length > 100000)
             //    dump.Clear();

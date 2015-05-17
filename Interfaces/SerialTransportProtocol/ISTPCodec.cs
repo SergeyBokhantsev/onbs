@@ -9,7 +9,7 @@ namespace Interfaces.SerialTransportProtocol
 {
     public interface ISTPCodec
     {
-        List<STPFrame> Decode(Stream stream);
+        List<STPFrame> Decode(IPort port);
         List<STPFrame> Decode(IEnumerable<STPFrame> frames);
         byte[] Encode(STPFrame frame);
     }

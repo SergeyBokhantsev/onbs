@@ -8,6 +8,7 @@ namespace HostController
 	{
         private IUIController uiController;
         private IInputController inputController;
+        private IArduinoController arduController;
 
         public ILogger Logger
         {
@@ -50,6 +51,9 @@ namespace HostController
         private void Initialize(object sender, EventArgs args)
         {
             inputController = new InputController.InputController(Logger);
+
+            arduController = new ArduinoController.ArduinoController(new MockArduPort(), Dispatcher, Logger);
+            arduController.FrameAcceptors.Add(inputController);
 
             uiController = new UIController.UIController("GtkApplication.dll", "GtkApplication.App", inputController, Logger, Dispatcher);
             uiController.ShowMainPage();

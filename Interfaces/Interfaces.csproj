@@ -42,13 +42,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IArduinoController.cs" />
     <Compile Include="IController.cs" />
     <Compile Include="IDispatcher.cs" />
     <Compile Include="IHostController.cs" />
     <Compile Include="IInputController.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Input\Buttons.cs" />
+    <Compile Include="IPort.cs" />
     <Compile Include="IUIController.cs" />
+    <Compile Include="SerialTransportProtocol\IFramesAcceptor.cs" />
     <Compile Include="SerialTransportProtocol\ISTPCodec.cs" />
     <Compile Include="SerialTransportProtocol\STPFrame.cs" />
     <Compile Include="UI\IPageModel.cs" />

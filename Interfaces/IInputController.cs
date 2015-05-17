@@ -10,10 +10,8 @@ namespace Interfaces
 {
     public delegate void ButtonPressedEventHandler(Buttons button, ButtonStates state);
 
-    public interface IInputController : IController
+    public interface IInputController : IController, IFramesAcceptor
     {
         event ButtonPressedEventHandler ButtonPressed;
-
-        void AcceptFrames(IEnumerable<STPFrame> frames);
     }
 }

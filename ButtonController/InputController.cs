@@ -16,18 +16,17 @@ namespace InputController
 
         private readonly ILogger logger;
 
+        public STPFrame.Types FrameType
+        {
+            get
+            {
+                return STPFrame.Types.Button;
+            }
+        }
+
         public InputController(ILogger logger)
         {
             this.logger = logger;
-
-            new Thread(new ThreadStart(() =>
-            {
-                while (true)
-                {
-                    Thread.Sleep(2000);
-                    AcceptFrames(new[] { new STPFrame(new byte[] { 0, 0 }, STPFrame.Types.Button) });
-                }
-            })).Start();
         }
 
         public void AcceptFrames(IEnumerable<STPFrame> frames)
