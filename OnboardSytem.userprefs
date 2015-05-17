@@ -1,10 +1,13 @@
-﻿<Properties>
+﻿<Properties StartupItem="HostController\HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="GtkApplication/Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="GtkApplication\MainWindow.cs">
     <Files>
-      <File FileName="GtkApplication/Program.cs" Line="23" Column="3" />
-      <File FileName="HostController/HostController.cs" Line="16" Column="3" />
-      <File FileName="UIController/UIController.cs" Line="39" Column="1" />
+      <File FileName="GtkApplication\Program.cs" Line="28" Column="3" />
+      <File FileName="HostController\HostController.cs" Line="1" Column="1" />
+      <File FileName="UIController\UIController.cs" Line="1" Column="1" />
+      <File FileName="GtkApplication\gtk-gui\GtkApplication.MainPage.cs" Line="1" Column="1" />
+      <File FileName="GtkApplication\Pages\MainPage.cs" Line="1" Column="1" />
+      <File FileName="GtkApplication\MainWindow.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

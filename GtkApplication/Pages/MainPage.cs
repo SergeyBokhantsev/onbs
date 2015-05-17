@@ -19,7 +19,7 @@ namespace GtkApplication
             
             binder = new ModelBinder(model);
 
-            binder.BindLabelText(lCaption);
+            binder.BindLabelText(welcome);
             binder.BindButtonClick(bStart, "start");
 		}
 	}

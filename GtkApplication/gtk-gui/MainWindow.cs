@@ -14,6 +14,9 @@ public partial class MainWindow
 		this.WindowPosition = ((global::Gtk.WindowPosition)(4));
 		this.DefaultWidth = 800;
 		this.DefaultHeight = 480;
+		if ((this.Child != null)) {
+			this.Child.ShowAll ();
+		}
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
 	}
