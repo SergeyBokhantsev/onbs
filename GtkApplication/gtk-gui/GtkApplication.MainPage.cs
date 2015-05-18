@@ -9,6 +9,8 @@ namespace GtkApplication
 		private global::Gtk.Label welcome;
 		
 		private global::Gtk.Button bStart;
+		
+		private global::Gtk.Image image1;
 
 		protected virtual void Build ()
 		{
@@ -41,6 +43,14 @@ namespace GtkApplication
 			w2.Position = 1;
 			w2.Expand = false;
 			w2.Fill = false;
+			// Container child vbox1.Gtk.Box+BoxChild
+			this.image1 = new global::Gtk.Image ();
+			this.image1.Name = "image1";
+			this.vbox1.Add (this.image1);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.image1]));
+			w3.Position = 2;
+			w3.Expand = false;
+			w3.Fill = false;
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
