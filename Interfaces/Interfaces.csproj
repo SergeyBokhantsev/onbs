@@ -42,15 +42,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GPS\Primitives.cs" />
     <Compile Include="IArduinoController.cs" />
     <Compile Include="IController.cs" />
     <Compile Include="IDispatcher.cs" />
+    <Compile Include="IGPSController.cs" />
     <Compile Include="IHostController.cs" />
     <Compile Include="IInputController.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Input\Buttons.cs" />
     <Compile Include="IPort.cs" />
     <Compile Include="IUIController.cs" />
+    <Compile Include="LockingProperty.cs" />
     <Compile Include="SerialTransportProtocol\IFramesAcceptor.cs" />
     <Compile Include="SerialTransportProtocol\ISTPCodec.cs" />
     <Compile Include="SerialTransportProtocol\STPFrame.cs" />
@@ -58,6 +61,7 @@
     <Compile Include="UI\IUIHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

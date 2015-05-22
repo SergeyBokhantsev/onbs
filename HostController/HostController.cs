@@ -6,9 +6,12 @@ namespace HostController
 {
 	public class HostController : IHostController
 	{
+        private GPSD.Net.GPSD gpsd;
+
         private IUIController uiController;
         private IInputController inputController;
         private IArduinoController arduController;
+        private IGPSController gpsController;
 
         public ILogger Logger
         {
@@ -54,6 +57,11 @@ namespace HostController
 
             arduController = new ArduinoController.ArduinoController(new MockArduPort(), Dispatcher, Logger);
             arduController.FrameAcceptors.Add(inputController);
+
+            gpsController = null;
+
+            gpsd = new GPSD.Net.GPSD(gpsController, Logger);
+            gpsd.Start();
 
             uiController = new UIController.UIController("GtkApplication.dll", "GtkApplication.App", inputController, Logger, Dispatcher);
             uiController.ShowMainPage();

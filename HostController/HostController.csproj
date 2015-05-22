@@ -49,6 +49,10 @@
       <Project>{0e653fda-f0da-44cb-a932-4b37487ea731}</Project>
       <Name>InputController</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GPSD.Net\GPSD.Net.csproj">
+      <Project>{975b7b95-004b-42db-be03-0aa8fcf06730}</Project>
+      <Name>GPSD.Net</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
       <Project>{3F066CD9-3523-4248-B37C-3378B44C426A}</Project>
       <Name>Interfaces</Name>
