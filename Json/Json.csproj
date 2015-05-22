@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{975B7B95-004B-42DB-BE03-0AA8FCF06730}</ProjectGuid>
+    <ProjectGuid>{2F22767D-1B1A-4293-BBE5-11C9D04AEE83}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GPSD.Net</RootNamespace>
-    <AssemblyName>GPSD.Net</AssemblyName>
+    <RootNamespace>Json</RootNamespace>
+    <AssemblyName>Json</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,23 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client.cs" />
-    <Compile Include="GPSD.cs" />
+    <Compile Include="JsonSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
-      <Project>{3f066cd9-3523-4248-b37c-3378b44c426a}</Project>
-      <Name>Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Json\Json.csproj">
-      <Project>{2f22767d-1b1a-4293-bbe5-11c9d04aee83}</Project>
-      <Name>Json</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TcpServer\TcpServer.csproj">
-      <Project>{5a40addf-71e7-45d4-8ac6-3d03f2dad131}</Project>
-      <Name>TcpServer</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

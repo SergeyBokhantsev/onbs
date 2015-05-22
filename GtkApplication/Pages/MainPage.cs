@@ -33,9 +33,9 @@ namespace GtkApplication
             pm = new Pixmap(null, 100, 100, 24);
             g = Gtk.DotNet.Graphics.FromDrawable(pm);
 
-            drawingarea1.ExposeEvent += Image1_ExposeEvent;
+            //drawingarea1.ExposeEvent += Image1_ExposeEvent;
 
-            bmp = new Bitmap(@"C:\Users\sergeyb\Desktop\New folder (6)\inktools\btn_ink_erase2_sel.png");
+            //bmp = new Bitmap(@"C:\Users\sergeyb\Desktop\New folder (6)\inktools\btn_ink_erase2_sel.png");
           
            // image1.SetFromPixmap(pm, null);
 		}

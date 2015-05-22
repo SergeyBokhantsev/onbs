@@ -23,8 +23,10 @@ namespace GPSD.Net
 
         public Client(Stream stream)
         {
-             SendHello();
-             Process();
+            this.stream = stream;
+
+            SendHello();
+            Process();
         }
 
         public void SetGPRMC(GPRMC gprmc)
@@ -64,20 +66,56 @@ namespace GPSD.Net
                 int size = stream.Read(buffer, 0, buffer.Length);
                 var query = Encoding.Default.GetString(buffer, 0, size);
                 //TODO: parse query
-                mode = Modes.WatchReceived;
+                //mode = Modes.WatchReceived;
             }
+        }
+
+
+
+        private class VersionMsg
+        {
+            public string @class { get { return "VERSION"; } }
+            public string release { get { return "3.9"; } }
+            public string rev { get { return "3.9"; } }
+            public string proto_major { get { return "3"; } }
+            public string proto_minor { get { return "8"; } }
+        }
+
+//        {"class":"DEVICES","devices":[{"class":"DEVICE","path":"/dev/ttyUSB0",
+//                   "activated":1269959537.20,"native":0,"bps":4800,"parity":"N",
+//                   "stopbits":1,"cycle":1.00}]}
+//{"class":"WATCH","enable":true,"json":true,"nmea":false,"raw":0,
+//                 "scaled":false,"timing":false,"pps":false}
+
+        private class DeviceMsg
+        {
+            public string @class { get { return "DEVICE"; } }
+            public string path { get { return "/dev/ttyUSB0"; } }
+            public double activated { get { return 1269959537.20; } }
+            public int native { get { return 0; } }
+            public int bps { get { return 9600; } }
+            public string parity { get { return "N"; } }
+            public int stopbits { get { return 1; } }
+            public double cycle { get { return 1; } }
+        }
+
+        private class DevicesMsg
+        {
+            public string @class { get { return "DEVICES"; } }
+            public object[] devices { get { return new object[] { new DeviceMsg() }; } }
         }
 
         private void SendHello()
         {
-            var helloStr = "{\"class\":\"VERSION\",\"release\":\"3.9\",\"rev\":\"3.9\",\"proto_major\":3,\"proto_minor\":8}";
-            var helloBin = Encoding.Default.GetBytes(helloStr);
-            stream.Write(helloBin, 0, helloBin.Length);
+            var hello = Json.JsonSerializer.Serialize(new VersionMsg(), Encoding.Default);
+            stream.Write(hello, 0, hello.Length);
         }
 
         private void SendWatchResponse()
         {
+            var dm = Json.JsonSerializer.Serialize(new DevicesMsg(), Encoding.Default);
 
+            stream.Write(dm, 0, dm.Length);
 
             mode = Modes.JsonMode;
         }

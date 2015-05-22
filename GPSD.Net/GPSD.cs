@@ -15,25 +15,25 @@ namespace GPSD.Net
         private readonly TcpServer.Server server;
         private readonly IGPSController gps;
         private readonly ILogger logger;
-
-        private readonly object gprmcLocker = new object();
-        private GPRMC gprmc;
+        private readonly LockingProperty<List<Client>> clients;
 
         public GPSD(IGPSController gps, ILogger logger)
         {
             this.gps = gps;
             this.logger = logger;
+            this.clients = new LockingProperty<List<Client>>();
+            this.clients.Value = new List<Client>();
 
             server = new TcpServer.Server(2947, logger);
 
-            gps.GPRMCReseived += GPRMCReseived;
+            //gps.GPRMCReseived += GPRMCReseived;
         }
 
         void GPRMCReseived(GPRMC gprmc)
         {
-            lock (gprmcLocker)
+            lock (clients)
             {
-                this.gprmc = gprmc;
+                clients.Value.ForEach(c => c.SetGPRMC(gprmc));
             }
         }
 
@@ -45,38 +45,9 @@ namespace GPSD.Net
 
         void ClientConnected(Stream stream)
         {
-            SendHello(stream);
-
-            GPRMC gprmc;
-            gprmc.Rev = long.MaxValue;
-            bool updated = true;
-
-            while (true)
-            {
-                lock (gprmcLocker)
-                {
-                    if (updated = this.gprmc.Rev != gprmc.Rev)
-                    {
-                        gprmc = this.gprmc;
-                    }
-                }
-
-                if (updated)
-                {
-                    SendGPRMC(gprmc, stream);
-                }
-                else
-                {
-                    Thread.Sleep(1000);
-                }
-            }
+            var client = new Client(stream);
+            clients.Value.Add(client);
         }
-
-        private void SendGPRMC(GPRMC gprmc, Stream stream)
-        {
-            throw new NotImplementedException();
-        }
-
         
     }
 }
