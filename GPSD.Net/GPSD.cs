@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.GPS;
+using TcpServer;
 
 namespace GPSD.Net
 {
@@ -15,14 +16,14 @@ namespace GPSD.Net
         private readonly TcpServer.Server server;
         private readonly IGPSController gps;
         private readonly ILogger logger;
-        private readonly LockingProperty<List<Client>> clients;
+        private readonly LockingProperty<List<GPSDClient>> clients;
 
         public GPSD(IGPSController gps, ILogger logger)
         {
             this.gps = gps;
             this.logger = logger;
-            this.clients = new LockingProperty<List<Client>>();
-            this.clients.Value = new List<Client>();
+            this.clients = new LockingProperty<List<GPSDClient>>();
+            this.clients.Value = new List<GPSDClient>();
 
             server = new TcpServer.Server(2947, logger);
 
@@ -33,6 +34,7 @@ namespace GPSD.Net
         {
             lock (clients)
             {
+                clients.Value.RemoveAll(c => { if (!c.Active) { c.Dispose(); return true; } else return false; });
                 clients.Value.ForEach(c => c.SetGPRMC(gprmc));
             }
         }
@@ -43,10 +45,10 @@ namespace GPSD.Net
             server.Start();
         }
 
-        void ClientConnected(Stream stream)
+        void ClientConnected(IncomingClient client)
         {
-            var client = new Client(stream);
-            clients.Value.Add(client);
+            var gclient = new GPSDClient(client);
+            clients.Value.Add(gclient);
         }
         
     }

@@ -12,7 +12,7 @@ namespace TcpServer
 {
     public class Server
     {
-        public event Action<Stream> ClientConnected;
+        public event Action<IncomingClient> ClientConnected;
 
         private readonly TcpListener listener;
         private readonly ILogger logger;
@@ -64,6 +64,8 @@ namespace TcpServer
             if (client == null || !started)
                 return;
 
+            Interlocked.Increment(ref pendingCount);
+
             client.SendTimeout = 30000;
 
             try
@@ -74,10 +76,7 @@ namespace TcpServer
 
                 if (client.Connected)
                 {
-                    using (var stream = ObtainStream(client))
-                    {
-                        OnClientConnected(stream);
-                    }
+                    OnClientConnected(client);
                 }
                 else
                 {
@@ -95,19 +94,17 @@ namespace TcpServer
             }
         }
 
-        private void OnClientConnected(Stream stream)
+        private void OnClientConnected(TcpClient client)
         {
             if (started)
             {
                 var handler = ClientConnected;
                 if (handler != null)
-                    handler(stream);
+                    using (var ic = new IncomingClient(client))
+                    {
+                        handler(ic);
+                    }
             }
-        }
-
-        private Stream ObtainStream(TcpClient client)
-        {
-            return client.GetStream();
         }
     }
 }

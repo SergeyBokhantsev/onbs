@@ -39,7 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client.cs" />
+    <Compile Include="GPSDClient.cs" />
     <Compile Include="GPSD.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -12,6 +12,15 @@ namespace Interfaces
 
         private T value;
 
+        public LockingProperty()
+        {
+        }
+
+        public LockingProperty(T initialValue)
+        {
+            Value = initialValue;
+        }
+
         public T Value
         {
             get
