@@ -18,6 +18,8 @@ namespace GPSD.Net
         private readonly ILogger logger;
         private readonly LockingProperty<List<GPSDClient>> clients;
 
+        //http://www.catb.org/gpsd/gpsd_json.html
+        //http://wiki.navit-project.org/index.php/Configuration
         public GPSD(IGPSController gps, ILogger logger)
         {
             this.gps = gps;
@@ -28,6 +30,12 @@ namespace GPSD.Net
             server = new TcpServer.Server(2947, logger);
 
             //gps.GPRMCReseived += GPRMCReseived;
+            gps.NMEAReceived += NMEAReceived;
+        }
+
+        void NMEAReceived(string obj)
+        {
+            throw new NotImplementedException();
         }
 
         void GPRMCReseived(GPRMC gprmc)

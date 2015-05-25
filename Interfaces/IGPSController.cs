@@ -10,5 +10,6 @@ namespace Interfaces
     public interface IGPSController : IController
     {
         event Action<GPRMC> GPRMCReseived;
+        event Action<string> NMEAReceived;
     }
 }
