@@ -68,6 +68,9 @@ namespace TcpServer
                 if (!disposed && handler != null)
                     handler(readBuffer, count);
             }
+			catch 
+			{
+			}
             finally
             {
                 if (Active)

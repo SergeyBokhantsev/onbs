@@ -83,6 +83,10 @@ namespace TcpServer
                     logger.Log(string.Format("Skipping Tcp client #{0} (not connected)", id), LogLevels.Debug);
                 }
             }
+			catch (Exception ex)
+			{
+				logger.Log(ex);
+			}
             finally
             {
                 client.Close();

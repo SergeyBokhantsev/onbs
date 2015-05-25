@@ -25,6 +25,8 @@ namespace GPSD.Net
 
         private string query;
 
+		private Encoding enc = Encoding.ASCII;
+
         public bool Active
         {
             get
@@ -39,16 +41,36 @@ namespace GPSD.Net
                 throw new ArgumentNullException("tcpClient");
 
             this.tcpClient = tcpClient;
-
-            tcpClient.BytesReceived += BytesReceived;
-
-            SendHello();
-            Process();
         }
 
-        void BytesReceived(byte[] buffer, int count)
+		public void Run()
+		{
+			tcpClient.BytesReceived += BytesReceived;
+
+			SendHello();
+
+			while (Active)
+			{
+				//updateEvent.WaitOne();
+				Thread.Sleep(1000);
+
+				switch (mode.Value)
+				{
+					case Modes.WatchProcessing:
+					ProcessWatchQuery();
+					break;
+
+					case Modes.JsonMode:
+					SendJson();
+					break;
+				}
+			}
+		}
+
+
+        private void BytesReceived(byte[] buffer, int count)
         {
-            query += Encoding.Default.GetString(buffer, 0, count);
+            query += enc.GetString(buffer, 0, count);
 
             if (query.EndsWith("\n"))
             {
@@ -65,27 +87,7 @@ namespace GPSD.Net
             this.gprmc.Value = gprmc;
             updateEvent.Set();
         }
-
-        private void Process()
-        {
-            while (Active)
-            {
-                //updateEvent.WaitOne();
-                Thread.Sleep(1000);
-
-                switch (mode.Value)
-                {
-                    case Modes.WatchProcessing:
-                        ProcessWatchQuery();
-                        break;
-
-                    case Modes.JsonMode:
-                        SendJson();
-                        break;
-                }
-            }
-        }
-
+	
         private class VersionMsg
         {
             public string @class { get { return "VERSION"; } }
@@ -126,24 +128,33 @@ namespace GPSD.Net
             public bool json { get { return true; } }
             public bool nmea { get { return false; } }
             public int raw { get { return 0; } }
-            public bool scaled { get { return false; } }
+            public bool scaled { get { return true; } }
             public bool timing { get { return false; } }
             public bool pps { get { return false; } }
         }
 
+		private void WriteLn(byte[] data)
+		{
+			tcpClient.Write (data, 0, data.Length);
+			tcpClient.Write (new byte[] { 10 }, 0, 1);
+		}
+
         private void SendHello()
         {
-            var hello = Json.JsonSerializer.Serialize(new VersionMsg(), Encoding.Default);
-            tcpClient.Write(hello, 0, hello.Length);
+            var hello = Json.JsonSerializer.Serialize(new VersionMsg(), enc);
+			WriteLn (hello);
         }
 
         private void ProcessWatchQuery()
         {
             var dm = Json.JsonSerializer.Serialize(new DevicesMsg(), Encoding.Default);
-            var wm = Json.JsonSerializer.Serialize(new WatchMsg(), Encoding.Default);
+            var wm = Json.JsonSerializer.Serialize(new WatchMsg(), enc);
 
-            tcpClient.Write(dm, 0, dm.Length);
-            tcpClient.Write(wm, 0, wm.Length);
+          //tcpClient.Write(dm, 0, dm.Length);
+            //tcpClient.Write(wm, 0, wm.Length);
+
+			WriteLn (dm);
+			WriteLn (wm);
 
             mode.Value = Modes.JsonMode;
         }
@@ -175,24 +186,24 @@ namespace GPSD.Net
         {
             var tpv = new TPVMsg
             {
-                time = "2010-04-30T11:48:20.10Z",
-                ept = 0.005,
+                time = DateTime.Now.ToString(), //2010-04-30T11:48:20.10Z",
+                //ept = 0.005,
                 lat = 46.498204497,
                 lon = 7.568061439,
-                alt = 1327.689,
-                epx = 15.319,
-                epy = 17.054,
-                epv = 124.484,
-                track = 10.3797,
-                speed = 0.091,
-                climb = -0.085,
-                eps = 34.11,
-                mode = 3
+                //alt = 1327.689,
+                //epx = 15.319,
+                //epy = 17.054,
+                //epv = 124.484,
+                //track = 10.3797,
+                speed = 33.091,
+                //climb = -0.085,
+                //eps = 34.11,
+                mode = 2
             };
 
-            var bytes = Json.JsonSerializer.Serialize(tpv, Encoding.Default);
+            var bytes = Json.JsonSerializer.Serialize(tpv, enc);
 
-            tcpClient.Write(bytes, 0, bytes.Length);
+			WriteLn (bytes);
         }
 
         public void Dispose()

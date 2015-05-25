@@ -41,14 +41,22 @@ namespace GPSD.Net
 
         public void Start()
         {
-            server.ClientConnected += ClientConnected;
-            server.Start();
+			try
+			{
+            	server.ClientConnected += ClientConnected;
+            	server.Start();
+			}
+			catch (Exception ex) 
+			{
+
+			}
         }
 
         void ClientConnected(IncomingClient client)
         {
             var gclient = new GPSDClient(client);
             clients.Value.Add(gclient);
+	    	gclient.Run();
         }
         
     }
