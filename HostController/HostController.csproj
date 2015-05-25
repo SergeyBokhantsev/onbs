@@ -49,6 +49,10 @@
       <Project>{0e653fda-f0da-44cb-a932-4b37487ea731}</Project>
       <Name>InputController</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GPSController\GPSController.csproj">
+      <Project>{d653b708-aae0-4b81-a9bb-06b1c3bd1edb}</Project>
+      <Name>GPSController</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GPSD.Net\GPSD.Net.csproj">
       <Project>{975b7b95-004b-42db-be03-0aa8fcf06730}</Project>
       <Name>GPSD.Net</Name>

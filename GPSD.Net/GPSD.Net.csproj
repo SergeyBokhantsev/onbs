@@ -41,6 +41,12 @@
   <ItemGroup>
     <Compile Include="GPSDClient.cs" />
     <Compile Include="GPSD.cs" />
+    <Compile Include="Messages\DeviceMsg.cs" />
+    <Compile Include="Messages\DevicesMsg.cs" />
+    <Compile Include="Messages\Message.cs" />
+    <Compile Include="Messages\TPVMsg.cs" />
+    <Compile Include="Messages\VersionMsg.cs" />
+    <Compile Include="Messages\WatchMsg.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

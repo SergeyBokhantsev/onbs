@@ -6,22 +6,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Interfaces;
 
-namespace GPSController
+namespace Tests.Mocks
 {
     public class GPSController : IGPSController
     {
         public event Action<Interfaces.GPS.GPRMC> GPRMCReseived;
+
         public event Action<string> NMEAReceived;
 
-        private readonly IDispatcher dispatcher;
-
-        public GPSController(IDispatcher dispatcher)
+        public GPSController()
         {
-            if (dispatcher == null)
-                throw new ArgumentNullException("dispatcher");
-
-            this.dispatcher = dispatcher;
-
             new Thread(() => DoFake()).Start();
         }
 

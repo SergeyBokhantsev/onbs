@@ -44,7 +44,14 @@ namespace TcpServer
 
                 while (started)
                 {
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessClient), listener.AcceptTcpClient());
+                    try
+                    {
+                        ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessClient), listener.AcceptTcpClient());
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Log(ex);
+                    }
                 }
             }).Start();
         }

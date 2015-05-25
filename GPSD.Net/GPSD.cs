@@ -16,7 +16,7 @@ namespace GPSD.Net
         private readonly TcpServer.Server server;
         private readonly IGPSController gps;
         private readonly ILogger logger;
-        private readonly LockingProperty<List<GPSDClient>> clients;
+        private readonly List<GPSDClient> clients;
 
         //http://www.catb.org/gpsd/gpsd_json.html
         //http://wiki.navit-project.org/index.php/Configuration
@@ -24,27 +24,35 @@ namespace GPSD.Net
         {
             this.gps = gps;
             this.logger = logger;
-            this.clients = new LockingProperty<List<GPSDClient>>();
-            this.clients.Value = new List<GPSDClient>();
+            this.clients = new List<GPSDClient>();
 
             server = new TcpServer.Server(2947, logger);
 
-            //gps.GPRMCReseived += GPRMCReseived;
+            gps.GPRMCReseived += GPRMCReseived;
             gps.NMEAReceived += NMEAReceived;
         }
 
-        void NMEAReceived(string obj)
+        void NMEAReceived(string nmea)
         {
-            throw new NotImplementedException();
+            lock (clients)
+            {
+                CleanupInactive();
+                clients.ForEach(c => c.SetNMEA(nmea));
+            }
         }
 
         void GPRMCReseived(GPRMC gprmc)
         {
             lock (clients)
             {
-                clients.Value.RemoveAll(c => { if (!c.Active) { c.Dispose(); return true; } else return false; });
-                clients.Value.ForEach(c => c.SetGPRMC(gprmc));
+                CleanupInactive();
+                clients.ForEach(c => c.SetGPRMC(gprmc));
             }
+        }
+
+        private void CleanupInactive()
+        {
+            clients.RemoveAll(c => { if (!c.Active) { c.Dispose(); return true; } else return false; });
         }
 
         public void Start()
@@ -63,9 +71,23 @@ namespace GPSD.Net
         void ClientConnected(IncomingClient client)
         {
             var gclient = new GPSDClient(client);
-            clients.Value.Add(gclient);
+            lock (clients)
+            {
+                clients.Add(gclient);
+            }
 	    	gclient.Run();
         }
-        
+
+        public void Stop()
+        {
+            try
+            {
+                server.ClientConnected -= ClientConnected;
+                server.Stop();
+            }
+            catch (Exception ex)
+            {
+            }
+        }
     }
 }

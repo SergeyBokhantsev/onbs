@@ -7,15 +7,24 @@ using System.Threading.Tasks;
 
 namespace Json
 {
-    public static class JsonSerializer
+    public static class SimpleJsonSerializer
     {
         public static string Serialize(object obj)
         {
-            var props = obj.GetType().GetProperties();
+            if (obj.GetType().IsPrimitive)
+                return obj.ToString();
+            else if (obj is string)
+            {
+                return string.Concat("\"", obj, "\"");
+            }
+            else
+            {
+                var props = obj.GetType().GetProperties();
 
-            var body = string.Join(", ", props.Select(p => SerializeProperty(p, obj)));
+                var body = string.Join(",", props.Select(p => SerializeProperty(p, obj)));
 
-            return string.Concat("{", body, "}");
+                return string.Concat("{", body, "}");
+            }
         }
 
         public static byte[] Serialize(object obj, Encoding enc)
