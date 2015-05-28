@@ -16,19 +16,13 @@ namespace ArduinoController
         private readonly IDispatcher dispatcher;
         private readonly ILogger logger;
         private readonly ISTPCodec codec;
-
-        public IList<IFramesAcceptor> FrameAcceptors
-        {
-            get; private set;
-        }
+        private readonly List<IFramesAcceptor> acceptors = new List<IFramesAcceptor>();
 
         public ArduinoController(IPort port, IDispatcher dispatcher, ILogger logger)
         {
             this.port = port;
             this.dispatcher = dispatcher;
             this.logger = logger;
-
-            FrameAcceptors = new List<IFramesAcceptor>();
 
             var frameBeginMarker = Encoding.UTF8.GetBytes(":<:");
             var frameEndMarker = Encoding.UTF8.GetBytes(":>:");
@@ -47,12 +41,22 @@ namespace ArduinoController
 
             if (frames != null && frames.Any())
             {
-                foreach (var acceptor in FrameAcceptors)
+                foreach (var acceptor in acceptors)
                 {
                     dispatcher.Invoke(null, null, (s, a) => acceptor.AcceptFrames(frames.Where(f => f.Type == acceptor.FrameType)));
                     logger.Log(string.Format("Frames were dispatched for {0} acceptor", acceptor.FrameType), LogLevels.Debug);
                 }
             }
+        }
+
+        public void RegisterFrameAcceptor(IFramesAcceptor acceptor)
+        {
+            acceptors.Add(acceptor);
+        }
+
+        public void UnregisterFrameAcceptor(IFramesAcceptor acceptor)
+        {
+            acceptors.Remove(acceptor);
         }
     }
 }

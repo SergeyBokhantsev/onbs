@@ -9,6 +9,7 @@ namespace Interfaces
 {
     public interface IArduinoController : IController
     {
-        IList<IFramesAcceptor> FrameAcceptors { get; }
+        void RegisterFrameAcceptor(IFramesAcceptor acceptor);
+        void UnregisterFrameAcceptor(IFramesAcceptor acceptor);
     }
 }

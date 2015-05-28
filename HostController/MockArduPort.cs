@@ -19,6 +19,9 @@ namespace HostController
         private Queue<byte> buffer;
         private ISTPCodec codec;
 
+        private string fakeNmea;
+        private int fakeNmeaPos;
+
         public MockArduPort()
         {
             var frameBeginMarker = Encoding.UTF8.GetBytes(":<:");
@@ -26,6 +29,8 @@ namespace HostController
             codec = new STPCodec(frameBeginMarker, frameEndMarker);
 
             buffer = new Queue<byte>();
+
+            fakeNmea = System.IO.File.ReadAllText(".\\Data\\fake_nmea.txt");
 
             new Thread(() => SetData()).Start();
         }
@@ -35,10 +40,19 @@ namespace HostController
             while(true)
             {
                 var data = codec.Encode(new STPFrame(new byte[] { (byte)Buttons.Accept, (byte)ButtonStates.Press }, STPFrame.Types.Button)).ToList();
-                
+
+                if (fakeNmeaPos + 10 >= fakeNmea.Length)
+                    fakeNmeaPos = 0;
+
+                var nmeaPart = fakeNmea.Substring(fakeNmeaPos, 10);
+                var nmeaData = codec.Encode(new STPFrame(Encoding.Default.GetBytes(nmeaPart), STPFrame.Types.GPS)).ToList();
+
+                fakeNmeaPos += 10;
+
                 lock(buffer)
                 {
                     data.ForEach(buffer.Enqueue);
+                    nmeaData.ForEach(buffer.Enqueue);
                 }
 
                 if (DataReceived != null)

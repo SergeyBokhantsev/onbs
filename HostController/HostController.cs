@@ -56,9 +56,11 @@ namespace HostController
             inputController = new InputController.InputController(Logger);
 
             arduController = new ArduinoController.ArduinoController(new MockArduPort(), Dispatcher, Logger);
-            arduController.FrameAcceptors.Add(inputController);
+            arduController.RegisterFrameAcceptor(inputController);
 
-            gpsController = new GPSController.GPSController(Dispatcher);
+            var gpsCtrl = new GPSController.GPSController(Logger);
+            arduController.RegisterFrameAcceptor(gpsCtrl);
+            gpsController = gpsCtrl;
 
             gpsd = new GPSD.Net.GPSD(gpsController, Logger);
             gpsd.Start();

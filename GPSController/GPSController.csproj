@@ -40,12 +40,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GPSController.cs" />
+    <Compile Include="NmeaParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
       <Project>{3f066cd9-3523-4248-b37c-3378b44c426a}</Project>
       <Name>Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SerialTransportProtocol\SerialTransportProtocol.csproj">
+      <Project>{b1069b60-bc03-4a71-b8d2-c33f0043d96c}</Project>
+      <Name>SerialTransportProtocol</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

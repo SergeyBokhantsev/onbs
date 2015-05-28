@@ -394,7 +394,6 @@ namespace Json
                             ret.Add(CreateValue(item.Trim()));
                         }
                         return ret;
-                        break;
 
                     case ' ':
                     case '\r':
