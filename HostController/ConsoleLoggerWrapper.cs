@@ -14,7 +14,8 @@ namespace HostController
 
         public LogLevels Level
         {
-            get { return LogLevels.Debug; }
+            get;
+            private set;
         }
 
         public List<string> AllowedClassNames
@@ -23,9 +24,11 @@ namespace HostController
             private set;
         }
 
-        internal ConsoleLoggerWrapper()
+        internal ConsoleLoggerWrapper(IConfig config)
         {
-            AllowedClassNames = new List<string>();
+            Level = (LogLevels)Enum.Parse(typeof(LogLevels), config.GetString(Configuration.Names.LogLevel));
+
+            AllowedClassNames = new List<string>(config.GetString(Configuration.Names.LoggedClasses).Split(',').Select(o => o.Trim()).Where(o => !string.IsNullOrWhiteSpace(o)));
         }
 
         public void Log(object caller, string message, LogLevels level)

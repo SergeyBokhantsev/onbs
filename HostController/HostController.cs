@@ -1,6 +1,7 @@
 ﻿using Interfaces;
 using System;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace HostController
 {
@@ -12,6 +13,12 @@ namespace HostController
         private IInputController inputController;
         private IArduinoController arduController;
         private IGPSController gpsController;
+
+        public IConfig Config
+        {
+            get;
+            private set;
+        }
 
         public ILogger Logger
         {
@@ -26,6 +33,7 @@ namespace HostController
 
         public void Run()
         {
+            Config = new Configuration();
             CreateLogger();
             RunDispatcher();
         }
@@ -40,7 +48,7 @@ namespace HostController
 
         private void CreateLogger()
         {
-            Logger = new ConsoleLoggerWrapper();
+            Logger = new ConsoleLoggerWrapper(Config);
             Logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
         }
 
@@ -55,7 +63,7 @@ namespace HostController
         {
             inputController = new InputController.InputController(Logger);
 
-            arduController = new ArduinoController.ArduinoController(new SerialArduPort(Logger, "/dev/ttyAMA0"), Dispatcher, Logger);
+            arduController = new ArduinoController.ArduinoController(new SerialArduPort(Logger, Config), Dispatcher, Logger);
             arduController.RegisterFrameAcceptor(inputController);
 
             var gpsCtrl = new GPSController.GPSController(Logger);

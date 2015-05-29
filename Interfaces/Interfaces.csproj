@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="GPS\Primitives.cs" />
     <Compile Include="IArduinoController.cs" />
+    <Compile Include="IConfig.cs" />
     <Compile Include="IController.cs" />
     <Compile Include="IDispatcher.cs" />
     <Compile Include="IGPSController.cs" />
