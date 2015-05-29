@@ -40,7 +40,7 @@ namespace Json
             if (prop.PropertyType.Equals(typeof(int)))
                 return string.Format("\"{0}\":{1}", prop.Name, (int)value);
             if (prop.PropertyType.Equals(typeof(double)))
-                return string.Format("\"{0}\":{1}", prop.Name, (double)value);
+                return string.Format("\"{0}\":{1}", prop.Name, ((double)value) != 0 ? ((double)value).ToString("0.00000") : "0");
             if (prop.PropertyType.Equals(typeof(bool)))
                 return string.Format("\"{0}\":{1}", prop.Name, (bool)value);
             if (prop.PropertyType.Equals(typeof(string)))

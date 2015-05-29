@@ -1,8 +1,14 @@
 ﻿<Properties StartupItem="HostController\HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="GtkApplication\Pages\MainPage.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="GPSD.Net/GPSDClient.cs">
     <Files>
-      <File FileName="GtkApplication\Pages\MainPage.cs" Line="6" Column="14" />
+      <File FileName="GPSD.Net/GPSDClient.cs" Line="190" Column="19" />
+      <File FileName="TcpServer/IncomingClient.cs" Line="29" Column="8" />
+      <File FileName="GPSD.Net/GPSD.cs" Line="53" Column="1" />
+      <File FileName="TcpServer/Server.cs" Line="92" Column="6" />
+      <File FileName="UIController/UIController.cs" Line="11" Column="30" />
+      <File FileName="HostController/HostController.cs" Line="56" Column="1" />
+      <File FileName="HostController/Dispatcher.cs" Line="94" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
