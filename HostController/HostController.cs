@@ -55,7 +55,7 @@ namespace HostController
         {
             inputController = new InputController.InputController(Logger);
 
-            arduController = new ArduinoController.ArduinoController(new MockArduPort(), Dispatcher, Logger);
+            arduController = new ArduinoController.ArduinoController(new SerialArduPort(Dispatcher), Dispatcher, Logger);
             arduController.RegisterFrameAcceptor(inputController);
 
             var gpsCtrl = new GPSController.GPSController(Logger);

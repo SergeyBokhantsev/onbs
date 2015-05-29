@@ -30,7 +30,7 @@ namespace HostController
 
             buffer = new Queue<byte>();
 
-            fakeNmea = System.IO.File.ReadAllText(".\\Data\\fake_nmea.txt");
+            fakeNmea = System.IO.File.ReadAllText("./Data/fake_nmea.txt");
 
             new Thread(() => SetData()).Start();
         }
