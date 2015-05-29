@@ -34,7 +34,7 @@ namespace TcpServer
                 throw new InvalidOperationException("This listener is already started!");
 
             listener.Start();
-            logger.Log("Listener started", LogLevels.Debug);
+            logger.Log(this, "Listener started", LogLevels.Debug);
 
             started = true;
 
@@ -50,7 +50,7 @@ namespace TcpServer
                     }
                     catch (Exception ex)
                     {
-                        logger.Log(ex);
+                        logger.Log(this, ex);
                     }
                 }
             }).Start();
@@ -79,7 +79,7 @@ namespace TcpServer
             {
                 id = Interlocked.Increment(ref requestsCount);
 
-                logger.Log(string.Concat("Tcp client accepted, Id = ", id), LogLevels.Debug);
+                logger.Log(this, string.Concat("Tcp client accepted, Id = ", id), LogLevels.Debug);
 
                 if (client.Connected)
                 {
@@ -87,21 +87,21 @@ namespace TcpServer
                 }
                 else
                 {
-                    logger.Log(string.Format("Skipping Tcp client #{0} (not connected)", id), LogLevels.Debug);
+                    logger.Log(this, string.Format("Skipping Tcp client #{0} (not connected)", id), LogLevels.Debug);
                 }
             }
 			catch (Exception ex)
 			{
-				logger.Log(ex);
+				logger.Log(this, ex);
 			}
             finally
             {
                 client.Close();
 
-                logger.Log(string.Concat("Tcp client closed, Id = ", id), LogLevels.Debug);
+                logger.Log(this, string.Concat("Tcp client closed, Id = ", id), LogLevels.Debug);
                 var pending = Interlocked.Decrement(ref pendingCount);
 
-                logger.Log(string.Concat("Pending = ", pending), LogLevels.Debug);
+                logger.Log(this, string.Concat("Pending = ", pending), LogLevels.Debug);
             }
         }
 

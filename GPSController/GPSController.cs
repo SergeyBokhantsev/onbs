@@ -39,7 +39,7 @@ namespace GPSController
             parser = new NmeaParser();
             parser.GPRMC += parser_GPRMC;
 
-            logger.Log("GPS controller created", LogLevels.Info);
+            logger.Log(this, "GPS controller created", LogLevels.Info);
         }
 
         private void parser_GPRMC(Interfaces.GPS.GPRMC obj)
@@ -67,7 +67,7 @@ namespace GPSController
                 if (concatenatedNmea.Length > 0)
                 {
                     var concatenatedStr = concatenatedNmea.ToString();
-                    logger.Log(string.Format("Received gps sentence: '{0}'", concatenatedStr), LogLevels.Debug);
+                    logger.Log(this, string.Format("Received gps sentence: '{0}'", concatenatedStr), LogLevels.Debug);
 
                     var handler = NMEAReceived;
                     if (handler != null)

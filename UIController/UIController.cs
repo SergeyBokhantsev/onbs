@@ -53,7 +53,7 @@ namespace UIController
             uiHost = appConstructor.Invoke(new object[] { logger }) as IUIHost;
             hostWaiter.Set();
             uiHost.Run();
-            logger.Log("UI Host has exited", LogLevels.Info);
+            logger.Log(this, "UI Host has exited", LogLevels.Info);
         }
 
         public void ShowMainPage()

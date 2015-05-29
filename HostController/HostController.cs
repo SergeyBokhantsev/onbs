@@ -41,7 +41,7 @@ namespace HostController
         private void CreateLogger()
         {
             Logger = new ConsoleLoggerWrapper();
-            Logger.Log("--- Logging initiated ---", LogLevels.Info);
+            Logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
         }
 
         private void RunDispatcher()
@@ -55,7 +55,7 @@ namespace HostController
         {
             inputController = new InputController.InputController(Logger);
 
-            arduController = new ArduinoController.ArduinoController(new SerialArduPort(Dispatcher), Dispatcher, Logger);
+            arduController = new ArduinoController.ArduinoController(new SerialArduPort(Logger, "/dev/ttyAMA0"), Dispatcher, Logger);
             arduController.RegisterFrameAcceptor(inputController);
 
             var gpsCtrl = new GPSController.GPSController(Logger);

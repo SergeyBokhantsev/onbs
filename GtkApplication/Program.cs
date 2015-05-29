@@ -37,8 +37,8 @@ namespace GtkApplication
             }
             catch (Exception ex)
             {
-                logger.Log("Exception in UI Host", LogLevels.Fatal);
-                logger.Log(ex);
+                logger.Log(this, "Exception in UI Host", LogLevels.Fatal);
+                logger.Log(this, ex);
             }
 		}
 

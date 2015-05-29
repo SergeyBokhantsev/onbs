@@ -35,15 +35,15 @@ namespace InputController
             {
                 try
                 {
-                    logger.Log("Button frame received", LogLevels.Debug);
+                    logger.LogIfDebug(this, "Button frame received");
                     var button = (Buttons)frame.Data[0];
                     var state = (ButtonStates)frame.Data[1];
-                    logger.Log(string.Format("Button parsed: {0}, {1}", button, state), LogLevels.Debug);
+                    logger.LogIfDebug(this, string.Format("Button parsed: {0}, {1}", button, state));
                     OnButtonPressed(button, state);
                 }
                 catch (Exception ex)
                 {
-                    logger.Log(ex);
+                    logger.Log(this, ex);
                 }
             }
         }

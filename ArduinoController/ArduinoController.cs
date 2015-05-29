@@ -28,14 +28,14 @@ namespace ArduinoController
             var frameEndMarker = Encoding.UTF8.GetBytes(":>:");
             codec = new STPCodec(frameBeginMarker, frameEndMarker);
 
-            logger.Log(string.Format("{0} created.", this.GetType().Name), LogLevels.Info);
+            logger.Log(this, string.Format("{0} created.", this.GetType().Name), LogLevels.Info);
 
             port.DataReceived += DataReceived;
         }
 
         private void DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            logger.Log("DataReceived event", LogLevels.Debug);
+            logger.LogIfDebug(this, "DataReceived event");
 
             var frames = codec.Decode(port);
 
@@ -44,7 +44,7 @@ namespace ArduinoController
                 foreach (var acceptor in acceptors)
                 {
                     dispatcher.Invoke(null, null, (s, a) => acceptor.AcceptFrames(frames.Where(f => f.Type == acceptor.FrameType)));
-                    logger.Log(string.Format("Frames were dispatched for {0} acceptor", acceptor.FrameType), LogLevels.Debug);
+                    logger.LogIfDebug(this, string.Format("Frames were dispatched for {0} acceptor", acceptor.FrameType));
                 }
             }
         }

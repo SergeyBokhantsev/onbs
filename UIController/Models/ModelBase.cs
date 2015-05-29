@@ -36,7 +36,7 @@ namespace UIController.Models
 
         public T GetProperty<T>(string name)
         {
-            logger.Log(string.Format("Getting PageModel property '{0}'", name), LogLevels.Debug);
+            logger.LogIfDebug(this, string.Format("Getting PageModel property '{0}'", name));
 
             lock (properties)
             {
@@ -49,7 +49,7 @@ namespace UIController.Models
 
         public void SetProperty(string name, object value)
         {
-            logger.Log(string.Format("Setting PageModel property '{0}' with value of type '{1}'", name, value != null ? value.GetType().ToString() : "NULL"), LogLevels.Debug);
+            logger.LogIfDebug(this, string.Format("Setting PageModel property '{0}' with value of type '{1}'", name, value != null ? value.GetType().ToString() : "NULL"));
 
             lock (properties)
             {
@@ -64,7 +64,7 @@ namespace UIController.Models
             if (actionArgs == null)
                 throw new ArgumentNullException("actionArgs");
 
-            logger.Log(string.Format("Performing PageModel action '{0}'", actionArgs.ActionName), LogLevels.Debug);
+            logger.LogIfDebug(this, string.Format("Performing PageModel action '{0}'", actionArgs.ActionName));
 
             if (dispatcher.Check())
                 DoAction(actionArgs);
@@ -80,7 +80,7 @@ namespace UIController.Models
 
         public void Dispose()
         {
-            logger.Log(string.Format("Performing PageModel disposing: '{0}'", this.Name), LogLevels.Debug);
+            logger.LogIfDebug(this, string.Format("Performing PageModel disposing: '{0}'", this.Name));
 
             var handler = Disposing;
             if (handler != null)
