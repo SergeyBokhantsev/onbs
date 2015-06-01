@@ -49,13 +49,18 @@ namespace GtkApplication
             if (showPageArgs == null || showPageArgs.Model == null)
                 throw new ArgumentException("model");
 
-            win.Child = null;
+            if (win.Child != null)
+                win.Remove(win.Child);
 
             switch (showPageArgs.Model.Name)
             {
                 case "MainPage":
                     win.Add(new MainPage(showPageArgs.Model));
                     break;
+
+				case "ExternalApplicationPage":
+					win.Add(new ExternalApplicationPage (showPageArgs.Model));
+					break;
 
                 default:
                     throw new NotImplementedException(showPageArgs.Model.Name);

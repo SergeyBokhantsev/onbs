@@ -22,11 +22,22 @@ namespace UIController.Models
             this.runner = runner;
             this.ui = ui;
 
-            SetProperty("label_launch_info", string.Format("Launching {0}...", runner.Name));
+            runner.Exited += RunnerExited;
 
+            SetProperty("label_launch_info", string.Format("Launching {0}...", runner.Name));   
+        }
+
+        void RunnerExited(bool unexpected)
+        {
+            dispatcher.Invoke(null, null, new EventHandler((s, e) => ui.ShowMainPage()));
+        }
+
+        public void Run()
+        {
             try
             {
                 runner.Run();
+                SetProperty("label_launch_info", string.Format("{0} now launched", runner.Name));   
             }
             catch (Exception ex)
             {
@@ -39,7 +50,6 @@ namespace UIController.Models
             if (actionArgs.ActionName == "close")
             {
                 runner.Exit();
-                ui.ShowMainPage();
             }
         }
 

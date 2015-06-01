@@ -17,7 +17,7 @@ namespace UIController.Models
 
         private readonly Dictionary<string, object> properties = new Dictionary<string, object>();
 
-        private readonly IDispatcher dispatcher;
+        protected readonly IDispatcher dispatcher;
 
         protected readonly ILogger logger;
 

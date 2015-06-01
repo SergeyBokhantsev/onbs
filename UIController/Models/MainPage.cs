@@ -29,8 +29,9 @@ namespace UIController.Models
                     var appName = hostController.Config.GetString("navit exe");
                     var appArgs = hostController.Config.GetString("navit args");
                     var runner = hostController.CreateProcessRunner(appName, null);
-                    var page = new ExternalApplicationPage(runner, hostController.Dispatcher, hostController.Logger, uiController);
+                    var page = new ExternalApplicationPage(runner, hostController.Dispatcher, hostController.Logger, uiController);                    
                     uiController.ShowPage(page);
+                    page.Run();
                     break;
             }
         }
