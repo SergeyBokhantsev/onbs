@@ -36,6 +36,13 @@ namespace HostController
                 {
                     if (port == null)
                     {
+                        var portEnabled = config.GetBool(Configuration.Names.ArduinoPortEnabled);
+                        if (!portEnabled)
+                        {
+                            logger.Log(this, "Arduino port is disabled. Exit port loop.", LogLevels.Warning);
+                            return;
+                        }
+
                         var portPath = config.GetString(Configuration.Names.ArduinoPort);
                         var speed = config.GetInt(Configuration.Names.ArduinoPortSpeed);
                         var parity = (Parity)Enum.Parse(typeof(Parity), config.GetString(Configuration.Names.ArduinoPortParity));

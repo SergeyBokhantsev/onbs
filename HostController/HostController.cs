@@ -42,6 +42,12 @@ namespace HostController
         {
             if (typeof(T).Equals(typeof(IUIController)))
                 return (T)uiController;
+            else if (typeof(T).Equals(typeof(IInputController)))
+                return (T)inputController;
+            else if (typeof(T).Equals(typeof(IArduinoController)))
+                return (T)arduController;
+            else if (typeof(T).Equals(typeof(IGPSController)))
+                return (T)gpsController;
             else
                 throw new NotImplementedException(typeof(T).ToString());
         }
@@ -73,8 +79,13 @@ namespace HostController
             gpsd = new GPSD.Net.GPSD(gpsController, Logger);
             gpsd.Start();
 
-            uiController = new UIController.UIController("GtkApplication.dll", "GtkApplication.App", inputController, Logger, Dispatcher);
+            uiController = new UIController.UIController(Config.GetString(Configuration.Names.UIHostAssemblyName), Config.GetString(Configuration.Names.UIHostClass), this);
             uiController.ShowMainPage();
+        }
+
+        public IProcessRunner CreateProcessRunner(string appName, string commandLine)
+        {
+            return new ProcessRunner(appName, commandLine);
         }
     }
 }

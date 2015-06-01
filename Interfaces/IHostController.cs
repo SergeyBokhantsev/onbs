@@ -10,6 +10,7 @@ namespace Interfaces
     {
         ILogger Logger { get; }
         IDispatcher Dispatcher { get ; }
+        IConfig Config { get; }
         T GetController<T>() where T : IController;
         IProcessRunner CreateProcessRunner(string appName, string commandLine);
     }

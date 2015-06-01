@@ -25,8 +25,12 @@ namespace UIController.Models
             switch (actionArgs.ActionName)
             {
                 case "navit":
-                    var appName = hostController.
-                    var runner = hostController.CreateProcessRunner()
+                    var uiController = hostController.GetController<IUIController>();
+                    var appName = hostController.Config.GetString("navit exe");
+                    var appArgs = hostController.Config.GetString("navit args");
+                    var runner = hostController.CreateProcessRunner(appName, null);
+                    var page = new ExternalApplicationPage(runner, hostController.Dispatcher, hostController.Logger, uiController);
+                    uiController.ShowPage(page);
                     break;
             }
         }

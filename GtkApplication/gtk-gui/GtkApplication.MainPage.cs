@@ -5,8 +5,8 @@ namespace GtkApplication
 	public partial class MainPage
 	{
 		private global::Gtk.VBox vbox1;
-		
-		private global::Gtk.Label welcome;
+
+        private global::Gtk.Label label_f1;
 		
 		private global::Gtk.Button bStart;
 		
@@ -23,11 +23,11 @@ namespace GtkApplication
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.welcome = new global::Gtk.Label ();
-			this.welcome.Name = "welcome";
-			this.welcome.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
-			this.vbox1.Add (this.welcome);
-			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.welcome]));
+            this.label_f1 = new global::Gtk.Label();
+            this.label_f1.Name = "label_f1";
+            this.label_f1.LabelProp = global::Mono.Unix.Catalog.GetString("label1");
+            this.vbox1.Add(this.label_f1);
+            global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.label_f1]));
 			w1.Position = 0;
 			w1.Expand = false;
 			w1.Fill = false;

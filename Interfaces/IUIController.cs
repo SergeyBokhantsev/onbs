@@ -10,5 +10,6 @@ namespace Interfaces
     public interface IUIController : IController
     {
         void ShowMainPage();
+        void ShowPage(IPageModel model);
     }
 }

@@ -18,15 +18,13 @@ namespace UIController
         private ManualResetEvent hostWaiter = new ManualResetEvent(false);
         private IUIHost uiHost;
         private IPageModel current;
-        private readonly IDispatcher dispatcher;
-        private readonly ILogger logger;
+        private readonly IHostController hostController;
 
-        public UIController(string uiHostAssemblyPath, string uiHostClassName, IInputController inputController, ILogger logger, IDispatcher dispatcher)
+        public UIController(string uiHostAssemblyPath, string uiHostClassName, IHostController hostController)
         {
-            this.dispatcher = dispatcher;
-            this.logger = logger;
+            this.hostController = hostController;
 
-            var uit = new Thread(() => UIThread(uiHostAssemblyPath, uiHostClassName, logger));
+            var uit = new Thread(() => UIThread(uiHostAssemblyPath, uiHostClassName, hostController.Logger));
             uit.IsBackground = true;
             uit.Name = "UI";
             uit.Start();
@@ -34,7 +32,7 @@ namespace UIController
             if (!hostWaiter.WaitOne(10000) || uiHost == null)
                 throw new Exception("Unable to start UI host.");
 
-            inputController.ButtonPressed += ButtonPressed;
+            hostController.GetController<IInputController>().ButtonPressed += ButtonPressed;
         }
 
         private void ButtonPressed(Buttons button, ButtonStates state)
@@ -58,10 +56,10 @@ namespace UIController
 
         public void ShowMainPage()
         {
-            ShowPage(new MainPage(dispatcher, logger));
+            ShowPage(new MainPage(hostController));
         }
 
-        private void ShowPage(IPageModel model)
+        public void ShowPage(IPageModel model)
         {
             if (current != null)
                 current.Dispose();
