@@ -162,7 +162,8 @@ namespace GPSD.Net
                 if (!Json.JsonParser.TryParse(jsonData, out json))
                     return null;
 
-                return WatchMsg.Parse(json);
+                var res = WatchMsg.Parse(json);
+				return res;
             }
             catch
             {
@@ -170,33 +171,43 @@ namespace GPSD.Net
             }
         }
 
+		double temp = 30.42;
+
         private void SendJson()
         {
-            var tpv = new TPVMsg
-            {
-                time = DateTime.Now.ToString(), //2010-04-30T11:48:20.10Z",
-                //ept = 0.005,
-                lat = 46.498204497,
-                lon = 7.568061439,
-                //alt = 1327.689,
-                //epx = 15.319,
-                //epy = 17.054,
-                //epv = 124.484,
-                //track = 10.3797,
-                speed = 33.091,
-                //climb = -0.085,
-                //eps = 34.11,
-                mode = 2
-            };
+			var tpv = new TPVMsg
+			{
+				time = DateTime.Now.ToString(), //2010-04-30T11:48:20.10Z",
+				//ept = 0.005,
+				lat = 46.498204497,
+				lon = 7.568061439,
+				//alt = 1327.689,
+				//epx = 15.319,
+				//epy = 17.054,
+				//epv = 124.484,
+				//track = 10.3797,
+				speed = 33.091,
+				//climb = -0.085,
+				//eps = 34.11,
+				mode = 2
+			};
 
-            var bytes = Json.SimpleJsonSerializer.Serialize(tpv, enc);
+          //  var bytes = Json.SimpleJsonSerializer.Serialize(tpv, enc);
+
+			temp += 0.0005;
+
+			var fake = "{\"class\":\"TPV\",\"device\":\"/dev/pts/1\","+
+				"\"time\":\""+DateTime.Now.ToString("O")+"\",\"ept\":0.005,\"track\":90,"+
+				"\"lat\":"+gprmc.Value.Location.Lat.ToString()+",\"lon\":"+temp+",\"speed\":1.87,\"mode\":2}";
+
+			var bytes = enc.GetBytes(fake);
 
 			WriteLn (bytes);
         }
 
         private void SendNmea()
         {
-            var nmea = this.nmea.Value;
+			var nmea = this.nmea.Value;
             var data = enc.GetBytes(nmea);
             lock (tcpClient)
             {

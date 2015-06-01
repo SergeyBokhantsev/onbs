@@ -9,7 +9,7 @@ public partial class MainWindow: Gtk.Window
 	{
 		Build();
 
-        logger.Log("MainWindow created", Interfaces.LogLevels.Debug);
+        logger.Log(this, "MainWindow created", Interfaces.LogLevels.Debug);
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)

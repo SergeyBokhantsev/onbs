@@ -133,6 +133,11 @@ namespace Interfaces.GPS
         {
             return new GeoCoordinate { Degrees = value };
         }
+
+		public override string ToString ()
+		{
+			return Degrees.ToString ();
+		}
     }
 
     public struct GeoPoint

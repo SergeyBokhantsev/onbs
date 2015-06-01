@@ -49,7 +49,7 @@ namespace HostController
             this.threadId = Thread.CurrentThread.ManagedThreadId;
             this.logger = logger;
 
-            logger.Log("Dispatcher created", LogLevels.Debug);
+            logger.Log(this, "Dispatcher created", LogLevels.Info);
         }
 
         public void Invoke(object sender, EventArgs args, EventHandler handler)
@@ -60,7 +60,7 @@ namespace HostController
                 mre.Set();
             }
 
-            logger.Log(string.Format("Invoke call with handler '{0}' sheduled", handler.Method), LogLevels.Debug);
+            logger.LogIfDebug(this, string.Format("Invoke call with handler '{0}' sheduled", handler.Method));
         }
 
         public void Run()
@@ -87,18 +87,18 @@ namespace HostController
                         try
                         {
                             itemToInvoke.Invoke();
-                            logger.Log(string.Format("Invoke handler '{0}' executed", itemToInvoke), LogLevels.Debug);
+                            logger.LogIfDebug(this, string.Format("Invoke handler '{0}' executed", itemToInvoke));
                         }
                         catch (Exception ex)
                         {
-                            logger.Log(string.Format("Invoke handler '{0}' throw exeption", itemToInvoke), LogLevels.Debug);
-                            logger.Log(ex);
+                            logger.Log(this, string.Format("Invoke handler '{0}' throw exeption", itemToInvoke), LogLevels.Debug);
+                            logger.Log(this, ex);
                         }
                     }
                 }
                 else
                 {
-                    logger.Log("Dispatcher heartbeat", LogLevels.Debug);
+                    logger.LogIfDebug(this, "Dispatcher heartbeat");
                 }
             }
         }

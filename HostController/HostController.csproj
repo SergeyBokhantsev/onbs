@@ -31,8 +31,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration.cs" />
     <Compile Include="ConsoleLoggerWrapper.cs" />
     <Compile Include="Dispatcher.cs" />
     <Compile Include="EntryPoint.cs" />
@@ -40,22 +42,23 @@
     <Compile Include="ProcessRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HostController.cs" />
+    <Compile Include="SerialArduPort.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ArduinoController\ArduinoController.csproj">
-      <Project>{a05b89c0-c585-4fb8-a5e2-c75980d1b734}</Project>
+      <Project>{A05B89C0-C585-4FB8-A5E2-C75980D1B734}</Project>
       <Name>ArduinoController</Name>
     </ProjectReference>
     <ProjectReference Include="..\ButtonController\InputController.csproj">
-      <Project>{0e653fda-f0da-44cb-a932-4b37487ea731}</Project>
+      <Project>{0E653FDA-F0DA-44CB-A932-4B37487EA731}</Project>
       <Name>InputController</Name>
     </ProjectReference>
     <ProjectReference Include="..\GPSController\GPSController.csproj">
-      <Project>{d653b708-aae0-4b81-a9bb-06b1c3bd1edb}</Project>
+      <Project>{D653B708-AAE0-4B81-A9BB-06B1C3BD1EDB}</Project>
       <Name>GPSController</Name>
     </ProjectReference>
     <ProjectReference Include="..\GPSD.Net\GPSD.Net.csproj">
-      <Project>{975b7b95-004b-42db-be03-0aa8fcf06730}</Project>
+      <Project>{975B7B95-004B-42DB-BE03-0AA8FCF06730}</Project>
       <Name>GPSD.Net</Name>
     </ProjectReference>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
@@ -63,11 +66,11 @@
       <Name>Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\SerialTransportProtocol\SerialTransportProtocol.csproj">
-      <Project>{b1069b60-bc03-4a71-b8d2-c33f0043d96c}</Project>
+      <Project>{B1069B60-BC03-4A71-B8D2-C33F0043D96C}</Project>
       <Name>SerialTransportProtocol</Name>
     </ProjectReference>
     <ProjectReference Include="..\UIController\UIController.csproj">
-      <Project>{1e7b884f-479a-4562-bb89-445786fec998}</Project>
+      <Project>{1E7B884F-479A-4562-BB89-445786FEC998}</Project>
       <Name>UIController</Name>
     </ProjectReference>
   </ItemGroup>
@@ -75,6 +78,9 @@
     <Content Include="Data\fake_nmea.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
