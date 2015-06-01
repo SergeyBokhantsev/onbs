@@ -38,7 +38,12 @@ namespace HostController
             if (proc != null)
                 throw new InvalidOperationException();
 
-            proc = Process.Start(appPath, arguments);
+			var psi = new ProcessStartInfo (appPath);
+
+			psi.UseShellExecute = false;
+			psi.WorkingDirectory = Path.GetDirectoryName (appPath);
+
+			proc = Process.Start (psi);
             proc.WaitForInputIdle(10000);
 
             new Thread(() => Monitor()).Start();

@@ -16,6 +16,7 @@ namespace ArduinoController
         private readonly IDispatcher dispatcher;
         private readonly ILogger logger;
         private readonly ISTPCodec codec;
+		private readonly ISTPCodec arduinoCommandCodec;
         private readonly List<IFramesAcceptor> acceptors = new List<IFramesAcceptor>();
 
         public ArduinoController(IPort port, IDispatcher dispatcher, ILogger logger)
@@ -27,6 +28,11 @@ namespace ArduinoController
             var frameBeginMarker = Encoding.UTF8.GetBytes(":<:");
             var frameEndMarker = Encoding.UTF8.GetBytes(":>:");
             codec = new STPCodec(frameBeginMarker, frameEndMarker);
+
+			
+			var arduFrameBeginMarker = Encoding.UTF8.GetBytes("ac{");
+			var arduFrameEndMarker = Encoding.UTF8.GetBytes("}");
+			arduinoCommandCodec = new STPCodec(arduFrameBeginMarker, arduFrameEndMarker);
 
             logger.Log(this, string.Format("{0} created.", this.GetType().Name), LogLevels.Info);
 
@@ -41,6 +47,11 @@ namespace ArduinoController
 
             if (frames != null && frames.Any())
             {
+				//Converting ArduCommands
+				var convertedFrames = arduinoCommandCodec.Decode(frames.Where (f => f.Type == STPFrame.Types.ArduCommand));
+				if (convertedFrames != null)
+					frames.AddRange(convertedFrames);
+
                 foreach (var acceptor in acceptors)
                 {
                     dispatcher.Invoke(null, null, (s, a) => acceptor.AcceptFrames(frames.Where(f => f.Type == acceptor.FrameType)));

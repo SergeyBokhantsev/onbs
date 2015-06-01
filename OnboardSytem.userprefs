@@ -1,15 +1,21 @@
 ﻿<Properties StartupItem="HostController\HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="GtkApplication\Pages\ExternalApplicationPage.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ButtonController/InputController.cs">
     <Files>
-      <File FileName="GtkApplication\Pages\MainPage.cs" Line="34" Column="21" />
-      <File FileName="GtkApplication\Pages\ExternalApplicationPage.cs" Line="11" Column="17" />
-      <File FileName="UIController\Models\ExternalApplicationPage.cs" Line="25" Column="43" />
-      <File FileName="GtkApplication\Program.cs" Line="1" Column="1" />
+      <File FileName="ButtonController/InputController.cs" Line="37" Column="18" />
+      <File FileName="ArduinoController/ArduinoController.cs" Line="51" Column="54" />
+      <File FileName="HostController/SerialArduPort.cs" Line="75" Column="1" />
+      <File FileName="Interfaces/SerialTransportProtocol/STPFrame.cs" Line="28" Column="46" />
+      <File FileName="TcpServer/Server.cs" Line="49" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Catchpoint exceptionName="System.NullReferenceException" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches>
+    <Watch file="ArduinoController/ArduinoController.cs" line="42" offsetX="438" offsetY="738" expression="frames" liveUpdate="False" />
+    <Watch file="ButtonController/InputController.cs" line="34" offsetX="390" offsetY="594" expression="frame" liveUpdate="False" />
+  </MonoDevelop.Ide.DebuggingService.PinnedWatches>
 </Properties>

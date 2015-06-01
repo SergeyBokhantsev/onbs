@@ -44,7 +44,7 @@ namespace GPSController
 
         private void Postprocess(GPRMC newGprmc)
         {
-            if (gprmc.Active)
+            if (gprmc != null && gprmc.Active)
             {
                 double heading;
 
@@ -57,9 +57,10 @@ namespace GPSController
                     heading = gprmc.TrackAngle;
                 }
 
-                gprmc = newGprmc;
-                gprmc.TrackAngle = heading;
+				newGprmc.TrackAngle = heading;
             }
+
+			gprmc = newGprmc;
         }
 
         private bool checksumOk(string str)
