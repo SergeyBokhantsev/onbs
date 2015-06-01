@@ -10,25 +10,30 @@ namespace UIController.Models
 {
     public class MainPage : ModelBase
     {
-        public MainPage(IDispatcher dispatcher, ILogger logger)
-            :base(typeof(MainPage).Name, dispatcher, logger)
+        private readonly IHostController hostController;
+
+        public MainPage(IHostController hostController)
+            :base(typeof(MainPage).Name, hostController.Dispatcher, hostController.Logger)
         {
-            SetProperty("welcome", "Welcome!");
+            this.hostController = hostController;
+
+            SetProperty("label_f1", "F1 to Navit");
         }
 
         protected override void DoAction(PageModelActionEventArgs actionArgs)
         {
             switch (actionArgs.ActionName)
             {
-                case "start":
-                    SetProperty("welcome", Guid.NewGuid().ToString());
+                case "navit":
+                    var appName = hostController.
+                    var runner = hostController.CreateProcessRunner()
                     break;
             }
         }
 
-        protected override void OnAcceptButton(Interfaces.Input.ButtonStates state)
+        protected override void OnF1Button(Interfaces.Input.ButtonStates state)
         {
-            SetProperty("welcome", Guid.NewGuid().ToString());
+            DoAction(new PageModelActionEventArgs("navit"));
         }
     }
 }

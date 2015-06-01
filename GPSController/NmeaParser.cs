@@ -11,6 +11,8 @@ namespace GPSController
     {
         public event Action<GPRMC> GPRMC;
 
+        private GPRMC gprmc;
+
         public void Accept(string sentence)
         {
             if (!string.IsNullOrEmpty(sentence))
@@ -31,11 +33,32 @@ namespace GPSController
                             var gprmc = new GPRMC();
                             if (gprmc.Parse(items))
                             {
-                                OnGPRMCReceived(gprmc);
+                                Postprocess(gprmc);
+                                OnGPRMCReceived(this.gprmc);
                             }
                             break;
                     }
                 }
+            }
+        }
+
+        private void Postprocess(GPRMC newGprmc)
+        {
+            if (gprmc.Active)
+            {
+                double heading;
+
+                if (newGprmc.Active && newGprmc.Speed > 8)
+                {
+                    heading = Interfaces.GPS.Helpers.GetHeading(gprmc.Location, newGprmc.Location);
+                }
+                else
+                {
+                    heading = gprmc.TrackAngle;
+                }
+
+                gprmc = newGprmc;
+                gprmc.TrackAngle = heading;
             }
         }
 

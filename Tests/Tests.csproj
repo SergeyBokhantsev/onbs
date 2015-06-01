@@ -55,6 +55,7 @@
     <Compile Include="SimpleJsonSerializerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GPSDTests.cs" />
+    <Compile Include="GPSHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GPSController\GPSController.csproj">

@@ -21,6 +21,8 @@ namespace UIController.Models
 
         protected readonly ILogger logger;
 
+        private readonly Dictionary<Buttons, Action<ButtonStates>> buttonHandlersMap;
+
         public string Name
         {
             get;
@@ -32,6 +34,20 @@ namespace UIController.Models
             Name = name;
             this.dispatcher = dispatcher;
             this.logger = logger;
+
+            buttonHandlersMap = new Dictionary<Buttons, Action<ButtonStates>>()
+            {
+                { Buttons.Accept, new Action<ButtonStates>(OnAcceptButton) },
+                { Buttons.Cancel, new Action<ButtonStates>(OnCancelButton) },
+                { Buttons.F1, new Action<ButtonStates>(OnF1Button) },
+                { Buttons.F2, new Action<ButtonStates>(OnF2Button) },
+                { Buttons.F3, new Action<ButtonStates>(OnF3Button) },
+                { Buttons.F4, new Action<ButtonStates>(OnF4Button) },
+                { Buttons.F5, new Action<ButtonStates>(OnF5Button) },
+                { Buttons.F6, new Action<ButtonStates>(OnF6Button) },
+                { Buttons.F7, new Action<ButtonStates>(OnF7Button) },
+                { Buttons.F8, new Action<ButtonStates>(OnF8Button) },
+            };
         }
 
         public T GetProperty<T>(string name)
@@ -107,21 +123,51 @@ namespace UIController.Models
 
         public void Button(Buttons button, ButtonStates state)
         {
-            switch (button)
-            {
-                case Buttons.Accept:
-                    if (dispatcher.Check())
-                        OnAcceptButton(state);
-                    else
-                        dispatcher.Invoke(null, null, new EventHandler((s, a) => OnAcceptButton(state)));
-                    break;
+            Action<ButtonStates> action = buttonHandlersMap[button];
 
-                default:
-                    throw new NotImplementedException(button.ToString());
-            }
+            if (dispatcher.Check())
+                action(state);
+            else
+                dispatcher.Invoke(null, null, new EventHandler((s, a) => action(state)));
         }
 
         protected virtual void OnAcceptButton(ButtonStates state)
+        {
+        }
+
+        protected virtual void OnCancelButton(ButtonStates state)
+        {
+        }
+
+        protected virtual void OnF1Button(ButtonStates state)
+        {
+        }
+
+        protected virtual void OnF2Button(ButtonStates state)
+        {
+        }
+
+        protected virtual void OnF3Button(ButtonStates state)
+        {
+        }
+
+        protected virtual void OnF4Button(ButtonStates state)
+        {
+        }
+
+        protected virtual void OnF5Button(ButtonStates state)
+        {
+        }
+
+        protected virtual void OnF6Button(ButtonStates state)
+        {
+        }
+
+        protected virtual void OnF7Button(ButtonStates state)
+        {
+        }
+
+        protected virtual void OnF8Button(ButtonStates state)
         {
         }
     }

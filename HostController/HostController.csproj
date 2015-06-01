@@ -37,6 +37,7 @@
     <Compile Include="Dispatcher.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="MockArduPort.cs" />
+    <Compile Include="ProcessRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HostController.cs" />
   </ItemGroup>

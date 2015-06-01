@@ -213,7 +213,7 @@ namespace Interfaces.GPS
         public DateTime Time { get { return time; } }
         public bool Active { get; private set; }
         public double Speed { get; private set; }
-        public double TrackAngle { get; private set; }
+        public double TrackAngle { get; set; }
         public double MagneticVariation { get; private set; }
 
         public long Revision { get; private set; }
