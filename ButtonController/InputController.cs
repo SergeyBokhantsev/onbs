@@ -16,6 +16,20 @@ namespace InputController
 
         private readonly ILogger logger;
 
+        private readonly Dictionary<Buttons, Buttons> btnMap = new Dictionary<Buttons, Buttons>()
+        {
+            { Buttons.F1, Buttons.F1 },
+            { Buttons.F2, Buttons.F1 },
+            { Buttons.F3, Buttons.F1 },
+            { Buttons.F4, Buttons.F1 },
+            { Buttons.F5, Buttons.F1 },
+            { Buttons.F6, Buttons.F1 },
+            { Buttons.F7, Buttons.F1 },
+            { Buttons.F8, Buttons.F1 },
+            { Buttons.Accept, Buttons.Accept },
+            { Buttons.Cancel, Buttons.Cancel },
+        };
+
         public STPFrame.Types FrameType
         {
             get
@@ -36,7 +50,7 @@ namespace InputController
                 try
                 {
                     logger.LogIfDebug(this, "Button frame received");
-                    var button = (Buttons)frame.Data[0];
+                    var button = btnMap[(Buttons)frame.Data[0]];
                     var state = (ButtonStates)frame.Data[1];
                     logger.LogIfDebug(this, string.Format("Button parsed: {0}, {1}", button, state));
                     OnButtonPressed(button, state);

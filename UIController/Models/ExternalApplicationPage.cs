@@ -24,7 +24,9 @@ namespace UIController.Models
 
             runner.Exited += RunnerExited;
 
-            SetProperty("label_launch_info", string.Format("Launching {0}...", runner.Name));   
+            SetProperty("label_launch_info", string.Format("Launching {0}...", runner.Name));
+            SetProperty("is_error", "0");
+            SetProperty("button_exit_label", "Close and back");
         }
 
         void RunnerExited(bool unexpected)
@@ -37,10 +39,11 @@ namespace UIController.Models
             try
             {
                 runner.Run();
-                SetProperty("label_launch_info", string.Format("{0} now launched", runner.Name));   
+                SetProperty("label_launch_info", string.Format("{0} now launched", runner.Name));
             }
             catch (Exception ex)
             {
+                SetProperty("is_error", "1");
                 SetProperty("label_launch_info", string.Format("Error launching {0}...{1}{2}", runner.Name, Environment.NewLine, ex.Message));
             }
         }

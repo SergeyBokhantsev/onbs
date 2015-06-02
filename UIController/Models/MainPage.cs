@@ -10,6 +10,8 @@ namespace UIController.Models
 {
     public class MainPage : ModelBase
     {
+        private const string navigationAppKey = "Navit";
+
         private readonly IHostController hostController;
 
         public MainPage(IHostController hostController)
@@ -17,18 +19,16 @@ namespace UIController.Models
         {
             this.hostController = hostController;
 
-            SetProperty("label_f1", "F1 to Navit");
+            SetProperty("label_f1", string.Format("F1 to {0}", navigationAppKey));
         }
 
         protected override void DoAction(PageModelActionEventArgs actionArgs)
         {
             switch (actionArgs.ActionName)
             {
-                case "navit":
+                case "navigation":
                     var uiController = hostController.GetController<IUIController>();
-                    var appName = hostController.Config.GetString("navit exe");
-                    var appArgs = hostController.Config.GetString("navit args");
-                    var runner = hostController.CreateProcessRunner(appName, null);
+                    var runner = hostController.CreateProcessRunner(navigationAppKey);
                     var page = new ExternalApplicationPage(runner, hostController.Dispatcher, hostController.Logger, uiController);                    
                     uiController.ShowPage(page);
                     page.Run();
@@ -38,7 +38,7 @@ namespace UIController.Models
 
         protected override void OnF1Button(Interfaces.Input.ButtonStates state)
         {
-            DoAction(new PageModelActionEventArgs("navit"));
+            DoAction(new PageModelActionEventArgs("navigation"));
         }
     }
 }

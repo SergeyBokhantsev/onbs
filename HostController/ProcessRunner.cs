@@ -17,6 +17,9 @@ namespace HostController
         private Process proc;
         private readonly string appPath;
         private readonly string arguments;
+        private readonly bool useShellExecution;
+        private readonly bool waitForUI;
+        private readonly ILogger logger;
 
         private bool closing;
 
@@ -26,11 +29,23 @@ namespace HostController
             private set;
         }
 
-        public ProcessRunner(string appPath, string arguments)
+        public ProcessRunner(string appPath, string arguments, bool useShellExecution, bool waitForUI, ILogger logger)
         {
+            if (string.IsNullOrEmpty(appPath))
+                throw new Exception("appPath");
+
+            if (logger == null)
+                throw new Exception("logger");
+
             this.appPath = appPath;
             this.arguments = arguments;
+            this.useShellExecution = useShellExecution;
+            this.waitForUI = waitForUI;
+            this.logger = logger;
+
             Name = Path.GetFileName(appPath);
+
+            logger.LogIfDebug(this, string.Format("Process runner created for {0} {1}", appPath, arguments));
         }
 
         public void Run()
@@ -38,23 +53,45 @@ namespace HostController
             if (proc != null)
                 throw new InvalidOperationException();
 
-			var psi = new ProcessStartInfo (appPath);
+            try
+            {
 
-			psi.UseShellExecute = false;
-			psi.WorkingDirectory = Path.GetDirectoryName (appPath);
+                logger.Log(this, string.Format("Launching {0}", appPath), LogLevels.Info);
 
-			proc = Process.Start (psi);
-            proc.WaitForInputIdle(10000);
+                var psi = new ProcessStartInfo(appPath);
+                psi.Arguments = arguments;
+                psi.UseShellExecute = useShellExecution;
+                psi.WorkingDirectory = Path.GetDirectoryName(appPath);
+
+                proc = Process.Start(psi);
+
+                logger.LogIfDebug(this, string.Format("Launched {0}", appPath));
+
+                if (waitForUI)
+                {
+                    logger.LogIfDebug(this, "Waiting for UI becomes initialized...");
+                    proc.WaitForInputIdle(10000);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Log(this, ex);
+                throw new Exception(string.Format("Unable to launch '{0}': {1}", appPath, ex.Message), ex);
+            }
 
             new Thread(() => Monitor()).Start();
         }
 
         private void Monitor()
         {
+            logger.LogIfDebug(this, string.Format("Launching monitor loop for {0}", appPath));
+
             while (!proc.HasExited)
             {
                 Thread.Sleep(1000);
             }
+
+            logger.Log(this, string.Format("{0} has exited", appPath), LogLevels.Info);
 
             OnExited();
         }
@@ -63,10 +100,14 @@ namespace HostController
         {
             closing = true;
 
-            if (!proc.HasExited)
+            logger.LogIfDebug(this, string.Format("Begin closing {0}", appPath));
+
+            if (proc != null && !proc.HasExited)
             {
                 try
                 {
+                    logger.LogIfDebug(this, "Trying to close main window...");
+
                     var handle = proc.MainWindowHandle;
                     proc.CloseMainWindow();
 
@@ -74,14 +115,17 @@ namespace HostController
                 }
                 catch (Exception ex)
                 {
-
+                    logger.Log(this, ex);
                 }
 
                 if (!proc.HasExited)
+                {
+                    logger.LogIfDebug(this, "Application was not closed, killing...");
                     proc.Kill();
-
-                OnExited();
+                }
             }
+
+            OnExited();
         }
 
         private void OnExited()

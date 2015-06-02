@@ -36,8 +36,78 @@ namespace GtkApplication.Pages
         }
     }
 
+    internal abstract class ColorBinding : Binding
+    {
+        protected ColorBinding(string propertyName)
+            :base(propertyName)
+        {
+        }
+
+        protected bool IsEqual(Gdk.Color c1, Gdk.Color c2)
+        {
+            return c1.Red == c2.Red && c1.Green == c2.Green && c1.Blue == c2.Blue;
+        }
+
+        protected bool IsOpaque(Gdk.Color color)
+        {
+            return IsEqual(ModelBinder.Qpaque, color);
+        }
+    }
+
+    internal class EventBoxBgColorBinding : ColorBinding
+    {
+        private readonly EventBox box;
+        private readonly Dictionary<string, Gdk.Color> colorMap;
+
+        public EventBoxBgColorBinding(EventBox box, string propertyName, Dictionary<string, Gdk.Color> colorMap)
+            :base(propertyName)
+        {
+            this.box = box;
+            this.colorMap = colorMap;
+        }
+
+        public override void Update(object value)
+        {
+            var key = value as string;
+
+            if (colorMap.ContainsKey(key))
+            {
+                var color = colorMap[key];
+
+                if (IsOpaque(color))
+                {
+                    box.VisibleWindow = false;
+                }
+                else
+                {
+                    box.VisibleWindow = true;
+                    box.ModifyBg(StateType.Normal, color);
+                }
+            }
+        }
+    }
+
+    internal class ButtonLabelBinding : Binding
+    {
+        private readonly Button button;
+
+        public ButtonLabelBinding(Button button, string propertyName)
+            : base(propertyName)
+        {
+            this.button = button;
+        }
+
+        public override void Update(object value)
+        {
+            button.Label = value as string;
+        }
+    }
+
+
     internal class ModelBinder
     {
+        public static readonly Gdk.Color Qpaque = new Gdk.Color(137, 217, 28);
+
         private readonly IPageModel model;
 
         private readonly List<Binding> bindings = new List<Binding>();
@@ -89,9 +159,23 @@ namespace GtkApplication.Pages
             UpdateBinding(binding);
         }
 
+        public void BindEventBoxBgColor(EventBox box, string propName, Dictionary<string, Gdk.Color> colorMap)
+        {
+            var binding = new EventBoxBgColorBinding(box, propName, colorMap);
+            bindings.Add(binding);
+            UpdateBinding(binding);
+        }
+
         public void BindButtonClick(Button button, string actionName)
         {
             button.Clicked += (s, a) => model.Action(new PageModelActionEventArgs(actionName));
+        }
+
+        public void BindButtonLabel(Button button, string propName)
+        {
+            var binding = new ButtonLabelBinding(button, propName);
+            bindings.Add(binding);
+            UpdateBinding(binding);
         }
     }
 }

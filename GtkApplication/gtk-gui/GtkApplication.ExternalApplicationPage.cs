@@ -6,6 +6,8 @@ namespace GtkApplication
 	{
 		private global::Gtk.VBox vbox1;
 		
+		private global::Gtk.EventBox eventbox1;
+		
 		private global::Gtk.Label label_launch_info;
 		
 		private global::Gtk.ToggleButton button_close;
@@ -21,15 +23,19 @@ namespace GtkApplication
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
+			this.eventbox1 = new global::Gtk.EventBox ();
+			this.eventbox1.Name = "eventbox1";
+			// Container child eventbox1.Gtk.Container+ContainerChild
 			this.label_launch_info = new global::Gtk.Label ();
 			this.label_launch_info.Name = "label_launch_info";
 			this.label_launch_info.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
-			this.vbox1.Add (this.label_launch_info);
-			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.label_launch_info]));
-			w1.Position = 1;
-			w1.Expand = false;
-			w1.Fill = false;
-			w1.Padding = ((uint)(20));
+			this.eventbox1.Add (this.label_launch_info);
+			this.vbox1.Add (this.eventbox1);
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox1]));
+			w2.Position = 1;
+			w2.Expand = false;
+			w2.Fill = false;
+			w2.Padding = ((uint)(20));
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.button_close = new global::Gtk.ToggleButton ();
 			this.button_close.CanFocus = true;
@@ -37,10 +43,10 @@ namespace GtkApplication
 			this.button_close.UseUnderline = true;
 			this.button_close.Label = global::Mono.Unix.Catalog.GetString ("GtkToggleButton");
 			this.vbox1.Add (this.button_close);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.button_close]));
-			w2.Position = 2;
-			w2.Expand = false;
-			w2.Fill = false;
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.button_close]));
+			w3.Position = 2;
+			w3.Expand = false;
+			w3.Fill = false;
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();

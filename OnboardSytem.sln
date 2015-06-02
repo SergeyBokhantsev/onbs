@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GtkApplication", "GtkApplication\GtkApplication.csproj", "{C0FFA4A5-8B59-4386-9C03-B36AEACAA6E2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HostController", "HostController\HostController.csproj", "{2368372A-EF3A-46B3-9516-B15530827F53}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C0FFA4A5-8B59-4386-9C03-B36AEACAA6E2} = {C0FFA4A5-8B59-4386-9C03-B36AEACAA6E2}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\Interfaces.csproj", "{3F066CD9-3523-4248-B37C-3378B44C426A}"
 EndProject

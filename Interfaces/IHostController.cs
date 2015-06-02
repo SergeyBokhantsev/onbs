@@ -12,6 +12,6 @@ namespace Interfaces
         IDispatcher Dispatcher { get ; }
         IConfig Config { get; }
         T GetController<T>() where T : IController;
-        IProcessRunner CreateProcessRunner(string appName, string commandLine);
+        IProcessRunner CreateProcessRunner(string appKey);
     }
 }

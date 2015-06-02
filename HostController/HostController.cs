@@ -83,9 +83,14 @@ namespace HostController
             uiController.ShowMainPage();
         }
 
-        public IProcessRunner CreateProcessRunner(string appName, string commandLine)
+        public IProcessRunner CreateProcessRunner(string appKey)
         {
-            return new ProcessRunner(appName, commandLine);
+            var appName = Config.GetString(string.Concat(appKey, "_exe"));
+            var commandLine = Config.GetString(string.Concat(appKey, "_args"));
+            var useShellExecution = Config.GetBool(string.Concat(appKey, "_use_shell"));
+            var waitForUI = Config.GetBool(string.Concat(appKey, "_wait_UI"));
+
+            return new ProcessRunner(appName, commandLine, useShellExecution, waitForUI, Logger);
         }
     }
 }
