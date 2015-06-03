@@ -10,7 +10,8 @@ namespace UIController.Models
 {
     public class MainPage : ModelBase
     {
-        private const string navigationAppKey = "Navit";
+        private const string navigationAppKey = "nav";
+		private const string cameraAppKey = "cam";
 
         private readonly IHostController hostController;
 
@@ -19,26 +20,38 @@ namespace UIController.Models
         {
             this.hostController = hostController;
 
-            SetProperty("label_f1", string.Format("F1 to {0}", navigationAppKey));
+            SetProperty("label_f1", "F1 to Navigation");
         }
 
         protected override void DoAction(PageModelActionEventArgs actionArgs)
         {
             switch (actionArgs.ActionName)
             {
-                case "navigation":
-                    var uiController = hostController.GetController<IUIController>();
-                    var runner = hostController.CreateProcessRunner(navigationAppKey);
-                    var page = new ExternalApplicationPage(runner, hostController.Dispatcher, hostController.Logger, uiController);                    
-                    uiController.ShowPage(page);
-                    page.Run();
+			case navigationAppKey:
+				{
+					var uiController = hostController.GetController<IUIController> ();
+					var runner = hostController.CreateProcessRunner (navigationAppKey);
+					var page = new ExternalApplicationPage (runner, hostController.Dispatcher, hostController.Logger, uiController);                    
+					uiController.ShowPage (page);
+					page.Run ();
+				}
                     break;
+
+			case cameraAppKey:
+				{
+					var uiController = hostController.GetController<IUIController> ();
+					var runner = hostController.CreateProcessRunner (cameraAppKey);
+					var page = new ExternalApplicationPage (runner, hostController.Dispatcher, hostController.Logger, uiController);                    
+					uiController.ShowPage (page);
+					page.Run ();
+				}
+				break;
             }
         }
 
         protected override void OnF1Button(Interfaces.Input.ButtonStates state)
         {
-            DoAction(new PageModelActionEventArgs("navigation"));
+            DoAction(new PageModelActionEventArgs(cameraAppKey));
         }
     }
 }

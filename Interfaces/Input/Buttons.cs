@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Interfaces.Input
 {
-    public enum Buttons { Accept, Cancel, F1, F2, F3, F4, F5, F6, F7, F8 }
+    public enum Buttons { Accept = 3, Cancel = 2, F1 = 7, F2 = 0, F3 = 8, F4 = 5, F5 = 6, F6 = 1, F7 = 4, F8 = 9 }
 
     public enum ButtonStates { Press, Hold, Release }
 }

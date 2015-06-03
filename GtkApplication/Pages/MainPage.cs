@@ -26,7 +26,7 @@ namespace GtkApplication
             binder = new ModelBinder(model);
 
             binder.BindLabelText(label_f1);
-            binder.BindButtonClick(bStart, "navigation");
+            binder.BindButtonClick(bStart, "cam");
 
             //image1.ExposeEvent += Image1_ExposeEvent;
 
