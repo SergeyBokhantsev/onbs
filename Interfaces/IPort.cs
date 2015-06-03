@@ -11,6 +11,7 @@ namespace Interfaces
     {
         event SerialDataReceivedEventHandler DataReceived;
 
+        long OverallReadedBytes { get; }
         int Read(byte[] buffer, int offset, int count);
     }
 }

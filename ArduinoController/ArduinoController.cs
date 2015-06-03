@@ -12,12 +12,19 @@ namespace ArduinoController
 {
     public class ArduinoController : IArduinoController
     {
+        public event MetricsUpdatedEventHandler MetricsUpdated;
+
+        private const string metricReadedBytes = "Bytes received";
+        private const string metricDecodedFrames = "Frames decoded";
+
         private readonly IPort port;
         private readonly IDispatcher dispatcher;
         private readonly ILogger logger;
         private readonly ISTPCodec codec;
 		private readonly ISTPCodec arduinoCommandCodec;
         private readonly List<IFramesAcceptor> acceptors = new List<IFramesAcceptor>();
+
+        private long decodedFramesCount;
 
         public ArduinoController(IPort port, IDispatcher dispatcher, ILogger logger)
         {
@@ -45,6 +52,10 @@ namespace ArduinoController
 
             var frames = codec.Decode(port);
 
+            decodedFramesCount += frames.Count;
+
+            UpdateMetrics();
+
             if (frames != null && frames.Any())
             {
 				//Converting ArduCommands
@@ -57,6 +68,21 @@ namespace ArduinoController
                     dispatcher.Invoke(null, null, (s, a) => acceptor.AcceptFrames(frames.Where(f => f.Type == acceptor.FrameType)));
                     logger.LogIfDebug(this, string.Format("Frames were dispatched for {0} acceptor", acceptor.FrameType));
                 }
+            }
+        }
+
+        private void UpdateMetrics()
+        {
+            var handler = MetricsUpdated;
+
+            if (handler != null)
+            {
+                var metrics = new Metrics("Arduino Controller", 2);
+
+                metrics.Add(0, metricReadedBytes, port.OverallReadedBytes);
+                metrics.Add(1, metricDecodedFrames, decodedFramesCount);
+
+                dispatcher.Invoke(null, null, new EventHandler((s,e) => handler(this, metrics)));
             }
         }
 

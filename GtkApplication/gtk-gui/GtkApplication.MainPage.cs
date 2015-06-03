@@ -4,7 +4,7 @@ namespace GtkApplication
 {
 	public partial class MainPage
 	{
-		private global::Gtk.VBox vbox1;
+		private global::Gtk.VBox base_vbox;
 		
 		private global::Gtk.Label label_f1;
 		
@@ -19,15 +19,15 @@ namespace GtkApplication
 			global::Stetic.BinContainer.Attach (this);
 			this.Name = "GtkApplication.MainPage";
 			// Container child GtkApplication.MainPage.Gtk.Container+ContainerChild
-			this.vbox1 = new global::Gtk.VBox ();
-			this.vbox1.Name = "vbox1";
-			this.vbox1.Spacing = 6;
+			this.base_vbox = new global::Gtk.VBox ();
+			this.base_vbox.Name = "vbox1";
+			this.base_vbox.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.label_f1 = new global::Gtk.Label ();
 			this.label_f1.Name = "label_f1";
 			this.label_f1.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
-			this.vbox1.Add (this.label_f1);
-			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.label_f1]));
+			this.base_vbox.Add (this.label_f1);
+			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.base_vbox [this.label_f1]));
 			w1.Position = 0;
 			w1.Expand = false;
 			w1.Fill = false;
@@ -38,18 +38,18 @@ namespace GtkApplication
 			this.bStart.Name = "bStart";
 			this.bStart.UseUnderline = true;
 			this.bStart.Label = global::Mono.Unix.Catalog.GetString ("GtkButton");
-			this.vbox1.Add (this.bStart);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.bStart]));
+			this.base_vbox.Add (this.bStart);
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.base_vbox [this.bStart]));
 			w2.Position = 1;
 			w2.Expand = false;
 			w2.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.drawingarea1 = new global::Gtk.DrawingArea ();
 			this.drawingarea1.Name = "drawingarea1";
-			this.vbox1.Add (this.drawingarea1);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.drawingarea1]));
+			this.base_vbox.Add (this.drawingarea1);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.base_vbox [this.drawingarea1]));
 			w3.Position = 2;
-			this.Add (this.vbox1);
+			this.Add (this.base_vbox);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
 			}

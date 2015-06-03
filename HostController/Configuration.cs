@@ -15,6 +15,7 @@ namespace HostController
             public static readonly string UIHostAssemblyName = "UIHostAssemblyName";
             public static readonly string UIHostClass = "UIHostClass";
 
+            public static readonly string ArduinoPortFake = "ArduinoPortFake";
             public static readonly string ArduinoPort = "ArduinoPort";
             public static readonly string ArduinoPortEnabled = "ArduinoPortEnabled";
             public static readonly string ArduinoPortSpeed = "ArduinoPortSpeed";

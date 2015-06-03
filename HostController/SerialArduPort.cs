@@ -14,6 +14,16 @@ namespace HostController
         private readonly object portLocker = new object();
         private readonly ILogger logger;
 
+        private long readedCount;
+
+        public long OverallReadedBytes
+        {
+            get 
+            { 
+                return Interlocked.Read(ref readedCount); 
+            }
+        }
+
         public SerialArduPort(ILogger logger, IConfig config)
         {
             if (logger == null)
@@ -98,6 +108,8 @@ namespace HostController
                 {
                     var readed = port.Read(buffer, offset, count);
 
+                    Interlocked.Add(ref readedCount, readed);
+
                     logger.LogIfDebug(this, string.Format("Readed {0} bytes", readed));
 
                     return readed;
@@ -106,6 +118,6 @@ namespace HostController
                     return 0;
             }
         }
-	}
+    }
 }
 

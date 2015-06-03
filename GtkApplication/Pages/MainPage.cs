@@ -3,6 +3,7 @@ using System.Drawing;
 using Gdk;
 using Gtk;
 using GtkApplication.Pages;
+using Interfaces;
 using Interfaces.UI;
 
 namespace GtkApplication
@@ -22,11 +23,13 @@ namespace GtkApplication
 			this.Build();
 
             this.model = model;
-            
+
             binder = new ModelBinder(model);
 
             binder.BindLabelText(label_f1);
             binder.BindButtonClick(bStart, "cam");
+
+            binder.BindMetrics(UpdateMetrics, "metrics");
 
             //image1.ExposeEvent += Image1_ExposeEvent;
 
@@ -39,6 +42,15 @@ namespace GtkApplication
           
            // image1.SetFromPixmap(pm, null);
 		}
+
+        private void UpdateMetrics(IMetrics metrics)
+        {
+            switch (metrics.ProviderName)
+            {
+                case "Arduino Controller":
+                    break;
+            }
+        }
 
         private void Image1_ExposeEvent(object o, ExposeEventArgs args)
         {

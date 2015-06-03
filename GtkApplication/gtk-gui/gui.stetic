@@ -20,17 +20,57 @@
       <placeholder />
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="GtkApplication.MainPage" design-size="300 300">
+  <widget class="Gtk.Bin" id="GtkApplication.MainPage" design-size="800 480">
     <property name="MemberName" />
+    <property name="WidthRequest">800</property>
+    <property name="HeightRequest">480</property>
     <property name="Visible">False</property>
     <child>
-      <widget class="Gtk.VBox" id="vbox1">
+      <widget class="Gtk.VBox" id="base_vbox">
         <property name="MemberName" />
         <property name="Spacing">6</property>
         <child>
-          <widget class="Gtk.Label" id="label_f1">
+          <widget class="Gtk.HBox" id="upper_buttons_hbox">
             <property name="MemberName" />
-            <property name="LabelProp" translatable="yes">label1</property>
+            <property name="HeightRequest">120</property>
+            <property name="Homogeneous">True</property>
+            <property name="Spacing">6</property>
+            <property name="BorderWidth">10</property>
+            <child>
+              <widget class="Gtk.Button" id="button1">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">GtkButton</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.Button" id="button3">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">GtkButton</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">False</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder />
+            </child>
+            <child>
+              <placeholder />
+            </child>
+            <child>
+              <placeholder />
+            </child>
           </widget>
           <packing>
             <property name="Position">0</property>
@@ -40,13 +80,37 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.Button" id="bStart">
+          <widget class="Gtk.HBox" id="bottom_buttons_hbox">
             <property name="MemberName" />
-            <property name="HeightRequest">50</property>
-            <property name="CanFocus">True</property>
-            <property name="Type">TextOnly</property>
-            <property name="Label" translatable="yes">GtkButton</property>
-            <property name="UseUnderline">True</property>
+            <property name="HeightRequest">120</property>
+            <property name="Homogeneous">True</property>
+            <property name="Spacing">6</property>
+            <property name="BorderWidth">10</property>
+            <child>
+              <widget class="Gtk.Button" id="button2">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">GtkButton</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">False</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder />
+            </child>
+            <child>
+              <placeholder />
+            </child>
+            <child>
+              <placeholder />
+            </child>
+            <child>
+              <placeholder />
+            </child>
           </widget>
           <packing>
             <property name="Position">1</property>
@@ -56,13 +120,7 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.DrawingArea" id="drawingarea1">
-            <property name="MemberName" />
-          </widget>
-          <packing>
-            <property name="Position">2</property>
-            <property name="AutoSize">True</property>
-          </packing>
+          <placeholder />
         </child>
       </widget>
     </child>

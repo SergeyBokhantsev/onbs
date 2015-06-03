@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Gtk;
+using Interfaces;
 using Interfaces.UI;
 
 namespace GtkApplication.Pages
@@ -103,6 +104,21 @@ namespace GtkApplication.Pages
         }
     }
 
+    internal class MetricsBinding : Binding
+    {
+        private readonly Action<IMetrics> updater;
+
+        public MetricsBinding(Action<IMetrics> updater, string propertyName)
+            : base(propertyName)
+        {
+            this.updater = updater;
+        }
+
+        public override void Update(object value)
+        {
+            updater(value as IMetrics);
+        }
+    }
 
     internal class ModelBinder
     {
@@ -176,6 +192,11 @@ namespace GtkApplication.Pages
             var binding = new ButtonLabelBinding(button, propName);
             bindings.Add(binding);
             UpdateBinding(binding);
+        }
+
+        public void BindMetrics(Action<IMetrics> updater, string propName)
+        {
+            bindings.Add(new MetricsBinding(updater, propName));
         }
     }
 }

@@ -20,7 +20,23 @@ namespace UIController.Models
         {
             this.hostController = hostController;
 
+            this.Disposing += MainPageDisposing;
+
+            var arduController = hostController.GetController<IArduinoController>();
+            arduController.MetricsUpdated += OnMetricsUpdated;
+
             SetProperty("label_f1", "F1 to Navigation");
+        }
+
+        private void OnMetricsUpdated(object sender, IMetrics metrics)
+        {
+            SetProperty("metrics", metrics);
+        }
+
+        void MainPageDisposing(object sender, EventArgs e)
+        {
+            var arduController = hostController.GetController<IArduinoController>();
+            arduController.MetricsUpdated -= OnMetricsUpdated;
         }
 
         protected override void DoAction(PageModelActionEventArgs actionArgs)

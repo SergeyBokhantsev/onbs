@@ -69,7 +69,9 @@ namespace HostController
         {
             inputController = new InputController.InputController(Logger);
 
-            arduController = new ArduinoController.ArduinoController(new SerialArduPort(Logger, Config), Dispatcher, Logger);
+            var useFakeArduPort = Config.GetBool(Configuration.Names.ArduinoPortFake);
+            var arduPort = useFakeArduPort ? new MockArduPort() as IPort : new SerialArduPort(Logger, Config) as IPort;
+            arduController = new ArduinoController.ArduinoController(arduPort, Dispatcher, Logger);
             arduController.RegisterFrameAcceptor(inputController);
 
             var gpsCtrl = new GPSController.GPSController(Logger);

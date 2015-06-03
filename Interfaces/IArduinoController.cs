@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
-    public interface IArduinoController : IController
+    public interface IArduinoController : IController, IMetricsProvider
     {
         void RegisterFrameAcceptor(IFramesAcceptor acceptor);
         void UnregisterFrameAcceptor(IFramesAcceptor acceptor);

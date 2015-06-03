@@ -22,6 +22,16 @@ namespace HostController
         private string fakeNmea;
         private int fakeNmeaPos;
 
+        private long readedCount;
+
+        public long OverallReadedBytes
+        {
+            get
+            {
+                return Interlocked.Read(ref readedCount);
+            }
+        }
+
         public MockArduPort()
         {
             var frameBeginMarker = Encoding.UTF8.GetBytes(":<:");
@@ -74,6 +84,7 @@ namespace HostController
                     {
                         buff[offset + i] = buffer.Dequeue();
                         readed++;
+                        Interlocked.Increment(ref readedCount);
                     }
                     else
                     {

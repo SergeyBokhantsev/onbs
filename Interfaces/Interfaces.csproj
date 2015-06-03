@@ -55,6 +55,7 @@
     <Compile Include="Input\Buttons.cs" />
     <Compile Include="IPort.cs" />
     <Compile Include="IProcessRunner.cs" />
+    <Compile Include="IMetricsProvider.cs" />
     <Compile Include="IUIController.cs" />
     <Compile Include="LockingProperty.cs" />
     <Compile Include="SerialTransportProtocol\IFramesAcceptor.cs" />
