@@ -4,7 +4,6 @@
     <images-root-path>..</images-root-path>
   </configuration>
   <import>
-    <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../../_bin/Application/GtkApplication.dll" internal="true" />
   </import>
   <widget class="Gtk.Window" id="MainWindow" design-size="800 480">
@@ -37,7 +36,7 @@
             <property name="Spacing">6</property>
             <property name="BorderWidth">10</property>
             <child>
-              <widget class="Gtk.Button" id="button1">
+              <widget class="Gtk.Button" id="btn_f1">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
@@ -50,7 +49,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Button" id="button3">
+              <widget class="Gtk.Button" id="btn_f2">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
@@ -63,13 +62,43 @@
               </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gtk.Button" id="btn_f3">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">GtkButton</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">False</property>
+              </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gtk.Button" id="btn_f4">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">GtkButton</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">3</property>
+                <property name="AutoSize">False</property>
+              </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gtk.Button" id="btn_cancel">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">GtkButton</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">4</property>
+                <property name="AutoSize">False</property>
+              </packing>
             </child>
           </widget>
           <packing>
@@ -87,7 +116,7 @@
             <property name="Spacing">6</property>
             <property name="BorderWidth">10</property>
             <child>
-              <widget class="Gtk.Button" id="button2">
+              <widget class="Gtk.Button" id="btn_f5">
                 <property name="MemberName" />
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
@@ -100,16 +129,56 @@
               </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gtk.Button" id="btn_f6">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">GtkButton</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">False</property>
+              </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gtk.Button" id="btn_f7">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">GtkButton</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">False</property>
+              </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gtk.Button" id="btn_f8">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">GtkButton</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">3</property>
+                <property name="AutoSize">False</property>
+              </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gtk.Button" id="btn_accept">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">GtkButton</property>
+                <property name="UseUnderline">True</property>
+              </widget>
+              <packing>
+                <property name="Position">4</property>
+                <property name="AutoSize">False</property>
+              </packing>
             </child>
           </widget>
           <packing>
@@ -120,7 +189,73 @@
           </packing>
         </child>
         <child>
-          <placeholder />
+          <widget class="Gtk.RadioButton" id="radiobutton1">
+            <property name="MemberName" />
+            <property name="CanFocus">True</property>
+            <property name="Label" translatable="yes">radiobutton1</property>
+            <property name="DrawIndicator">True</property>
+            <property name="HasLabel">True</property>
+            <property name="UseUnderline">True</property>
+            <property name="Group">group1</property>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HBox" id="hbox1">
+            <property name="MemberName" />
+            <property name="HeightRequest">60</property>
+            <property name="Spacing">6</property>
+            <property name="BorderWidth">10</property>
+            <child>
+              <widget class="Gtk.VBox" id="vbox1">
+                <property name="MemberName" />
+                <property name="Spacing">6</property>
+                <child>
+                  <widget class="Gtk.Label" id="label1">
+                    <property name="MemberName" />
+                    <property name="LabelProp" translatable="yes">Arduino communication</property>
+                  </widget>
+                  <packing>
+                    <property name="Position">0</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.TextView" id="label_arduino_metrics">
+                    <property name="MemberName" />
+                    <property name="CanFocus">True</property>
+                    <property name="Editable">False</property>
+                    <property name="Text" translatable="yes" />
+                  </widget>
+                  <packing>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder />
+            </child>
+            <child>
+              <placeholder />
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">3</property>
+            <property name="AutoSize">True</property>
+          </packing>
         </child>
       </widget>
     </child>

@@ -91,16 +91,21 @@ namespace GtkApplication.Pages
     internal class ButtonLabelBinding : Binding
     {
         private readonly Button button;
+        private readonly string prefix;
 
-        public ButtonLabelBinding(Button button, string propertyName)
+        public ButtonLabelBinding(Button button, string propertyName, string prefix)
             : base(propertyName)
         {
             this.button = button;
+            this.prefix = prefix;
         }
 
         public override void Update(object value)
         {
-            button.Label = value as string;
+            var label = value as string;
+            button.Label = (!string.IsNullOrEmpty(label) && !string.IsNullOrEmpty(prefix)) ?
+                            string.Concat(prefix, ": ", label)
+                            : label;
         }
     }
 
@@ -187,9 +192,9 @@ namespace GtkApplication.Pages
             button.Clicked += (s, a) => model.Action(new PageModelActionEventArgs(actionName));
         }
 
-        public void BindButtonLabel(Button button, string propName)
+        public void BindButtonLabel(Button button, string propName, string prefix = null)
         {
-            var binding = new ButtonLabelBinding(button, propName);
+            var binding = new ButtonLabelBinding(button, propName, prefix);
             bindings.Add(binding);
             UpdateBinding(binding);
         }

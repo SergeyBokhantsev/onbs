@@ -25,7 +25,8 @@ namespace UIController.Models
             var arduController = hostController.GetController<IArduinoController>();
             arduController.MetricsUpdated += OnMetricsUpdated;
 
-            SetProperty("label_f1", "F1 to Navigation");
+            SetProperty("nav_btn_caption", "Navigation");
+            SetProperty("cam_btn_caption", "Camera");
         }
 
         private void OnMetricsUpdated(object sender, IMetrics metrics)

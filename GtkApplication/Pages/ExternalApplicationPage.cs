@@ -26,7 +26,7 @@ namespace GtkApplication
                 { "1", new Gdk.Color(255, 10, 10) }
             });
 
-            binder.BindButtonLabel(button_close, "button_exit_label");
+            binder.BindButtonLabel(button_close, "button_exit_label", "CANCEL");
             binder.BindButtonClick(button_close, "close");
 		}
 	}
