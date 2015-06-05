@@ -11,11 +11,14 @@ namespace Interfaces.UI
 
     public class PageModelActionEventArgs : EventArgs
     {
+        public ButtonStates State { get; private set; }
+
         public string ActionName { get; private set; }
 
-        public PageModelActionEventArgs(string actionName)
+        public PageModelActionEventArgs(string actionName, ButtonStates state)
         {
             ActionName = actionName;
+            State = state;
         }
     }
 
@@ -28,6 +31,5 @@ namespace Interfaces.UI
         void SetProperty(string name, object value);
         void RefreshAllProps();
         void Action(PageModelActionEventArgs actionArgs);
-        void Button(Buttons button, ButtonStates state);
     }
 }

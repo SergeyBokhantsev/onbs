@@ -8,7 +8,7 @@ namespace GtkApplication
 		
 		private global::Gtk.HBox upper_buttons_hbox;
 		
-		private global::Gtk.Button btn_f1;
+		private global::Gtk.EventBox eventbox1;
 		
 		private global::Gtk.Button btn_f2;
 		
@@ -30,7 +30,7 @@ namespace GtkApplication
 		
 		private global::Gtk.Button btn_accept;
 		
-		private global::Gtk.RadioButton radiobutton1;
+		private global::Gtk.HBox hbox2;
 		
 		private global::Gtk.HBox hbox1;
 		
@@ -60,13 +60,10 @@ namespace GtkApplication
 			this.upper_buttons_hbox.Spacing = 6;
 			this.upper_buttons_hbox.BorderWidth = ((uint)(10));
 			// Container child upper_buttons_hbox.Gtk.Box+BoxChild
-			this.btn_f1 = new global::Gtk.Button ();
-			this.btn_f1.CanFocus = true;
-			this.btn_f1.Name = "btn_f1";
-			this.btn_f1.UseUnderline = true;
-			this.btn_f1.Label = global::Mono.Unix.Catalog.GetString ("GtkButton");
-			this.upper_buttons_hbox.Add (this.btn_f1);
-			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.upper_buttons_hbox [this.btn_f1]));
+			this.eventbox1 = new global::Gtk.EventBox ();
+			this.eventbox1.Name = "eventbox1";
+			this.upper_buttons_hbox.Add (this.eventbox1);
+			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.upper_buttons_hbox [this.eventbox1]));
 			w1.Position = 0;
 			// Container child upper_buttons_hbox.Gtk.Box+BoxChild
 			this.btn_f2 = new global::Gtk.Button ();
@@ -167,14 +164,11 @@ namespace GtkApplication
 			w12.Expand = false;
 			w12.Fill = false;
 			// Container child base_vbox.Gtk.Box+BoxChild
-			this.radiobutton1 = new global::Gtk.RadioButton (global::Mono.Unix.Catalog.GetString ("radiobutton1"));
-			this.radiobutton1.CanFocus = true;
-			this.radiobutton1.Name = "radiobutton1";
-			this.radiobutton1.DrawIndicator = true;
-			this.radiobutton1.UseUnderline = true;
-			this.radiobutton1.Group = new global::GLib.SList (global::System.IntPtr.Zero);
-			this.base_vbox.Add (this.radiobutton1);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.base_vbox [this.radiobutton1]));
+			this.hbox2 = new global::Gtk.HBox ();
+			this.hbox2.Name = "hbox2";
+			this.hbox2.Spacing = 6;
+			this.base_vbox.Add (this.hbox2);
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.base_vbox [this.hbox2]));
 			w13.Position = 2;
 			// Container child base_vbox.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox ();

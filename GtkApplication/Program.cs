@@ -21,9 +21,17 @@ namespace GtkApplication
         private ILogger logger;
         private MainWindow win;
 
+		private readonly LookAndFeel style;
+
         public App(ILogger logger)
         {
             this.logger = logger;
+
+			style = new LookAndFeel ();
+			style.Bg = new Gdk.Color (0,30,50);
+			style.HoverColor = new Gdk.Color (100, 0, 0);
+			style.Fg = new Gdk.Color (255, 255, 255);
+			style.ClickColor = new Gdk.Color (255, 0, 0);
         }
 
 		public void Run()
@@ -32,6 +40,9 @@ namespace GtkApplication
             {
                 Application.Init();
                 win = new MainWindow(logger);
+
+				win.ModifyBg(StateType.Normal, style.Bg);
+
                 win.Show();
                 Application.Run();
             }
@@ -55,11 +66,11 @@ namespace GtkApplication
             switch (showPageArgs.Model.Name)
             {
                 case "MainPage":
-                    win.Add(new MainPage(showPageArgs.Model));
+				win.Add(new MainPage(showPageArgs.Model, style, logger));
                     break;
 
 				case "ExternalApplicationPage":
-					win.Add(new ExternalApplicationPage (showPageArgs.Model));
+				win.Add(new ExternalApplicationPage (showPageArgs.Model, style, logger));
 					break;
 
                 default:

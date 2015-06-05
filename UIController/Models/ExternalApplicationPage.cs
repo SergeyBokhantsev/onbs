@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Interfaces.Input;
 
 namespace UIController.Models
 {
@@ -48,17 +49,17 @@ namespace UIController.Models
             }
         }
 
-        protected override void DoAction(PageModelActionEventArgs actionArgs)
+        protected override void DoAction(PageModelActionEventArgs args)
         {
-            if (actionArgs.ActionName == "close")
+            switch (args.ActionName)
             {
-                runner.Exit();
+                case "Cancel":
+                    if (args.State == ButtonStates.Press)
+                    {
+                        runner.Exit();
+                    }
+                    break;
             }
-        }
-
-        protected override void OnCancelButton(Interfaces.Input.ButtonStates state)
-        {
-            DoAction(new PageModelActionEventArgs("close"));
         }
     }
 }

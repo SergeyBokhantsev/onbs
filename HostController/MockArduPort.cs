@@ -49,7 +49,7 @@ namespace HostController
         {
             while(true)
             {
-                var data = codec.Encode(new STPFrame(new byte[] { (byte)Buttons.Accept, (byte)ButtonStates.Press }, STPFrame.Types.Button)).ToList();
+               // var data = codec.Encode(new STPFrame(new byte[] { (byte)Buttons.Accept, (byte)ButtonStates.Press }, STPFrame.Types.Button)).ToList();
 
                 if (fakeNmeaPos + 10 >= fakeNmea.Length)
                     fakeNmeaPos = 0;
@@ -61,7 +61,7 @@ namespace HostController
 
                 lock(buffer)
                 {
-                    data.ForEach(buffer.Enqueue);
+                   // data.ForEach(buffer.Enqueue);
                     nmeaData.ForEach(buffer.Enqueue);
                 }
 

@@ -19,16 +19,18 @@ namespace GtkApplication
        // System.Drawing.Graphics g;
       //  Bitmap bmp;
 
-		public MainPage(IPageModel model)
+		public MainPage(IPageModel model, LookAndFeel style, ILogger logger)
 		{
 			this.Build();
 
+			var bF1 = new FlatButton (eventbox1, style);
+
             this.model = model;
 
-            binder = new ModelBinder(model);
+			binder = new ModelBinder(model, logger);
 		
-            binder.BindButtonLabel(btn_f1, "nav_btn_caption", "F1");
-            binder.BindButtonClick(btn_f1, "nav");
+			binder.BindFlatButtonLabel(bF1, "nav_btn_caption", "F1");
+            binder.BindFlatButtonClick(bF1, "nav");
 
             binder.BindButtonLabel(btn_f2, "cam_btn_caption", "F2");
             binder.BindButtonClick(btn_f2, "cam");
@@ -43,6 +45,12 @@ namespace GtkApplication
             binder.BindButtonLabel(btn_accept, string.Empty);
 
             binder.BindMetrics(UpdateMetrics, "metrics");
+
+			//eventbox1.ModifyBg(StateType.Normal, new Gdk.Color(200,30,50));
+			//eventbox1.ModifyFg(StateType.Normal, new Gdk.Color(100,30,50));
+		//	btn_f1.ModifyFg(StateType.Normal, new Gdk.Color(0,30,50));
+
+
 
             //image1.ExposeEvent += Image1_ExposeEvent;
 

@@ -69,6 +69,8 @@
     <Compile Include="gtk-gui\GtkApplication.MainPage.cs" />
     <Compile Include="Pages\ExternalApplicationPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.ExternalApplicationPage.cs" />
+    <Compile Include="Controls\FlatButton.cs" />
+    <Compile Include="Controls\LookAndFeel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
@@ -78,4 +80,7 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Controls\" />
+  </ItemGroup>
 </Project>

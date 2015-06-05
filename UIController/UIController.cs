@@ -40,7 +40,10 @@ namespace UIController
             var page = current;
 
             if (page != null)
-                page.Button(button, state);
+            {
+                var args = new PageModelActionEventArgs(button.ToString(), state);
+                page.Action(args);
+            }
         }
 
         private void UIThread(string uiHostAssemblyPath, string uiHostClassName, ILogger logger)

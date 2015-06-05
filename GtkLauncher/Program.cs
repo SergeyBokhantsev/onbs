@@ -1,4 +1,5 @@
 ﻿using System;
+using Interfaces.UI;
 
 namespace GtkLauncher
 {
@@ -9,8 +10,9 @@ namespace GtkLauncher
 			try
 			{
 				var app = new GtkApplication.App (new ConsoleLogger ());
-				var page = new EmptyPageModel ("MainPage");
-				app.ShowPage(page);
+
+				app.ShowPage(GetExternalAppPage());
+
 				app.Run();
 			}
 			catch (Exception ex)
@@ -19,6 +21,24 @@ namespace GtkLauncher
 			}
 
 			Console.ReadKey();
+		}
+
+		private static IPageModel GetMainPage()
+		{
+			var page = new EmptyPageModel ("MainPage");
+
+			page.SetProperty("nav_btn_caption", "Test string");
+
+			return page;
+		}
+
+		private static IPageModel GetExternalAppPage()
+		{
+			var page = new EmptyPageModel ("ExternalApplicationPage");
+
+			page.SetProperty ("is_error", "0");
+
+			return page;
 		}
 	}
 }

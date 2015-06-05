@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Interfaces;
+using Interfaces.Input;
 
 namespace UIController.Models
 {
@@ -40,35 +41,38 @@ namespace UIController.Models
             arduController.MetricsUpdated -= OnMetricsUpdated;
         }
 
-        protected override void DoAction(PageModelActionEventArgs actionArgs)
+        protected override void DoAction(PageModelActionEventArgs args)
         {
-            switch (actionArgs.ActionName)
+            switch (args.ActionName)
             {
-			case navigationAppKey:
-				{
-					var uiController = hostController.GetController<IUIController> ();
-					var runner = hostController.CreateProcessRunner (navigationAppKey);
-					var page = new ExternalApplicationPage (runner, hostController.Dispatcher, hostController.Logger, uiController);                    
-					uiController.ShowPage (page);
-					page.Run ();
-				}
+                case navigationAppKey:
+                case "F1":
+                    {
+                        if (args.State == ButtonStates.Press)
+                        {
+                            var uiController = hostController.GetController<IUIController>();
+                            var runner = hostController.CreateProcessRunner(navigationAppKey);
+                            var page = new ExternalApplicationPage(runner, hostController.Dispatcher, hostController.Logger, uiController);
+                            uiController.ShowPage(page);
+                            page.Run();
+                        }
+                    }
                     break;
 
-			case cameraAppKey:
-				{
-					var uiController = hostController.GetController<IUIController> ();
-					var runner = hostController.CreateProcessRunner (cameraAppKey);
-					var page = new ExternalApplicationPage (runner, hostController.Dispatcher, hostController.Logger, uiController);                    
-					uiController.ShowPage (page);
-					page.Run ();
-				}
-				break;
+                case cameraAppKey:
+                case "F2":
+                    {
+                        if (args.State == ButtonStates.Press)
+                        {
+                            var uiController = hostController.GetController<IUIController>();
+                            var runner = hostController.CreateProcessRunner(cameraAppKey);
+                            var page = new ExternalApplicationPage(runner, hostController.Dispatcher, hostController.Logger, uiController);
+                            uiController.ShowPage(page);
+                            page.Run();
+                        }
+                    }
+                    break;
             }
-        }
-
-        protected override void OnF1Button(Interfaces.Input.ButtonStates state)
-        {
-            DoAction(new PageModelActionEventArgs(cameraAppKey));
         }
     }
 }

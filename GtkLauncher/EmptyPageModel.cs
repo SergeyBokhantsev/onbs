@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using Interfaces.UI;
 
 namespace GtkLauncher
 {
 	public class EmptyPageModel : IPageModel
 	{
+		private Dictionary<string, object> props = new Dictionary<string, object> ();
+
 		public EmptyPageModel(string modelName)
 		{
 			Name = modelName;
@@ -18,24 +21,26 @@ namespace GtkLauncher
 
 		public T GetProperty<T>(string name)
 		{
-			return default(T);
+			if (props.ContainsKey (name))
+				return (T)props [name];
+			else
+				return default(T);
 		}
 
 		public void SetProperty(string name, object value)
 		{
+			props [name] = value;
 		}
 
 		public void RefreshAllProps()
 		{
-
+			if (PropertyChanged != null) {
+				foreach (var key in props.Keys)
+					PropertyChanged (key);
+			}
 		}
 
 		public void Action(PageModelActionEventArgs actionArgs)
-		{
-
-		}
-
-		public void Button(Interfaces.Input.Buttons button, Interfaces.Input.ButtonStates state)
 		{
 
 		}

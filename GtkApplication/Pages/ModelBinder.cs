@@ -109,6 +109,27 @@ namespace GtkApplication.Pages
         }
     }
 
+	internal class FlatButtonLabelBinding : Binding
+	{
+		private readonly FlatButton button;
+		private readonly string prefix;
+
+		public FlatButtonLabelBinding(FlatButton button, string propertyName, string prefix)
+			: base(propertyName)
+		{
+			this.button = button;
+			this.prefix = prefix;
+		}
+
+		public override void Update(object value)
+		{
+			var label = value as string;
+			button.Text = (!string.IsNullOrEmpty(label) && !string.IsNullOrEmpty(prefix)) ?
+				string.Concat(prefix, ": ", label)
+				: label;
+		}
+	}
+
     internal class MetricsBinding : Binding
     {
         private readonly Action<IMetrics> updater;
@@ -130,15 +151,20 @@ namespace GtkApplication.Pages
         public static readonly Gdk.Color Qpaque = new Gdk.Color(137, 217, 28);
 
         private readonly IPageModel model;
+		private readonly ILogger logger;
 
         private readonly List<Binding> bindings = new List<Binding>();
 
-        public ModelBinder(IPageModel model)
+		public ModelBinder(IPageModel model, ILogger logger)
         {
             if (model == null)
                 throw new ArgumentNullException("model");
 
+			if (logger == null)
+				throw new ArgumentNullException("logger");
+
             this.model = model;
+			this.logger = logger;
 
             model.PropertyChanged += PropertyChanged;
         }
@@ -157,10 +183,19 @@ namespace GtkApplication.Pages
                 Application.Invoke(new EventHandler((s, a) =>
                 {
                     foreach(var b in binds)
-                        b.Update(value);
+						{
+							try
+							{
+                       			 b.Update(value);
+							}
+							catch (Exception ex)
+							{
+								logger.Log(this, ex);
+							}
+						}
                 }));
             }
-        }
+		}
 
         private void UpdateBinding(Binding binding)
         {
@@ -168,7 +203,14 @@ namespace GtkApplication.Pages
 
             Application.Invoke(new EventHandler((s, a) =>
             {
-                binding.Update(value);
+						try
+						{
+                			binding.Update(value);
+						}
+						catch (Exception ex)
+						{
+							logger.Log(this, ex);
+						}
             }));
         }
 
@@ -189,8 +231,13 @@ namespace GtkApplication.Pages
 
         public void BindButtonClick(Button button, string actionName)
         {
-            button.Clicked += (s, a) => model.Action(new PageModelActionEventArgs(actionName));
+            button.Clicked += (s, a) => model.Action(new PageModelActionEventArgs(actionName, Interfaces.Input.ButtonStates.Press));
         }
+
+		public void BindFlatButtonClick(FlatButton button, string actionName)
+		{
+			button.Clicked += () => model.Action(new PageModelActionEventArgs(actionName, Interfaces.Input.ButtonStates.Press));
+		}
 
         public void BindButtonLabel(Button button, string propName, string prefix = null)
         {
@@ -198,6 +245,13 @@ namespace GtkApplication.Pages
             bindings.Add(binding);
             UpdateBinding(binding);
         }
+
+		public void BindFlatButtonLabel(FlatButton button, string propName, string prefix = null)
+		{
+			var binding = new FlatButtonLabelBinding(button, propName, prefix);
+			bindings.Add(binding);
+			UpdateBinding(binding);
+		}
 
         public void BindMetrics(Action<IMetrics> updater, string propName)
         {
