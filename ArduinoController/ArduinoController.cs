@@ -61,10 +61,10 @@ namespace ArduinoController
             {
                 var frames = codec.Decode(port);
 
-                decodedFramesCount += frames.Count;
-
                 if (frames != null && frames.Any())
                 {
+					decodedFramesCount += frames.Count;
+
                     //Converting ArduCommands
                     var convertedFrames = arduinoCommandCodec.Decode(frames.Where(f => f.Type == STPFrame.Types.ArduCommand));
                     if (convertedFrames != null)

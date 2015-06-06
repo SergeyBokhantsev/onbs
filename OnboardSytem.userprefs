@@ -1,14 +1,17 @@
 ﻿<Properties StartupItem="HostController\HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="GtkApplication\Pages\MainPage.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="UIController/Models/MainPage.cs">
     <Files>
-      <File FileName="GtkApplication\Pages\MainPage.cs" Line="43" Column="43" />
+      <File FileName="ArduinoController/ArduinoController.cs" Line="66" Column="41" />
+      <File FileName="UIController/UIController.cs" Line="40" Column="1" />
+      <File FileName="UIController/Models/ModelBase.cs" Line="70" Column="1" />
+      <File FileName="UIController/Models/MainPage.cs" Line="43" Column="3" />
+      <File FileName="ButtonController/InputController.cs" Line="40" Column="41" />
+      <File FileName="Interfaces/Input/Buttons.cs" Line="6" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Catchpoint exceptionName="System.NullReferenceException" includeSubclasses="True" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
     <Watch file="ArduinoController\ArduinoController.cs" line="42" offsetX="438" offsetY="738" expression="frames" liveUpdate="False" />
