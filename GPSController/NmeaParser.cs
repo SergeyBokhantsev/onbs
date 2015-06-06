@@ -1,4 +1,5 @@
-﻿using Interfaces.GPS;
+﻿using Interfaces;
+using Interfaces.GPS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,12 @@ namespace GPSController
     {
         public event Action<GPRMC> GPRMC;
 
-        private GPRMC gprmc;
+        private LockingProperty<GPRMC> gprmc = new LockingProperty<GPRMC>();
+
+        public GPRMC LastGPRMC
+        {
+            get { return gprmc.Value; }
+        }
 
         public void Accept(string sentence)
         {
@@ -34,7 +40,7 @@ namespace GPSController
                             if (gprmc.Parse(items))
                             {
                                 Postprocess(gprmc);
-                                OnGPRMCReceived(this.gprmc);
+                                OnGPRMCReceived();
                             }
                             break;
                     }
@@ -44,23 +50,23 @@ namespace GPSController
 
         private void Postprocess(GPRMC newGprmc)
         {
-            if (gprmc != null && gprmc.Active)
+            if (gprmc.Value != null && gprmc.Value.Active)
             {
                 double heading;
 
                 if (newGprmc.Active && newGprmc.Speed > 8)
                 {
-                    heading = Interfaces.GPS.Helpers.GetHeading(gprmc.Location, newGprmc.Location);
+                    heading = Interfaces.GPS.Helpers.GetHeading(gprmc.Value.Location, newGprmc.Location);
                 }
                 else
                 {
-                    heading = gprmc.TrackAngle;
+                    heading = gprmc.Value.TrackAngle;
                 }
 
 				newGprmc.TrackAngle = heading;
             }
 
-			gprmc = newGprmc;
+			gprmc.Value = newGprmc;
         }
 
         private bool checksumOk(string str)
@@ -81,11 +87,11 @@ namespace GPSController
             }
         }
 
-        private void OnGPRMCReceived(GPRMC gprmc)
+        private void OnGPRMCReceived()
         {
             var handler = GPRMC;
             if (handler != null)
-                handler(gprmc);
+                handler(gprmc.Value);
         }
     }
 }

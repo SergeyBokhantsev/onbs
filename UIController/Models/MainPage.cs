@@ -16,6 +16,8 @@ namespace UIController.Models
 
         private readonly IHostController hostController;
 
+        private List<IMetricsProvider> metricsProviders;
+
         public MainPage(IHostController hostController)
             :base(typeof(MainPage).Name, hostController.Dispatcher, hostController.Logger)
         {
@@ -23,11 +25,23 @@ namespace UIController.Models
 
             this.Disposing += MainPageDisposing;
 
-            var arduController = hostController.GetController<IArduinoController>();
-            arduController.MetricsUpdated += OnMetricsUpdated;
+            SubscribeMetricsProviders();
 
             SetProperty("nav_btn_caption", "Navigation");
             SetProperty("cam_btn_caption", "Camera");
+        }
+
+        private void SubscribeMetricsProviders()
+        {
+            if (metricsProviders != null)
+                throw new InvalidOperationException("metrics providers has been already initialized.");
+
+            metricsProviders = new List<IMetricsProvider>();
+
+            metricsProviders.Add(hostController.GetController<IArduinoController>());
+            metricsProviders.Add(hostController.GetController<IGPSController>());
+
+            metricsProviders.ForEach(mp => mp.MetricsUpdated += OnMetricsUpdated);
         }
 
         private void OnMetricsUpdated(object sender, IMetrics metrics)
@@ -37,8 +51,16 @@ namespace UIController.Models
 
         void MainPageDisposing(object sender, EventArgs e)
         {
-            var arduController = hostController.GetController<IArduinoController>();
-            arduController.MetricsUpdated -= OnMetricsUpdated;
+            UnsubscribeMetricsProviders();
+        }
+
+        private void UnsubscribeMetricsProviders()
+        {
+            if (metricsProviders != null)
+            {
+                metricsProviders.ForEach(mp => mp.MetricsUpdated -= OnMetricsUpdated);
+                metricsProviders = null;
+            }
         }
 
         protected override void DoAction(PageModelActionEventArgs args)

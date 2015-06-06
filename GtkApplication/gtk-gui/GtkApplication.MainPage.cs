@@ -43,6 +43,16 @@ namespace GtkApplication
 		private global::Gtk.EventBox eventbox_arduino_metrics;
 		
 		private global::Gtk.Label label_arduino_metrics;
+		
+		private global::Gtk.VBox vbox2;
+		
+		private global::Gtk.EventBox eventbox_gps_metrics_caption;
+		
+		private global::Gtk.Label label_gps_metrics_caption;
+		
+		private global::Gtk.EventBox eventbox_gps_metrics;
+		
+		private global::Gtk.Label label_gps_metrics;
 
 		protected virtual void Build ()
 		{
@@ -154,8 +164,8 @@ namespace GtkApplication
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.vbox1 = new global::Gtk.VBox ();
 			this.vbox1.HeightRequest = 10;
-			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
+			this.vbox1.BorderWidth = ((uint)(6));
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.eventbox_arduino_metrics_caption = new global::Gtk.EventBox ();
 			this.eventbox_arduino_metrics_caption.Name = "eventbox_arduino_metrics_caption";
@@ -175,7 +185,7 @@ namespace GtkApplication
 			this.eventbox_arduino_metrics.Name = "eventbox_arduino_metrics";
 			// Container child eventbox_arduino_metrics.Gtk.Container+ContainerChild
 			this.label_arduino_metrics = new global::Gtk.Label ();
-			this.label_arduino_metrics.HeightRequest = 60;
+			this.label_arduino_metrics.HeightRequest = 100;
 			this.label_arduino_metrics.Name = "label_arduino_metrics";
 			this.label_arduino_metrics.Xalign = 0.06F;
 			this.label_arduino_metrics.Yalign = 0.06F;
@@ -190,9 +200,48 @@ namespace GtkApplication
 			w18.Position = 0;
 			w18.Expand = false;
 			w18.Fill = false;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.vbox2 = new global::Gtk.VBox ();
+			this.vbox2.WidthRequest = 200;
+			this.vbox2.Name = "vbox2";
+			this.vbox2.Spacing = 6;
+			this.vbox2.BorderWidth = ((uint)(6));
+			// Container child vbox2.Gtk.Box+BoxChild
+			this.eventbox_gps_metrics_caption = new global::Gtk.EventBox ();
+			this.eventbox_gps_metrics_caption.Name = "eventbox_gps_metrics_caption";
+			// Container child eventbox_gps_metrics_caption.Gtk.Container+ContainerChild
+			this.label_gps_metrics_caption = new global::Gtk.Label ();
+			this.label_gps_metrics_caption.Name = "label_gps_metrics_caption";
+			this.label_gps_metrics_caption.LabelProp = global::Mono.Unix.Catalog.GetString ("GPS controller:");
+			this.eventbox_gps_metrics_caption.Add (this.label_gps_metrics_caption);
+			this.vbox2.Add (this.eventbox_gps_metrics_caption);
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.eventbox_gps_metrics_caption]));
+			w20.Position = 0;
+			w20.Expand = false;
+			w20.Fill = false;
+			// Container child vbox2.Gtk.Box+BoxChild
+			this.eventbox_gps_metrics = new global::Gtk.EventBox ();
+			this.eventbox_gps_metrics.Name = "eventbox_gps_metrics";
+			// Container child eventbox_gps_metrics.Gtk.Container+ContainerChild
+			this.label_gps_metrics = new global::Gtk.Label ();
+			this.label_gps_metrics.HeightRequest = 100;
+			this.label_gps_metrics.Name = "label_gps_metrics";
+			this.label_gps_metrics.Xalign = 0.06F;
+			this.label_gps_metrics.Yalign = 0.06F;
+			this.eventbox_gps_metrics.Add (this.label_gps_metrics);
+			this.vbox2.Add (this.eventbox_gps_metrics);
+			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.eventbox_gps_metrics]));
+			w22.Position = 1;
+			w22.Expand = false;
+			w22.Fill = false;
+			this.hbox1.Add (this.vbox2);
+			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.vbox2]));
+			w23.Position = 1;
+			w23.Expand = false;
+			w23.Fill = false;
 			this.base_vbox.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.base_vbox [this.hbox1]));
-			w19.Position = 3;
+			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.base_vbox [this.hbox1]));
+			w24.Position = 3;
 			this.Add (this.base_vbox);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();

@@ -74,7 +74,7 @@ namespace HostController
             arduController = new ArduinoController.ArduinoController(arduPort, Dispatcher, Logger);
             arduController.RegisterFrameAcceptor(inputController);
 
-            var gpsCtrl = new GPSController.GPSController(Logger);
+            var gpsCtrl = new GPSController.GPSController(Dispatcher, Logger);
             arduController.RegisterFrameAcceptor(gpsCtrl);
             gpsController = gpsCtrl;
 
