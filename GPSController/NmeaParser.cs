@@ -54,7 +54,7 @@ namespace GPSController
             {
                 double heading;
 
-                if (newGprmc.Active && newGprmc.Speed > 8)
+                if (newGprmc.Active && newGprmc.Speed > 5)
                 {
                     heading = Interfaces.GPS.Helpers.GetHeading(gprmc.Value.Location, newGprmc.Location);
                 }

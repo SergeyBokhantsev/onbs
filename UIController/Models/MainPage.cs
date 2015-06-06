@@ -74,7 +74,7 @@ namespace UIController.Models
                         {
                             var uiController = hostController.GetController<IUIController>();
                             var runner = hostController.CreateProcessRunner(navigationAppKey);
-                            var page = new ExternalApplicationPage(runner, hostController.Dispatcher, hostController.Logger, uiController);
+                            var page = new ExternalApplicationPage(hostController, runner, hostController.Dispatcher, hostController.Logger, uiController);
                             uiController.ShowPage(page);
                             page.Run();
                         }
@@ -88,7 +88,7 @@ namespace UIController.Models
                         {
                             var uiController = hostController.GetController<IUIController>();
                             var runner = hostController.CreateProcessRunner(cameraAppKey);
-                            var page = new ExternalApplicationPage(runner, hostController.Dispatcher, hostController.Logger, uiController);
+                            var page = new ExternalApplicationPage(hostController, runner, hostController.Dispatcher, hostController.Logger, uiController);
                             uiController.ShowPage(page);
                             page.Run();
                         }

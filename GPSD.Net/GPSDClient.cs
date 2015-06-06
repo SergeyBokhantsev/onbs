@@ -171,7 +171,7 @@ namespace GPSD.Net
             }
         }
 
-		double temp = 30.42;
+		//double temp = 30.42;
 
         private void SendJson()
         {
@@ -179,11 +179,11 @@ namespace GPSD.Net
 
           //  var bytes = Json.SimpleJsonSerializer.Serialize(tpv, enc);
 
-			temp += 0.0005;
+			//temp += 0.0005;
 
 			var fake = "{\"class\":\"TPV\",\"device\":\"/dev/pts/1\","+
-				"\"time\":\""+DateTime.Now.ToString("O")+"\",\"ept\":0.005,\"track\":90,"+
-				"\"lat\":"+gprmc.Value.Location.Lat.ToString()+",\"lon\":"+temp+",\"speed\":1.87,\"mode\":2}";
+				"\"time\":\""+DateTime.Now.ToString("O")+"\",\"ept\":0.005,\"track\":"+gprmc.Value.TrackAngle.ToString()+","+
+				"\"lat\":"+gprmc.Value.Location.Lat.ToString()+",\"lon\":"+gprmc.Value.Location.Lon.ToString()+",\"speed\":1.87,\"mode\":2}";
 
 			var bytes = enc.GetBytes(fake);
 
