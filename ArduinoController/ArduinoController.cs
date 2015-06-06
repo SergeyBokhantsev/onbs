@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Interfaces.SerialTransportProtocol;
 using System.IO.Ports;
 using SerialTransportProtocol;
+using System.Diagnostics;
 
 namespace ArduinoController
 {
@@ -16,6 +17,8 @@ namespace ArduinoController
 
         private const string metricReadedBytes = "Bytes received";
         private const string metricDecodedFrames = "Frames decoded";
+        private const string metricElapsed = "Process time";
+        private const string metricIsError = "_is_error";
 
         private readonly IPort port;
         private readonly IDispatcher dispatcher;
@@ -50,37 +53,52 @@ namespace ArduinoController
         {
             logger.LogIfDebug(this, "DataReceived event");
 
-            var frames = codec.Decode(port);
+            bool is_error = false;
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
 
-            decodedFramesCount += frames.Count;
-
-            UpdateMetrics();
-
-            if (frames != null && frames.Any())
+            try
             {
-				//Converting ArduCommands
-				var convertedFrames = arduinoCommandCodec.Decode(frames.Where (f => f.Type == STPFrame.Types.ArduCommand));
-				if (convertedFrames != null)
-					frames.AddRange(convertedFrames);
+                var frames = codec.Decode(port);
 
-                foreach (var acceptor in acceptors)
+                decodedFramesCount += frames.Count;
+
+                if (frames != null && frames.Any())
                 {
-                    dispatcher.Invoke(null, null, (s, a) => acceptor.AcceptFrames(frames.Where(f => f.Type == acceptor.FrameType)));
-                    logger.LogIfDebug(this, string.Format("Frames were dispatched for {0} acceptor", acceptor.FrameType));
+                    //Converting ArduCommands
+                    var convertedFrames = arduinoCommandCodec.Decode(frames.Where(f => f.Type == STPFrame.Types.ArduCommand));
+                    if (convertedFrames != null)
+                        frames.AddRange(convertedFrames);
+
+                    foreach (var acceptor in acceptors)
+                    {
+                        dispatcher.Invoke(null, null, (s, a) => acceptor.AcceptFrames(frames.Where(f => f.Type == acceptor.FrameType)));
+                        logger.LogIfDebug(this, string.Format("Frames were dispatched for {0} acceptor", acceptor.FrameType));
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                logger.Log(this, ex);
+                is_error = true;
+            }
+
+            sw.Stop();
+            UpdateMetrics(is_error, sw.ElapsedMilliseconds);
         }
 
-        private void UpdateMetrics()
+        private void UpdateMetrics(bool is_error, long elapsed)
         {
             var handler = MetricsUpdated;
 
             if (handler != null)
             {
-                var metrics = new Metrics("Arduino Controller", 2);
+                var metrics = new Metrics("Arduino Controller", 4);
 
                 metrics.Add(0, metricReadedBytes, port.OverallReadedBytes);
                 metrics.Add(1, metricDecodedFrames, decodedFramesCount);
+                metrics.Add(2, metricElapsed, elapsed);
+                metrics.Add(3, metricIsError, is_error);
 
                 dispatcher.Invoke(null, null, new EventHandler((s,e) => handler(this, metrics)));
             }

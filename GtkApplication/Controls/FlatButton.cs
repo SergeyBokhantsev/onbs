@@ -11,7 +11,7 @@ namespace GtkApplication
 
 		private readonly EventBox box;
 		private readonly Label label;
-		private readonly LookAndFeel style;
+		private readonly LookAndFeel scheme;
 
 		public string Text
 		{
@@ -23,10 +23,10 @@ namespace GtkApplication
 			}
 		}
 
-		public FlatButton(EventBox box, LookAndFeel style)
+		public FlatButton(EventBox box, LookAndFeel scheme)
 		{
 			this.box = box;
-			this.style = style;
+			this.scheme = scheme;
 
 			label = new Label ();
 			box.Add (label);
@@ -35,19 +35,19 @@ namespace GtkApplication
 			box.LeaveNotifyEvent += LeaveNotifyEvent;
 			box.ButtonPressEvent += ButtonPressEvent;
 
-			SetBg (style.Bg);
-			SetFg (style.Fg);
+			SetBg (scheme.Bg);
+			SetFg (scheme.Fg);
 		}
 
 		async void ButtonPressEvent (object o, ButtonPressEventArgs args)
 		{
-			SetBg (style.ClickColor);
+			SetBg (scheme.ClickColor);
 
 			if (Clicked != null)
 				Clicked ();
 
 			await Task.Delay(200);
-			SetBg (style.Bg);
+			SetBg (scheme.Bg);
 		}
 
 		private void SetBg(Color color)
@@ -62,12 +62,12 @@ namespace GtkApplication
 
 		private void EnterNotifyEvent(object sender, EnterNotifyEventArgs args)
 		{
-			SetBg (style.HoverColor);
+			SetBg (scheme.HoverColor);
 		}
 			
 		private void LeaveNotifyEvent (object o, LeaveNotifyEventArgs args)
 		{
-			SetBg (style.Bg);
+			SetBg (scheme.Bg);
 		}
 	}
 }

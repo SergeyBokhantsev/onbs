@@ -21,18 +21,54 @@ namespace GtkApplication
         private ILogger logger;
         private MainWindow win;
 
-		private readonly LookAndFeel style;
+		private readonly Style style;
 
         public App(ILogger logger)
         {
             this.logger = logger;
 
-			style = new LookAndFeel ();
-			style.Bg = new Gdk.Color (0,30,50);
-			style.HoverColor = new Gdk.Color (100, 0, 0);
-			style.Fg = new Gdk.Color (255, 255, 255);
-			style.ClickColor = new Gdk.Color (255, 0, 0);
+			style = GetStyle ();
         }
+
+		private Style GetStyle()
+		{
+			var window = new LookAndFeel { 
+				Bg = new Gdk.Color (0, 30, 50),
+				HoverColor = new Gdk.Color (100, 0, 0),
+				Fg = new Gdk.Color (255, 255, 255),
+				ClickColor = new Gdk.Color (255, 0, 0)
+			};
+
+			var commonButton = new LookAndFeel { 
+				Bg = new Gdk.Color (50, 50, 50),
+				HoverColor = new Gdk.Color (30, 30, 30),
+				Fg = new Gdk.Color (255, 255, 255),
+				ClickColor = new Gdk.Color (100, 100, 100)
+			};
+
+			var acceptButton = new LookAndFeel { 
+				Bg = new Gdk.Color (20, 80, 30),
+				HoverColor = new Gdk.Color (30, 130, 100),
+				Fg = new Gdk.Color (255, 255, 255),
+				ClickColor = new Gdk.Color (60, 200, 120)
+			};
+
+			var cancelButton = new LookAndFeel { 
+				Bg = new Gdk.Color (100, 0, 0),
+				HoverColor = new Gdk.Color (130, 30, 0),
+				Fg = new Gdk.Color (255, 255, 255),
+				ClickColor = new Gdk.Color (255, 70, 70)
+			};
+
+			var textBox = new LookAndFeel { 
+				Bg = new Gdk.Color (0, 30, 50),
+				HoverColor = new Gdk.Color (0, 0, 0),
+				Fg = new Gdk.Color (220, 220, 180),
+				ClickColor = new Gdk.Color (255, 0, 0)
+			};
+
+			return new Style (window, commonButton, acceptButton, cancelButton, textBox);
+		}
 
 		public void Run()
 		{
@@ -41,7 +77,7 @@ namespace GtkApplication
                 Application.Init();
                 win = new MainWindow(logger);
 
-				win.ModifyBg(StateType.Normal, style.Bg);
+				win.ModifyBg(StateType.Normal, style.Window.Bg);
 
                 win.Show();
                 Application.Run();

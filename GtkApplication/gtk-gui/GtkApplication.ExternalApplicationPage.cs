@@ -30,6 +30,7 @@ namespace GtkApplication
 			this.label_launch_info = new global::Gtk.Label ();
 			this.label_launch_info.Name = "label_launch_info";
 			this.label_launch_info.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
+			this.label_launch_info.Wrap = true;
 			this.eventbox1.Add (this.label_launch_info);
 			this.vbox1.Add (this.eventbox1);
 			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox1]));
