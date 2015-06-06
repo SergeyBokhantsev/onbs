@@ -1,13 +1,9 @@
 ﻿<Properties StartupItem="HostController\HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="UIController/Models/MainPage.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="UIController/Models/NavigationAppPage.cs">
     <Files>
-      <File FileName="ArduinoController/ArduinoController.cs" Line="66" Column="41" />
-      <File FileName="UIController/UIController.cs" Line="40" Column="1" />
-      <File FileName="UIController/Models/ModelBase.cs" Line="70" Column="1" />
-      <File FileName="UIController/Models/MainPage.cs" Line="43" Column="3" />
-      <File FileName="ButtonController/InputController.cs" Line="40" Column="41" />
-      <File FileName="Interfaces/Input/Buttons.cs" Line="6" Column="1" />
+      <File FileName="Interfaces/IAutomationController.cs" Line="15" Column="5" />
+      <File FileName="UIController/Models/NavigationAppPage.cs" Line="64" Column="14" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

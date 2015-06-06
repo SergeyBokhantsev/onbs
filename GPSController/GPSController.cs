@@ -74,7 +74,7 @@ namespace GPSController
 
                 if (nmeaSentences != null && nmeaSentences.Any())
                 {
-                    Interlocked.Increment(ref nmeaSentencesCount);
+					Interlocked.Add (ref nmeaSentencesCount, nmeaSentences.Count);
 
                     foreach (var f in nmeaSentences)
                     {

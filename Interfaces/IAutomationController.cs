@@ -11,6 +11,9 @@ namespace Interfaces
     /// </summary>
     public enum AutomationKeys
     {
+		a,
+		d,
+		Tab = 0x0009,
         plus = 0x002b,
         comma = 0x002c,
         minus = 0x002d,
@@ -19,6 +22,7 @@ namespace Interfaces
         Right = 0x0602,
         Up = 0x0603,
         Control = 0x0702,
+		Alt = 0x0703,
     };
 
     public interface IAutomationController : IController

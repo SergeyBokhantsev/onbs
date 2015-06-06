@@ -92,6 +92,14 @@ namespace UIController.Models
                         }
                     }
                     break;
+
+			case "F4":
+				if (args.State == ButtonStates.Press) 
+				{
+					hostController.GetController<IAutomationController> ()
+					.Key (AutomationKeys.Alt, AutomationKeys.Tab);
+				}
+				break;
             }
         }
     }

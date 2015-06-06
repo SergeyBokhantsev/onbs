@@ -12,7 +12,7 @@ namespace AutomationController.ToolAdapters
         private readonly IProcessRunnerFactory processRunnerFactory;
         private readonly ILogger logger;
 
-        private const string automationTool = "xdotoool";
+        private const string automationTool = "xdotool";
         private readonly bool shellExecute = true;
         private readonly bool waitForUI = false;
 
@@ -38,3 +38,11 @@ namespace AutomationController.ToolAdapters
         }
     }
 }
+
+
+
+
+
+
+
+

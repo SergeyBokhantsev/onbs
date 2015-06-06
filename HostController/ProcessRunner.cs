@@ -84,6 +84,9 @@ namespace HostController
 
         private void Monitor()
         {
+			if (proc == null)
+				return;
+
             logger.LogIfDebug(this, string.Format("Launching monitor loop for {0}", appPath));
 
             while (!proc.HasExited)
