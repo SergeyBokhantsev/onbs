@@ -14,11 +14,11 @@ namespace Tests.Mocks
             get { return LogLevels.Debug; }
         }
 
-        public void Log(string message, LogLevels level)
+        public void Log(object caller, string message, LogLevels level)
         {
         }
 
-        public void Log(Exception ex)
+        public void Log(object caller, Exception ex)
         {
         }
     }

@@ -5,7 +5,7 @@ using System.Configuration;
 
 namespace HostController
 {
-	public class HostController : IHostController
+    public class HostController : IHostController, IProcessRunnerFactory
 	{
         private GPSD.Net.GPSD gpsd;
 
@@ -13,6 +13,7 @@ namespace HostController
         private IInputController inputController;
         private IArduinoController arduController;
         private IGPSController gpsController;
+        private IAutomationController automationController;
 
         public IConfig Config
         {
@@ -29,6 +30,14 @@ namespace HostController
         {
             get;
             private set;
+        }
+
+        public IProcessRunnerFactory ProcessRunnerFactory
+        {
+            get
+            {
+                return this;
+            }
         }
 
         public void Run()
@@ -48,6 +57,8 @@ namespace HostController
                 return (T)arduController;
             else if (typeof(T).Equals(typeof(IGPSController)))
                 return (T)gpsController;
+            else if (typeof(T).Equals(typeof(IAutomationController)))
+                return (T)automationController;
             else
                 throw new NotImplementedException(typeof(T).ToString());
         }
@@ -81,18 +92,25 @@ namespace HostController
             gpsd = new GPSD.Net.GPSD(gpsController, Logger);
             gpsd.Start();
 
+            automationController = new AutomationController.AutomationController(this);
+
             uiController = new UIController.UIController(Config.GetString(Configuration.Names.UIHostAssemblyName), Config.GetString(Configuration.Names.UIHostClass), this);
             uiController.ShowMainPage();
         }
 
-        public IProcessRunner CreateProcessRunner(string appKey)
+        public IProcessRunner Create(string appKey)
         {
             var appName = Config.GetString(string.Concat(appKey, "_exe"));
             var commandLine = Config.GetString(string.Concat(appKey, "_args"));
             var useShellExecution = Config.GetBool(string.Concat(appKey, "_use_shell"));
             var waitForUI = Config.GetBool(string.Concat(appKey, "_wait_UI"));
 
-            return new ProcessRunner(appName, commandLine, useShellExecution, waitForUI, Logger);
+            return Create(appName, commandLine, useShellExecution, waitForUI);
+        }
+
+        public IProcessRunner Create(string exePath, string args, bool useShellExecute, bool waitForUI)
+        {
+            return new ProcessRunner(exePath, args, useShellExecute, waitForUI, Logger);
         }
     }
 }

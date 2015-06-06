@@ -49,6 +49,10 @@
       <Project>{A05B89C0-C585-4FB8-A5E2-C75980D1B734}</Project>
       <Name>ArduinoController</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AutomationController\AutomationController.csproj">
+      <Project>{85445923-f9ca-4054-b2ad-43b14791d82c}</Project>
+      <Name>AutomationController</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ButtonController\InputController.csproj">
       <Project>{0E653FDA-F0DA-44CB-A932-4B37487EA731}</Project>
       <Name>InputController</Name>

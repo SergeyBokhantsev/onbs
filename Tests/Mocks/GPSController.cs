@@ -30,5 +30,7 @@ namespace Tests.Mocks
                 Thread.Sleep(1000);
             }
         }
+
+        public event MetricsUpdatedEventHandler MetricsUpdated;
     }
 }

@@ -72,10 +72,8 @@ namespace UIController.Models
                     {
                         if (args.State == ButtonStates.Press)
                         {
-                            var uiController = hostController.GetController<IUIController>();
-                            var runner = hostController.CreateProcessRunner(navigationAppKey);
-                            var page = new ExternalApplicationPage(hostController, runner, hostController.Dispatcher, hostController.Logger, uiController);
-                            uiController.ShowPage(page);
+                            var page = new NavigationAppPage(hostController, navigationAppKey);
+                            hostController.GetController<IUIController>().ShowPage(page);
                             page.Run();
                         }
                     }
@@ -87,8 +85,8 @@ namespace UIController.Models
                         if (args.State == ButtonStates.Press)
                         {
                             var uiController = hostController.GetController<IUIController>();
-                            var runner = hostController.CreateProcessRunner(cameraAppKey);
-                            var page = new ExternalApplicationPage(hostController, runner, hostController.Dispatcher, hostController.Logger, uiController);
+                            var runner = hostController.ProcessRunnerFactory.Create(cameraAppKey);
+                            var page = new ExternalApplicationPage(typeof(ExternalApplicationPage).Name, runner, hostController.Dispatcher, hostController.Logger, uiController);
                             uiController.ShowPage(page);
                             page.Run();
                         }

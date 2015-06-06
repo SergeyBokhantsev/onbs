@@ -11,7 +11,7 @@ namespace Interfaces
         ILogger Logger { get; }
         IDispatcher Dispatcher { get ; }
         IConfig Config { get; }
+        IProcessRunnerFactory ProcessRunnerFactory { get; }
         T GetController<T>() where T : IController;
-        IProcessRunner CreateProcessRunner(string appKey);
     }
 }

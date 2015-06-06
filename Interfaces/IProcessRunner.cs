@@ -19,4 +19,10 @@ namespace Interfaces
         void Run();
         void Exit();
     }
+
+    public interface IProcessRunnerFactory
+    {
+        IProcessRunner Create(string appKey);
+        IProcessRunner Create(string exePath, string args, bool useShellExecute, bool waitForUI);
+    }
 }

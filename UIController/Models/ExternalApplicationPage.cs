@@ -11,17 +11,14 @@ namespace UIController.Models
 {
     public class ExternalApplicationPage : ModelBase
     {
-		private readonly IHostController hostController;
         private readonly IProcessRunner runner;
         private readonly IUIController ui;
 
-		public ExternalApplicationPage(IHostController hostController, IProcessRunner runner, IDispatcher dispatcher, ILogger logger, IUIController ui)
-            : base(typeof(ExternalApplicationPage).Name, dispatcher, logger)
+		public ExternalApplicationPage(string modelName, IProcessRunner runner, IDispatcher dispatcher, ILogger logger, IUIController ui)
+            : base(modelName, dispatcher, logger)
         {
             if (runner == null)
                 throw new ArgumentNullException("runner");
-
-			this.hostController = hostController;
 
             this.runner = runner;
             this.ui = ui;
@@ -62,16 +59,6 @@ namespace UIController.Models
                         runner.Exit();
                     }
                     break;
-			case "F1":
-				{
-					if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold) 
-				{
-						var pr = hostController.CreateProcessRunner ("key_left");
-						pr.Run ();
-					}
-
-				}
-				break;
             }
         }
     }

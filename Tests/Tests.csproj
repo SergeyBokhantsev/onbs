@@ -58,6 +58,10 @@
     <Compile Include="GPSHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AutomationController\AutomationController.csproj">
+      <Project>{85445923-f9ca-4054-b2ad-43b14791d82c}</Project>
+      <Name>AutomationController</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GPSController\GPSController.csproj">
       <Project>{d653b708-aae0-4b81-a9bb-06b1c3bd1edb}</Project>
       <Name>GPSController</Name>
