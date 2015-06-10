@@ -27,8 +27,9 @@ namespace UIController.Models
 
             SubscribeMetricsProviders();
 
-            SetProperty("nav_btn_caption", "Navigation");
-            SetProperty("cam_btn_caption", "Camera");
+            SetProperty(ModelNames.ButtonF1Label, "Navigation");
+            SetProperty(ModelNames.ButtonF2Label, "Camera");
+            SetProperty(ModelNames.ButtonF8Label, "Configuration");
         }
 
         private void SubscribeMetricsProviders()
@@ -67,8 +68,7 @@ namespace UIController.Models
         {
             switch (args.ActionName)
             {
-                case navigationAppKey:
-                case "F1":
+                case ModelNames.ButtonF1:
                     {
                         if (args.State == ButtonStates.Press)
                         {
@@ -79,8 +79,7 @@ namespace UIController.Models
                     }
                     break;
 
-                case cameraAppKey:
-                case "F2":
+                case ModelNames.ButtonF2:
                     {
                         if (args.State == ButtonStates.Press)
                         {
@@ -93,13 +92,14 @@ namespace UIController.Models
                     }
                     break;
 
-			case "F4":
-				if (args.State == ButtonStates.Press) 
-				{
-					hostController.GetController<IAutomationController> ()
-					.Key (AutomationKeys.Alt, AutomationKeys.Tab);
-				}
-				break;
+                case ModelNames.ButtonF8:
+                    {
+                        if (args.State == ButtonStates.Press)
+                        {
+                            hostController.GetController<IUIController>().ShowPage(new Models.ConfigPages.ConfigGPSPage(hostController));
+                        }
+                    }
+                    break;
             }
         }
     }

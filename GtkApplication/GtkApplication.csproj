@@ -71,6 +71,8 @@
     <Compile Include="gtk-gui\GtkApplication.ExternalApplicationPage.cs" />
     <Compile Include="Controls\FlatButton.cs" />
     <Compile Include="Controls\LookAndFeel.cs" />
+    <Compile Include="Pages\SystemConfigurationPage.cs" />
+    <Compile Include="gtk-gui\GtkApplication.SystemConfigurationPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">

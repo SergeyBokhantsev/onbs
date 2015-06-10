@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\ConfigPages\ConfigGPSPage.cs" />
     <Compile Include="Models\ExternalApplicationPage.cs" />
     <Compile Include="Models\MainPage.cs" />
     <Compile Include="Models\ModelBase.cs" />

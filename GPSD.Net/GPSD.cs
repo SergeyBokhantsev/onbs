@@ -13,16 +13,23 @@ namespace GPSD.Net
 {
     public class GPSD
     {
+        private class CfgNames
+        {
+            public const string GPSDEnabled = "GPSDEnabled";
+        }
+
         private readonly TcpServer.Server server;
         private readonly IGPSController gps;
         private readonly ILogger logger;
+        private readonly IConfig config;
         private readonly List<GPSDClient> clients;
 
         //http://www.catb.org/gpsd/gpsd_json.html
         //http://wiki.navit-project.org/index.php/Configuration
-        public GPSD(IGPSController gps, ILogger logger)
+        public GPSD(IGPSController gps, IConfig config, ILogger logger)
         {
             this.gps = gps;
+            this.config = config;
             this.logger = logger;
             this.clients = new List<GPSDClient>();
 
@@ -37,7 +44,9 @@ namespace GPSD.Net
             lock (clients)
             {
                 CleanupInactive();
-                clients.ForEach(c => c.SetNMEA(nmea));
+
+                if (config.GetBool(CfgNames.GPSDEnabled))
+                    clients.ForEach(c => c.SetNMEA(nmea));
             }
         }
 

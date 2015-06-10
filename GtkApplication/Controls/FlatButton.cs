@@ -13,6 +13,8 @@ namespace GtkApplication
 		private readonly Label label;
 		private readonly LookAndFeel scheme;
 
+		private bool clicking;
+
 		public string Text
 		{
 			get {
@@ -24,11 +26,18 @@ namespace GtkApplication
 		}
 
 		public FlatButton(EventBox box, LookAndFeel scheme)
+			:this(box, scheme, TextAligment.CenterMiddle)
+		{
+		}
+
+		public FlatButton(EventBox box, LookAndFeel scheme, TextAligment labelAligment)
 		{
 			this.box = box;
 			this.scheme = scheme;
 
 			label = new Label ();
+			label.SetAlignment(labelAligment.X, labelAligment.Y);
+
 			box.Add (label);
 
 			box.EnterNotifyEvent +=	EnterNotifyEvent;
@@ -39,15 +48,23 @@ namespace GtkApplication
 			SetFg (scheme.Fg);
 		}
 
-		async void ButtonPressEvent (object o, ButtonPressEventArgs args)
+	    void ButtonPressEvent (object o, ButtonPressEventArgs args)
 		{
-			SetBg (scheme.ClickColor);
+			if (clicking)
+				return;
+
+			clicking = true;
+
+			//SetBg (scheme.ClickColor);
 
 			if (Clicked != null)
 				Clicked ();
 
-			await Task.Delay(200);
-			SetBg (scheme.Bg);
+			//await Task.Delay(50);
+
+			SetBg (scheme.ClickColor);
+
+			clicking = false;
 		}
 
 		private void SetBg(Color color)

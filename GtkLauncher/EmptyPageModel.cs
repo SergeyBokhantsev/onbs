@@ -15,6 +15,8 @@ namespace GtkLauncher
 
 		#region IPageModel implementation
 
+		public event Action<PageModelActionEventArgs> OnAction;
+
 		public event PageModelPropertyChangedHandler PropertyChanged;
 
 		public event EventHandler Disposing;
@@ -30,6 +32,9 @@ namespace GtkLauncher
 		public void SetProperty(string name, object value)
 		{
 			props [name] = value;
+
+			if (PropertyChanged != null)
+				PropertyChanged(name);
 		}
 
 		public void RefreshAllProps()
@@ -42,7 +47,8 @@ namespace GtkLauncher
 
 		public void Action(PageModelActionEventArgs actionArgs)
 		{
-
+			if (OnAction != null)
+				OnAction(actionArgs);
 		}
 
 		public string Name

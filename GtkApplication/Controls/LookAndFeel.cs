@@ -4,6 +4,28 @@ using Gtk;
 
 namespace GtkApplication
 {
+	public struct TextAligment
+	{
+		public float X;
+		public float Y;
+
+		public static TextAligment CenterMiddle
+		{
+			get
+			{
+				return new TextAligment { X = 0.5f, Y = 0.5f };
+			}
+		}
+
+		public static TextAligment LeftMiddle
+		{
+			get
+			{
+				return new TextAligment { X = 0.06f, Y = 0.5f };
+			}
+		}
+	}
+
 	public class LookAndFeel
 	{
 		public Color Fg { 

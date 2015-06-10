@@ -3,6 +3,7 @@ using Gtk;
 using Interfaces;
 using Interfaces.UI;
 using System.Diagnostics.Contracts;
+using System.Reflection;
 
 namespace GtkApplication
 {
@@ -98,23 +99,30 @@ namespace GtkApplication
 
             if (win.Child != null)
                 win.Remove(win.Child);
-
-            switch (showPageArgs.Model.Name)
-            {
-                case "MainPage":
-				win.Add(new MainPage(showPageArgs.Model, style, logger));
-                    break;
-
-				case "ExternalApplicationPage":
-				win.Add(new ExternalApplicationPage (showPageArgs.Model, style, logger));
-					break;
-
-                default:
-                    throw new NotImplementedException(showPageArgs.Model.Name);
-            }
+			
+			win.Add(CreatePage(showPageArgs.Model));
 
             win.ShowAll();
         }
+
+		Gtk.Bin CreatePage(IPageModel model)
+		{
+			try
+			{
+				var pageType = Type.GetType(string.Concat("GtkApplication.", model.Name));
+				var constructor = pageType.GetConstructor(new Type[] { typeof(IPageModel), typeof(Style), typeof(ILogger) });
+				var page = constructor.Invoke(new object[] { model, style, logger }) as Gtk.Bin;
+
+				if (page == null)
+					throw new Exception();
+
+				return page ;
+			} catch (Exception ex)
+			{
+				//TODO: implement error page
+				throw;
+			}
+		}
 
         public void ShowPage(IPageModel model)
         {

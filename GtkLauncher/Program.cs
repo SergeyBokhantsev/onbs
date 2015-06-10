@@ -28,8 +28,8 @@ namespace GtkLauncher
 		{
 			var page = new EmptyPageModel ("MainPage");
 
-			page.SetProperty("nav_btn_caption", "Navigation");
-			page.SetProperty("cam_btn_caption", "Camera");
+			page.SetProperty(ModelNames.ButtonF1Label, "Navigation");
+			page.SetProperty(ModelNames.ButtonF2Label, "Camera");
 
 			return page;
 		}
@@ -41,6 +41,37 @@ namespace GtkLauncher
 			page.SetProperty ("is_error", "1");
 			page.SetProperty ("button_exit_label", "Exit");
 			page.SetProperty ("label_launch_info", "var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());");
+
+			return page;
+		}
+
+		private static IPageModel GetSystemConfigurationPage()
+		{
+			bool gpsdEnabled = true;
+
+			var page = new EmptyPageModel ("SystemConfigurationPage");
+
+			page.SetProperty ("label_caption", "Custom configuration");
+
+			page.SetProperty("label_CANCEL", "Return");
+			page.SetProperty("label_ACCEPT", "Next page");
+
+			page.SetProperty("label_F1", "GPSD Enabled");
+
+			page.OnAction += arg => {
+
+				switch(arg.ActionName)
+				{
+					case "F1":
+						if (arg.State == Interfaces.Input.ButtonStates.Press)
+						{
+							gpsdEnabled = !gpsdEnabled;
+							page.SetProperty("label_F1", gpsdEnabled ? "GPSD Enabled" : "GPSD Disabled");
+						}
+						break;
+				}
+
+			};
 
 			return page;
 		}

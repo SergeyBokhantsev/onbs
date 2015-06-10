@@ -8,7 +8,7 @@ using Interfaces;
 
 namespace HostController
 {
-    public class Configuration : IConfig
+    public class Configuration : IConfig, IDisposable
     {
         public static class Names
         {
@@ -27,24 +27,46 @@ namespace HostController
             public static readonly string LoggedClasses = "LoggedClasses";
         }
 
+        private readonly System.Configuration.Configuration cfg;
+
+        public Configuration()
+        {
+            cfg = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        }
+
         public string GetString(string name)
         {
-            return ConfigurationManager.AppSettings[name];
+            return cfg.AppSettings.Settings[name].Value;
         }
 
         public int GetInt(string name)
         {
-            return int.Parse(ConfigurationManager.AppSettings[name]);
+            return int.Parse(GetString(name));
         }
 
         public double GetDouble(string name)
         {
-            return double.Parse(ConfigurationManager.AppSettings[name]);
+            return double.Parse(GetString(name));
         }
 
         public bool GetBool(string name)
         {
-            return bool.Parse(ConfigurationManager.AppSettings[name]);
+            return bool.Parse(GetString(name));
+        }
+
+        public void Set<T>(string name, T value)
+        {
+            cfg.AppSettings.Settings[name].Value = value.ToString();
+        }
+
+        public void Save()
+        {
+            cfg.Save(ConfigurationSaveMode.Modified);
+        }
+
+        public void Dispose()
+        {
+            Save();
         }
     }
 }

@@ -14,11 +14,6 @@ namespace GPSController
 
         private LockingProperty<GPRMC> gprmc = new LockingProperty<GPRMC>();
 
-        public GPRMC LastGPRMC
-        {
-            get { return gprmc.Value; }
-        }
-
         public void Accept(string sentence)
         {
             if (!string.IsNullOrEmpty(sentence))

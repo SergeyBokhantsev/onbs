@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.SerialTransportProtocol;
 using SerialTransportProtocol;
+using Interfaces.GPS;
 
 namespace GPSController
 {
@@ -25,6 +26,7 @@ namespace GPSController
         private int gpsFramesCount;
         private int nmeaSentencesCount;
         private int gprmcCount;
+        private GPRMC lastGprmc;
 
         public STPFrame.Types FrameType
         {
@@ -47,6 +49,8 @@ namespace GPSController
                 new byte[] { 13, 10 },
                 STPFrame.Types.GPS);
 
+            lastGprmc = new GPRMC();
+
             parser = new NmeaParser();
             parser.GPRMC += parser_GPRMC;
 
@@ -56,6 +60,8 @@ namespace GPSController
         private void parser_GPRMC(Interfaces.GPS.GPRMC obj)
         {
             Interlocked.Increment(ref gprmcCount);
+
+            lastGprmc = obj;
 
             var handler = GPRMCReseived;
             if (handler != null)
@@ -109,7 +115,7 @@ namespace GPSController
                 metrics.Add(0, "GPS Frames", gpsFramesCount);
                 metrics.Add(1, "NMEA", nmeaSentencesCount);
                 metrics.Add(2, "GPRMC", gprmcCount);
-                metrics.Add(3, "Loc", parser.LastGPRMC.Location);
+                metrics.Add(3, "Loc", lastGprmc.Location);
                 metrics.Add(4, "_is_error", false);
 
                 dispatcher.Invoke(null, null, new EventHandler((s, e) => handler(this, metrics)));

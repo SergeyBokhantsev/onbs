@@ -45,6 +45,7 @@ namespace HostController
             Config = new Configuration();
             CreateLogger();
             RunDispatcher();
+            Shutdown();
         }
 
         public T GetController<T>() where T : IController
@@ -89,13 +90,22 @@ namespace HostController
             arduController.RegisterFrameAcceptor(gpsCtrl);
             gpsController = gpsCtrl;
 
-            gpsd = new GPSD.Net.GPSD(gpsController, Logger);
+            gpsd = new GPSD.Net.GPSD(gpsController, Config, Logger);
             gpsd.Start();
 
             automationController = new AutomationController.AutomationController(this);
 
             uiController = new UIController.UIController(Config.GetString(Configuration.Names.UIHostAssemblyName), Config.GetString(Configuration.Names.UIHostClass), this);
             uiController.ShowMainPage();
+        }
+
+        private void Shutdown()
+        {
+            Logger.Log(this, "Begin shutdown", LogLevels.Info);
+
+            (Config as Configuration).Dispose();
+
+            Logger.Log(this, "--- Logging finished ---", LogLevels.Info);
         }
 
         public IProcessRunner Create(string appKey)

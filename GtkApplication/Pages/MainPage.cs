@@ -23,32 +23,62 @@ namespace GtkApplication
 
 			this.Build();
 
-			var bF1 = new FlatButton (box_F1, style.CommonButton);
-			var bF2 = new FlatButton (box_F2, style.CommonButton);
-			var bF3 = new FlatButton (box_F3, style.CommonButton);
-			var bF4 = new FlatButton (box_F4, style.CommonButton);
-			var bF5 = new FlatButton (box_F5, style.CommonButton);
-			var bF6 = new FlatButton (box_F6, style.CommonButton);
-			var bF7 = new FlatButton (box_F7, style.CommonButton);
-			var bF8 = new FlatButton (box_F8, style.CommonButton);
-			var bAccept = new FlatButton (box_Accept, style.AcceptButton);
-			var bCancel = new FlatButton (box_Cancel, style.CancelButton);
+//			var bF1 = new FlatButton (box_F1, style.CommonButton);
+//			var bF2 = new FlatButton (box_F2, style.CommonButton);
+//			var bF3 = new FlatButton (box_F3, style.CommonButton);
+//			var bF4 = new FlatButton (box_F4, style.CommonButton);
+//			var bF5 = new FlatButton (box_F5, style.CommonButton);
+//			var bF6 = new FlatButton (box_F6, style.CommonButton);
+//			var bF7 = new FlatButton (box_F7, style.CommonButton);
+//			var bF8 = new FlatButton (box_F8, style.CommonButton);
+//			var bAccept = new FlatButton (box_Accept, style.AcceptButton);
+//			var bCancel = new FlatButton (box_Cancel, style.CancelButton);
 			          
 			style.TextBox.Apply (label_arduino_metrics_caption, eventbox_arduino_metrics_caption);
 			style.TextBox.Apply (label_arduino_metrics, eventbox_arduino_metrics);
 
 			style.TextBox.Apply(label_gps_metrics_caption, eventbox_gps_metrics_caption);
 			style.TextBox.Apply(label_gps_metrics, eventbox_gps_metrics);
-				
-			binder = new ModelBinder(model, logger);
-		
-			binder.BindFlatButtonLabel(bF1, "nav_btn_caption", "F1");
-            binder.BindFlatButtonClick(bF1, "nav");
 
-            binder.BindFlatButtonLabel(bF2, "cam_btn_caption", "F2");
-            binder.BindFlatButtonClick(bF2, "cam");
+            binder = new ModelBinder(model, logger);
+
+			InitializeButton(box_Cancel, style.CancelButton, ModelNames.ButtonCancel, TextAligment.CenterMiddle);
+			InitializeButton(box_Accept, style.AcceptButton, ModelNames.ButtonAccept, TextAligment.CenterMiddle);
+			InitializeButton(box_F1, style.CommonButton, ModelNames.ButtonF1, TextAligment.CenterMiddle);
+			InitializeButton(box_F2, style.CommonButton, ModelNames.ButtonF2, TextAligment.CenterMiddle);
+			InitializeButton(box_F3, style.CommonButton, ModelNames.ButtonF3, TextAligment.CenterMiddle);
+			InitializeButton(box_F4, style.CommonButton, ModelNames.ButtonF4, TextAligment.CenterMiddle);
+			InitializeButton(box_F5, style.CommonButton, ModelNames.ButtonF5, TextAligment.CenterMiddle);
+			InitializeButton(box_F6, style.CommonButton, ModelNames.ButtonF6, TextAligment.CenterMiddle);
+			InitializeButton(box_F7, style.CommonButton, ModelNames.ButtonF7, TextAligment.CenterMiddle);
+			InitializeButton(box_F8, style.CommonButton, ModelNames.ButtonF8, TextAligment.CenterMiddle);
+
+			
+//			binder.BindFlatButtonLabel(bF1, "nav_btn_caption", "F1");
+//            binder.BindFlatButtonClick(bF1, "nav");
+//
+//            binder.BindFlatButtonLabel(bF2, "cam_btn_caption", "F2");
+//            binder.BindFlatButtonClick(bF2, "cam");
 
             binder.BindMetrics(UpdateMetrics, "metrics");
+		}
+
+		private void InitializeButton(EventBox box, LookAndFeel lf, string buttonName, TextAligment align)
+		{
+			var btnLabelPropertyName = ModelNames.ResolveButtonLabelName(buttonName);
+
+			if (!string.IsNullOrEmpty(model.GetProperty<string>(btnLabelPropertyName)))
+			{
+				var btn = new FlatButton (box, lf, align);
+
+				binder.BindFlatButtonLabel(btn, btnLabelPropertyName, buttonName);
+				binder.BindFlatButtonClick(btn, buttonName);
+			} else
+			{
+				var stubLabel = new Label ();
+				box.Add(stubLabel);
+				style.Window.Apply(stubLabel, box);
+			}
 		}
 
         private void UpdateMetrics(IMetrics metrics)
