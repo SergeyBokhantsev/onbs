@@ -13,5 +13,6 @@ namespace Interfaces
         double GetDouble(string name);
         bool GetBool(string name);
         void Set<T>(string name, T value);
+        void Save();
     }
 }

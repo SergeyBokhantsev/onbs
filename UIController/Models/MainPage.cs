@@ -96,7 +96,7 @@ namespace UIController.Models
                     {
                         if (args.State == ButtonStates.Press)
                         {
-                            hostController.GetController<IUIController>().ShowPage(new Models.ConfigPages.ConfigGPSPage(hostController));
+                            hostController.GetController<IUIController>().ShowPage(new Models.ConfigPages.CommonConfigPage(hostController));
                         }
                     }
                     break;
