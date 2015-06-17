@@ -1,6 +1,7 @@
 ﻿using System;
 using Interfaces.UI;
 using Interfaces;
+using System.Threading;
 
 namespace GtkLauncher
 {
@@ -30,6 +31,12 @@ namespace GtkLauncher
 
 			page.SetProperty(ModelNames.ButtonF1Label, "Navigation");
 			page.SetProperty(ModelNames.ButtonF2Label, "Camera");
+
+
+			page.SetProperty("time_valid", "1");
+			var timer = new Timer (new TimerCallback (o => page.SetProperty("time", DateTime.Now)), null, 500, 1000);
+
+			page.SetProperty("_timer", timer);
 
 			return page;
 		}

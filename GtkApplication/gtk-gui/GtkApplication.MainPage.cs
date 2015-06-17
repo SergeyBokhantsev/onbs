@@ -53,6 +53,10 @@ namespace GtkApplication
 		private global::Gtk.EventBox eventbox_gps_metrics;
 		
 		private global::Gtk.Label label_gps_metrics;
+		
+		private global::Gtk.EventBox eventbox_time;
+		
+		private global::Gtk.Label label_time;
 
 		protected virtual void Build ()
 		{
@@ -164,6 +168,7 @@ namespace GtkApplication
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.vbox1 = new global::Gtk.VBox ();
 			this.vbox1.HeightRequest = 10;
+			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			this.vbox1.BorderWidth = ((uint)(6));
 			// Container child vbox1.Gtk.Box+BoxChild
@@ -239,9 +244,21 @@ namespace GtkApplication
 			w23.Position = 1;
 			w23.Expand = false;
 			w23.Fill = false;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.eventbox_time = new global::Gtk.EventBox ();
+			this.eventbox_time.Name = "eventbox_time";
+			// Container child eventbox_time.Gtk.Container+ContainerChild
+			this.label_time = new global::Gtk.Label ();
+			this.label_time.Name = "label_time";
+			this.label_time.Yalign = 0F;
+			this.label_time.LabelProp = global::Mono.Unix.Catalog.GetString ("--:--:--");
+			this.eventbox_time.Add (this.label_time);
+			this.hbox1.Add (this.eventbox_time);
+			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.eventbox_time]));
+			w25.Position = 2;
 			this.base_vbox.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.base_vbox [this.hbox1]));
-			w24.Position = 3;
+			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.base_vbox [this.hbox1]));
+			w26.Position = 3;
 			this.Add (this.base_vbox);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();

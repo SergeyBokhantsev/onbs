@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.Input;
+using System.Threading;
 
 namespace UIController.Models
 {
@@ -15,6 +16,7 @@ namespace UIController.Models
 		private const string cameraAppKey = "cam";
 
         private readonly IHostController hostController;
+        private readonly Timer timer;
 
         private List<IMetricsProvider> metricsProviders;
 
@@ -27,9 +29,17 @@ namespace UIController.Models
 
             SubscribeMetricsProviders();
 
+            timer = new Timer(TimerCallback, null, 500, 1000);
+
             SetProperty(ModelNames.ButtonF1Label, "Navigation");
             SetProperty(ModelNames.ButtonF2Label, "Camera");
             SetProperty(ModelNames.ButtonF8Label, "Configuration");
+        }
+
+        private void TimerCallback(object state)
+        {
+            SetProperty("time", DateTime.Now);
+            SetProperty("time_valid", hostController.Config.IsSystemTimeValid ? "1" : "0");
         }
 
         private void SubscribeMetricsProviders()

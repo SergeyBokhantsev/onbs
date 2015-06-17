@@ -24,18 +24,38 @@ namespace GtkApplication.Pages
     internal class LabelTextBinding : Binding
     {
         private readonly Label label;
+		private readonly Func<object, string> formatter;
 
-        public LabelTextBinding(Label label, string propertyName)
+		public LabelTextBinding(Label label, string propertyName, Func<object, string> formatter)
             :base(propertyName)
         {
             this.label = label;
+			this.formatter = formatter ?? new Func<object, string> (o => { return o == null ? string.Empty : o.ToString(); });
         }
 
         public override void Update(object value)
         {
-            label.Text = value != null ? value.ToString() : string.Empty;
+			label.Text = formatter(value);
         }
     }
+
+	internal class LabelMarkupBinding : Binding
+	{
+		private readonly Label label;
+		private readonly Func<object, string> formatter;
+
+		public LabelMarkupBinding(Label label, string propertyName, Func<object, string> formatter)
+			:base(propertyName)
+		{
+			this.label = label;
+			this.formatter = formatter ?? new Func<object, string> (o => { return o == null ? string.Empty : o.ToString(); });
+		}
+
+		public override void Update(object value)
+		{
+			label.Markup = formatter(value);
+		}
+	}
 
     internal abstract class ColorBinding : Binding
     {
@@ -214,13 +234,21 @@ namespace GtkApplication.Pages
             }));
         }
 
-        public void BindLabelText(Label label, string propName = null)
+		public void BindLabelText(Label label, string propName = null, Func<object, string> formatter = null)
         {
             propName = propName ?? label.Name;
-            var binding = new LabelTextBinding(label, propName);
+            var binding = new LabelTextBinding(label, propName, formatter);
             bindings.Add(binding);
             UpdateBinding(binding);
         }
+
+		public void BindLabelMarkup(Label label, string propName = null, Func<object, string> formatter = null)
+		{
+			propName = propName ?? label.Name;
+			var binding = new LabelMarkupBinding(label, propName, formatter);
+			bindings.Add(binding);
+			UpdateBinding(binding);
+		}
 
         public void BindEventBoxBgColor(EventBox box, string propName, Dictionary<string, Gdk.Color> colorMap)
         {

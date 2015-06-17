@@ -40,6 +40,8 @@ namespace GtkApplication
 			style.TextBox.Apply(label_gps_metrics_caption, eventbox_gps_metrics_caption);
 			style.TextBox.Apply(label_gps_metrics, eventbox_gps_metrics);
 
+			style.TextBox.Apply(label_time, eventbox_time);
+
             binder = new ModelBinder(model, logger);
 
 			InitializeButton(box_Cancel, style.CancelButton, ModelNames.ButtonCancel, TextAligment.CenterMiddle);
@@ -53,7 +55,7 @@ namespace GtkApplication
 			InitializeButton(box_F7, style.CommonButton, ModelNames.ButtonF7, TextAligment.CenterMiddle);
 			InitializeButton(box_F8, style.CommonButton, ModelNames.ButtonF8, TextAligment.CenterMiddle);
 
-			
+			//label_time.Markup = "<span size='38000'>big text</span>"+Environment.NewLine+"<span size='18000'>big text</span>";
 //			binder.BindFlatButtonLabel(bF1, "nav_btn_caption", "F1");
 //            binder.BindFlatButtonClick(bF1, "nav");
 //
@@ -61,6 +63,26 @@ namespace GtkApplication
 //            binder.BindFlatButtonClick(bF2, "cam");
 
             binder.BindMetrics(UpdateMetrics, "metrics");
+
+			binder.BindLabelMarkup(label_time, "time", new Func<object, string>(t =>
+			{
+				if (t != null || t is DateTime)
+				{
+					var time = (DateTime)t;
+					return string.Format("<span size='38000'>{0}</span>{1}<span size='18000'>{2}</span>", time.ToString("T"), Environment.NewLine, time.ToShortDateString());
+				}
+				else
+				{
+					return string.Empty;
+				}
+			}));
+
+			binder.BindEventBoxBgColor(eventbox_time, "time_valid", 
+				new System.Collections.Generic.Dictionary<string, Gdk.Color> () 
+			{ 
+				{ "0", new Gdk.Color(255,0,0) },
+				{ "1", style.Window.Bg }
+			});
 		}
 
 		private void InitializeButton(EventBox box, LookAndFeel lf, string buttonName, TextAligment align)
