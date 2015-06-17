@@ -9,6 +9,7 @@ namespace HostController
 	{
         private GPSD.Net.GPSD gpsd;
 
+        private Configuration config;
         private IUIController uiController;
         private IInputController inputController;
         private IArduinoController arduController;
@@ -17,8 +18,10 @@ namespace HostController
 
         public IConfig Config
         {
-            get;
-            private set;
+            get
+            {
+                return config;
+            }
         }
 
         public ILogger Logger
@@ -42,7 +45,10 @@ namespace HostController
 
         public void Run()
         {
-            Config = new Configuration();
+            config = new Configuration();
+
+            config.IsSystemTimeValid = config.GetBool(Configuration.Names.SystemTimeValidByDefault);
+
             CreateLogger();
             RunDispatcher();
             Shutdown();
@@ -87,9 +93,9 @@ namespace HostController
             arduController.RegisterFrameAcceptor(inputController);
 
             var gpsCtrl = new GPSController.GPSController(Dispatcher, Logger);
+            
             arduController.RegisterFrameAcceptor(gpsCtrl);
             gpsController = gpsCtrl;
-
             gpsd = new GPSD.Net.GPSD(gpsController, Config, Logger);
             gpsd.Start();
 
@@ -97,11 +103,24 @@ namespace HostController
 
             uiController = new UIController.UIController(Config.GetString(Configuration.Names.UIHostAssemblyName), Config.GetString(Configuration.Names.UIHostClass), this);
             uiController.ShowMainPage();
+
+            gpsCtrl.GPRMCReseived += CheckSystemTime;
+        }
+
+        private void CheckSystemTime(Interfaces.GPS.GPRMC gprmc)
+        {
+            if (gprmc.Active && (config.IsSystemTimeValid = new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(gprmc.Time)))
+            {
+                gpsController.GPRMCReseived -= CheckSystemTime;
+                Logger.Log(this, "SystemTimeCorrector has been disconnected.", LogLevels.Info);
+            }
         }
 
         private void Shutdown()
         {
             Logger.Log(this, "Begin shutdown", LogLevels.Info);
+
+            gpsController.GPRMCReseived -= CheckSystemTime;
 
             (Config as Configuration).Dispose();
 

@@ -25,9 +25,22 @@ namespace HostController
 
             public static readonly string LogLevel = "LogLevel";
             public static readonly string LoggedClasses = "LoggedClasses";
+
+            public static readonly string SystemTimeMinDifference = "SystemTimeMinDifference";
+            public static readonly string SystemTimeSetCommand = "SystemTimeSetCommand";
+            public static readonly string SystemTimeValidByDefault = "SystemTimeValidByDefault";
         }
 
         private readonly System.Configuration.Configuration cfg;
+
+        #region SESSION CONFIG
+        public bool IsSystemTimeValid
+        {
+            get;
+            set;
+        }
+
+        #endregion
 
         public Configuration()
         {

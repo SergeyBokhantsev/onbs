@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
-    public interface IConfig
+    public interface ISessionConfig
+    {
+        bool IsSystemTimeValid { get; }
+    }
+
+    public interface IConfig : ISessionConfig
     {
         string GetString(string name);
         int GetInt(string name);
