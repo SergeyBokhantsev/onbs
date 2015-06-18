@@ -49,6 +49,10 @@ namespace HostController
 
             config.IsSystemTimeValid = config.GetBool(Configuration.Names.SystemTimeValidByDefault);
 
+			if (DateTime.Now.Year >= 2015)
+				config.IsSystemTimeValid = true;
+
+
             CreateLogger();
             RunDispatcher();
             Shutdown();

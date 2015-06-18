@@ -1,9 +1,11 @@
 ﻿<Properties StartupItem="HostController\HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="UIController/Models/NavigationAppPage.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/App.config">
     <Files>
-      <File FileName="Interfaces/IAutomationController.cs" Line="15" Column="5" />
-      <File FileName="UIController/Models/NavigationAppPage.cs" Line="64" Column="14" />
+      <File FileName="UIController/Models/NavigationAppPage.cs" Line="58" Column="1" />
+      <File FileName="UIController/Models/ConfigPages/CommonConfigPage.cs" Line="41" Column="37" />
+      <File FileName="Interfaces/UI/IPageModel.cs" Line="39" Column="51" />
+      <File FileName="HostController/App.config" Line="12" Column="43" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

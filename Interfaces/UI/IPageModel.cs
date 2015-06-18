@@ -35,8 +35,8 @@ namespace Interfaces.UI
 
 	public static class ModelNames
     {
-		public const string ButtonAccept = "ACCEPT";
-        public const string ButtonCancel = "CANCEL";
+		public const string ButtonAccept = "Accept";
+        public const string ButtonCancel = "Cancel";
         public const string ButtonF1 = "F1";
         public const string ButtonF2 = "F2";
         public const string ButtonF3 = "F3";
