@@ -31,7 +31,9 @@ namespace HostController
 
             this.logger = logger;
            
-            new System.Threading.Thread(() => Monitor(config)).Start();
+            var t = new System.Threading.Thread(() => Monitor(config));
+			t.IsBackground = true;
+			t.Start ();
         }
 
         private void Monitor(IConfig config)

@@ -53,7 +53,7 @@ namespace HostController
 
         public void Save()
         {
-            cfg.Save(ConfigurationSaveMode.Modified);
+            cfg.Save(ConfigurationSaveMode.Full);
         }
 
         public void Dispose()
