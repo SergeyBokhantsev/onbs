@@ -101,10 +101,8 @@ namespace UIController.Models
                     {
                         if (args.State == ButtonStates.Press)
                         {
-                            var uiController = hostController.GetController<IUIController>();
-                            var runner = hostController.ProcessRunnerFactory.Create(cameraAppKey);
-                            var page = new ExternalApplicationPage(typeof(ExternalApplicationPage).Name, runner, hostController.Dispatcher, hostController.Logger, uiController);
-                            uiController.ShowPage(page);
+                            var page = new WebCamPage(hostController, cameraAppKey);
+                            hostController.GetController<IUIController>().ShowPage(page);
                             page.Run();
                         }
                     }

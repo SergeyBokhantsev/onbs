@@ -35,7 +35,7 @@ namespace UIController.Models
             dispatcher.Invoke(null, null, new EventHandler((s, e) => ui.ShowMainPage()));
         }
 
-        public void Run()
+        public virtual void Run()
         {
             try
             {
