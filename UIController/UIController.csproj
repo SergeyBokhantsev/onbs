@@ -45,6 +45,7 @@
     <Compile Include="Models\MainPage.cs" />
     <Compile Include="Models\ModelBase.cs" />
     <Compile Include="Models\NavigationAppPage.cs" />
+    <Compile Include="Models\ConfigPages\ShutdownPage.cs" />
     <Compile Include="UIController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

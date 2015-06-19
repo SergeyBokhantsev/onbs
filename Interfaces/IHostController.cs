@@ -12,6 +12,6 @@ namespace Interfaces
         IDispatcher Dispatcher { get ; }
         IConfig Config { get; }
         IProcessRunnerFactory ProcessRunnerFactory { get; }
-        T GetController<T>() where T : IController;
+        T GetController<T>() where T : class, IController;
     }
 }

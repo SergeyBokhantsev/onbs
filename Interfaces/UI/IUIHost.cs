@@ -10,5 +10,6 @@ namespace Interfaces.UI
     {
         void Run();
         void ShowPage(IPageModel model);
+        void Shutdown();
     }
 }

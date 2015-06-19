@@ -10,7 +10,7 @@ namespace HostController
         private GPSD.Net.GPSD gpsd;
 
         private Configuration config;
-        private IUIController uiController;
+        private UIController.UIController uiController;
         private IInputController inputController;
         private IArduinoController arduController;
         private IGPSController gpsController;
@@ -47,29 +47,29 @@ namespace HostController
         {
             config = new Configuration();
 
-            config.IsSystemTimeValid = config.GetBool(Configuration.Names.SystemTimeValidByDefault);
+            config.IsSystemTimeValid = config.GetBool(ConfigNames.SystemTimeValidByDefault);
 
 			if (DateTime.Now.Year >= 2015)
 				config.IsSystemTimeValid = true;
-
 
             CreateLogger();
             RunDispatcher();
             Shutdown();
         }
 
-        public T GetController<T>() where T : IController
+        public T GetController<T>() 
+            where T : class, IController
         {
             if (typeof(T).Equals(typeof(IUIController)))
-                return (T)uiController;
+                return uiController as T;
             else if (typeof(T).Equals(typeof(IInputController)))
-                return (T)inputController;
+                return inputController as T;
             else if (typeof(T).Equals(typeof(IArduinoController)))
-                return (T)arduController;
+                return arduController as T;
             else if (typeof(T).Equals(typeof(IGPSController)))
-                return (T)gpsController;
+                return gpsController as T;
             else if (typeof(T).Equals(typeof(IAutomationController)))
-                return (T)automationController;
+                return automationController as T;
             else
                 throw new NotImplementedException(typeof(T).ToString());
         }
@@ -91,7 +91,7 @@ namespace HostController
         {
             inputController = new InputController.InputController(Logger);
 
-            var useFakeArduPort = Config.GetBool(Configuration.Names.ArduinoPortFake);
+            var useFakeArduPort = Config.GetBool(ConfigNames.ArduinoPortFake);
             var arduPort = useFakeArduPort ? new MockArduPort() as IPort : new SerialArduPort(Logger, Config) as IPort;
             arduController = new ArduinoController.ArduinoController(arduPort, Dispatcher, Logger);
             arduController.RegisterFrameAcceptor(inputController);
@@ -105,7 +105,7 @@ namespace HostController
 
             automationController = new AutomationController.AutomationController(this);
 
-            uiController = new UIController.UIController(Config.GetString(Configuration.Names.UIHostAssemblyName), Config.GetString(Configuration.Names.UIHostClass), this);
+            uiController = new UIController.UIController(Config.GetString(ConfigNames.UIHostAssemblyName), Config.GetString(ConfigNames.UIHostClass), this);
             uiController.ShowMainPage();
 
             gpsCtrl.GPRMCReseived += CheckSystemTime;
@@ -125,6 +125,8 @@ namespace HostController
             Logger.Log(this, "Begin shutdown", LogLevels.Info);
 
             gpsController.GPRMCReseived -= CheckSystemTime;
+
+            uiController.Shutdown();
 
             (Config as Configuration).Dispose();
 

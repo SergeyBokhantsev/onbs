@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.Input;
-using System.Threading;
+using System.Timers;
 
 namespace UIController.Models
 {
@@ -29,17 +29,21 @@ namespace UIController.Models
 
             SubscribeMetricsProviders();
 
-            timer = new Timer(TimerCallback, null, 500, 1000);
-
             SetProperty(ModelNames.ButtonF1Label, "Navigation");
             SetProperty(ModelNames.ButtonF2Label, "Camera");
 			SetProperty (ModelNames.ButtonF3Label, "Set time test");
 			SetProperty(ModelNames.ButtonF8Label, "Configuration");
+            SetProperty(ModelNames.ButtonCancelLabel, "Power");
+
 			SetProperty("time_valid", "0");
 			SetProperty("time", null);
+
+            timer = new Timer(1000);
+            timer.Elapsed += TimerTick;
+            timer.Start();
         }
 
-        private void TimerCallback(object state)
+        private void TimerTick(object sender, ElapsedEventArgs e)
         {
             SetProperty("time", DateTime.Now);
             SetProperty("time_valid", hostController.Config.IsSystemTimeValid ? "1" : "0");
@@ -66,6 +70,7 @@ namespace UIController.Models
         void MainPageDisposing(object sender, EventArgs e)
         {
             UnsubscribeMetricsProviders();
+            timer.Stop();
         }
 
         private void UnsubscribeMetricsProviders()
@@ -121,6 +126,15 @@ namespace UIController.Models
                         if (args.State == ButtonStates.Press)
                         {
                             hostController.GetController<IUIController>().ShowPage(new Models.ConfigPages.CommonConfigPage(hostController));
+                        }
+                    }
+                    break;
+
+                case ModelNames.ButtonCancel:
+                    {
+                        if (args.State == ButtonStates.Press)
+                        {
+                            hostController.GetController<IUIController>().ShowPage(new Models.ConfigPages.ShutdownPage(hostController));
                         }
                     }
                     break;

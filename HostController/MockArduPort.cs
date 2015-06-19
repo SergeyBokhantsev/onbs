@@ -42,7 +42,9 @@ namespace HostController
 
             fakeNmea = System.IO.File.ReadAllText("./Data/fake_nmea.txt");
 
-            new Thread(() => SetData()).Start();
+            var t = new Thread(() => SetData());
+            t.IsBackground = true;
+            t.Start();
         }
 
         private void SetData()

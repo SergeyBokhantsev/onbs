@@ -128,5 +128,10 @@ namespace GtkApplication
         {
             Application.Invoke(null, new ShowPageEventArgs(model), ShowPage);
         }
+
+        public void Shutdown()
+        {
+            Application.Quit();
+        }
     }
 }

@@ -15,23 +15,24 @@ namespace UIController
 {
     public class UIController : IUIController
     {
-        private ManualResetEvent hostWaiter = new ManualResetEvent(false);
+        private readonly string uiHostAssemblyPath;
+        private readonly string uiHostClassName;
+
+        private AutoResetEvent hostWaiter = new AutoResetEvent(false);
         private IUIHost uiHost;
         private IPageModel current;
         private readonly IHostController hostController;
 
+        private bool shutdowning;
+
         public UIController(string uiHostAssemblyPath, string uiHostClassName, IHostController hostController)
         {
+            this.uiHostAssemblyPath = uiHostAssemblyPath;
+            this.uiHostClassName = uiHostClassName;
             this.hostController = hostController;
 
-            var uit = new Thread(() => UIThread(uiHostAssemblyPath, uiHostClassName, hostController.Logger));
-            uit.IsBackground = true;
-            uit.Name = "UI";
-            uit.Start();
+            StartUIThread();
             
-            if (!hostWaiter.WaitOne(10000) || uiHost == null)
-                throw new Exception("Unable to start UI host.");
-
             hostController.GetController<IInputController>().ButtonPressed += ButtonPressed;
         }
 
@@ -46,6 +47,17 @@ namespace UIController
             }
         }
 
+        private void StartUIThread()
+        {
+            var uit = new Thread(() => UIThread(uiHostAssemblyPath, uiHostClassName, hostController.Logger));
+            uit.IsBackground = true;
+            uit.Name = "UI";
+            uit.Start();
+
+            if (!hostWaiter.WaitOne(10000) || uiHost == null)
+                throw new Exception("Unable to start UI host.");
+        }
+
         private void UIThread(string uiHostAssemblyPath, string uiHostClassName, ILogger logger)
         {
             var assembly = Assembly.LoadFrom(uiHostAssemblyPath);
@@ -55,6 +67,13 @@ namespace UIController
             hostWaiter.Set();
             uiHost.Run();
             logger.Log(this, "UI Host has exited", LogLevels.Info);
+
+            if (!shutdowning)
+            {
+                logger.Log(this, "Restarting UI Host...", LogLevels.Info);
+                StartUIThread();
+                ShowMainPage();
+            }
         }
 
         public void ShowMainPage()
@@ -64,12 +83,28 @@ namespace UIController
 
         public void ShowPage(IPageModel model)
         {
+            AssertHost();
+
             if (current != null)
                 current.Dispose();
 
             current = model;
 
             uiHost.ShowPage(current);
+        }
+
+        public void Shutdown()
+        {
+            AssertHost();
+            shutdowning = true;
+            uiHost.Shutdown();
+            uiHost = null;
+        }
+
+        private void AssertHost()
+        {
+            if (shutdowning || uiHost == null)
+                throw new Exception("UI host was destroyed");
         }
     }
 }

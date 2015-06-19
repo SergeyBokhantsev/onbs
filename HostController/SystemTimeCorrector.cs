@@ -12,19 +12,29 @@ namespace HostController
     {
         private readonly double minTimeDifference;
         private readonly string setTimeCommand;
+        private readonly string setTimeArgs;
+        private readonly string setTimeSetFormat;
         private readonly IProcessRunnerFactory processRunnerFactory;
         private readonly ILogger logger;
 
-        private readonly object locker = new object();
-        private bool timeValid;
+        private static readonly object locker = new object();
+        private static bool timeValid;
 
         public SystemTimeCorrector(IConfig config, IProcessRunnerFactory processRunnerFactory, ILogger logger)
         {
+            if (processRunnerFactory == null || logger == null)
+                throw new ArgumentNullException("processRunnerFactory OR logger");
+
             this.processRunnerFactory = processRunnerFactory;
             this.logger = logger;
 
-            minTimeDifference = config.GetDouble(Configuration.Names.SystemTimeMinDifference);
-            setTimeCommand = config.GetString(Configuration.Names.SystemTimeSetCommand);
+            minTimeDifference = config.GetDouble(ConfigNames.SystemTimeMinDifference);
+            setTimeCommand = config.GetString(ConfigNames.SystemTimeSetCommand);
+            setTimeArgs = config.GetString(ConfigNames.SystemTimeSetArgs);
+            setTimeSetFormat = config.GetString(ConfigNames.SystemTimeSetFormat);
+
+            if (string.IsNullOrEmpty(setTimeCommand) || string.IsNullOrEmpty(setTimeArgs) || string.IsNullOrEmpty(setTimeSetFormat))
+                throw new ArgumentNullException("setTimeCommand OR setTimeArgs OR setTimeSetFormat");
         }
 
         public bool IsSystemTimeValid(DateTime validTime)
@@ -43,11 +53,12 @@ namespace HostController
                 {
                     logger.Log(this, "Updating system time...", LogLevels.Info);
 
-                    var pr = processRunnerFactory.Create(setTimeCommand, validTime.ToString("O"), true, false);
+                    var args = string.Format(setTimeArgs, validTime.ToString(setTimeSetFormat));
+                    var pr = processRunnerFactory.Create(setTimeCommand, args, true, false);
                     pr.Run();
 
-					timeValid = true;
-					return true;
+                    Thread.Sleep(500);
+					return false;
                 }
                 else
                 {

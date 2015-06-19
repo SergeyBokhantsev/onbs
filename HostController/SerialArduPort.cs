@@ -46,18 +46,18 @@ namespace HostController
                 {
                     if (port == null)
                     {
-                        var portEnabled = config.GetBool(Configuration.Names.ArduinoPortEnabled);
+                        var portEnabled = config.GetBool(ConfigNames.ArduinoPortEnabled);
                         if (!portEnabled)
                         {
                             logger.Log(this, "Arduino port is disabled. Exit port loop.", LogLevels.Warning);
                             return;
                         }
 
-                        var portPath = config.GetString(Configuration.Names.ArduinoPort);
-                        var speed = config.GetInt(Configuration.Names.ArduinoPortSpeed);
-                        var parity = (Parity)Enum.Parse(typeof(Parity), config.GetString(Configuration.Names.ArduinoPortParity));
-                        var databits = config.GetInt(Configuration.Names.ArduinoPortDataBits);
-                        var stopbits = (StopBits)Enum.Parse(typeof(StopBits), config.GetString(Configuration.Names.ArduinoPortStopBits));
+                        var portPath = config.GetString(ConfigNames.ArduinoPort);
+                        var speed = config.GetInt(ConfigNames.ArduinoPortSpeed);
+                        var parity = (Parity)Enum.Parse(typeof(Parity), config.GetString(ConfigNames.ArduinoPortParity));
+                        var databits = config.GetInt(ConfigNames.ArduinoPortDataBits);
+                        var stopbits = (StopBits)Enum.Parse(typeof(StopBits), config.GetString(ConfigNames.ArduinoPortStopBits));
 
                         lock (portLocker)
                         {

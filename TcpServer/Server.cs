@@ -38,7 +38,7 @@ namespace TcpServer
 
             started = true;
 
-            new Thread(() =>
+            var t = new Thread(() =>
             {
                 Thread.CurrentThread.Name = "Tcp server";
 
@@ -53,7 +53,10 @@ namespace TcpServer
                         logger.Log(this, ex);
                     }
                 }
-            }).Start();
+            });
+
+            t.IsBackground = true;
+            t.Start();
         }
 
         public void Stop()
