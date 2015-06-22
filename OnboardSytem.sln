@@ -30,6 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json", "Json\Json.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomationController", "AutomationController\AutomationController.csproj", "{85445923-F9CA-4054-B2AD-43B14791D82C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavitConfigGenerator", "NavitConfigGenerator\NavitConfigGenerator.csproj", "{34252C77-00D2-4E38-B432-274B6D6A0032}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -170,6 +172,16 @@ Global
 		{85445923-F9CA-4054-B2AD-43B14791D82C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{85445923-F9CA-4054-B2AD-43B14791D82C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{85445923-F9CA-4054-B2AD-43B14791D82C}.Release|x86.ActiveCfg = Release|Any CPU
+		{34252C77-00D2-4E38-B432-274B6D6A0032}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34252C77-00D2-4E38-B432-274B6D6A0032}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34252C77-00D2-4E38-B432-274B6D6A0032}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{34252C77-00D2-4E38-B432-274B6D6A0032}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{34252C77-00D2-4E38-B432-274B6D6A0032}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{34252C77-00D2-4E38-B432-274B6D6A0032}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34252C77-00D2-4E38-B432-274B6D6A0032}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34252C77-00D2-4E38-B432-274B6D6A0032}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{34252C77-00D2-4E38-B432-274B6D6A0032}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{34252C77-00D2-4E38-B432-274B6D6A0032}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

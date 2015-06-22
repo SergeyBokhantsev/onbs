@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1E7B884F-479A-4562-BB89-445786FEC998}</ProjectGuid>
+    <ProjectGuid>{34252C77-00D2-4E38-B432-274B6D6A0032}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UIController</RootNamespace>
-    <AssemblyName>UIController</AssemblyName>
+    <RootNamespace>NavitConfigGenerator</RootNamespace>
+    <AssemblyName>NavitConfigGenerator</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -39,23 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\ConfigPages\CommonConfigPage.cs" />
-    <Compile Include="Models\ConfigPages\ConfigGPSPage.cs" />
-    <Compile Include="Models\ConfigPages\NavitConfigPage.cs" />
-    <Compile Include="Models\ExternalApplicationPage.cs" />
-    <Compile Include="Models\MainPage.cs" />
-    <Compile Include="Models\ModelBase.cs" />
-    <Compile Include="Models\NavigationAppPage.cs" />
-    <Compile Include="Models\ConfigPages\ShutdownPage.cs" />
-    <Compile Include="Models\WebCamPage.cs" />
-    <Compile Include="UIController.cs" />
+    <Compile Include="ConfigGenerator.cs" />
+    <Compile Include="NavitConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Interfaces\Interfaces.csproj">
-      <Project>{3f066cd9-3523-4248-b37c-3378b44c426a}</Project>
-      <Name>Interfaces</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

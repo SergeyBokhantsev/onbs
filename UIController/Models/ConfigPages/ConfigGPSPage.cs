@@ -31,6 +31,8 @@ namespace UIController.Models.ConfigPages
             SetProperty(ModelNames.ButtonAcceptLabel, "Go to Common Config");
 
             SetGPSdaemonProperty();
+
+            SetProperty(ModelNames.ButtonF2Label, "Navit config");
         }
 
         protected override void DoAction(PageModelActionEventArgs args)
@@ -54,6 +56,15 @@ namespace UIController.Models.ConfigPages
                    break;
 
                case ModelNames.ButtonF1:
+                   if (args.State == ButtonStates.Press)
+                   {
+                       var enabled = config.GetBool(CfgNames.GPSDEnabled);
+                       config.Set(CfgNames.GPSDEnabled, !enabled);
+                       SetGPSdaemonProperty();
+                   }
+                   break;
+
+               case ModelNames.ButtonF2:
                    if (args.State == ButtonStates.Press)
                    {
                        var enabled = config.GetBool(CfgNames.GPSDEnabled);
