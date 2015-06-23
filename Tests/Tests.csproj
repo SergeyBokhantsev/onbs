@@ -50,12 +50,14 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Mocks\Config.cs" />
     <Compile Include="Mocks\GPSController.cs" />
     <Compile Include="Mocks\Logger.cs" />
     <Compile Include="SimpleJsonSerializerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GPSDTests.cs" />
     <Compile Include="GPSHelpers.cs" />
+    <Compile Include="NavitConfigGeneratorTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AutomationController\AutomationController.csproj">
@@ -78,6 +80,15 @@
       <Project>{2f22767d-1b1a-4293-bbe5-11c9d04aee83}</Project>
       <Name>Json</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NavitConfigGenerator\NavitConfigGenerator.csproj">
+      <Project>{34252c77-00d2-4e38-b432-274b6d6a0032}</Project>
+      <Name>NavitConfigGenerator</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Data\NavitConfig\template.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

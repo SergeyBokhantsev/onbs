@@ -26,6 +26,10 @@ namespace Interfaces
         public static readonly string UIHostAssemblyName = "UIHostAssemblyName";
         public static readonly string UIHostClass = "UIHostClass";
 
+        public static readonly string GPSLocation = "GPSLocation";
+
+        public static readonly string GPSDEnabled = "GPSDEnabled";
+
         public static readonly string ArduinoPortFake = "ArduinoPortFake";
         public static readonly string ArduinoPort = "ArduinoPort";
         public static readonly string ArduinoPortEnabled = "ArduinoPortEnabled";

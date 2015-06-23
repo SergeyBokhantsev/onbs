@@ -80,29 +80,33 @@ namespace NavitConfigGenerator
             {
                 if (line.Contains('{'))
                 {
+                    var ret = line;
+
                     if (line.Contains(Pl.Center))
-                        yield return line.Replace(Pl.Center, string.Concat(Center.Lon.Degrees.ToString(), " ", Center.Lat.Degrees.ToString()));
+                        ret = ret.Replace(Pl.Center, string.Concat(Center.Lon.Degrees.ToString(), " ", Center.Lat.Degrees.ToString()));
 
                     if (line.Contains(Pl.KeepNorthOrient))
-                        yield return line.Replace(Pl.KeepNorthOrient, KeepNorthOrient ? "0" : "-1");
+                        ret = ret.Replace(Pl.KeepNorthOrient, KeepNorthOrient ? "0" : "-1");
 
                     if (line.Contains(Pl.Autozoom))
-                        yield return line.Replace(Pl.Autozoom, Autozoom ? "1" : "0");
+                        ret = ret.Replace(Pl.Autozoom, Autozoom ? "1" : "0");
 
                     if (line.Contains(Pl.Menubar))
-                        yield return line.Replace(Pl.Menubar, Menubar ? "1" : "0");
+                        ret = ret.Replace(Pl.Menubar, Menubar ? "1" : "0");
 
                     if (line.Contains(Pl.Statusbar))
-                        yield return line.Replace(Pl.Statusbar, Statusbar ? "1" : "0");
+                        ret = ret.Replace(Pl.Statusbar, Statusbar ? "1" : "0");
 
                     if (line.Contains(Pl.Toolbar))
-                        yield return line.Replace(Pl.Toolbar, Toolbar ? "1" : "0");
+                        ret = ret.Replace(Pl.Toolbar, Toolbar ? "1" : "0");
 
                     if (line.Contains(Pl.GPSActive))
-                        yield return line.Replace(Pl.GPSActive, GPSActive ? "1" : "0");
+                        ret = ret.Replace(Pl.GPSActive, GPSActive ? "1" : "0");
 
-                    yield return line;
+                    yield return ret;
                 }
+                else
+                    yield return line;
             }
         }
     }

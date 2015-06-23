@@ -61,5 +61,10 @@ namespace HostController
             var classNameAttr = callerType.GetCustomAttributes(typeof(LogClassAttribute), true).FirstOrDefault() as LogClassAttribute;
             return classNameAttr != null ? classNameAttr.ClassName : callerType.Name;
         }
+
+        public void Flush()
+        {
+            
+        }
     }
 }

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
+    public enum HostControllerShutdownModes { Exit, Restart, Shutdown }
+
     public interface IHostController
     {
         ILogger Logger { get; }
@@ -13,5 +15,6 @@ namespace Interfaces
         IConfig Config { get; }
         IProcessRunnerFactory ProcessRunnerFactory { get; }
         T GetController<T>() where T : class, IController;
+        void Shutdown(HostControllerShutdownModes mode);
     }
 }

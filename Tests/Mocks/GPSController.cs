@@ -32,5 +32,11 @@ namespace Tests.Mocks
         }
 
         public event MetricsUpdatedEventHandler MetricsUpdated;
+
+        public Interfaces.GPS.GeoPoint Location
+        {
+            get;
+            set;
+        }
     }
 }

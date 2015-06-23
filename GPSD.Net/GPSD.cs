@@ -13,11 +13,6 @@ namespace GPSD.Net
 {
     public class GPSD
     {
-        private class CfgNames
-        {
-            public const string GPSDEnabled = "GPSDEnabled";
-        }
-
         private readonly TcpServer.Server server;
         private readonly IGPSController gps;
         private readonly ILogger logger;
@@ -45,7 +40,7 @@ namespace GPSD.Net
             {
                 CleanupInactive();
 
-                if (config.GetBool(CfgNames.GPSDEnabled))
+                if (config.GetBool(ConfigNames.GPSDEnabled))
                     clients.ForEach(c => c.SetNMEA(nmea));
             }
         }

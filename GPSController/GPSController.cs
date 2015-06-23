@@ -20,6 +20,7 @@ namespace GPSController
 
         private readonly IDispatcher dispatcher;
         private readonly ILogger logger;
+        private readonly IConfig config;
         private readonly STPCodec codec;
         private readonly NmeaParser parser;
 
@@ -27,7 +28,8 @@ namespace GPSController
         private int nmeaSentencesCount;
         private int gprmcCount;
         private GPRMC lastGprmc;
-        private LockingProperty<GeoPoint> location;
+        private LockingProperty<GeoPoint> location = new LockingProperty<GeoPoint>();
+        private bool shutdown;
 
         public GeoPoint Location
         {
@@ -42,14 +44,18 @@ namespace GPSController
             get { return STPFrame.Types.GPS; }
         }
 
-        public GPSController(IDispatcher dispatcher, ILogger logger)
+        public GPSController(IConfig config, IDispatcher dispatcher, ILogger logger)
         {
+            if (config == null)
+                throw new ArgumentNullException("config");
+
             if (dispatcher == null)
                 throw new ArgumentNullException("dispatcher");
 
             if (logger == null)
                 throw new ArgumentNullException("logger");
 
+            this.config = config;
             this.dispatcher = dispatcher;
             this.logger = logger;
 
@@ -59,6 +65,8 @@ namespace GPSController
                 STPFrame.Types.GPS);
 
             lastGprmc = new GPRMC();
+
+            ReadLocation();
 
             parser = new NmeaParser();
             parser.GPRMC += parser_GPRMC;
@@ -76,13 +84,13 @@ namespace GPSController
                 location.Value = obj.Location;
 
             var handler = GPRMCReseived;
-            if (handler != null)
+            if (!shutdown && handler != null)
                 handler(obj);
         }
 
         public void AcceptFrames(IEnumerable<STPFrame> frames)
         {
-            if (frames != null && frames.Any())
+            if (!shutdown && frames != null && frames.Any())
             {
                 Interlocked.Increment(ref gpsFramesCount);
 
@@ -132,6 +140,39 @@ namespace GPSController
 
                 dispatcher.Invoke(null, null, new EventHandler((s, e) => handler(this, metrics)));
             }
+        }
+
+        private void ReadLocation()
+        {
+            try
+            {
+                var items = config.GetString(ConfigNames.GPSLocation).Split(';');
+                location.Value = new GeoPoint(double.Parse(items[0]), double.Parse(items[1]));
+            }
+            catch (Exception ex)
+            {
+                logger.Log(this, string.Concat("Unable to read GPS Location from configuration: ", ex.Message), LogLevels.Warning);
+                location.Value = new GeoPoint(50.5, 30.5);
+            }
+        }
+
+        private void SaveLocation()
+        {
+            var loc = location.Value;
+            config.Set<string>(ConfigNames.GPSLocation, string.Concat(loc.Lon.Degrees.ToString(), ";", loc.Lat.Degrees.ToString()));
+        }
+
+        public void Shutdown()
+        {
+            shutdown = true;
+
+            GPRMCReseived = null;
+            NMEAReceived = null;
+            MetricsUpdated = null;
+
+            SaveLocation();
+
+            logger.Log(this, "GPS Controller shutdown", LogLevels.Info);
         }
     }
 }

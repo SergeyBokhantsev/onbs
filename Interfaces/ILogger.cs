@@ -21,6 +21,7 @@ namespace Interfaces
         LogLevels Level { get; }
         void Log(object caller, string message, LogLevels level);
         void Log(object caller, Exception ex);
+        void Flush();
     }
 
     public class LogClassAttribute : Attribute

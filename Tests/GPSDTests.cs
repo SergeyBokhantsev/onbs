@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests
@@ -16,7 +17,17 @@ namespace Tests
             //INIT
             var logger = new Mocks.Logger();
             var gps = new Mocks.GPSController();
-            var gpsd = new GPSD.Net.GPSD(gps, logger);
+            var config = CreateConfig();
+            var gpsd = new GPSD.Net.GPSD(gps, config, logger);
+        }
+
+        private IConfig CreateConfig()
+        {
+            var cfg = new Mocks.Config();
+
+            cfg.Set<bool>(Interfaces.ConfigNames.GPSDEnabled, true);
+
+            return cfg;
         }
 
         [TestMethod]
@@ -25,7 +36,8 @@ namespace Tests
             //INIT
             var logger = new Mocks.Logger();
             var gps = new Mocks.GPSController();
-            var gpsd = new GPSD.Net.GPSD(gps, logger);
+            var config = CreateConfig();
+            var gpsd = new GPSD.Net.GPSD(gps, config, logger);
             var tcpClient = new TcpClient();
 
             //ACT

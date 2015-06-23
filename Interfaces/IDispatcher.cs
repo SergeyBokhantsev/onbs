@@ -9,7 +9,6 @@ namespace Interfaces
     public interface IDispatcher
     {
         void Run();
-        void Exit();
         bool Check();
         void Invoke(object sender, EventArgs args, EventHandler handler);
     }

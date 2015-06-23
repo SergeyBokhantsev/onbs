@@ -8,7 +8,7 @@ using Interfaces;
 
 namespace HostController
 {
-    public class Configuration : IConfig, IDisposable
+    public class Configuration : IConfig
     {        
         private readonly System.Configuration.Configuration cfg;
 
@@ -54,11 +54,6 @@ namespace HostController
         public void Save()
         {
             cfg.Save(ConfigurationSaveMode.Full);
-        }
-
-        public void Dispose()
-        {
-            Save();
         }
     }
 }

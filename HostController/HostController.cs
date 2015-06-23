@@ -13,7 +13,7 @@ namespace HostController
         private UIController.UIController uiController;
         private IInputController inputController;
         private IArduinoController arduController;
-        private IGPSController gpsController;
+        private GPSController.GPSController gpsController;
         private IAutomationController automationController;
 
         public IConfig Config
@@ -54,7 +54,6 @@ namespace HostController
 
             CreateLogger();
             RunDispatcher();
-            Shutdown();
         }
 
         public T GetController<T>() 
@@ -96,7 +95,7 @@ namespace HostController
             arduController = new ArduinoController.ArduinoController(arduPort, Dispatcher, Logger);
             arduController.RegisterFrameAcceptor(inputController);
 
-            var gpsCtrl = new GPSController.GPSController(Dispatcher, Logger);
+            var gpsCtrl = new GPSController.GPSController(Config, Dispatcher, Logger);
             
             arduController.RegisterFrameAcceptor(gpsCtrl);
             gpsController = gpsCtrl;
@@ -120,17 +119,40 @@ namespace HostController
             }
         }
 
-        private void Shutdown()
+        public void Shutdown(HostControllerShutdownModes mode)
         {
-            Logger.Log(this, "Begin shutdown", LogLevels.Info);
+            Logger.Log(this, string.Format("Begin shutdown in {0} mode", mode), LogLevels.Info);
 
-            gpsController.GPRMCReseived -= CheckSystemTime;
+            gpsController.Shutdown();
 
             uiController.Shutdown();
 
-            (Config as Configuration).Dispose();
+            ((Dispatcher)Dispatcher).Exit();
+
+            Config.Save();
 
             Logger.Log(this, "--- Logging finished ---", LogLevels.Info);
+
+            Logger.Flush();
+
+            switch (mode)
+            {
+                case HostControllerShutdownModes.Restart:
+                    {
+                        var command = Config.GetString(ConfigNames.SystemRestartCommand);
+                        var arg = Config.GetString(ConfigNames.SystemRestartArg);
+                        ProcessRunnerFactory.Create(command, arg, true, false).Run();
+                    }
+                    break;
+
+                case HostControllerShutdownModes.Shutdown:
+                    {
+                        var command = Config.GetString(ConfigNames.SystemShutdownCommand);
+                        var arg = Config.GetString(ConfigNames.SystemShutdownArg);
+                        ProcessRunnerFactory.Create(command, arg, true, false).Run();
+                    }
+                    break;
+            }
         }
 
         public IProcessRunner Create(string appKey)

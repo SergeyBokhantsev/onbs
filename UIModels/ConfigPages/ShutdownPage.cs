@@ -33,27 +33,21 @@ namespace UIModels.ConfigPages
                 case ModelNames.ButtonF1:
                     if (args.State == ButtonStates.Press)
                     {
-                        hostController.Dispatcher.Exit();
+                        hostController.Shutdown(HostControllerShutdownModes.Exit);
                     }
                     break;
 
                 case ModelNames.ButtonF2:
                     if (args.State == ButtonStates.Press)
                     {
-                        var command = hostController.Config.GetString(ConfigNames.SystemRestartCommand);
-                        var arg = hostController.Config.GetString(ConfigNames.SystemRestartArg);
-
-                        hostController.ProcessRunnerFactory.Create(command, arg, true, false).Run();
+                        hostController.Shutdown(HostControllerShutdownModes.Restart);
                     }
                     break;
 
                 case ModelNames.ButtonF3:
                     if (args.State == ButtonStates.Press)
                     {
-                        var command = hostController.Config.GetString(ConfigNames.SystemShutdownCommand);
-                        var arg = hostController.Config.GetString(ConfigNames.SystemShutdownArg);
-
-                        hostController.ProcessRunnerFactory.Create(command, arg, true, false).Run();
+                        hostController.Shutdown(HostControllerShutdownModes.Shutdown);
                     }
                     break;
 
