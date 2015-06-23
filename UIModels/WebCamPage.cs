@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace UIController.Models
+namespace UIModels
 {
     public class WebCamPage : ExternalApplicationPage
     {
@@ -19,7 +19,6 @@ namespace UIController.Models
         private const string WebcamControlColor = "WebcamControlColor";
         private const string WebcamControlContrast = "WebcamControlContrast";
 		private const string WebcamControlBright = "WebcamControlBright";
-
 
         private readonly IHostController hc;
         private readonly object locker = new object();

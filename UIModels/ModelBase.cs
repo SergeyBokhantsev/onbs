@@ -7,7 +7,7 @@ using Interfaces;
 using Interfaces.Input;
 using Interfaces.UI;
 
-namespace UIController.Models
+namespace UIModels
 {
     public abstract class ModelBase : IPageModel
     {

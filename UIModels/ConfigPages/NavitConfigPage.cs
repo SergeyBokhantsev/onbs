@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Interfaces;
 
-namespace UIController.Models.ConfigPages
+namespace UIModels.ConfigPages
 {
     public class NavitConfigPage : ModelBase
     {

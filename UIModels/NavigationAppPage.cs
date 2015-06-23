@@ -7,20 +7,54 @@ using System.Text;
 using System.Threading.Tasks;
 using Interfaces.Input;
 
-namespace UIController.Models
+namespace UIModels
 {
     public class NavigationAppPage : ExternalApplicationPage
     {
         private readonly IAutomationController automation;
 
-        public NavigationAppPage(IHostController hostController, string navAppKey)
+        public NavigationAppPage(IHostController hostController)
             :base(typeof(ExternalApplicationPage).Name, 
-            hostController.ProcessRunnerFactory.Create(navAppKey),
+            CreateProcessRunner(hostController),
             hostController.Dispatcher,
             hostController.Logger,
             hostController.GetController<IUIController>())
         {
             automation = hostController.GetController<IAutomationController>();
+        }
+
+        private static IProcessRunner CreateProcessRunner(IHostController hc)
+        {
+            try
+            {
+                var config = hc.Config;
+
+                var templatePath = config.GetString(ConfigNames.NavitConfigTemplatePath);
+                var outFile = config.GetString(ConfigNames.NavitConfigPath);
+
+                var navitConfig = new NavitConfigGenerator.NavitConfiguration();
+
+                navitConfig.KeepNorthOrient = config.GetBool(ConfigNames.NavitKeepNorth);
+                navitConfig.Autozoom = config.GetBool(ConfigNames.NavitAutozoom);
+                navitConfig.GPSActive = config.GetBool(ConfigNames.NavitGPSActive);
+                navitConfig.Menubar = config.GetBool(ConfigNames.NavitMenubar);
+                navitConfig.Statusbar = config.GetBool(ConfigNames.NavitStatusbar);
+                navitConfig.Toolbar = config.GetBool(ConfigNames.NavitToolbar);
+                navitConfig.Center = hc.GetController<IGPSController>().Location;
+
+                navitConfig.WriteConfig(templatePath, outFile);
+
+                var exe = config.GetString(ConfigNames.NavitExe);
+                var args = string.Format(config.GetString(ConfigNames.NavitArgs), outFile);
+
+                return hc.ProcessRunnerFactory.Create(exe, args, false, true);
+            }
+            catch (Exception ex)
+            {
+                hc.Logger.Log(hc, string.Concat("Cannot create Navit runner: ", ex.Message), LogLevels.Error);
+                hc.Logger.Log(hc, ex);
+                return null;
+            }
         }
 
         protected override void DoAction(PageModelActionEventArgs args)

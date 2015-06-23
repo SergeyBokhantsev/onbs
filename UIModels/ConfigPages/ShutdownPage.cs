@@ -7,7 +7,7 @@ using Interfaces;
 using Interfaces.Input;
 using Interfaces.UI;
 
-namespace UIController.Models.ConfigPages
+namespace UIModels.ConfigPages
 {
     public class ShutdownPage : ModelBase
     {
@@ -60,7 +60,7 @@ namespace UIController.Models.ConfigPages
                 case ModelNames.ButtonCancel:
                     if (args.State == ButtonStates.Press)
                     {
-                        hostController.GetController<IUIController>().ShowMainPage();
+                        hostController.GetController<IUIController>().ShowDefaultPage();
                     }
                     break;
             }

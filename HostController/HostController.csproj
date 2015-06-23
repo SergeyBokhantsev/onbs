@@ -78,6 +78,10 @@
       <Project>{1E7B884F-479A-4562-BB89-445786FEC998}</Project>
       <Name>UIController</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UIModels\UIModels.csproj">
+      <Project>{8ddd45ef-f719-48bd-93c0-27eb6c44df3f}</Project>
+      <Name>UIModels</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\fake_nmea.txt">

@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1E7B884F-479A-4562-BB89-445786FEC998}</ProjectGuid>
+    <ProjectGuid>{8DDD45EF-F719-48BD-93C0-27EB6C44DF3F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UIController</RootNamespace>
-    <AssemblyName>UIController</AssemblyName>
+    <RootNamespace>UIModels</RootNamespace>
+    <AssemblyName>UIModels</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -39,13 +39,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UIController.cs" />
+    <Compile Include="ConfigPages\CommonConfigPage.cs" />
+    <Compile Include="ConfigPages\ConfigGPSPage.cs" />
+    <Compile Include="ConfigPages\NavitConfigPage.cs" />
+    <Compile Include="ConfigPages\ShutdownPage.cs" />
+    <Compile Include="ExternalApplicationPage.cs" />
+    <Compile Include="MainPage.cs" />
+    <Compile Include="ModelBase.cs" />
+    <Compile Include="NavigationAppPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebCamPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
       <Project>{3f066cd9-3523-4248-b37c-3378b44c426a}</Project>
       <Name>Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NavitConfigGenerator\NavitConfigGenerator.csproj">
+      <Project>{34252c77-00d2-4e38-b432-274b6d6a0032}</Project>
+      <Name>NavitConfigGenerator</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

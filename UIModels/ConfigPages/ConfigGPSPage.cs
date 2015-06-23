@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UIController.Models.ConfigPages
+namespace UIModels.ConfigPages
 {
     public class ConfigGPSPage : ModelBase
     {
@@ -43,7 +43,7 @@ namespace UIController.Models.ConfigPages
                    if (args.State == ButtonStates.Press)
                    {
                        hostController.Config.Save();
-                       hostController.GetController<IUIController>().ShowMainPage();
+                       hostController.GetController<IUIController>().ShowDefaultPage();
                    }
                    break;
 

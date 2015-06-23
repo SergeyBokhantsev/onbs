@@ -11,5 +11,7 @@ namespace Interfaces
     {
         event Action<GPRMC> GPRMCReseived;
         event Action<string> NMEAReceived;
+
+        GeoPoint Location {get;}
     }
 }

@@ -47,5 +47,16 @@ namespace Interfaces
         public static readonly string SystemShutdownArg = "SystemShutdownArg";
         public static readonly string SystemRestartCommand = "SystemRestartCommand";
         public static readonly string SystemRestartArg = "SystemRestartArg";
+
+        public static readonly string NavitExe = "navit_exe";
+        public static readonly string NavitArgs = "navit_args";
+        public static readonly string NavitConfigTemplatePath = "navit_config_template";
+        public static readonly string NavitConfigPath = "navit_config_outfile";
+        public static readonly string NavitKeepNorth = "navit_keep_north";
+        public static readonly string NavitAutozoom = "navit_autozoom";
+        public static readonly string NavitMenubar = "navit_menubar";
+        public static readonly string NavitToolbar = "navit_toolbar";
+        public static readonly string NavitStatusbar = "navit_statusbar";
+        public static readonly string NavitGPSActive = "navit_gps_active";
     }
 }

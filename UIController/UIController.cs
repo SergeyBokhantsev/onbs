@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using UIController.Models;
 
 namespace UIController
 {
@@ -22,14 +21,16 @@ namespace UIController
         private IUIHost uiHost;
         private IPageModel current;
         private readonly IHostController hostController;
+        private readonly Func<IPageModel> startPageConstructor;
 
         private bool shutdowning;
 
-        public UIController(string uiHostAssemblyPath, string uiHostClassName, IHostController hostController)
+        public UIController(string uiHostAssemblyPath, string uiHostClassName, IHostController hostController, Func<IPageModel> startPageConstructor)
         {
             this.uiHostAssemblyPath = uiHostAssemblyPath;
             this.uiHostClassName = uiHostClassName;
             this.hostController = hostController;
+            this.startPageConstructor = startPageConstructor;
 
             StartUIThread();
             
@@ -72,13 +73,13 @@ namespace UIController
             {
                 logger.Log(this, "Restarting UI Host...", LogLevels.Info);
                 StartUIThread();
-                ShowMainPage();
+                ShowDefaultPage();
             }
         }
 
-        public void ShowMainPage()
+        public void ShowDefaultPage()
         {
-            ShowPage(new MainPage(hostController));
+            ShowPage(startPageConstructor());
         }
 
         public void ShowPage(IPageModel model)

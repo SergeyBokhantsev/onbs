@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Interfaces.Input;
 
-namespace UIController.Models
+namespace UIModels
 {
     public class ExternalApplicationPage : ModelBase
     {
@@ -17,9 +17,6 @@ namespace UIController.Models
 		public ExternalApplicationPage(string modelName, IProcessRunner runner, IDispatcher dispatcher, ILogger logger, IUIController ui)
             : base(modelName, dispatcher, logger)
         {
-            if (runner == null)
-                throw new ArgumentNullException("runner");
-
             this.runner = runner;
             this.ui = ui;
 
@@ -32,13 +29,16 @@ namespace UIController.Models
 
         void RunnerExited(bool unexpected)
         {
-            dispatcher.Invoke(null, null, new EventHandler((s, e) => ui.ShowMainPage()));
+            dispatcher.Invoke(null, null, new EventHandler((s, e) => ui.ShowDefaultPage()));
         }
 
         public virtual void Run()
         {
             try
             {
+                if (runner == null)
+                    throw new Exception("Runner was not provided");
+
                 runner.Run();
                 SetProperty("label_launch_info", string.Format("{0} now launched", runner.Name));
             }

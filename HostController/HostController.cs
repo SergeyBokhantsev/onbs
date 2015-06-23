@@ -105,8 +105,8 @@ namespace HostController
 
             automationController = new AutomationController.AutomationController(this);
 
-            uiController = new UIController.UIController(Config.GetString(ConfigNames.UIHostAssemblyName), Config.GetString(ConfigNames.UIHostClass), this);
-            uiController.ShowMainPage();
+            uiController = new UIController.UIController(Config.GetString(ConfigNames.UIHostAssemblyName), Config.GetString(ConfigNames.UIHostClass), this, () => new UIModels.MainPage(this));
+            uiController.ShowDefaultPage();
 
             gpsCtrl.GPRMCReseived += CheckSystemTime;
         }

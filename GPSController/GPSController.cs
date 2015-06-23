@@ -27,6 +27,15 @@ namespace GPSController
         private int nmeaSentencesCount;
         private int gprmcCount;
         private GPRMC lastGprmc;
+        private LockingProperty<GeoPoint> location;
+
+        public GeoPoint Location
+        {
+            get
+            {
+                return location.Value;
+            }
+        }
 
         public STPFrame.Types FrameType
         {
@@ -62,6 +71,9 @@ namespace GPSController
             Interlocked.Increment(ref gprmcCount);
 
             lastGprmc = obj;
+
+            if (obj.Active)
+                location.Value = obj.Location;
 
             var handler = GPRMCReseived;
             if (handler != null)

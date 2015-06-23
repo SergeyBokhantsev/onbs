@@ -8,11 +8,10 @@ using Interfaces;
 using Interfaces.Input;
 using System.Timers;
 
-namespace UIController.Models
+namespace UIModels
 {
     public class MainPage : ModelBase
     {
-        private const string navigationAppKey = "nav";
 		private const string cameraAppKey = "cam";
 
         private readonly IHostController hostController;
@@ -90,7 +89,7 @@ namespace UIController.Models
                     {
                         if (args.State == ButtonStates.Press)
                         {
-                            var page = new NavigationAppPage(hostController, navigationAppKey);
+                            var page = new NavigationAppPage(hostController);
                             hostController.GetController<IUIController>().ShowPage(page);
                             page.Run();
                         }
@@ -123,7 +122,7 @@ namespace UIController.Models
                     {
                         if (args.State == ButtonStates.Press)
                         {
-                            hostController.GetController<IUIController>().ShowPage(new Models.ConfigPages.CommonConfigPage(hostController));
+                            hostController.GetController<IUIController>().ShowPage(new ConfigPages.CommonConfigPage(hostController));
                         }
                     }
                     break;
@@ -132,7 +131,7 @@ namespace UIController.Models
                     {
                         if (args.State == ButtonStates.Press)
                         {
-                            hostController.GetController<IUIController>().ShowPage(new Models.ConfigPages.ShutdownPage(hostController));
+                            hostController.GetController<IUIController>().ShowPage(new ConfigPages.ShutdownPage(hostController));
                         }
                     }
                     break;
