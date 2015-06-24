@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
-    public enum HostControllerShutdownModes { Exit, Restart, Shutdown }
+    public enum HostControllerShutdownModes { Exit, Restart, Shutdown, UnhandledException }
 
     public interface IHostController
     {

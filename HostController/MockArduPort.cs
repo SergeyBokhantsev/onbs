@@ -71,6 +71,8 @@ namespace HostController
                     DataReceived(null, null);
 
                 Thread.Sleep(1000);
+
+                throw new Exception("fooo");
             }
         }
 

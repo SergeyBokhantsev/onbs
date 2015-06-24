@@ -40,6 +40,7 @@ namespace Interfaces
 
         public static readonly string LogLevel = "LogLevel";
         public static readonly string LoggedClasses = "LoggedClasses";
+        public static readonly string LogFolder = "LogFolder";
 
         public static readonly string SystemTimeMinDifference = "SystemTimeMinDifference";
         public static readonly string SystemTimeSetCommand = "SystemTimeSetCommand";

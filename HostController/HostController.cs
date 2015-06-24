@@ -2,11 +2,16 @@
 using System;
 using System.Threading.Tasks;
 using System.Configuration;
+using System.Reflection;
+using System.IO;
+using System.Text;
 
 namespace HostController
 {
     public class HostController : IHostController, IProcessRunnerFactory
 	{
+        private string logFolder;
+
         private GPSD.Net.GPSD gpsd;
 
         private Configuration config;
@@ -53,6 +58,7 @@ namespace HostController
 				config.IsSystemTimeValid = true;
 
             CreateLogger();
+
             RunDispatcher();
         }
 
@@ -75,8 +81,56 @@ namespace HostController
 
         private void CreateLogger()
         {
+            var workingDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            try
+            {
+                logFolder = Path.Combine(workingDir, Config.GetString(ConfigNames.LogFolder));
+            }
+            catch (Exception ex)
+            {
+                logFolder = Path.Combine(workingDir, "Logs");
+            }
+
+            if (!Directory.Exists(logFolder))
+                Directory.CreateDirectory(logFolder);
+
             Logger = new ConsoleLoggerWrapper(Config);
             Logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
+
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+                {
+                    var exception = e.ExceptionObject as Exception;
+                    var exceptionFileName = WriteUnhandledException(exception);
+                    Logger.Log(this, exception);
+                    Logger.Log(this, string.Format("Unhandled exception occured, terminating application. Exception details logged to '{0}'", exceptionFileName), LogLevels.Fatal);
+                    Shutdown(HostControllerShutdownModes.UnhandledException);
+                };
+        }
+
+        private string WriteUnhandledException(Exception exception)
+        {
+            try
+            {
+                var sb = new StringBuilder();
+                sb.Append(DateTime.Now.ToString());
+                sb.Append(Environment.NewLine);
+                sb.Append("EXCEPTION: ");
+                sb.Append(exception != null ? exception.Message : "NULL");
+                sb.Append(Environment.NewLine);
+                sb.Append("CALL STACK: ");
+                sb.Append(exception != null ? exception.StackTrace : "NULL");
+
+                var fileName = string.Concat("EXEPTION_", DateTime.Now.ToFileTime().ToString(), "_", Guid.NewGuid().ToString(), ".txt");
+                var filePath = Path.Combine(logFolder, fileName);
+                File.WriteAllText(filePath, sb.ToString());
+
+                return filePath;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
 
         private void RunDispatcher()
@@ -129,7 +183,8 @@ namespace HostController
 
             ((Dispatcher)Dispatcher).Exit();
 
-            Config.Save();
+            if (mode != HostControllerShutdownModes.UnhandledException)
+                Config.Save();
 
             Logger.Log(this, "--- Logging finished ---", LogLevels.Info);
 
