@@ -11,6 +11,8 @@
     <AssemblyName>UIModels</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <ProductVersion>12.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,11 +54,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
-      <Project>{3f066cd9-3523-4248-b37c-3378b44c426a}</Project>
+      <Project>{3F066CD9-3523-4248-B37C-3378B44C426A}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\NavitConfigGenerator\NavitConfigGenerator.csproj">
-      <Project>{34252c77-00d2-4e38-b432-274b6d6a0032}</Project>
+      <Project>{34252C77-00D2-4E38-B432-274B6D6A0032}</Project>
       <Name>NavitConfigGenerator</Name>
     </ProjectReference>
   </ItemGroup>

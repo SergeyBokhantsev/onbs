@@ -51,7 +51,7 @@
       <Name>ArduinoController</Name>
     </ProjectReference>
     <ProjectReference Include="..\AutomationController\AutomationController.csproj">
-      <Project>{85445923-f9ca-4054-b2ad-43b14791d82c}</Project>
+      <Project>{85445923-F9CA-4054-B2AD-43B14791D82C}</Project>
       <Name>AutomationController</Name>
     </ProjectReference>
     <ProjectReference Include="..\ButtonController\InputController.csproj">
@@ -71,7 +71,7 @@
       <Name>Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogLib\LogLib.csproj">
-      <Project>{aedad09e-c7ee-464c-9fa8-e3aea59a5a12}</Project>
+      <Project>{AEDAD09E-C7EE-464C-9FA8-E3AEA59A5A12}</Project>
       <Name>LogLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\SerialTransportProtocol\SerialTransportProtocol.csproj">
@@ -83,7 +83,7 @@
       <Name>UIController</Name>
     </ProjectReference>
     <ProjectReference Include="..\UIModels\UIModels.csproj">
-      <Project>{8ddd45ef-f719-48bd-93c0-27eb6c44df3f}</Project>
+      <Project>{8DDD45EF-F719-48BD-93C0-27EB6C44DF3F}</Project>
       <Name>UIModels</Name>
     </ProjectReference>
   </ItemGroup>
