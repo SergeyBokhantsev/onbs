@@ -164,8 +164,7 @@ namespace NavitConfigGenerator
                         ret = ret.Replace(Pl.LockOnRoad, LockOnRoad ? "1" : "0");
 
 					if (line.Contains (Pl.Center))
-						ret = ret.Replace (Pl.Center, "4808 N 1134 E");
-					    //string.Concat(Center.Lon.Degrees.ToString(), " ", Center.Lat.Degrees.ToString()));
+						ret = ret.Replace (Pl.Center, string.Concat(Center.Lat.Degrees.ToString(), " ", Center.Lon.Degrees.ToString()));
 
                     if (line.Contains(Pl.KeepNorthOrient))
                         ret = ret.Replace(Pl.KeepNorthOrient, KeepNorthOrient ? "0" : "-1");

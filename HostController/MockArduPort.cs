@@ -53,13 +53,15 @@ namespace HostController
             {
                // var data = codec.Encode(new STPFrame(new byte[] { (byte)Buttons.Accept, (byte)ButtonStates.Press }, STPFrame.Types.Button)).ToList();
 
-                if (fakeNmeaPos + 10 >= fakeNmea.Length)
+				const int chunk = 60;
+
+				if (fakeNmeaPos + chunk >= fakeNmea.Length)
                     fakeNmeaPos = 0;
 
-                var nmeaPart = fakeNmea.Substring(fakeNmeaPos, 10);
+				var nmeaPart = fakeNmea.Substring(fakeNmeaPos, chunk);
                 var nmeaData = codec.Encode(new STPFrame(Encoding.Default.GetBytes(nmeaPart), STPFrame.Types.GPS)).ToList();
 
-                fakeNmeaPos += 10;
+				fakeNmeaPos += chunk;
 
                 lock(buffer)
                 {

@@ -8,6 +8,7 @@ using Interfaces;
 using Interfaces.SerialTransportProtocol;
 using SerialTransportProtocol;
 using Interfaces.GPS;
+using System.Diagnostics;
 
 namespace GPSController
 {
@@ -88,11 +89,27 @@ namespace GPSController
                 handler(obj);
         }
 
+		[Conditional("DEBUG")]
+		private void LogIncomingRaw(IEnumerable<STPFrame> frames)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			foreach (var f in frames)
+			{
+				var str = Encoding.Default.GetString (f.Data);
+				sb.Append (str);
+			}
+
+			logger.LogIfDebug (this, sb.ToString ());
+		}
+
         public void AcceptFrames(IEnumerable<STPFrame> frames)
         {
             if (!shutdown && frames != null && frames.Any())
             {
                 Interlocked.Increment(ref gpsFramesCount);
+
+				LogIncomingRaw (frames);
 
                 var concatenatedNmea = new StringBuilder();
 

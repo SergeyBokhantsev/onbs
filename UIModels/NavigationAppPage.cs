@@ -40,6 +40,15 @@ namespace UIModels
                 navitConfig.Menubar = config.GetBool(ConfigNames.NavitMenubar);
                 navitConfig.Statusbar = config.GetBool(ConfigNames.NavitStatusbar);
                 navitConfig.Toolbar = config.GetBool(ConfigNames.NavitToolbar);
+				navitConfig.Zoom = config.GetInt(ConfigNames.NavitZoom);
+				navitConfig.LockOnRoad = config.GetBool(ConfigNames.NavitLockOnRoad);
+				navitConfig.OSDCompass = config.GetBool(ConfigNames.NavitOSDCompass);
+				navitConfig.OSDETA = config.GetBool(ConfigNames.NavitOSDETA);
+				navitConfig.OSDNavigation = config.GetBool(ConfigNames.NavitOSDNavigation);
+				navitConfig.OSDNavigationDistanceToNext = config.GetBool(ConfigNames.NavitOSDNavigationDistanceToNext);
+				navitConfig.OSDNavigationDistanceToTarget = config.GetBool(ConfigNames.NavitOSDNavigationDistanceToTarget);
+				navitConfig.OSDNavigationNextTurn = config.GetBool(ConfigNames.NavitOSDNavigationNextTurn);
+
                 navitConfig.Center = hc.GetController<IGPSController>().Location;
 
                 navitConfig.WriteConfig(templatePath, outFile);

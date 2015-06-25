@@ -175,10 +175,8 @@ namespace GPSD.Net
 
         private void SendJson()
         {
-            var g = this.gprmc.Value;
+            var g = this.gprmc.Value ?? new GPRMC();
 
-            if (g != null && g.Active)
-            {
                 //  var bytes = Json.SimpleJsonSerializer.Serialize(tpv, enc);
 
                 //temp += 0.0005;
@@ -188,14 +186,14 @@ namespace GPSD.Net
                 //    "\"lat\":" + gprmc.Value.Location.Lat.ToString() + ",\"lon\":" + gprmc.Value.Location.Lon.ToString() + ",\"speed\":1.87,\"mode\":2}";
                 
                 var fake = "{\"class\":\"TPV\",\"device\":\"/dev/pts/1\"," +
-                    "\"time\":\"" + g.Time.ToString("O") + "\",\"ept\":0.0,\"track\":" + g.TrackAngle.ToString() + "," +
-                    "\"lat\":" + g.Location.Lat.ToString() + ",\"lon\":" + g.Location.Lon.ToString() + ",\"speed\":"+ g.Speed.ToString() +",\"mode\":2}";
+                    "\"time\":\"" + (g.Active ? g.Time.ToString("O") : "0") + "\",\"ept\":0.0,\"track\":" + g.TrackAngle.ToString() + "," +
+                    "\"lat\":" + g.Location.Lat.ToString() + ",\"lon\":" + g.Location.Lon.ToString() + ",\"speed\":"
+					+ g.Speed.ToString() +",\"mode\":"+ (g.Active ? "2" : "1") +"}";
 
 
                 var bytes = enc.GetBytes(fake);
 
                 WriteLn(bytes);
-            }
         }
 
         private void SendNmea()
