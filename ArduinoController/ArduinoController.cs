@@ -72,7 +72,7 @@ namespace ArduinoController
 
                     foreach (var acceptor in acceptors)
                     {
-                        dispatcher.Invoke(null, null, (s, a) => acceptor.AcceptFrames(frames.Where(f => f.Type == acceptor.FrameType)));
+                        dispatcher.Invoke(this, null, (s, a) => acceptor.AcceptFrames(frames.Where(f => f.Type == acceptor.FrameType)));
                         logger.LogIfDebug(this, string.Format("Frames were dispatched for {0} acceptor", acceptor.FrameType));
                     }
                 }
@@ -100,7 +100,7 @@ namespace ArduinoController
                 metrics.Add(2, metricElapsed, elapsed);
                 metrics.Add(3, metricIsError, is_error);
 
-                dispatcher.Invoke(null, null, new EventHandler((s,e) => handler(this, metrics)));
+                dispatcher.Invoke(this, null, new EventHandler((s,e) => handler(this, metrics)));
             }
         }
 

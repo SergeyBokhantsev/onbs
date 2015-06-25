@@ -27,8 +27,7 @@ namespace UIModels.ConfigPages
 
             SetProperty("label_caption", "GPS Configuration");
             SetProperty(ModelNames.ButtonCancelLabel, "Return to Main Menu");
-            
-            SetProperty(ModelNames.ButtonAcceptLabel, "Go to Common Config");
+            SetProperty(ModelNames.ButtonAcceptLabel, "Go to Navit Config");
 
             SetGPSdaemonProperty();
 
@@ -50,7 +49,7 @@ namespace UIModels.ConfigPages
                case ModelNames.ButtonAccept:
                    if (args.State == ButtonStates.Press)
                    {
-                       var page = new CommonConfigPage(hostController);
+                       var page = new NavitCommonConfigPage(hostController);
                        hostController.GetController<IUIController>().ShowPage(page);
                    }
                    break;

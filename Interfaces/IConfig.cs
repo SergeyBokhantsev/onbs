@@ -63,5 +63,13 @@ namespace Interfaces
         public static readonly string NavitToolbar = "navit_toolbar";
         public static readonly string NavitStatusbar = "navit_statusbar";
         public static readonly string NavitGPSActive = "navit_gps_active";
+        public static readonly string NavitZoom = "navit_zoom";
+        public static readonly string NavitLockOnRoad = "navit_lock_on_road";
+        public static readonly string NavitOSDCompass = "navit_osd_compass";
+        public static readonly string NavitOSDETA = "navit_osd_eta";
+        public static readonly string NavitOSDNavigationDistanceToTarget = "navit_osd_navigation_distance_to_target";
+        public static readonly string NavitOSDNavigation = "navit_osd_navigation";
+        public static readonly string NavitOSDNavigationDistanceToNext = "navit_osd_navigation_distance_to_next";
+        public static readonly string NavitOSDNavigationNextTurn = "navit_osd_navigation_next_turn";
     }
 }

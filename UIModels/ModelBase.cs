@@ -21,6 +21,8 @@ namespace UIModels
 
         protected readonly ILogger logger;
 
+        protected bool onlyPressButtonEvents = true;
+
         public string Name
         {
             get;
@@ -64,12 +66,19 @@ namespace UIModels
             if (actionArgs == null)
                 throw new ArgumentNullException("actionArgs");
 
-            logger.LogIfDebug(this, string.Format("Performing PageModel action '{0}'", actionArgs.ActionName));
+            if ((onlyPressButtonEvents && actionArgs.State == ButtonStates.Press) || !onlyPressButtonEvents)
+            {
+                logger.LogIfDebug(this, string.Format("Performing PageModel action '{0}'", actionArgs.ActionName));
 
-            if (dispatcher.Check())
-                DoAction(actionArgs);
+                if (dispatcher.Check())
+                    DoAction(actionArgs);
+                else
+                    dispatcher.Invoke(this, null, new EventHandler((s, a) => DoAction(actionArgs)));
+            }
             else
-                dispatcher.Invoke(null, null, new EventHandler((s, a) => DoAction(actionArgs)));
+            {
+                logger.LogIfDebug(this, string.Format("Skipping PageModel action '{0}'", actionArgs.ActionName));
+            }
         }
 
         /// <summary>

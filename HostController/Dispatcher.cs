@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -37,7 +38,7 @@ namespace HostController
             }
         }
 
-        private readonly ManualResetEvent mre = new ManualResetEvent(false);
+        private readonly ManualResetEventSlim mre = new ManualResetEventSlim(false);
         private readonly Queue<InvokeItem> invokeItems = new Queue<InvokeItem>();
         private readonly ILogger logger;
         private readonly int threadId;
@@ -54,20 +55,29 @@ namespace HostController
 
         public void Invoke(object sender, EventArgs args, EventHandler handler)
         {
+            AssertCallerIsNotNull(sender);
+
             lock (invokeItems)
             {
                 invokeItems.Enqueue(new InvokeItem(sender, args, handler));
                 mre.Set();
             }
 
-            logger.LogIfDebug(this, string.Format("Invoke call with handler '{0}' sheduled", handler.Method));
+            logger.LogIfDebug(this, string.Format("Invoke call from {0} with handler '{1}' sheduled", sender ?? "NULL", handler.Method));
+        }
+
+        [Conditional("DEBUG")]
+        private void AssertCallerIsNotNull(object caller)
+        {
+            if (caller == null)
+                throw new ArgumentNullException("Dispatcher caller is null");
         }
 
         public void Run()
         {
             while (!exit)
             {
-                if (mre.WaitOne(10000))
+                if (mre.Wait(10000))
                 {
                     InvokeItem itemToInvoke = null;
 

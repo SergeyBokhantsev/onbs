@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LogLib
@@ -10,8 +12,9 @@ namespace LogLib
     public abstract class FileLogWriter
     {
         private string filePath;
-        private List<byte[]> buffer = new List<byte[]>();
+        private ConcurrentQueue<byte[]> buffer = new ConcurrentQueue<byte[]>();
         private readonly int autoflushSize;
+        private readonly object locker = new object();
 
         protected FileLogWriter(int autoflushSize)
         {
@@ -22,7 +25,7 @@ namespace LogLib
 
         private bool ObtainFileName()
         {
-            for (int i=0; i<1000; ++i)
+            for (int i=0; i<100000; ++i)
             {
                 filePath = CreateFilePath(i);
 
@@ -46,9 +49,9 @@ namespace LogLib
         protected void Add(string content)
         {
             var data = Encoding.Default.GetBytes(content);
-            buffer.Add(data);
+            buffer.Enqueue(data);
 
-            if (buffer.Count > autoflushSize)
+            if (buffer.Count > autoflushSize && !Monitor.IsEntered(locker))
             {
                 Save();
             }
@@ -56,31 +59,33 @@ namespace LogLib
 
         protected void Save()
         {
-            if (filePath == null)
-                ObtainFileName();
-
-            var dataCount = buffer.Count;
-
-            if (dataCount == 0)
+            if (!buffer.Any())
                 return;
 
             try
             {
-                using (var stream = File.Open(filePath, FileMode.Append, FileAccess.Write, FileShare.Read))
+                lock (locker)
                 {
-                    for (int i = 0; i < dataCount; ++i)
+                    if (filePath == null)
+                        ObtainFileName();
+
+                    using (var stream = File.Open(filePath, FileMode.Append, FileAccess.Write, FileShare.Read))
                     {
-                        var data = buffer[0];
-                        stream.Write(data, 0, data.Length);
-                        stream.WriteByte(13);
-                        stream.WriteByte(10);
-                        buffer.RemoveAt(0);
+                        while (buffer.Any())
+                        {
+                            byte[] data;
+
+                            if (buffer.TryDequeue(out data))
+                            {
+                                stream.Write(data, 0, data.Length);
+                            }
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                buffer.Add(Encoding.Default.GetBytes(string.Concat(Environment.NewLine, "ERROR WRITING LOG FILE:", Environment.NewLine, ex.Message, Environment.NewLine)));
+                buffer.Enqueue(Encoding.Default.GetBytes(string.Concat(Environment.NewLine, "ERROR WRITING LOG FILE:", Environment.NewLine, ex.Message, Environment.NewLine)));
             }
         }
     }

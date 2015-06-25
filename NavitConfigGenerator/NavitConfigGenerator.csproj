@@ -59,6 +59,8 @@
   </Target>
   -->
   <ItemGroup>
-    <None Include="navit_template.xml" />
+    <None Include="Data\navit_template.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

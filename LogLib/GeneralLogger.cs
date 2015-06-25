@@ -12,7 +12,6 @@ namespace LogLib
 {
     public class GeneralLogger : FileLogWriter, ILogger
     {
-        private readonly object locker = new object();
         private readonly string logFolder;
 
         public LogLevels Level
@@ -45,10 +44,7 @@ namespace LogLib
 
                 if (caller == null || !AllowedClassNames.Any() || AllowedClassNames.Contains(className))
                 {
-                    lock (locker)
-                    {
-                        Add(string.Concat(DateTime.Now, " | ", level, " | ", className, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message));
-                    }
+                    Add(string.Concat(DateTime.Now, " | ", level, " | ", className, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message, Environment.NewLine));
                 }
             }
         }
@@ -56,16 +52,12 @@ namespace LogLib
         public void Log(object caller, Exception ex)
         {
             Log(caller, string.Concat(ex.Message, Environment.NewLine, ex.StackTrace), LogLevels.Error);
-            
             Flush();
         }
 
         public void Flush()
         {
-            lock (locker)
-            {
-                Save();
-            }
+            Save();
         }
 
         protected override string CreateFilePath(int index)

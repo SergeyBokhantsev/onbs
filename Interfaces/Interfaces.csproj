@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
     <Compile Include="GPS\Helpers.cs" />
     <Compile Include="GPS\Primitives.cs" />
     <Compile Include="IArduinoController.cs" />

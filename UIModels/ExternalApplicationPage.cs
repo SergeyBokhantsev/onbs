@@ -29,7 +29,7 @@ namespace UIModels
 
         void RunnerExited(bool unexpected)
         {
-            dispatcher.Invoke(null, null, new EventHandler((s, e) => ui.ShowDefaultPage()));
+            dispatcher.Invoke(this, null, new EventHandler((s, e) => ui.ShowDefaultPage()));
         }
 
         public virtual void Run()

@@ -138,7 +138,7 @@ namespace GPSController
                 metrics.Add(3, "Loc", lastGprmc.Location);
                 metrics.Add(4, "_is_error", false);
 
-                dispatcher.Invoke(null, null, new EventHandler((s, e) => handler(this, metrics)));
+                dispatcher.Invoke(this, null, new EventHandler((s, e) => handler(this, metrics)));
             }
         }
 

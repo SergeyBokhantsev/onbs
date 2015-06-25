@@ -137,7 +137,7 @@ namespace HostController
         private void RunDispatcher()
         {
             Dispatcher = new Dispatcher(Logger);
-            Dispatcher.Invoke(null, null, Initialize);
+            Dispatcher.Invoke(this, null, Initialize);
             Dispatcher.Run();
         }
 
