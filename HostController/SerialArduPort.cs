@@ -5,7 +5,6 @@ using System.Threading;
 using System.Diagnostics;
 namespace HostController
 {
-    [LogClass("SerialPort")]
 	public class SerialArduPort : IPort
 	{
         public event SerialDataReceivedEventHandler DataReceived;

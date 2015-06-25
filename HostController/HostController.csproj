@@ -70,6 +70,10 @@
       <Project>{3F066CD9-3523-4248-B37C-3378B44C426A}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LogLib\LogLib.csproj">
+      <Project>{aedad09e-c7ee-464c-9fa8-e3aea59a5a12}</Project>
+      <Name>LogLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SerialTransportProtocol\SerialTransportProtocol.csproj">
       <Project>{B1069B60-BC03-4A71-B8D2-C33F0043D96C}</Project>
       <Name>SerialTransportProtocol</Name>

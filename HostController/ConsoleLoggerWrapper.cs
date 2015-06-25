@@ -5,66 +5,48 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Interfaces;
+using System.Diagnostics;
 
 namespace HostController
 {
     public class ConsoleLoggerWrapper : ILogger
     {
-        private readonly object locker = new object();
+        private readonly ILogger logger;
 
         public LogLevels Level
         {
-            get;
-            private set;
+            get
+            {
+                return logger.Level;
+            }
         }
 
-        public List<string> AllowedClassNames
+        internal ConsoleLoggerWrapper(ILogger logger)
         {
-            get;
-            private set;
-        }
-
-        internal ConsoleLoggerWrapper(IConfig config)
-        {
-            Level = (LogLevels)Enum.Parse(typeof(LogLevels), config.GetString(ConfigNames.LogLevel));
-
-            AllowedClassNames = new List<string>(config.GetString(ConfigNames.LoggedClasses).Split(',').Select(o => o.Trim()).Where(o => !string.IsNullOrWhiteSpace(o)));
+            this.logger = logger;
         }
 
         public void Log(object caller, string message, LogLevels level)
         {
-            if (level <= this.Level)
-            {
-                var className = GetClassName(caller);
-
-                if (!AllowedClassNames.Any() || AllowedClassNames.Contains(className))
-                {
-                    lock (locker)
-                    {
-                        Console.WriteLine(string.Concat(DateTime.Now, " | ", level, " | ", className, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message));
-                    }
-                }
-            }
+            WriteToConsole(string.Concat(DateTime.Now, " | ", level, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message));
+            logger.Log(caller, message, level);
         }
 
         public void Log(object caller, Exception ex)
         {
-            Log(caller, string.Concat(ex.Message, Environment.NewLine, ex.StackTrace), LogLevels.Error);
+            WriteToConsole(string.Concat(ex.Message, Environment.NewLine, ex.StackTrace));
+            logger.Log(caller, ex);
         }
 
-        private string GetClassName(object caller)
+        [Conditional("DEBUG")]
+        private void WriteToConsole(string message)
         {
-            if (caller == null)
-                return "Unknown";
-
-            var callerType = caller.GetType();
-            var classNameAttr = callerType.GetCustomAttributes(typeof(LogClassAttribute), true).FirstOrDefault() as LogClassAttribute;
-            return classNameAttr != null ? classNameAttr.ClassName : callerType.Name;
+            Console.WriteLine(message);
         }
 
         public void Flush()
         {
-            
+            logger.Flush();
         }
     }
 }

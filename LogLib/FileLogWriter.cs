@@ -16,7 +16,6 @@ namespace LogLib
         protected FileLogWriter(int autoflushSize)
         {
             this.autoflushSize = autoflushSize;
-            ObtainFileName();
         }
 
         protected abstract string CreateFilePath(int index);
@@ -57,6 +56,9 @@ namespace LogLib
 
         protected void Save()
         {
+            if (filePath == null)
+                ObtainFileName();
+
             var dataCount = buffer.Count;
 
             if (dataCount == 0)
@@ -70,6 +72,8 @@ namespace LogLib
                     {
                         var data = buffer[0];
                         stream.Write(data, 0, data.Length);
+                        stream.WriteByte(13);
+                        stream.WriteByte(10);
                         buffer.RemoveAt(0);
                     }
                 }

@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Reflection;
 using System.IO;
 using System.Text;
+using LogLib;
 
 namespace HostController
 {
@@ -95,7 +96,7 @@ namespace HostController
             if (!Directory.Exists(logFolder))
                 Directory.CreateDirectory(logFolder);
 
-            Logger = new ConsoleLoggerWrapper(Config);
+            Logger = new ConsoleLoggerWrapper(new GeneralLogger(Config));
             Logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
 
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>

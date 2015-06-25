@@ -24,16 +24,6 @@ namespace Interfaces
         void Flush();
     }
 
-    public class LogClassAttribute : Attribute
-    {
-        public string ClassName { get; private set;}
-
-        public LogClassAttribute(string className)
-        {
-            ClassName = className;
-        }
-    }
-
     public static class LogHelper
     {
         [Conditional("DEBUG")]
