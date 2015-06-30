@@ -21,5 +21,9 @@ namespace Tests.Mocks
         public void Log(object caller, Exception ex)
         {
         }
+
+        public void Flush()
+        {
+        }
     }
 }

@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomationController", "Aut
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavitConfigGenerator", "NavitConfigGenerator\NavitConfigGenerator.csproj", "{34252C77-00D2-4E38-B432-274B6D6A0032}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpClient", "HttpClient\HttpClient.csproj", "{73F2BD9F-8E72-4EA5-8EC8-8943C37C21C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelsClient", "TravelsClient\TravelsClient.csproj", "{FBDB1458-CA4B-45D9-9E7E-7B9484959859}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,14 @@ Global
 		{34252C77-00D2-4E38-B432-274B6D6A0032}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34252C77-00D2-4E38-B432-274B6D6A0032}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34252C77-00D2-4E38-B432-274B6D6A0032}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73F2BD9F-8E72-4EA5-8EC8-8943C37C21C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73F2BD9F-8E72-4EA5-8EC8-8943C37C21C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73F2BD9F-8E72-4EA5-8EC8-8943C37C21C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73F2BD9F-8E72-4EA5-8EC8-8943C37C21C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBDB1458-CA4B-45D9-9E7E-7B9484959859}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBDB1458-CA4B-45D9-9E7E-7B9484959859}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBDB1458-CA4B-45D9-9E7E-7B9484959859}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBDB1458-CA4B-45D9-9E7E-7B9484959859}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
