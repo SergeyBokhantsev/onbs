@@ -9,7 +9,7 @@ namespace WebApp.Models
     public class ONBSContext : DbContext
     {
         public ONBSContext()
-            :base("ONBS")
+            : base(System.Configuration.ConfigurationManager.AppSettings["DBConnectionString"])
         {
         }
 

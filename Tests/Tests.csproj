@@ -50,6 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="HttpClientTests\TestHttpClient.cs" />
     <Compile Include="Mocks\Config.cs" />
     <Compile Include="Mocks\GPSController.cs" />
     <Compile Include="Mocks\Logger.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="GPSDTests.cs" />
     <Compile Include="GPSHelpers.cs" />
     <Compile Include="NavitConfigGeneratorTest.cs" />
+    <Compile Include="TravelClientTest\TestTravelClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AutomationController\AutomationController.csproj">
@@ -72,6 +74,10 @@
       <Project>{975b7b95-004b-42db-be03-0aa8fcf06730}</Project>
       <Name>GPSD.Net</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HttpClient\HttpClient.csproj">
+      <Project>{73f2bd9f-8e72-4ea5-8ec8-8943c37c21c6}</Project>
+      <Name>HttpClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
       <Project>{3f066cd9-3523-4248-b37c-3378b44c426a}</Project>
       <Name>Interfaces</Name>
@@ -83,6 +89,10 @@
     <ProjectReference Include="..\NavitConfigGenerator\NavitConfigGenerator.csproj">
       <Project>{34252c77-00d2-4e38-b432-274b6d6a0032}</Project>
       <Name>NavitConfigGenerator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TravelsClient\TravelsClient.csproj">
+      <Project>{fbdb1458-ca4b-45d9-9e7e-7b9484959859}</Project>
+      <Name>TravelsClient</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
