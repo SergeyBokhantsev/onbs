@@ -79,9 +79,15 @@ namespace HttpClient
                     {
                         var data = Encoding.Default.GetBytes(body);
 
+                        request.ContentLength = data.Length;
+
                         for (int i = 0; i < data.Length; ++i)
                             stream.WriteByte(data[i]);
                     }
+                }
+                else
+                {
+                    request.ContentLength = 0;
                 }
 
                 var response = request.GetResponse() as HttpWebResponse;

@@ -12,6 +12,15 @@ namespace TravelsClient
 {
     public class Client
     {
+        private const string ARG_KEY = "key";
+        private const string ARG_VEHICLE = "vehicle";
+        private const string ARG_NAME = "name";
+        private const string ARG_TRAVEL = "travel";
+        private const string ARG_LAT = "lat";
+        private const string ARG_LON = "lon";
+        private const string ARG_SPEED = "speed";
+        private const string ARG_TYPE = "type";
+
         private const string apiPrefix = "/api/";
 
         private readonly Uri serviceUri;
@@ -25,7 +34,7 @@ namespace TravelsClient
         {
             get
             {
-                return string.Concat("key=", key);
+                return CreateArg(ARG_KEY, key);
             }
         }
 
@@ -33,7 +42,7 @@ namespace TravelsClient
         {
             get
             {
-                return string.Concat("vehicle=", key);
+                return CreateArg(ARG_VEHICLE, vehicleId);
             }
         }
 
@@ -49,10 +58,15 @@ namespace TravelsClient
             client.ClientException += exc => logger.Log(this, exc);
         }
 
+        private string CreateArg(string name, string value)
+        {
+            return string.Concat(name, "=", HttpUtility.UrlEncode(value));
+        }
+
         private Uri CreateUri(string relativeUrl, params string[] args)
         {
             var argLine = args.Any() ? string.Concat("?", string.Join("&", args)) : string.Empty;
-            return new Uri(serviceUri, string.Format("{0}{1}{2}", apiPrefix, relativeUrl, HttpUtility.UrlEncode(argLine)));
+            return new Uri(serviceUri, string.Format("{0}{1}{2}", apiPrefix, relativeUrl, argLine));
         }
 
         private Travel ParseTravel(Stream stream)
@@ -100,7 +114,7 @@ namespace TravelsClient
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException("travel name");
 
-            var url = CreateUri("Travels/open", KeyParam, VehicleParam, string.Concat("name=", name));
+            var url = CreateUri("Travels/open", KeyParam, VehicleParam, CreateArg(ARG_NAME, name));
             var response = client.Post(url, null);
 
             if (response.Status != System.Net.HttpStatusCode.Created)
@@ -141,11 +155,11 @@ namespace TravelsClient
             if (tp == null)
                 throw new ArgumentNullException("travel point");
 
-            var tId = string.Concat("travel=", travelId);
-            var lat = string.Concat("lat=", tp.Lat);
-            var lon = string.Concat("lon=", tp.Lon);
-            var speed = string.Concat("speed=", tp.Speed);
-            var type = string.Concat("type=", tp.Type);
+            var tId = CreateArg(ARG_TRAVEL, travelId.ToString());
+            var lat = CreateArg(ARG_LAT, tp.Lat.ToString());
+            var lon = CreateArg(ARG_LON, tp.Lon.ToString());
+            var speed = CreateArg(ARG_SPEED, tp.Speed.ToString());
+            var type = CreateArg(ARG_TYPE, tp.Type.ToString());
 
             var url = CreateUri("TravelPoints/add", KeyParam, VehicleParam, tId, lat, lon, speed, type);
 

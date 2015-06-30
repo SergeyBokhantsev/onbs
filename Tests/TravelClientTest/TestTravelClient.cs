@@ -7,8 +7,8 @@ namespace Tests.TravelClientTest
     [TestClass]
     public class TestTravelClient
     {
-        private const string serviceUrl = "http://onbs.azurewebsites.net";
-        private const string userKey = "UnitTests";
+        private const string serviceUrl = "http://localhost:22424"; //"http://onbs.azurewebsites.net";
+        private const string userKey = "1";
         private const string vehicleId = "UnitTestsVehicle";
 
         private Travel CreateTravel(TravelsClient.Client client, string name)

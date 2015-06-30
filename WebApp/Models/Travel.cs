@@ -10,6 +10,7 @@ namespace WebApp.Models
     {
         public int ID { get; set; }
         public string Name { get; set; }
+        public string Vehicle { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
         public virtual ICollection<TravelPoint> Track { get; set; }
@@ -18,9 +19,10 @@ namespace WebApp.Models
         {
         }
 
-        public Travel(string name)
+        public Travel(string name, string vehicle)
         {
             this.Name = name;
+            this.Vehicle = vehicle;
             this.StartTime = this.EndTime = DateTime.Now;
         }
     }

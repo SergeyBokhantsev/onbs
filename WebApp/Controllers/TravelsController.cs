@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -15,106 +16,52 @@ namespace WebApp.Controllers
 {
     public class TravelsController : TravelApiControllerBase
     {
-        private void AssertKey(string key)
-        {
-            var user = db.Users.Where(u => u.Key == key).FirstOrDefault();
-
-            if (user == null)
-                throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.Forbidden));
-        }
-
-        // GET api/Travels
-        public IEnumerable<Travel> GetTravels()
-        {
-            return db.Travels.AsEnumerable();
-        }
-
-        // GET api/Travels/5
-        public Travel GetTravel(int id, string key)
-        {
-            AssertKey(key);
-
-            Travel travel = db.Travels.Find(id);
-            if (travel == null)
-            {
-                throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
-            }
-
-            return travel;
-        }
-
-        // PUT api/Travels/5
-        public HttpResponseMessage PutTravel(int id, Travel travel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
-            }
-
-            if (id != travel.ID)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest);
-            }
-
-            db.Entry(travel).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
-            }
-
-            return Request.CreateResponse(HttpStatusCode.OK);
-        }
-
-        // POST api/Travels
+        // POST api/Travels/open
         [HttpPost]
         [ActionName("open")]
-        public HttpResponseMessage PostTravel(string key, string name)
+        public HttpResponseMessage OpenTravel(string key, string vehicle, string name)
         {
             return Monitor(key, () =>
                 {
-                    Travel travel = new Travel(name);
+                    if (string.IsNullOrEmpty(vehicle) || string.IsNullOrEmpty(name))
+                        throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.BadRequest));
+
+                    var travel = new Travel(name, vehicle);
 
                     db.Travels.Add(travel);
                     db.SaveChanges();
 
                     HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created);
-                    response.Content = new StringContent(travel.ID.ToString());
+                    response.Content = new StringContent(JsonConvert.SerializeObject(travel));
                     return response;
                 });
         }
 
         // DELETE api/Travels/5
-        public HttpResponseMessage DeleteTravel(int id)
+        public HttpResponseMessage DeleteTravel(int id, string key)
         {
-            Travel travel = db.Travels.Find(id);
-            if (travel == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound);
-            }
+            return Monitor(key, () =>
+                {
+                    Travel travel = db.Travels.Find(id);
 
-            db.Travels.Remove(travel);
+                    if (travel == null)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.NotFound);
+                    }
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
-            }
+                    db.Travels.Remove(travel);
 
-            return Request.CreateResponse(HttpStatusCode.OK, travel);
-        }
+                    try
+                    {
+                        db.SaveChanges();
+                    }
+                    catch (DbUpdateConcurrencyException ex)
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
+                    }
 
-        protected override void Dispose(bool disposing)
-        {
-            db.Dispose();
-            base.Dispose(disposing);
+                    return Request.CreateResponse(HttpStatusCode.NoContent, travel);
+                });
         }
     }
 }

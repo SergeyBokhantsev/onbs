@@ -344,7 +344,9 @@ namespace Json
             int @int;
             double @double;
 
-            if (bool.TryParse(rawValue, out @bool))
+            if (("null").Equals(rawValue))
+                return new JsonValue<object>(null);
+            else if (bool.TryParse(rawValue, out @bool))
                 return new JsonValue<bool>(@bool);
             else if (int.TryParse(rawValue, out @int))
                 return new JsonValue<int>(@int);
