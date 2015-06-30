@@ -6,16 +6,15 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using WebApp.Models;
 
 namespace WebApp.Controllers
 {
-    public class TravelsController : ApiController
+    public class TravelsController : TravelApiControllerBase
     {
-        private ONBSContext db = new ONBSContext();
-
         private void AssertKey(string key)
         {
             var user = db.Users.Where(u => u.Key == key).FirstOrDefault();
@@ -74,24 +73,19 @@ namespace WebApp.Controllers
         // POST api/Travels
         [HttpPost]
         [ActionName("open")]
-        public HttpResponseMessage PostTravel(string name)
+        public HttpResponseMessage PostTravel(string key, string name)
         {
-            Travel travel = new Travel { StartTime = DateTime.Now, Name = name };
+            return Monitor(key, () =>
+                {
+                    Travel travel = new Travel(name);
 
-            if (ModelState.IsValid)
-            {
-                db.Travels.Add(travel);
-                db.SaveChanges();
+                    db.Travels.Add(travel);
+                    db.SaveChanges();
 
-                HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created);
-                response.Content = new StringContent(travel.ID.ToString());
-                response.Headers.Location = new Uri(Url.Link("DefaultApi", new { id = travel.ID }));
-                return response;
-            }
-            else
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
-            }
+                    HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created);
+                    response.Content = new StringContent(travel.ID.ToString());
+                    return response;
+                });
         }
 
         // DELETE api/Travels/5

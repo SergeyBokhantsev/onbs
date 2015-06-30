@@ -6,16 +6,15 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using WebApp.Models;
 
 namespace WebApp.Controllers
 {
-    public class TravelPointsController : ApiController
+    public class TravelPointsController : TravelApiControllerBase
     {
-        private ONBSContext db = new ONBSContext();
-
         // GET api/TravelPoints
         public IEnumerable<TravelPoint> GetTravelPoints()
         {
@@ -35,8 +34,10 @@ namespace WebApp.Controllers
         }
 
         // PUT api/TravelPoints/5
-        public HttpResponseMessage PutTravelPoint(int id, TravelPoint travelpoint)
+        public HttpResponseMessage PutTravelPoint(int id, [FromBody] IEnumerable<TravelPoint> travelpoints)
         {
+            TravelPoint travelpoint = null;
+
             if (!ModelState.IsValid)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
@@ -61,15 +62,37 @@ namespace WebApp.Controllers
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
+        public HttpResponseMessage PostTravelPoint(string key, int travelId, [FromBody] IEnumerable<TravelPoint> points)
+        {
+            return Monitor(key, () =>
+            {
+                var travel = db.GetTravel(travelId);
+
+                foreach (var p in points)
+                    travel.Track.Add(p);
+
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.Created);
+            });
+        }
+
+        async Task<HttpResponseMessage> Foo()
+        {
+            var body = await Request.Content.ReadAsStringAsync();
+            return Request.CreateResponse(HttpStatusCode.Created);
+        }
+
         // POST api/TravelPoints
         [HttpPost]
         [ActionName("add")]
-        public HttpResponseMessage PostTravelPoint(int travel_id, double lat, double lon)
+        public HttpResponseMessage PostTravelPoint(int travel_id, double lat, double lon, double speed, string description)
         {
             var travel = db.Travels.Where(t => t.ID == travel_id).FirstOrDefault();
 
-            var travelpoint = new TravelPoint { Lat = lat, Lon = lon };
+            var travelpoint = new TravelPoint { Lat = lat, Lon = lon, Speed = speed, Description = description, Time = DateTime.Now };
 
+            travel.EndTime = DateTime.Now;
             travel.Track.Add(travelpoint);
 
             if (ModelState.IsValid)
