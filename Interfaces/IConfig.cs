@@ -71,5 +71,9 @@ namespace Interfaces
         public static readonly string NavitOSDNavigation = "navit_osd_navigation";
         public static readonly string NavitOSDNavigationDistanceToNext = "navit_osd_navigation_distance_to_next";
         public static readonly string NavitOSDNavigationNextTurn = "navit_osd_navigation_next_turn";
+
+        public static readonly string TravelServiceUrl = "TravelServiceUrl";
+        public static readonly string TravelServiceVehicle = "TravelServiceVehicle";
+        public static readonly string TravelServiceKey = "TravelServiceKey";
     }
 }

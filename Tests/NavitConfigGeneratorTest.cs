@@ -25,7 +25,7 @@ namespace Tests
             Assert.IsTrue(File.Exists("Data/NavitConfig/config.xml"));
             
             var cfgFile = File.ReadAllText("Data/NavitConfig/config.xml");
-            Assert.IsTrue(cfgFile.Contains("center=\"50.5 30.5\""));
+            Assert.IsTrue(cfgFile.Contains("center=\"30.5 50.5\""));
             Assert.IsTrue(cfgFile.Contains("autozoom_active=\"1\""));
             Assert.IsTrue(cfgFile.Contains("menubar=\"0\""));
             Assert.IsTrue(cfgFile.Contains("toolbar=\"1\""));

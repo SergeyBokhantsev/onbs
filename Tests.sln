@@ -23,8 +23,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpClient", "HttpClient\Ht
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelsClient", "TravelsClient\TravelsClient.csproj", "{FBDB1458-CA4B-45D9-9E7E-7B9484959859}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialTransportProtocol", "SerialTransportProtocol\SerialTransportProtocol.csproj", "{B1069B60-BC03-4A71-B8D2-C33F0043D96C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,10 +69,6 @@ Global
 		{FBDB1458-CA4B-45D9-9E7E-7B9484959859}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBDB1458-CA4B-45D9-9E7E-7B9484959859}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBDB1458-CA4B-45D9-9E7E-7B9484959859}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B1069B60-BC03-4A71-B8D2-C33F0043D96C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B1069B60-BC03-4A71-B8D2-C33F0043D96C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B1069B60-BC03-4A71-B8D2-C33F0043D96C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B1069B60-BC03-4A71-B8D2-C33F0043D96C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

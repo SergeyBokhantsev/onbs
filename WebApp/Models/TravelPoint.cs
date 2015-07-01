@@ -7,9 +7,12 @@ using System.Web;
 
 namespace WebApp.Models
 {
+    public enum TravelPointTypes { AutoTrackPoint = 0, ManualTrackPoint = 1 }
+
     public class TravelPoint
     {
         public int ID { get; set; }
+        public TravelPointTypes Type { get; set; }
         public double Lat { get; set; }
         public double Lon { get; set; }
         public DateTime Time { get; set; }

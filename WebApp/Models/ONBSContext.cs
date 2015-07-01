@@ -8,13 +8,13 @@ namespace WebApp.Models
 {
     public class ONBSContext : DbContext
     {
+        public DbSet<User> Users { get; set; }
+        public DbSet<Travel> Travels { get; set; }
+        public DbSet<TravelPoint> TravelPoints { get; set; }
+
         public ONBSContext()
             : base(System.Configuration.ConfigurationManager.AppSettings["DBConnectionString"])
         {
         }
-
-        public DbSet<User> Users { get; set; }
-        public DbSet<Travel> Travels { get; set; }
-        public DbSet<TravelPoint> TravelPoints { get; set; }
     }
 }

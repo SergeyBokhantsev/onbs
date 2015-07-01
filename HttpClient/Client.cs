@@ -75,12 +75,11 @@ namespace HttpClient
             {
                 if (!string.IsNullOrEmpty(body))
                 {
+                    var data = Encoding.Default.GetBytes(body);
+                    request.ContentLength = data.Length;
+
                     using (var stream = request.GetRequestStream())
                     {
-                        var data = Encoding.Default.GetBytes(body);
-
-                        request.ContentLength = data.Length;
-
                         for (int i = 0; i < data.Length; ++i)
                             stream.WriteByte(data[i]);
                     }
