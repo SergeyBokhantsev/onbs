@@ -10,11 +10,15 @@ namespace Interfaces.GPS
 {
     public class GPSLogFilter
     {
-        private List<GPRMC> points = new List<GPRMC>();
+        private readonly int maxSecondsGap;
+        private readonly int maxMetersGap;
+        private readonly List<GPRMC> points = new List<GPRMC>();
         private GPRMC lastGprmc;
 
-        public GPSLogFilter()
+        public GPSLogFilter(int maxSecondsGap, int maxMetersGap)
         {
+            this.maxSecondsGap = maxSecondsGap;
+            this.maxMetersGap = maxMetersGap;
         }
 
         public void Log(GPRMC gprmc)
@@ -45,7 +49,22 @@ namespace Interfaces.GPS
 
         private bool Match(GPRMC gprmc)
         {
-            throw new NotImplementedException();
+            if (lastGprmc != null)
+            {
+                var secondsGap = (gprmc.Time - lastGprmc.Time).TotalSeconds;
+
+                if (secondsGap < maxSecondsGap)
+                {
+                    var distanceGap = Math.Abs(Interfaces.GPS.Helpers.GetDistance(lastGprmc.Location, gprmc.Location));
+
+                    if (distanceGap < maxMetersGap)
+                        return false;
+                }
+            }
+
+            lastGprmc = gprmc;
+
+            return true;
         }
     }
 }

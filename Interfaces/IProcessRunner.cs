@@ -21,6 +21,7 @@ namespace Interfaces
         void Run();
         void SendToStandardInput(string message);
         string GetFromStandardOutput();
+        bool WaitForExit(int timeoutMilliseconds);
         void Exit();
     }
 

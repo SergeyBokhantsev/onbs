@@ -54,14 +54,16 @@ namespace GtkLauncher
 
 		#endregion
 
+		public void Flush ()
+		{
+		}
+
 		private string GetClassName(object caller)
 		{
 			if (caller == null)
 				return "Unknown";
 
-			var callerType = caller.GetType();
-			var classNameAttr = callerType.GetCustomAttributes(typeof(LogClassAttribute), true).FirstOrDefault() as LogClassAttribute;
-			return classNameAttr != null ? classNameAttr.ClassName : callerType.Name;
+			return caller.GetType().Name;
 		}
 	}
 }

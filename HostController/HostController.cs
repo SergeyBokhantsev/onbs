@@ -78,6 +78,8 @@ namespace HostController
                 return gpsController as T;
             else if (typeof(T).Equals(typeof(IAutomationController)))
                 return automationController as T;
+            else if (typeof(T).Equals(typeof(ITravelController)))
+                return travelController as T;
             else
                 throw new NotImplementedException(typeof(T).ToString());
         }
@@ -145,6 +147,12 @@ namespace HostController
 
         private void Initialize(object sender, EventArgs args)
         {
+            netKeeper = new InternetConnectionKeeper(ProcessRunnerFactory, Config, Logger);
+            netKeeper.InternetConnectionStatus += connected => config.IsInternetConnected = connected;
+            netKeeper.InternetTime += CheckSystemTimeFromInternet;
+            netKeeper.StartChecking();
+            netKeeper.WaitForConnection(5000);
+
             inputController = new InputController.InputController(Logger);
 
             var useFakeArduPort = Config.GetBool(ConfigNames.ArduinoPortFake);
@@ -160,11 +168,6 @@ namespace HostController
             gpsd.Start();
 
             automationController = new AutomationController.AutomationController(this);
-
-            netKeeper = new InternetConnectionKeeper(ProcessRunnerFactory, Config, Logger);
-            netKeeper.InternetConnectionStatus += connected => config.IsInternetConnected = connected;
-            netKeeper.InternetTime += CheckSystemTimeFromInternet;
-            netKeeper.StartChecking();
 
             travelController = new TravelController.TravelController(this);
 

@@ -285,7 +285,6 @@ namespace Interfaces.GPS
                     var year = 2000 + int.Parse(items[9].Substring(4, 2));
 
                     time = new DateTime(year, month, day, hour, min, seconds);
-                    time = time.AddHours(3);
                 }
 
                 if (items[10].Length > 0)

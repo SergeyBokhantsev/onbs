@@ -17,6 +17,8 @@ namespace UIModels
         private readonly IHostController hostController;
         private readonly IDispatcherTimer timer;
 
+        private readonly int localTimeZone;
+
         private List<IMetricsProvider> metricsProviders;
 
         public MainPage(IHostController hostController)
@@ -25,6 +27,8 @@ namespace UIModels
             this.hostController = hostController;
 
             this.Disposing += MainPageDisposing;
+
+            this.localTimeZone = hostController.Config.GetInt(ConfigNames.SystemTimeLocalZone);
 
             SubscribeMetricsProviders();
 
@@ -37,13 +41,13 @@ namespace UIModels
 			SetProperty("time_valid", "1");
 			SetProperty("time", null);
 
-            timer = hostController.Dispatcher.CreateTimer(1, TimerTick);
+            timer = hostController.Dispatcher.CreateTimer(1000, TimerTick);
             timer.Enabled = true;
         }
 
         private void TimerTick(object sender, EventArgs e)
         {
-            SetProperty("time", DateTime.Now);
+            SetProperty("time", DateTime.Now.AddHours(localTimeZone));
             SetProperty("time_valid", hostController.Config.IsSystemTimeValid ? "1" : "0");
         }
 
@@ -56,6 +60,7 @@ namespace UIModels
 
             metricsProviders.Add(hostController.GetController<IArduinoController>());
             metricsProviders.Add(hostController.GetController<IGPSController>());
+            metricsProviders.Add(hostController.GetController<ITravelController>());
 
             metricsProviders.ForEach(mp => mp.MetricsUpdated += OnMetricsUpdated);
         }

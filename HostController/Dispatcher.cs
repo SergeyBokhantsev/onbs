@@ -173,7 +173,7 @@ namespace HostController
             private set;
         }
 
-        public int SpanSeconds
+        public int Span
         {
             get;
             set;
@@ -185,18 +185,18 @@ namespace HostController
             set;
         }
 
-        public DispatcherTimer(int spanSeconds, EventHandler callback)
+        public DispatcherTimer(int span, EventHandler callback)
         {
             if (callback == null)
                 throw new ArgumentNullException("callback");
 
             this.callback = callback;
-            SpanSeconds = spanSeconds;
+            Span = span;
         }
 
         public bool GetCallbackIfTimeTo(DateTime time, out EventHandler callback)
         {
-            if (!Disposed && Enabled && (time - lastExecutedTime).TotalSeconds >= SpanSeconds)
+            if (!Disposed && Enabled && (time - lastExecutedTime).TotalMilliseconds >= Span)
             {
                 lastExecutedTime = time;
                 callback = this.callback;

@@ -19,9 +19,9 @@ namespace HostController
         private readonly IConfig config;
         private readonly ILogger logger;
 
-        private IProcessRunner dialer;
-
+        private bool initialDelayExecuted;
         private bool disposed;
+        private bool connected;
 
         public InternetConnectionKeeper(IProcessRunnerFactory runnerFactory, IConfig config, ILogger logger)
         {
@@ -39,40 +39,41 @@ namespace HostController
             thread.Start();
         }
 
+        public void WaitForConnection(int timeoutMs)
+        {
+            const int span = 200;
+            int waited = 0;
+
+            while (!connected && waited < timeoutMs)
+            {
+                Thread.Sleep(span);
+                waited += span;
+            }
+        }
+
         private void CheckerThread()
         {
-            Thread.Sleep(config.GetInt(ConfigNames.InetKeeperCheckInitialDelayMs));
-
             while (!disposed)
             {
                 if (!GetConnected())
                 {
-                    OnInternetConnectionStatus(false);
+                    OnInternetConnectionStatus(connected = false);
+
+                    if (!initialDelayExecuted)
+                    {
+                        Thread.Sleep(config.GetInt(ConfigNames.InetKeeperCheckInitialDelayMs));
+                        initialDelayExecuted = true;
+                    }
+
                     Connect();
                 }
                 else
                 {
-                    OnInternetConnectionStatus(true);
+                    initialDelayExecuted = true;
+                    OnInternetConnectionStatus(connected = true);
                 }
-
-                DumpDiallerOutput();
 
                 Thread.Sleep(30000);
-            }
-        }
-
-        [Conditional("DEBUG")]
-        private void DumpDiallerOutput()
-        {
-            if (dialer != null)
-            {
-                var dump = dialer.GetFromStandardOutput();
-
-                if (!string.IsNullOrEmpty(dump))
-                {
-                    logger.Log(this, "DIALER OUTPUT DUMP:", LogLevels.Info);
-                    logger.Log(this, dump, LogLevels.Info);
-                }
             }
         }
 
@@ -92,30 +93,21 @@ namespace HostController
 
         private void Connect()
         {
-            // Release carrier
-            if (dialer != null && !dialer.HasExited)
+            try
             {
-                dialer.Exit();
-                Thread.Sleep(3000);
+                var connectCommand = config.GetString(ConfigNames.InetKeeperConnectCommand);
+                var connector = runnerFactory.Create(connectCommand, null, false);
+
+                connector.Run();
+                connector.WaitForExit(30000);
+
+                logger.LogIfDebug(this, "INET CONNECT OUTPUT DUMP:");
+                logger.LogIfDebug(this, connector.GetFromStandardOutput());
             }
-
-            var modeSwitchApp = config.GetString(ConfigNames.InetKeeperUSBModeswitchApp);
-            var modeswitch = runnerFactory.Create("sudo", modeSwitchApp, false);
-            modeswitch.Run();
-
-            Thread.Sleep(5000);
-            logger.LogIfDebug(this, "MODESWITCH OUTPUT DUMP:");
-            logger.LogIfDebug(this, modeswitch.GetFromStandardOutput());
-
-            modeswitch.Exit();
-
-            var diallerApp = config.GetString(ConfigNames.InetKeeperDialerApp);
-            dialer = runnerFactory.Create("sudo", diallerApp, false);
-            dialer.Run();
-
-            Thread.Sleep(10000);
-            logger.LogIfDebug(this, "DIALER OUTPUT DUMP:");
-            logger.LogIfDebug(this, dialer.GetFromStandardOutput());
+            catch (Exception ex)
+            {
+                logger.Log(this, ex);
+            }
         }
 
         private bool GetConnected()
@@ -135,7 +127,7 @@ namespace HostController
                         {
                             var date = response.Headers[HttpResponseHeader.Date];
                             var dateTime = DateTime.Parse(date);
-                            OnInternetTime(dateTime);
+                            OnInternetTime(dateTime.ToUniversalTime());
                         }
                         catch (Exception ex)
                         {

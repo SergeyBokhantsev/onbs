@@ -8,7 +8,11 @@ namespace Interfaces
 {
     public interface IDispatcherTimer : IDisposable
     {
-        int SpanSeconds { get; set; }
+        /// <summary>
+        /// Interval in milliseconds. 
+        /// Warning: minimal span depends on Dispatcher implementation!
+        /// </summary>
+        int Span { get; set; }
         bool Enabled { get; set; }
     }
 }

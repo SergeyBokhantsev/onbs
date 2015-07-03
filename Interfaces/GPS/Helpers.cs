@@ -39,6 +39,23 @@ namespace Interfaces.GPS
 
             return (RadianToDegree(Math.Atan2(dLong, dPhi)) + 360.0) % 360.0;
         }
+
+        /// <returns>Meters</returns>
+        public static double GetDistance(GeoPoint c1, GeoPoint c2)
+        {
+            var R = 6371000; // m
+            var f1 = DegreeToRadian(c1.Lat.Degrees);
+            var f2 = DegreeToRadian(c2.Lat.Degrees);
+            var df = DegreeToRadian(c2.Lat.Degrees - c1.Lat.Degrees);
+            var dl = DegreeToRadian(c2.Lon.Degrees - c1.Lon.Degrees);
+
+            var a = System.Math.Sin(df / 2) * System.Math.Sin(df / 2) +
+                    System.Math.Cos(f1) * System.Math.Cos(f2) *
+                    System.Math.Sin(dl / 2) * System.Math.Sin(dl / 2);
+            var c = 2 * System.Math.Atan2(System.Math.Sqrt(a), System.Math.Sqrt(1 - a));
+
+            return R * c;
+        }
     }
 }
 

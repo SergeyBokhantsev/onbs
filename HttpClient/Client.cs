@@ -24,12 +24,12 @@ namespace HttpClient
 
         public ClientResponse Get(Uri uri, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
         {
-            return ExecuteRequest(InsertHeaders(WebRequest.CreateHttp(uri), headers));
+            return ExecuteRequest(InsertHeaders(WebRequest.Create(uri) as HttpWebRequest, headers));
         }
 
         public ClientResponse Post(Uri uri, string body, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
         {
-            var request = InsertHeaders(WebRequest.CreateHttp(uri), headers);
+            var request = InsertHeaders(WebRequest.Create(uri) as HttpWebRequest, headers);
 
             request.Method = "POST";
 
@@ -38,7 +38,7 @@ namespace HttpClient
 
         public ClientResponse Delete(Uri uri, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
         {
-            var request = InsertHeaders(WebRequest.CreateHttp(uri), headers);
+            var request = InsertHeaders(WebRequest.Create(uri) as HttpWebRequest, headers);
 
             request.Method = "DELETE";
 

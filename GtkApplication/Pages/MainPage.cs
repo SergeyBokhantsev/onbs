@@ -40,6 +40,9 @@ namespace GtkApplication
 			style.TextBox.Apply(label_gps_metrics_caption, eventbox_gps_metrics_caption);
 			style.TextBox.Apply(label_gps_metrics, eventbox_gps_metrics);
 
+			style.TextBox.Apply(label_travel_caption, eventbox_travel_caption);
+			style.TextBox.Apply(label_travel_metrics, eventbox_travel_metrics);
+
 			style.TextBox.Apply(label_time, eventbox_time);
 
             binder = new ModelBinder(model, logger);
@@ -117,7 +120,33 @@ namespace GtkApplication
                 case "GPS Controller":
                     UpdateGPSMetrics(metrics);
                     break;
+
+                case "Travel Controller":
+                    UpdateTravelMetrics(metrics);
+                    break;
             }
+        }
+
+        private void UpdateTravelMetrics(IMetrics metrics)
+        {
+            bool is_error = false;
+            StringBuilder text = new StringBuilder();
+
+            foreach (var pair in metrics)
+            {
+                if (pair.Key.StartsWith("_"))
+                {
+                    if (pair.Key == "_is_error" && pair.Value is bool && (bool)pair.Value == false)
+                        is_error = false;
+                }
+                else
+                {
+                    text.Append(string.Concat(pair.Key, ": ", pair.Value, Environment.NewLine));
+                }
+            }
+
+            label_travel_metrics.Text = text.ToString().TrimEnd();
+            eventbox_travel_metrics.ModifyBg(StateType.Normal, is_error ? new Gdk.Color(200, 0, 0) : style.TextBox.Bg);
         }
 
         private void UpdateArduinoMetrics(IMetrics metrics)

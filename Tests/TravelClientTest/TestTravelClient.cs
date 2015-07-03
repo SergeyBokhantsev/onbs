@@ -9,20 +9,28 @@ namespace Tests.TravelClientTest
     [TestClass]
     public class TestTravelClient
     {
-        //private const string serviceUrl ="http://onbs2.azurewebsites.net";
-        private const string serviceUrl =  "http://localhost:22424/";
+        private const string serviceUrl ="http://onbs2.azurewebsites.net";
+        //private const string serviceUrl =  "http://localhost:22424/";
 
         private const string userKey = "1";
         private const string vehicleId = "UnitTestsVehicle";
 
         private Travel CreateTravel(TravelsClient.Client client, string name)
         {
-            return client.OpenTravel(name);
+            var result = client.OpenTravel(name);
+
+            if (result.Success)
+                return result.Travel;
+            else
+                throw new Exception(result.Error);
         }
 
         private void DeleteTravel(TravelsClient.Client client, Travel travel)
         {
-            client.DeleteTravel(travel);
+            var result = client.DeleteTravel(travel);
+
+            if (!result.Success)
+                throw new Exception(result.Error);
         }
 
         [TestMethod]
@@ -62,9 +70,11 @@ namespace Tests.TravelClientTest
             var travel = CreateTravel(client, name);
 
             //ACT
-            var receivedTravel = client.GetTravel(travel.ID);
+            var result = client.GetTravel(travel.ID);
+            var receivedTravel = result.Travel;
 
             //ASSERT
+            Assert.IsTrue(result.Success);
             Assert.IsNotNull(receivedTravel);
             Assert.AreEqual(travel.Name, receivedTravel.Name);
             Assert.AreEqual(travel.ID, receivedTravel.ID);
@@ -89,7 +99,7 @@ namespace Tests.TravelClientTest
 
             //ASSERT
             Assert.IsNotNull(receivedTravel);
-            Assert.IsTrue(receivedTravel.Closed);
+            Assert.IsTrue(receivedTravel.Travel.Closed);
 
             //Cleanup
             DeleteTravel(client, travel);
@@ -110,7 +120,7 @@ namespace Tests.TravelClientTest
 
             //ASSERT 1
             Assert.IsNotNull(activeTravel);
-            Assert.AreEqual(travel2.ID, activeTravel.ID);
+            Assert.AreEqual(travel2.ID, activeTravel.Travel.ID);
 
             // ACT 2
             client.CloseTravel(travel2);
@@ -118,7 +128,7 @@ namespace Tests.TravelClientTest
 
             //ASSERT 2
             Assert.IsNotNull(activeTravel);
-            Assert.AreEqual(travel1.ID, activeTravel.ID);
+            Assert.AreEqual(travel1.ID, activeTravel.Travel.ID);
 
             //Cleanup
             DeleteTravel(client, travel1);
@@ -132,10 +142,11 @@ namespace Tests.TravelClientTest
             var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, Guid.NewGuid().ToString(), new Mocks.Logger());
 
             //ACT 1
-            var activeTravel = client.FindActiveTravel();
+            var activeTravelResult = client.FindActiveTravel();
 
             //ASSERT 1
-            Assert.IsNull(activeTravel);
+            Assert.IsTrue(activeTravelResult.Success);
+            Assert.IsNull(activeTravelResult.Travel);
         }
 
         [TestMethod]
@@ -148,8 +159,12 @@ namespace Tests.TravelClientTest
 
             //ACT
             travel.Name = "newname";
-            client.RenameTravel(travel);
-            var receivedTravel = client.GetTravel(travel.ID);
+            var result = client.RenameTravel(travel);
+            Assert.IsTrue(result.Success);
+
+            var getResult = client.GetTravel(travel.ID);
+            Assert.IsTrue(getResult.Success);
+            var receivedTravel = getResult.Travel;
 
             //ASSERT
             Assert.IsNotNull(receivedTravel);

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
-    public interface ITravelController : IController
+    public interface ITravelController : IController, IMetricsProvider
     {
-        string TravelName { get; }
-        DateTime TravelStarted { get; }
-        void StartNewTravel(string name);
-        void RenameTravel(string name);
+        //string TravelName { get; }
+        //DateTime TravelStarted { get; }
+        //void StartNewTravel(string name);
+        //void RenameTravel(string name);
     }
 }

@@ -54,6 +54,16 @@ namespace GtkApplication
 		
 		private global::Gtk.Label label_gps_metrics;
 		
+		private global::Gtk.VBox vbox3;
+		
+		private global::Gtk.EventBox eventbox_travel_caption;
+		
+		private global::Gtk.Label label_travel_caption;
+		
+		private global::Gtk.EventBox eventbox_travel_metrics;
+		
+		private global::Gtk.Label label_travel_metrics;
+		
 		private global::Gtk.EventBox eventbox_time;
 		
 		private global::Gtk.Label label_time;
@@ -167,8 +177,8 @@ namespace GtkApplication
 			this.hbox1.BorderWidth = ((uint)(10));
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.vbox1 = new global::Gtk.VBox ();
+			this.vbox1.WidthRequest = 160;
 			this.vbox1.HeightRequest = 10;
-			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			this.vbox1.BorderWidth = ((uint)(6));
 			// Container child vbox1.Gtk.Box+BoxChild
@@ -207,7 +217,7 @@ namespace GtkApplication
 			w18.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.vbox2 = new global::Gtk.VBox ();
-			this.vbox2.WidthRequest = 200;
+			this.vbox2.WidthRequest = 160;
 			this.vbox2.Name = "vbox2";
 			this.vbox2.Spacing = 6;
 			this.vbox2.BorderWidth = ((uint)(6));
@@ -245,6 +255,45 @@ namespace GtkApplication
 			w23.Expand = false;
 			w23.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
+			this.vbox3 = new global::Gtk.VBox ();
+			this.vbox3.WidthRequest = 160;
+			this.vbox3.Name = "vbox3";
+			this.vbox3.Spacing = 6;
+			this.vbox3.BorderWidth = ((uint)(6));
+			// Container child vbox3.Gtk.Box+BoxChild
+			this.eventbox_travel_caption = new global::Gtk.EventBox ();
+			this.eventbox_travel_caption.Name = "eventbox_travel_caption";
+			// Container child eventbox_travel_caption.Gtk.Container+ContainerChild
+			this.label_travel_caption = new global::Gtk.Label ();
+			this.label_travel_caption.Name = "label_travel_caption";
+			this.label_travel_caption.LabelProp = global::Mono.Unix.Catalog.GetString ("Travel:");
+			this.eventbox_travel_caption.Add (this.label_travel_caption);
+			this.vbox3.Add (this.eventbox_travel_caption);
+			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.eventbox_travel_caption]));
+			w25.Position = 0;
+			w25.Expand = false;
+			w25.Fill = false;
+			// Container child vbox3.Gtk.Box+BoxChild
+			this.eventbox_travel_metrics = new global::Gtk.EventBox ();
+			this.eventbox_travel_metrics.Name = "eventbox_travel_metrics";
+			// Container child eventbox_travel_metrics.Gtk.Container+ContainerChild
+			this.label_travel_metrics = new global::Gtk.Label ();
+			this.label_travel_metrics.HeightRequest = 100;
+			this.label_travel_metrics.Name = "label_travel_metrics";
+			this.label_travel_metrics.Xalign = 0.06F;
+			this.label_travel_metrics.Yalign = 0.06F;
+			this.eventbox_travel_metrics.Add (this.label_travel_metrics);
+			this.vbox3.Add (this.eventbox_travel_metrics);
+			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.eventbox_travel_metrics]));
+			w27.Position = 1;
+			w27.Expand = false;
+			w27.Fill = false;
+			this.hbox1.Add (this.vbox3);
+			global::Gtk.Box.BoxChild w28 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.vbox3]));
+			w28.Position = 2;
+			w28.Expand = false;
+			w28.Fill = false;
+			// Container child hbox1.Gtk.Box+BoxChild
 			this.eventbox_time = new global::Gtk.EventBox ();
 			this.eventbox_time.Name = "eventbox_time";
 			// Container child eventbox_time.Gtk.Container+ContainerChild
@@ -254,11 +303,11 @@ namespace GtkApplication
 			this.label_time.LabelProp = global::Mono.Unix.Catalog.GetString ("--:--:--");
 			this.eventbox_time.Add (this.label_time);
 			this.hbox1.Add (this.eventbox_time);
-			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.eventbox_time]));
-			w25.Position = 2;
+			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.eventbox_time]));
+			w30.Position = 3;
 			this.base_vbox.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.base_vbox [this.hbox1]));
-			w26.Position = 3;
+			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.base_vbox [this.hbox1]));
+			w31.Position = 3;
 			this.Add (this.base_vbox);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();

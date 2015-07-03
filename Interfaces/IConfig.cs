@@ -43,6 +43,7 @@ namespace Interfaces
         public static readonly string LoggedClasses = "LoggedClasses";
         public static readonly string LogFolder = "LogFolder";
 
+        public static readonly string SystemTimeLocalZone = "SystemTimeLocalZone";
         public static readonly string SystemTimeMinDifference = "SystemTimeMinDifference";
         public static readonly string SystemTimeSetCommand = "SystemTimeSetCommand";
         public static readonly string SystemTimeSetArgs = "SystemTimeSetArgs";
@@ -76,12 +77,15 @@ namespace Interfaces
         public static readonly string TravelServiceUrl = "TravelServiceUrl";
         public static readonly string TravelServiceVehicle = "TravelServiceVehicle";
         public static readonly string TravelServiceKey = "TravelServiceKey";
+        public static readonly string TravelServiceExportRateSeconds = "TravelServiceExportRateSeconds";
+        public static readonly string TravelServiceMinutesGapToOpenNewTravel = "TravelServiceMinutesGapToOpenNewTravel";
+        public static readonly string TravelServiceGPSFilterMaxGapSeconds = "TravelServiceGPSFilterMaxGapSeconds";
+        public static readonly string TravelServiceGPSFilterMaxGapMeters = "TravelServiceGPSFilterMaxGapMeters";
 
         public static readonly string InetKeeperEnabled = "InetKeeperEnabled";
         public static readonly string InetKeeperCheckUrl = "InetKeeperCheckUrl";
         public static readonly string InetKeeperCheckMethod = "InetKeeperCheckMethod";
         public static readonly string InetKeeperCheckInitialDelayMs = "InetKeeperCheckInitialDelayMs";
-        public static readonly string InetKeeperUSBModeswitchApp = "InetKeeperUSBModeswitchApp";
-        public static readonly string InetKeeperDialerApp = "InetKeeperDialerApp";
+        public static readonly string InetKeeperConnectCommand = "InetKeeperConnectCommand";
     }
 }

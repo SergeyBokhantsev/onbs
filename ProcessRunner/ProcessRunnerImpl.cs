@@ -173,5 +173,22 @@ namespace ProcessRunner
 
             return res.ToString();
         }
+
+        public bool WaitForExit(int timeoutMilliseconds)
+        {
+            const int checkSpanMs = 500;
+            int waitingMs = 0;
+
+            while (waitingMs < timeoutMilliseconds)
+            {
+                if (proc == null || proc.HasExited)
+                    return true;
+
+                Thread.Sleep(checkSpanMs);
+                waitingMs += checkSpanMs;
+            }
+
+            return false;
+        }
     }
 }

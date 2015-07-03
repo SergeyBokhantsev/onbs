@@ -21,24 +21,76 @@ namespace TravelsClient
             client = new Client(serviceUri, key, vehicleId, logger);
         }
 
-        public bool TryFindActiveTravelAsync(Action<Travel> callback)
+        private bool AccessAllowed()
         {
             int currentState = Interlocked.Exchange(ref busyState, BUSY);
+            return currentState != BUSY;
+        }
 
-            if (currentState == BUSY)
+        public bool TryFindActiveTravelAsync(Action<TravelResult> callback)
+        {
+            if (AccessAllowed())
+            {
+                ThreadPool.QueueUserWorkItem(state =>
+                    {
+                        var result = client.FindActiveTravel();
+
+                        Interlocked.Decrement(ref busyState);
+
+                        if (callback != null)
+                            callback(result);
+                    });
+
+                return true;
+            }
+            else
+            {
                 return false;
+            }
+        }
 
-            ThreadPool.QueueUserWorkItem(state =>
+        public bool TryOpenNewTravel(string name, Action<TravelResult> callback)
+        {
+            if (AccessAllowed())
+            {
+                ThreadPool.QueueUserWorkItem(state =>
                 {
-                    var travel = client.FindActiveTravel();
-
-                    if (callback != null)
-                        callback(travel);
+                    var result = client.OpenTravel(name);
 
                     Interlocked.Decrement(ref busyState);
+
+                    if (callback != null)
+                        callback(result);
                 });
 
-            return true;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool TryAddTravelPoints(IEnumerable<TravelPoint> points, Travel travel, Action<ActionResult> callback)
+        {
+            if (AccessAllowed())
+            {
+                ThreadPool.QueueUserWorkItem(state =>
+                {
+                    var result = client.AddTravelPoint(points, travel);
+
+                    Interlocked.Decrement(ref busyState);
+
+                    if (callback != null)
+                        callback(result);
+                });
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
