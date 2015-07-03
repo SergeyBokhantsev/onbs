@@ -60,7 +60,7 @@ namespace TravelController
         {
             if (!ready)
             {
-                FindOrCreateCurrentTravel();
+               // FindOrCreateCurrentTravel();
             }
         }
 

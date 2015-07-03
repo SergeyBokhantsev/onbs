@@ -122,7 +122,8 @@ namespace HostController
         {
             try
             {
-                var request = WebRequest.CreateHttp(config.GetString(ConfigNames.InetKeeperCheckUrl));
+                var request = WebRequest.Create(config.GetString
+				                                (ConfigNames.InetKeeperCheckUrl)) as HttpWebRequest;
                 request.Method = config.GetString(ConfigNames.InetKeeperCheckMethod);
                 var response = request.GetResponse() as HttpWebResponse;
 
@@ -150,10 +151,15 @@ namespace HostController
                     return false;
                 }
             }
-            catch
+            catch (WebException)
             {
                 return false;
             }
+			catch (Exception ex) 
+			{
+				logger.Log (this, ex);
+				return false;
+			}
         }
 
         public void Dispose()
