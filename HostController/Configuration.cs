@@ -19,6 +19,12 @@ namespace HostController
             set;
         }
 
+        public bool IsInternetConnected
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         public Configuration()

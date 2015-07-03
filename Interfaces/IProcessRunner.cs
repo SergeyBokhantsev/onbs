@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,13 +17,16 @@ namespace Interfaces
     {
         event ExitedEventHandler Exited;
         string Name { get; }
+        bool HasExited { get; }
         void Run();
+        void SendToStandardInput(string message);
+        string GetFromStandardOutput();
         void Exit();
     }
 
     public interface IProcessRunnerFactory
     {
         IProcessRunner Create(string appKey);
-        IProcessRunner Create(string exePath, string args, bool useShellExecute, bool waitForUI);
+        IProcessRunner Create(string exePath, string args, bool waitForUI);
     }
 }

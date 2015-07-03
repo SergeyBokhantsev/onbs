@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -38,6 +39,7 @@ namespace HostController
             }
         }
 
+        private readonly List<DispatcherTimer> timers = new List<DispatcherTimer>();
         private readonly ManualResetEventSlim mre = new ManualResetEventSlim(false);
         private readonly Queue<InvokeItem> invokeItems = new Queue<InvokeItem>();
         private readonly ILogger logger;
@@ -77,7 +79,7 @@ namespace HostController
         {
             while (!exit)
             {
-                if (mre.Wait(10000))
+                if (mre.Wait(1000))
                 {
                     InvokeItem itemToInvoke = null;
 
@@ -106,9 +108,37 @@ namespace HostController
                         }
                     }
                 }
-                else
+
+                ProcessTimers();
+            }
+        }
+
+        private void ProcessTimers()
+        {
+            bool needToCleanDisposed = false;
+            var time = DateTime.Now;
+
+            lock (timers)
+            {
+                foreach (var timer in timers)
                 {
-                    logger.LogIfDebug(this, "Dispatcher heartbeat");
+                    if (timer.Disposed)
+                    {
+                        needToCleanDisposed = true;
+                    }
+                    else
+                    {
+                        EventHandler timerCallback;
+                        if (timer.GetCallbackIfTimeTo(time, out timerCallback))
+                        {
+                            Invoke(timer, null, timerCallback);
+                        }
+                    }
+                }
+
+                if (needToCleanDisposed)
+                {
+                    timers.RemoveAll(t => t.Disposed);
                 }
             }
         }
@@ -122,6 +152,66 @@ namespace HostController
         public bool Check()
         {
             return Thread.CurrentThread.ManagedThreadId == threadId;
+        }
+
+        public IDispatcherTimer CreateTimer(int spanSeconds, EventHandler callback)
+        {
+            var timer = new DispatcherTimer(spanSeconds, callback);
+            timers.Add(timer);
+            return timer;
+        }
+    }
+
+    public class DispatcherTimer: IDispatcherTimer
+    {
+        private readonly EventHandler callback;
+        private DateTime lastExecutedTime;
+
+        public bool Disposed
+        {
+            get;
+            private set;
+        }
+
+        public int SpanSeconds
+        {
+            get;
+            set;
+        }
+
+        public bool Enabled
+        {
+            get;
+            set;
+        }
+
+        public DispatcherTimer(int spanSeconds, EventHandler callback)
+        {
+            if (callback == null)
+                throw new ArgumentNullException("callback");
+
+            this.callback = callback;
+            SpanSeconds = spanSeconds;
+        }
+
+        public bool GetCallbackIfTimeTo(DateTime time, out EventHandler callback)
+        {
+            if (!Disposed && Enabled && (time - lastExecutedTime).TotalSeconds >= SpanSeconds)
+            {
+                lastExecutedTime = time;
+                callback = this.callback;
+                return true;
+            }
+            else
+            {
+                callback = null;
+                return false;
+            }
+        }
+
+        public void Dispose()
+        {
+            Disposed = true;
         }
     }
 }

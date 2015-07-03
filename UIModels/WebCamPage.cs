@@ -113,7 +113,7 @@ namespace UIModels
         {
             var command = hc.Config.GetString(WebcamControlCommand);
             var arg = string.Format(hc.Config.GetString(WebcamControlColorArgs), Color);
-            hc.ProcessRunnerFactory.Create(command, arg, true, false).Run();
+            hc.ProcessRunnerFactory.Create(command, arg, false).Run();
             Thread.Sleep(300);
         }
 
@@ -121,7 +121,7 @@ namespace UIModels
         {
             var command = hc.Config.GetString(WebcamControlCommand);
             var arg = string.Format(hc.Config.GetString(WebcamControlContrastArgs), Contrast);
-            hc.ProcessRunnerFactory.Create(command, arg, true, false).Run();
+            hc.ProcessRunnerFactory.Create(command, arg, false).Run();
             Thread.Sleep(300);
         }
 
@@ -129,7 +129,7 @@ namespace UIModels
 		{
 			var command = hc.Config.GetString(WebcamControlCommand);
 			var arg = string.Format(hc.Config.GetString(WebcamControlBrightArgs), Bright);
-			hc.ProcessRunnerFactory.Create(command, arg, true, false).Run();
+			hc.ProcessRunnerFactory.Create(command, arg, false).Run();
 			Thread.Sleep(300);
 		}
 

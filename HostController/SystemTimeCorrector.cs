@@ -54,7 +54,7 @@ namespace HostController
                     logger.Log(this, "Updating system time...", LogLevels.Info);
 
                     var args = string.Format(setTimeArgs, validTime.ToString(setTimeSetFormat));
-                    var pr = processRunnerFactory.Create(setTimeCommand, args, true, false);
+                    var pr = processRunnerFactory.Create(setTimeCommand, args, false);
                     pr.Run();
 
                     Thread.Sleep(500);

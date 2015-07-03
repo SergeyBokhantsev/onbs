@@ -45,5 +45,12 @@ namespace Tests.Mocks
             get;
             set;
         }
+
+
+        public bool IsInternetConnected
+        {
+            get;
+            set;
+        }
     }
 }

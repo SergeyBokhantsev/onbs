@@ -13,7 +13,6 @@ namespace AutomationController.ToolAdapters
         private readonly ILogger logger;
 
         private const string automationTool = "xdotool";
-        private readonly bool shellExecute = true;
         private readonly bool waitForUI = false;
 
         public XdotoolAdapter(IProcessRunnerFactory processRunnerFactory, ILogger logger)
@@ -34,7 +33,7 @@ namespace AutomationController.ToolAdapters
         private IProcessRunner CreateRunner(params AutomationKeys[] key)
         {
             var args = string.Concat("key ", string.Join("+", key));
-            return processRunnerFactory.Create(automationTool, args, shellExecute, waitForUI);
+            return processRunnerFactory.Create(automationTool, args, waitForUI);
         }
     }
 }

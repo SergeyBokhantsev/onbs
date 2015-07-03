@@ -56,7 +56,7 @@ namespace UIModels
                 var exe = config.GetString(ConfigNames.NavitExe);
                 var args = string.Format(config.GetString(ConfigNames.NavitArgs), outFile);
 
-                return hc.ProcessRunnerFactory.Create(exe, args, false, true);
+                return hc.ProcessRunnerFactory.Create(exe, args, true);
             }
             catch (Exception ex)
             {

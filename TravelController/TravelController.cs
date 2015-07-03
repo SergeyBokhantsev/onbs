@@ -11,8 +11,16 @@ namespace TravelController
 {
     public class TravelController : IController
     {
+        //private enum States { NotStarted, FindingOpenedTravel, CreatingTravel, Ready }
+
         private readonly IHostController hc;
-        private readonly Client client;
+        private readonly AsyncClient client;
+        private readonly List<TravelPoint> points = new List<TravelPoint>();
+
+        private Travel travel;
+        private bool ready;
+
+        //private LockingProperty<States> state = new LockingProperty<States>(States.NotStarted);
 
         public TravelController(IHostController hc)
         {
@@ -20,26 +28,66 @@ namespace TravelController
                 throw new ArgumentNullException("hc");
 
             this.hc = hc;
-            this.client = CreateClient(hc.Config, hc.Logger);
-
-            hc.GetController<IGPSController>().GPRMCReseived += GPRMCReseived;
-        }
-
-        void GPRMCReseived(GPRMC obj)
-        {
             
+            if ((client = CreateClient(hc.Config, hc.Logger)) != null)
+            {
+                hc.GetController<IGPSController>().GPRMCReseived += GPRMCReseived;
+                hc.Dispatcher.CreateTimer(30, ExportPoints).Enabled = true;
+            }
         }
 
-        private Client CreateClient(IConfig config, ILogger logger)
+        private void FindOrCreateCurrentTravel()
         {
-            if (config == null)
-                throw new ArgumentNullException("config");
+            if (client.TryFindActiveTravelAsync(travel =>
+                {
+                    this.travel = travel;
 
-            var serverUrl = config.GetString(ConfigNames.TravelServiceUrl);
-            var vehicleId = config.GetString(ConfigNames.TravelServiceVehicle);
-            var key = config.GetString(ConfigNames.TravelServiceKey);
+                    if (travel == null)
+                    {
+                        
+                    }
+                    else
+                    {
 
-            return new Client(serverUrl, key, vehicleId, logger);
+                    }
+                }))
+            {
+                
+            }
+        }
+
+        private void ExportPoints(object sender, EventArgs e)
+        {
+            if (!ready)
+            {
+                FindOrCreateCurrentTravel();
+            }
+        }
+
+        private void GPRMCReseived(GPRMC obj)
+        {
+
+        }
+
+        private AsyncClient CreateClient(IConfig config, ILogger logger)
+        {
+            try
+            {
+                if (config == null)
+                    throw new ArgumentNullException("config");
+
+                var serverUrl = config.GetString(ConfigNames.TravelServiceUrl);
+                var vehicleId = config.GetString(ConfigNames.TravelServiceVehicle);
+                var key = config.GetString(ConfigNames.TravelServiceKey);
+
+                return new AsyncClient(new Uri(serverUrl), key, vehicleId, logger);
+            }
+            catch (Exception ex)
+            {
+                logger.Log(this, "Unable to create TravelClient", LogLevels.Error);
+                logger.Log(this, ex);
+                return null;
+            }
         }
     }
 }

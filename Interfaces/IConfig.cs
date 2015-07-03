@@ -9,6 +9,7 @@ namespace Interfaces
     public interface ISessionConfig
     {
         bool IsSystemTimeValid { get; }
+        bool IsInternetConnected { get; }
     }
 
     public interface IConfig : ISessionConfig
@@ -75,5 +76,12 @@ namespace Interfaces
         public static readonly string TravelServiceUrl = "TravelServiceUrl";
         public static readonly string TravelServiceVehicle = "TravelServiceVehicle";
         public static readonly string TravelServiceKey = "TravelServiceKey";
+
+        public static readonly string InetKeeperEnabled = "InetKeeperEnabled";
+        public static readonly string InetKeeperCheckUrl = "InetKeeperCheckUrl";
+        public static readonly string InetKeeperCheckMethod = "InetKeeperCheckMethod";
+        public static readonly string InetKeeperCheckInitialDelayMs = "InetKeeperCheckInitialDelayMs";
+        public static readonly string InetKeeperUSBModeswitchApp = "InetKeeperUSBModeswitchApp";
+        public static readonly string InetKeeperDialerApp = "InetKeeperDialerApp";
     }
 }

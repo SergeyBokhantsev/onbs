@@ -14,6 +14,7 @@ namespace HostController
         private string logFolder;
 
         private GPSD.Net.GPSD gpsd;
+        private InternetConnectionKeeper netKeeper;
 
         private Configuration config;
         private UIController.UIController uiController;
@@ -21,6 +22,7 @@ namespace HostController
         private IArduinoController arduController;
         private GPSController.GPSController gpsController;
         private IAutomationController automationController;
+        private TravelController.TravelController travelController;
 
         public IConfig Config
         {
@@ -159,24 +161,47 @@ namespace HostController
 
             automationController = new AutomationController.AutomationController(this);
 
+            netKeeper = new InternetConnectionKeeper(ProcessRunnerFactory, Config, Logger);
+            netKeeper.InternetConnectionStatus += connected => config.IsInternetConnected = connected;
+            netKeeper.InternetTime += CheckSystemTimeFromInternet;
+            netKeeper.StartChecking();
+
+            travelController = new TravelController.TravelController(this);
+
             uiController = new UIController.UIController(Config.GetString(ConfigNames.UIHostAssemblyName), Config.GetString(ConfigNames.UIHostClass), this, () => new UIModels.MainPage(this));
             uiController.ShowDefaultPage();
 
-            gpsCtrl.GPRMCReseived += CheckSystemTime;
+            gpsCtrl.GPRMCReseived += CheckSystemTimeFromGPS;
         }
 
-        private void CheckSystemTime(Interfaces.GPS.GPRMC gprmc)
+        private void CheckSystemTimeFromGPS(Interfaces.GPS.GPRMC gprmc)
         {
             if (gprmc.Active && (config.IsSystemTimeValid = new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(gprmc.Time)))
             {
-                gpsController.GPRMCReseived -= CheckSystemTime;
-                Logger.Log(this, "SystemTimeCorrector has been disconnected.", LogLevels.Info);
+                DisconnectSystemTimeChecking();
             }
+        }
+
+        private void CheckSystemTimeFromInternet(DateTime inetTime)
+        {
+            if (config.IsSystemTimeValid = new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(inetTime))
+            {
+                DisconnectSystemTimeChecking();
+            }
+        }
+
+        private void DisconnectSystemTimeChecking()
+        {
+            gpsController.GPRMCReseived -= CheckSystemTimeFromGPS;
+            netKeeper.InternetTime -= CheckSystemTimeFromInternet;
+            Logger.Log(this, "SystemTimeCorrector has been disconnected.", LogLevels.Info);
         }
 
         public void Shutdown(HostControllerShutdownModes mode)
         {
             Logger.Log(this, string.Format("Begin shutdown in {0} mode", mode), LogLevels.Info);
+
+            DisconnectSystemTimeChecking();
 
             gpsController.Shutdown();
 
@@ -197,7 +222,7 @@ namespace HostController
                     {
                         var command = Config.GetString(ConfigNames.SystemRestartCommand);
                         var arg = Config.GetString(ConfigNames.SystemRestartArg);
-                        ProcessRunnerFactory.Create(command, arg, true, false).Run();
+                        ProcessRunnerFactory.Create(command, arg, false).Run();
                     }
                     break;
 
@@ -205,7 +230,7 @@ namespace HostController
                     {
                         var command = Config.GetString(ConfigNames.SystemShutdownCommand);
                         var arg = Config.GetString(ConfigNames.SystemShutdownArg);
-                        ProcessRunnerFactory.Create(command, arg, true, false).Run();
+                        ProcessRunnerFactory.Create(command, arg, false).Run();
                     }
                     break;
             }
@@ -215,15 +240,14 @@ namespace HostController
         {
             var appName = Config.GetString(string.Concat(appKey, "_exe"));
             var commandLine = Config.GetString(string.Concat(appKey, "_args"));
-            var useShellExecution = Config.GetBool(string.Concat(appKey, "_use_shell"));
             var waitForUI = Config.GetBool(string.Concat(appKey, "_wait_UI"));
 
-            return Create(appName, commandLine, useShellExecution, waitForUI);
+            return Create(appName, commandLine, waitForUI);
         }
 
-        public IProcessRunner Create(string exePath, string args, bool useShellExecute, bool waitForUI)
+        public IProcessRunner Create(string exePath, string args, bool waitForUI)
         {
-            return new ProcessRunner(exePath, args, useShellExecute, waitForUI, Logger);
+            return new ProcessRunner.ProcessRunnerImpl(exePath, args, waitForUI, Logger);
         }
     }
 }

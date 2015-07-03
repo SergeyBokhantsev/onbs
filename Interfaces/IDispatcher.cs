@@ -11,5 +11,7 @@ namespace Interfaces
         void Run();
         bool Check();
         void Invoke(object sender, EventArgs args, EventHandler handler);
+
+        IDispatcherTimer CreateTimer(int spanSeconds, EventHandler callback);
     }
 }

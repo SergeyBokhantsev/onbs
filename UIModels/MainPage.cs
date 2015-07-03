@@ -15,7 +15,7 @@ namespace UIModels
 		private const string cameraAppKey = "cam";
 
         private readonly IHostController hostController;
-        private readonly Timer timer;
+        private readonly IDispatcherTimer timer;
 
         private List<IMetricsProvider> metricsProviders;
 
@@ -37,12 +37,11 @@ namespace UIModels
 			SetProperty("time_valid", "1");
 			SetProperty("time", null);
 
-            timer = new Timer(1000);
-            timer.Elapsed += TimerTick;
-            timer.Start();
+            timer = hostController.Dispatcher.CreateTimer(1, TimerTick);
+            timer.Enabled = true;
         }
 
-        private void TimerTick(object sender, ElapsedEventArgs e)
+        private void TimerTick(object sender, EventArgs e)
         {
             SetProperty("time", DateTime.Now);
             SetProperty("time_valid", hostController.Config.IsSystemTimeValid ? "1" : "0");
@@ -69,7 +68,7 @@ namespace UIModels
         void MainPageDisposing(object sender, EventArgs e)
         {
             UnsubscribeMetricsProviders();
-            timer.Stop();
+            timer.Dispose();
         }
 
         private void UnsubscribeMetricsProviders()

@@ -8,16 +8,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HostController
+namespace ProcessRunner
 {
-    public class ProcessRunner : IProcessRunner
+    public class ProcessRunnerImpl : IProcessRunner
     {
         public event ExitedEventHandler Exited;
 
         private Process proc;
         private readonly string appPath;
         private readonly string arguments;
-        private readonly bool useShellExecution;
         private readonly bool waitForUI;
         private readonly ILogger logger;
 
@@ -29,7 +28,18 @@ namespace HostController
             private set;
         }
 
-        public ProcessRunner(string appPath, string arguments, bool useShellExecution, bool waitForUI, ILogger logger)
+        public bool HasExited
+        {
+            get
+            {
+                if (proc == null)
+                    return true;
+                else
+                    return proc.HasExited;
+            }
+        }
+
+        public ProcessRunnerImpl(string appPath, string arguments, bool waitForUI, ILogger logger)
         {
             if (string.IsNullOrEmpty(appPath))
                 throw new Exception("appPath");
@@ -39,7 +49,6 @@ namespace HostController
 
             this.appPath = appPath;
             this.arguments = arguments;
-            this.useShellExecution = useShellExecution;
             this.waitForUI = waitForUI;
             this.logger = logger;
 
@@ -60,8 +69,10 @@ namespace HostController
 
                 var psi = new ProcessStartInfo(appPath);
                 psi.Arguments = arguments;
-                psi.UseShellExecute = useShellExecution;
+                psi.UseShellExecute = false;
                 psi.WorkingDirectory = Path.GetDirectoryName(appPath);
+                psi.RedirectStandardInput = true;
+                psi.RedirectStandardOutput = true;
 
                 proc = Process.Start(psi);
 
@@ -84,8 +95,8 @@ namespace HostController
 
         private void Monitor()
         {
-			if (proc == null)
-				return;
+            if (proc == null)
+                return;
 
             logger.LogIfDebug(this, string.Format("Launching monitor loop for {0}", appPath));
 
@@ -138,5 +149,29 @@ namespace HostController
                 handler(!closing);
         }
 
+        public void SendToStandardInput(string message)
+        {
+            if (!proc.HasExited)
+            {
+                proc.StandardInput.WriteLine(message);
+                proc.StandardInput.Flush();
+            }
+        }
+
+        public string GetFromStandardOutput()
+        {
+            StringBuilder res = new StringBuilder();
+            var buffer = new char[1024];
+            int readed = 0;
+
+            do
+            {
+                readed = proc.StandardOutput.Read(buffer, 0, buffer.Length);
+                res.Append(buffer, 0, readed);
+            }
+            while (readed == buffer.Length);
+
+            return res.ToString();
+        }
     }
 }
