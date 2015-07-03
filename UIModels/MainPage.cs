@@ -47,7 +47,7 @@ namespace UIModels
 
         private void TimerTick(object sender, EventArgs e)
         {
-            SetProperty("time", DateTime.Now.AddHours(localTimeZone));
+            SetProperty("time", DateTime.Now.ToUniversalTime().AddHours(localTimeZone));
             SetProperty("time_valid", hostController.Config.IsSystemTimeValid ? "1" : "0");
         }
 

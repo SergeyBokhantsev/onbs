@@ -138,7 +138,7 @@ namespace TravelController
 
         private string CreateNewTravelName()
         {
-            return string.Concat("Travel ", DateTime.Now.ToString("dd/MM/yyyy HH:mm"));
+            return DateTime.Now.ToString("dd/MM/yyyy HH:mm");
         }
 
         private void Operate(object sender, EventArgs e)

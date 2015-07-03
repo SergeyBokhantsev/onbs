@@ -72,7 +72,7 @@ namespace GtkApplication
 				if (t != null || t is DateTime)
 				{
 					var time = (DateTime)t;
-					return string.Format("<span size='38000'>{0}</span>{1}<span size='18000'>{2}</span>", time.ToString("T"), Environment.NewLine, time.ToShortDateString());
+					return string.Format("<span size='38000'>{0}</span>{1}<span size='18000'>{2}</span>", time.ToString("HH:mm:ss"), Environment.NewLine, time.ToShortDateString());
 				}
 				else
 				{

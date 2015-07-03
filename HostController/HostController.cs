@@ -12,7 +12,7 @@ namespace HostController
     public class HostController : IHostController, IProcessRunnerFactory
 	{
         private string logFolder;
-
+        
         private GPSD.Net.GPSD gpsd;
         private InternetConnectionKeeper netKeeper;
 
