@@ -52,9 +52,9 @@ namespace ProcessRunner
             this.waitForUI = waitForUI;
             this.logger = logger;
 
-            Name = Path.GetFileName(appPath);
+            Name = string.Format("{0} {1}", Path.GetFileName(appPath), arguments);
 
-            logger.LogIfDebug(this, string.Format("Process runner created for {0} {1}", appPath, arguments));
+            logger.LogIfDebug(this, string.Concat("Process runner created for {0}", Name));
         }
 
         public void Run()
@@ -65,7 +65,7 @@ namespace ProcessRunner
             try
             {
 
-                logger.Log(this, string.Format("Launching {0}", appPath), LogLevels.Info);
+                logger.Log(this, string.Format("Launching {0}", Name), LogLevels.Info);
 
                 var psi = new ProcessStartInfo(appPath);
                 psi.Arguments = arguments;
@@ -76,7 +76,7 @@ namespace ProcessRunner
 
                 proc = Process.Start(psi);
 
-                logger.LogIfDebug(this, string.Format("Launched {0}", appPath));
+                logger.LogIfDebug(this, string.Format("Launched {0}", Name));
 
                 if (waitForUI)
                 {
@@ -87,7 +87,7 @@ namespace ProcessRunner
             catch (Exception ex)
             {
                 logger.Log(this, ex);
-                throw new Exception(string.Format("Unable to launch '{0}': {1}", appPath, ex.Message), ex);
+                throw new Exception(string.Format("Unable to launch '{0}': {1}", Name, ex.Message), ex);
             }
 
             //var monitor = new Thread(Monitor);
@@ -96,17 +96,24 @@ namespace ProcessRunner
 
         private void Monitor(object o)
         {
-            if (proc == null)
-                return;
-
-            logger.LogIfDebug(this, string.Format("Launching monitor loop for {0}", appPath));
-
-            while (!proc.HasExited)
+            try
             {
-                Thread.Sleep(1000);
-            }
+                if (proc == null)
+                    return;
 
-            logger.Log(this, string.Format("{0} has exited", appPath), LogLevels.Info);
+                logger.LogIfDebug(this, string.Format("Launching monitor loop for {0}", Name));
+
+                while (!proc.HasExited)
+                {
+                    Thread.Sleep(1000);
+                }
+
+                logger.Log(this, string.Format("{0} has exited", Name), LogLevels.Info);
+            }
+            catch (Exception ex)
+            {
+                logger.Log(this, ex);
+            }
 
             OnExited();
         }
@@ -115,7 +122,7 @@ namespace ProcessRunner
         {
             closing = true;
 
-            logger.LogIfDebug(this, string.Format("Begin closing {0}", appPath));
+            logger.LogIfDebug(this, string.Format("Begin closing {0}", Name));
 
             if (proc != null && !proc.HasExited)
             {

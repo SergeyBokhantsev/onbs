@@ -51,17 +51,16 @@ namespace GPSD.Net
             this.tcpClient = tcpClient;
         }
 
-		public void Run()
-		{
-			tcpClient.BytesReceived += BytesReceived;
+        public void Run()
+        {
+            tcpClient.BytesReceived += BytesReceived;
 
-			SendHello();
+            SendHello();
 
-			while (Active)
-			{
-				if (!updateEvent.WaitOne(2000))
-					continue;
-				//Thread.Sleep(1000);
+            while (Active)
+            {
+                if (!updateEvent.WaitOne(2000))
+                    continue;
 
                 var w = watchInfo;
 
@@ -79,8 +78,8 @@ namespace GPSD.Net
                     else if (w.Watch.nmea)
                         SendNmea();
                 }
-			}
-		}
+            }
+        }
 
         private void RespondOnWatch()
         {
@@ -212,7 +211,7 @@ namespace GPSD.Net
         public void Dispose()
         {
             tcpClient.Dispose();
-		disposed = true;
+            disposed = true;
         }
     }
 }

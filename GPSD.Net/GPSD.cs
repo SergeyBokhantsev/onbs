@@ -61,15 +61,15 @@ namespace GPSD.Net
 
         public void Start()
         {
-			try
-			{
-            	server.ClientConnected += ClientConnected;
-            	server.Start();
-			}
-			catch (Exception ex) 
-			{
+            try
+            {
+                server.ClientConnected += ClientConnected;
+                server.Start();
+            }
+            catch (Exception ex)
+            {
 
-			}
+            }
         }
 
         void ClientConnected(IncomingClient client)
@@ -79,7 +79,7 @@ namespace GPSD.Net
             {
                 clients.Add(gclient);
             }
-	    	gclient.Run();
+            gclient.Run();
         }
 
         public void Stop()
@@ -88,11 +88,12 @@ namespace GPSD.Net
             {
                 server.ClientConnected -= ClientConnected;
                 server.Stop();
-		lock(clients)
-		{
-			clients.ForEach(Dispose);
-			clients.Clear();
-		}
+
+                lock (clients)
+                {
+                    clients.ForEach(c => c.Dispose());
+                    clients.Clear();
+                }
             }
             catch (Exception ex)
             {
