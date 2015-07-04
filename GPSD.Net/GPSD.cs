@@ -88,6 +88,11 @@ namespace GPSD.Net
             {
                 server.ClientConnected -= ClientConnected;
                 server.Stop();
+		lock(clients)
+		{
+			clients.ForEach(Dispose);
+			clients.Clear();
+		}
             }
             catch (Exception ex)
             {

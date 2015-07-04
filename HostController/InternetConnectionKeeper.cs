@@ -49,6 +49,8 @@ namespace HostController
                 Thread.Sleep(span);
                 waited += span;
             }
+
+			OnInternetConnectionStatus (connected);
         }
 
         private void CheckerThread()
@@ -73,9 +75,21 @@ namespace HostController
                     OnInternetConnectionStatus(connected = true);
                 }
 
-                Thread.Sleep(30000);
+                Wait(30000);
             }
         }
+
+		private void Wait(int timeout)
+		{
+			const int span = 2000;
+			int waited = 0;
+
+			while (!disposed && waited < timeout) 
+			{
+				Thread.Sleep (span);
+				waited += span;
+			}
+		}
 
         private void OnInternetConnectionStatus(bool connected)
         {
@@ -95,14 +109,25 @@ namespace HostController
         {
             try
             {
-                var connectCommand = config.GetString(ConfigNames.InetKeeperConnectCommand);
-                var connector = runnerFactory.Create(connectCommand, null, false);
+               //var connectCommand = config.GetString(ConfigNames.InetKeeperConnectCommand);
+               //var connector = runnerFactory.Create(connectCommand, null, false);
+			
+				var switcher = runnerFactory.Create("sudo", 
+				        "usb_modeswitch -c /usr/share/usb_modeswitch/12d1:1446", false);
 
+				switcher.Run();
+				switcher.WaitForExit(10000);
+
+				var slog = switcher.GetFromStandardOutput();
+
+				var connector = runnerFactory.Create("sudo", "wvdial", false);
                 connector.Run();
-                connector.WaitForExit(30000);
+                connector.WaitForExit(5000);
+
+				//var dlog = connector.GetFromStandardOutput();
 
                 logger.LogIfDebug(this, "INET CONNECT OUTPUT DUMP:");
-                logger.LogIfDebug(this, connector.GetFromStandardOutput());
+                //logger.LogIfDebug(this, connector.GetFromStandardOutput());
             }
             catch (Exception ex)
             {

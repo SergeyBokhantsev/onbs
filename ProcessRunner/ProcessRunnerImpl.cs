@@ -90,10 +90,11 @@ namespace ProcessRunner
                 throw new Exception(string.Format("Unable to launch '{0}': {1}", appPath, ex.Message), ex);
             }
 
-            new Thread(() => Monitor()).Start();
+            //var monitor = new Thread(Monitor);
+			ThreadPool.QueueUserWorkItem(Monitor);
         }
 
-        private void Monitor()
+        private void Monitor(object o)
         {
             if (proc == null)
                 return;

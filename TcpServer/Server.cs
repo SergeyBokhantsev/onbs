@@ -108,6 +108,12 @@ namespace TcpServer
             }
         }
 
+//		public void Dispose()
+//		{
+//			if (listener != null)
+//				listener.Stop();
+//		}
+
         private void OnClientConnected(TcpClient client)
         {
             if (started)

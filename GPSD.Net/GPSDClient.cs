@@ -33,11 +33,13 @@ namespace GPSD.Net
 
 		private Encoding enc = Encoding.ASCII;
 
+	private bool disposed;
+
         public bool Active
         {
             get
             {
-                return tcpClient.Active;
+                return !disposed && tcpClient.Active;
             }
         }
 
@@ -57,7 +59,8 @@ namespace GPSD.Net
 
 			while (Active)
 			{
-				updateEvent.WaitOne();
+				if (!updateEvent.WaitOne(2000))
+					continue;
 				//Thread.Sleep(1000);
 
                 var w = watchInfo;
@@ -209,6 +212,7 @@ namespace GPSD.Net
         public void Dispose()
         {
             tcpClient.Dispose();
+		disposed = true;
         }
     }
 }

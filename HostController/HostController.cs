@@ -204,6 +204,10 @@ namespace HostController
         {
             Logger.Log(this, string.Format("Begin shutdown in {0} mode", mode), LogLevels.Info);
 
+			netKeeper.Dispose();
+
+			gpsd.Stop();
+
             DisconnectSystemTimeChecking();
 
             gpsController.Shutdown();

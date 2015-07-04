@@ -33,6 +33,7 @@ namespace TravelsClient
             {
                 ThreadPool.QueueUserWorkItem(state =>
                     {
+					Thread.CurrentThread.Name = Guid.NewGuid().ToString();
                         var result = client.FindActiveTravel();
 
                         Interlocked.Decrement(ref busyState);
@@ -55,6 +56,7 @@ namespace TravelsClient
             {
                 ThreadPool.QueueUserWorkItem(state =>
                 {
+					Thread.CurrentThread.Name = Guid.NewGuid().ToString();
                     var result = client.OpenTravel(name);
 
                     Interlocked.Decrement(ref busyState);
@@ -77,6 +79,7 @@ namespace TravelsClient
             {
                 ThreadPool.QueueUserWorkItem(state =>
                 {
+					Thread.CurrentThread.Name = Guid.NewGuid().ToString();
                     var result = client.AddTravelPoint(points, travel);
 
                     Interlocked.Decrement(ref busyState);

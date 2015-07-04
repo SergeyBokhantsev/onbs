@@ -37,6 +37,11 @@ namespace HostController
                 throw new ArgumentNullException("setTimeCommand OR setTimeArgs OR setTimeSetFormat");
         }
 
+		private bool GetTimeValidity(DateTime time)
+		{
+			return Math.Abs((time - DateTime.Now).TotalMilliseconds) < minTimeDifference;
+		}
+
         public bool IsSystemTimeValid(DateTime validTime)
         {
             if (timeValid)
@@ -49,16 +54,18 @@ namespace HostController
 
                 logger.Log(this, string.Format("Checking system time. System time is '{0}', proposed time is '{1}'", DateTime.Now.ToString(), validTime.ToString()), LogLevels.Info);
 
-                if (Math.Abs((validTime - DateTime.Now).TotalMilliseconds) > minTimeDifference)
+                if (!GetTimeValidity(validTime)) 
                 {
                     logger.Log(this, "Updating system time...", LogLevels.Info);
 
                     var args = string.Format(setTimeArgs, validTime.ToString(setTimeSetFormat));
                     var pr = processRunnerFactory.Create(setTimeCommand, args, false);
                     pr.Run();
-
-                    Thread.Sleep(500);
-					return false;
+					pr.WaitForExit(5000);
+					if (GetTimeValidity (validTime))
+						return IsSystemTimeValid (validTime);
+					else
+						return false;
                 }
                 else
                 {
