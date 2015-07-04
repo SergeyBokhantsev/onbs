@@ -133,30 +133,32 @@ namespace HostController
                 var request = WebRequest.Create(config.GetString
 				                                (ConfigNames.InetKeeperCheckUrl)) as HttpWebRequest;
                 request.Method = config.GetString(ConfigNames.InetKeeperCheckMethod);
-                var response = request.GetResponse() as HttpWebResponse;
 
-                if (response.StatusCode == HttpStatusCode.OK)
+                using (var response = request.GetResponse() as HttpWebResponse)
                 {
-                    if (InternetTime != null)
+                    if (response.StatusCode == HttpStatusCode.OK)
                     {
-                        try
+                        if (InternetTime != null)
                         {
-                            var date = response.Headers[HttpResponseHeader.Date];
-                            var dateTime = DateTime.Parse(date);
-                            OnInternetTime(dateTime.ToUniversalTime());
+                            try
+                            {
+                                var date = response.Headers[HttpResponseHeader.Date];
+                                var dateTime = DateTime.Parse(date);
+                                OnInternetTime(dateTime.ToUniversalTime());
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.Log(this, "Exception trying to get internet datetime.", LogLevels.Warning);
+                                logger.Log(this, ex);
+                            }
                         }
-                        catch (Exception ex)
-                        {
-                            logger.Log(this, "Exception trying to get internet datetime.", LogLevels.Warning);
-                            logger.Log(this, ex);
-                        }
-                    }
 
-                    return true;
-                }
-                else
-                {
-                    return false;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
             catch (WebException)

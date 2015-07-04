@@ -163,15 +163,19 @@ namespace TravelsClient
         public TravelResult FindActiveTravel()
         {
             var url = CreateUri("Travels/active", KeyParam, VehicleParam);
-            var response = client.Get(url);
-            return new TravelResult(response, FIND_OPENED_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.OK, HttpStatusCode.NotFound);
+            using (var response = client.Get(url))
+            {
+                return new TravelResult(response, FIND_OPENED_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.OK, HttpStatusCode.NotFound);
+            }
         }
 
         public TravelResult GetTravel(int id)
         {
             var url = CreateUri("Travels/get", KeyParam, CreateArg(ARG_ID, id.ToString()));
-            var response = client.Get(url);
-            return new TravelResult(response, GET_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.OK);
+            using (var response = client.Get(url))
+            {
+                return new TravelResult(response, GET_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.OK);
+            }
         }
 
         public TravelResult OpenTravel(string name)
@@ -180,8 +184,10 @@ namespace TravelsClient
                 return new TravelResult(null, "Name is not provided");
 
             var url = CreateUri("Travels/open", KeyParam, VehicleParam, CreateArg(ARG_NAME, name));
-            var response = client.Post(url, null);
-            return new TravelResult(response, OPEN_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.Created);
+            using (var response = client.Post(url, null))
+            {
+                return new TravelResult(response, OPEN_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.Created);
+            }
         }
 
         public ActionResult CloseTravel(Travel travel)
@@ -190,8 +196,10 @@ namespace TravelsClient
                 return new ActionResult(null, "Travel is not provided.");
 
             var url = CreateUri("Travels/close", KeyParam, CreateArg(ARG_ID, travel.ID.ToString()));
-            var response = client.Post(url, null);
-            return new ActionResult(response, CLOSE_TRAVEL_GENERIC_ERROR_MESSAGE);
+            using (var response = client.Post(url, null))
+            {
+                return new ActionResult(response, CLOSE_TRAVEL_GENERIC_ERROR_MESSAGE);
+            }
         }
 
         public ActionResult RenameTravel(Travel travel)
@@ -205,8 +213,10 @@ namespace TravelsClient
             var tId = CreateArg(ARG_ID, travel.ID.ToString());
             var name = CreateArg(ARG_NAME, travel.Name);
             var url = CreateUri("Travels/rename", KeyParam, tId, name);
-            var response = client.Post(url, null);
-            return new ActionResult(response, RENAME_TRAVEL_GENERIC_ERROR_MESSAGE);
+            using (var response = client.Post(url, null))
+            {
+                return new ActionResult(response, RENAME_TRAVEL_GENERIC_ERROR_MESSAGE);
+            }
         }
 
         public ActionResult DeleteTravel(Travel travel)
@@ -215,8 +225,10 @@ namespace TravelsClient
                 return new ActionResult(null, "Travel is not provided.");
 
             var url = CreateUri("Travels/delete", KeyParam, CreateArg(ARG_ID, travel.ID.ToString()));
-            var response = client.Delete(url);
-            return new ActionResult(response, DELETE_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.NoContent);
+            using (var response = client.Delete(url))
+            {
+                return new ActionResult(response, DELETE_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.NoContent);
+            }
         }
 
         public ActionResult AddTravelPoint(TravelPoint tp, Travel travel)
@@ -237,8 +249,10 @@ namespace TravelsClient
                 var descr = CreateArg(ARG_DESCRIPTION, tp.Description);
 
                 var url = CreateUri("TravelPoints/add", KeyParam, VehicleParam, tId, lat, lon, speed, type, descr);
-                var response = client.Post(url, null);
-                return new ActionResult(response, ADD_TRAVEL_POINT_GENERIC_ERROR_MESSAGE);
+                using (var response = client.Post(url, null))
+                {
+                    return new ActionResult(response, ADD_TRAVEL_POINT_GENERIC_ERROR_MESSAGE);
+                }
             }
             catch (Exception ex)
             {
@@ -277,8 +291,10 @@ namespace TravelsClient
                     body.Remove(body.Length - 1, 1);
 
                 var url = CreateUri("TravelPoints/addmany", KeyParam, tId);
-                var response = client.Post(url, body.ToString());
-                return new ActionResult(response, ADD_TRAVEL_POINT_GENERIC_ERROR_MESSAGE);
+                using (var response = client.Post(url, body.ToString()))
+                {
+                    return new ActionResult(response, ADD_TRAVEL_POINT_GENERIC_ERROR_MESSAGE);
+                }
             }
             catch (Exception ex)
             {

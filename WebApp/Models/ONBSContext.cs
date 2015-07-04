@@ -16,5 +16,10 @@ namespace WebApp.Models
             : base(System.Configuration.ConfigurationManager.AppSettings["DBConnectionString"])
         {
         }
+
+        public ONBSContext(string connectionString)
+            : base(connectionString)
+        {
+        }
     }
 }

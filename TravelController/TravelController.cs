@@ -143,29 +143,35 @@ namespace TravelController
 
         private void Operate(object sender, EventArgs e)
         {
-			if (!hc.Config.IsSystemTimeValid || !hc.Config.IsInternetConnected) {
-				hc.Logger.LogIfDebug (this, string.Format ("Skipping Operation because of precondition failed: SystemTimeIsValid = {0} and InternetIsConnected = {1}", 
-				                                                     hc.Config.IsSystemTimeValid, hc.Config.IsInternetConnected), LogLevels.Warning);
-			} else {
-				switch (state.Value) {
-				case States.NotStarted:
-					FindOpenedTravel ();
-					break;
+            if (!hc.Config.IsSystemTimeValid || !hc.Config.IsInternetConnected)
+            {
+                hc.Logger.LogIfDebug(this, string.Format("Skipping Operation because of precondition failed: SystemTimeIsValid = {0} and InternetIsConnected = {1}",
+                                                                     hc.Config.IsSystemTimeValid, hc.Config.IsInternetConnected), LogLevels.Warning);
+                state.Value = States.NotStarted;
+                travel = null;
+            }
+            else
+            {
+                switch (state.Value)
+                {
+                    case States.NotStarted:
+                        FindOpenedTravel();
+                        break;
 
-				case States.OpenedTravelNotFound:
-					OpenNewTravel (null);
-					break;
+                    case States.OpenedTravelNotFound:
+                        OpenNewTravel(null);
+                        break;
 
-				case States.Ready:
-					timer.Span = exportRateMs;
-					ExportPoints ();
-					break;
+                    case States.Ready:
+                        timer.Span = exportRateMs;
+                        ExportPoints();
+                        break;
 
-				default:
-					hc.Logger.LogIfDebug (this, string.Format ("Skipping sheduled operation because of current state is {0}", state.Value));
-					break;
-				}
-			}
+                    default:
+                        hc.Logger.LogIfDebug(this, string.Format("Skipping sheduled operation because of current state is {0}", state.Value));
+                        break;
+                }
+            }
 
             UpdateMetrics();
         }
@@ -176,7 +182,7 @@ namespace TravelController
             metrics.Add(0, "", travel != null ? travel.Name : "NO TRAVEL");
             metrics.Add(1, "State", state.Value);
 			metrics.Add(2, "Sended points", metricsSendedPoints);
-            metrics.Add(3, "Buffered points", metricsBufferedPoints);
+            metrics.Add(3, "Buffered points", metricsBufferedPoints + logFilter.Count);
 
             var handler = MetricsUpdated;
             if (handler != null)
@@ -232,6 +238,7 @@ namespace TravelController
                         }
 
                         state.Value = States.Ready;
+                        UpdateMetrics();
                     }))
                 {
                     state.Value = States.ExportingPoints;
@@ -250,6 +257,7 @@ namespace TravelController
             {
                 logFilter.Log(gprmc);
                 hc.Logger.LogIfDebug(this, "GPRMC was provided to Travel Controller");
+                UpdateMetrics();
             }
         }
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HttpClient
 {
-    public class ClientResponse
+    public class ClientResponse : IDisposable
     {
         private readonly HttpWebResponse webResponse;
 
@@ -34,6 +34,11 @@ namespace HttpClient
         public Stream GetStream()
         {
             return webResponse != null ? webResponse.GetResponseStream() : null;
+        }
+
+        public void Dispose()
+        {
+            webResponse.Dispose();
         }
     }
 }

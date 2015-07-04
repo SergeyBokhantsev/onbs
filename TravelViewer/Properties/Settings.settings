@@ -1,0 +1,9 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="TravelViewer.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="DBConnectionString" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Server=tcp:fs82gir1zr.database.windows.net,1433;Database=onbs;User ID=sdol@fs82gir1zr;Password=Screw0st;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

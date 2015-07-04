@@ -15,6 +15,14 @@ namespace Interfaces.GPS
         private readonly List<GPRMC> points = new List<GPRMC>();
         private GPRMC lastGprmc;
 
+        public int Count
+        {
+            get
+            {
+                return points.Count;
+            }
+        }
+
         public GPSLogFilter(int maxSecondsGap, int maxMetersGap)
         {
             this.maxSecondsGap = maxSecondsGap;

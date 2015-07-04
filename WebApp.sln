@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "WebApp\WebApp.csproj", "{FBA2A997-7C9B-41CD-9EB3-7CE1128D80DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelViewer", "TravelViewer\TravelViewer.csproj", "{6F2A0F47-C554-4568-B6DB-FBD87B2A8021}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{FBA2A997-7C9B-41CD-9EB3-7CE1128D80DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBA2A997-7C9B-41CD-9EB3-7CE1128D80DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBA2A997-7C9B-41CD-9EB3-7CE1128D80DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F2A0F47-C554-4568-B6DB-FBD87B2A8021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F2A0F47-C554-4568-B6DB-FBD87B2A8021}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F2A0F47-C554-4568-B6DB-FBD87B2A8021}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F2A0F47-C554-4568-B6DB-FBD87B2A8021}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
