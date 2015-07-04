@@ -109,25 +109,16 @@ namespace HostController
         {
             try
             {
-               //var connectCommand = config.GetString(ConfigNames.InetKeeperConnectCommand);
-               //var connector = runnerFactory.Create(connectCommand, null, false);
-			
-				var switcher = runnerFactory.Create("sudo", 
-				        "usb_modeswitch -c /usr/share/usb_modeswitch/12d1:1446", false);
+                var switcherCommand = config.GetString(ConfigNames.InetKeeperModeswitchCommand);
+                var switcher = runnerFactory.Create("sudo", switcherCommand, false);
+                switcher.Run();
+                switcher.WaitForExit(10000);
+                logger.LogIfDebug(this, switcher.GetFromStandardOutput());
 
-				switcher.Run();
-				switcher.WaitForExit(10000);
-
-				var slog = switcher.GetFromStandardOutput();
-
-				var connector = runnerFactory.Create("sudo", "wvdial", false);
-                connector.Run();
-                connector.WaitForExit(5000);
-
-				//var dlog = connector.GetFromStandardOutput();
-
-                logger.LogIfDebug(this, "INET CONNECT OUTPUT DUMP:");
-                //logger.LogIfDebug(this, connector.GetFromStandardOutput());
+                var dialCommand = config.GetString(ConfigNames.InetKeeperDialCommand);
+                var dialler = runnerFactory.Create("sudo", dialCommand, false);
+                dialler.Run();
+                dialler.WaitForExit(5000);
             }
             catch (Exception ex)
             {

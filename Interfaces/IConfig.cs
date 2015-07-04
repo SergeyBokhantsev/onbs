@@ -86,6 +86,7 @@ namespace Interfaces
         public static readonly string InetKeeperCheckUrl = "InetKeeperCheckUrl";
         public static readonly string InetKeeperCheckMethod = "InetKeeperCheckMethod";
         public static readonly string InetKeeperCheckInitialDelayMs = "InetKeeperCheckInitialDelayMs";
-        public static readonly string InetKeeperConnectCommand = "InetKeeperConnectCommand";
+        public static readonly string InetKeeperModeswitchCommand = "InetKeeperModeswitchCommand";
+        public static readonly string InetKeeperDialCommand = "InetKeeperDialCommand";
     }
 }
