@@ -50,7 +50,8 @@ namespace TcpServer
                     }
                     catch (Exception ex)
                     {
-                        logger.Log(this, ex);
+                        if (started)
+                            logger.Log(this, ex);
                     }
                 }
             });
