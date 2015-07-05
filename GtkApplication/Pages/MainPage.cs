@@ -129,7 +129,7 @@ namespace GtkApplication
 
         private void UpdateTravelMetrics(IMetrics metrics)
         {
-            bool is_error = false;
+            bool is_error = true;
             StringBuilder text = new StringBuilder();
 
             foreach (var pair in metrics)
@@ -146,7 +146,7 @@ namespace GtkApplication
             }
 
             label_travel_metrics.Text = text.ToString().TrimEnd();
-            eventbox_travel_metrics.ModifyBg(StateType.Normal, is_error ? new Gdk.Color(200, 0, 0) : style.TextBox.Bg);
+            eventbox_travel_caption.ModifyBg(StateType.Normal, is_error ? new Gdk.Color(200, 0, 0) : style.TextBox.Bg);
         }
 
         private void UpdateArduinoMetrics(IMetrics metrics)
@@ -190,7 +190,7 @@ namespace GtkApplication
 			}
 
 			label_gps_metrics.Text = text.ToString().TrimEnd();
-			//eventbox_arduino_metrics_caption.ModifyBg (StateType.Normal, is_error ? new Gdk.Color (200, 0, 0) : style.TextBox.Bg);
+			eventbox_gps_metrics_caption.ModifyBg (StateType.Normal, is_error ? new Gdk.Color (200, 0, 0) : style.TextBox.Bg);
 		}
     }
 }

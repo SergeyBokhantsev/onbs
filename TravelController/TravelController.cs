@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.GPS;
 using TravelsClient;
+using System.Threading;
 
 namespace TravelController
 {
-    public class TravelController : ITravelController
+    public class TravelController : ITravelController, IDisposable
     {
         public event MetricsUpdatedEventHandler MetricsUpdated;
 
@@ -30,6 +31,9 @@ namespace TravelController
 
         private volatile int metricsBufferedPoints;
         private volatile int metricsSendedPoints;
+        private bool metricsError = true;
+
+        private bool disposed;
 
         public TravelController(IHostController hc)
         {
@@ -38,7 +42,8 @@ namespace TravelController
 
             this.hc = hc;
 
-            logFilter = new GPSLogFilter(hc.Config.GetInt(ConfigNames.TravelServiceGPSFilterMaxGapSeconds), hc.Config.GetInt(ConfigNames.TravelServiceGPSFilterMaxGapMeters));
+            logFilter = new GPSLogFilter(hc.Config.GetDouble(ConfigNames.TravelServiceGPSFilterDistanceToSpeedRatio), 
+                                         hc.Config.GetInt(ConfigNames.TravelServiceGPSFilterDeadZoneMeters));
 
             this.exportRateMs = Math.Max(minimalExportRateMs, hc.Config.GetInt(ConfigNames.TravelServiceExportRateSeconds) * 1000);
 
@@ -85,21 +90,26 @@ namespace TravelController
                             state.Value = States.OpenedTravelNotFound;
                             hc.Logger.Log(this, "Opened travel not found", LogLevels.Info);
                         }
+
+                        metricsError = false;
                     }
                     else
                     {
                         hc.Logger.Log(this, "Error while finding opened travel:", LogLevels.Warning);
                         hc.Logger.Log(this, result.Error, LogLevels.Warning);
                         state.Value = States.OpenedTravelNotFound;
+                        metricsError = true;
                     }
                 }))
             {
                 hc.Logger.LogIfDebug(this, "FindOpenedTravel operation started.");
                 state.Value = States.FindingOpenedTravel;
+                metricsError = false;
             }
             else
             {
                 hc.Logger.Log(this, "Unable to start FindOpenedTravel operation", LogLevels.Warning);
+                metricsError = true;
             }
         }
 
@@ -115,6 +125,7 @@ namespace TravelController
                     this.travel = result.Travel;
                     state.Value = States.Ready;
                     hc.Logger.Log(this, string.Format("New travel was opened succesfully, Id={0}", result.Travel.ID), LogLevels.Info);
+                    metricsError = false;
                 }
                 else
                 {
@@ -122,16 +133,19 @@ namespace TravelController
                     state.Value = States.NotStarted;
                     hc.Logger.Log(this, "Error while opening new travel:", LogLevels.Warning);
                     hc.Logger.Log(this, result.Error, LogLevels.Warning);
+                    metricsError = true;
                 }
             }))
             {
                 state.Value = States.CreatingNewTravel;
                 hc.Logger.LogIfDebug(this, "OpenNewTravel operation started");
+                metricsError = false;
                 return true;
             }
             else
             {
                 hc.Logger.Log(this, "Unable to start OpenNewTravel operation", LogLevels.Warning);
+                metricsError = true;
                 return false;
             }
         }
@@ -143,19 +157,37 @@ namespace TravelController
 
         private void Operate(object sender, EventArgs e)
         {
-            if (!hc.Config.IsSystemTimeValid || !hc.Config.IsInternetConnected)
+            if (disposed)
+            {
+                return;
+            }
+            else if (!hc.Config.IsSystemTimeValid || !hc.Config.IsInternetConnected)
             {
                 hc.Logger.LogIfDebug(this, string.Format("Skipping Operation because of precondition failed: SystemTimeIsValid = {0} and InternetIsConnected = {1}",
                                                                      hc.Config.IsSystemTimeValid, hc.Config.IsInternetConnected), LogLevels.Warning);
                 state.Value = States.NotStarted;
                 travel = null;
+                metricsError = true;
             }
             else
             {
                 switch (state.Value)
                 {
                     case States.NotStarted:
-                        FindOpenedTravel();
+                        int count = 0;
+                        lock (bufferedPoints)
+                        {
+                            count = bufferedPoints.Count;
+                        }
+                        var minPointsToStart = hc.Config.GetInt(ConfigNames.TravelServiceMinPointsCountToStart);
+                        if (bufferedPoints.Count < minPointsToStart)
+                        {
+                            hc.Logger.Log(this, string.Concat("Skipping export because points < ", minPointsToStart), LogLevels.Info);
+                        }
+                        else
+                        {
+                            FindOpenedTravel();
+                        }
                         break;
 
                     case States.OpenedTravelNotFound:
@@ -171,6 +203,8 @@ namespace TravelController
                         hc.Logger.LogIfDebug(this, string.Format("Skipping sheduled operation because of current state is {0}", state.Value));
                         break;
                 }
+
+                metricsError = false;
             }
 
             UpdateMetrics();
@@ -178,11 +212,12 @@ namespace TravelController
 
         private void UpdateMetrics()
         {
-            var metrics = new Metrics("Travel Controller", 4);
+            var metrics = new Metrics("Travel Controller", 5);
             metrics.Add(0, "", travel != null ? travel.Name : "NO TRAVEL");
             metrics.Add(1, "State", state.Value);
 			metrics.Add(2, "Sended points", metricsSendedPoints);
-            metrics.Add(3, "Buffered points", metricsBufferedPoints + logFilter.Count);
+            metrics.Add(3, "Buffered points", metricsBufferedPoints);
+            metrics.Add(4, "_is_error", metricsError);
 
             var handler = MetricsUpdated;
             if (handler != null)
@@ -195,19 +230,6 @@ namespace TravelController
                 return;
 
             var pointsToExport = new List<TravelPoint>();
-            var newPoints = logFilter.WithdrawPoints();
-
-            if (newPoints != null && newPoints.Any())
-            {
-                pointsToExport.AddRange(newPoints.Select(gprmc => new TravelPoint
-                {
-                    Type = TravelPointTypes.AutoTrackPoint,
-                    Lat = gprmc.Location.Lat.Degrees,
-                    Lon = gprmc.Location.Lon.Degrees,
-                    Speed = gprmc.Speed,
-                    Time = gprmc.Time.ToUniversalTime()
-                }));
-            }
 
             lock (bufferedPoints)
             {
@@ -226,6 +248,7 @@ namespace TravelController
                         {
                             metricsSendedPoints += pointsToExport.Count;
                             hc.Logger.LogIfDebug(this, "Point(s) were exported succesfully");
+                            metricsError = false;
                         }
                         else
                         {
@@ -235,6 +258,7 @@ namespace TravelController
                                 metricsBufferedPoints = bufferedPoints.Count;
                             }
                             hc.Logger.Log(this, "Attempt to add Travel points was failed.", LogLevels.Warning);
+                            metricsError = false;
                         }
 
                         state.Value = States.Ready;
@@ -243,20 +267,35 @@ namespace TravelController
                 {
                     state.Value = States.ExportingPoints;
                     hc.Logger.LogIfDebug(this, "ExportPoints operation started");
+                    metricsError = false;
                 }
                 else
                 {
                     hc.Logger.Log(this, "Unable to start ExportPoints operation", LogLevels.Warning);
+                    metricsError = true;
                 }
             }
         }
 
         private void GPRMCReseived(GPRMC gprmc)
         {
-            if (gprmc.Active)
+            if (!disposed && gprmc.Active && logFilter.Match(gprmc))
             {
-                logFilter.Log(gprmc);
-                hc.Logger.LogIfDebug(this, "GPRMC was provided to Travel Controller");
+                lock (bufferedPoints)
+                {
+                    bufferedPoints.Add(new TravelPoint
+                    {
+                        Type = TravelPointTypes.AutoTrackPoint,
+                        Lat = gprmc.Location.Lat.Degrees,
+                        Lon = gprmc.Location.Lon.Degrees,
+                        Speed = gprmc.Speed,
+                        Time = gprmc.Time.ToUniversalTime()
+                    });
+
+                    metricsBufferedPoints = bufferedPoints.Count;
+                }
+
+                hc.Logger.LogIfDebug(this, "GPRMC was added to Travel Controller");
                 UpdateMetrics();
             }
         }
@@ -284,6 +323,24 @@ namespace TravelController
             }
         }
 
-        
+        public void Dispose()
+        {
+            disposed = true;
+            timer.Dispose();
+
+            if (bufferedPoints.Count > 0 && state.Value == States.Ready && hc.Config.IsSystemTimeValid && hc.Config.IsInternetConnected)
+            {
+                hc.Logger.Log(this, "Trying to send buffered points...", LogLevels.Info);
+
+                ExportPoints();
+
+                while (state.Value == States.ExportingPoints)
+                {
+                    Thread.Sleep(1000);
+                }
+
+                hc.Logger.Log(this, "Buffered points were successfully sended...", LogLevels.Info);
+            }
+        }
     }
 }

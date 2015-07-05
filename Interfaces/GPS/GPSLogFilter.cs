@@ -10,69 +10,40 @@ namespace Interfaces.GPS
 {
     public class GPSLogFilter
     {
-        private readonly int maxSecondsGap;
-        private readonly int maxMetersGap;
-        private readonly List<GPRMC> points = new List<GPRMC>();
+        private readonly double distanceToSpeedRatio;
+        private readonly int deadZoneMeters;
         private GPRMC lastGprmc;
 
-        public int Count
+        public GPSLogFilter(double distanceToSpeedRatio, int deadZoneMeters)
         {
-            get
-            {
-                return points.Count;
-            }
+            this.distanceToSpeedRatio = distanceToSpeedRatio;
+            this.deadZoneMeters = deadZoneMeters;
         }
 
-        public GPSLogFilter(int maxSecondsGap, int maxMetersGap)
-        {
-            this.maxSecondsGap = maxSecondsGap;
-            this.maxMetersGap = maxMetersGap;
-        }
-
-        public void Log(GPRMC gprmc)
-        {
-            if (Match(gprmc))
-            {
-                lock (points)
-                {
-                    points.Add(gprmc);
-                }
-            }
-        }
-
-        public GPRMC[] WithdrawPoints()
-        {
-            lock (points)
-            {
-                if (points.Any())
-                {
-                    var result = points.ToArray();
-                    points.Clear();
-                    return result;
-                }
-                else
-                    return null;
-            }
-        }
-
-        private bool Match(GPRMC gprmc)
+        public bool Match(GPRMC gprmc)
         {
             if (lastGprmc != null)
             {
-                var secondsGap = (gprmc.Time - lastGprmc.Time).TotalSeconds;
+                var distance = Math.Abs(Interfaces.GPS.Helpers.GetDistance(lastGprmc.Location, gprmc.Location));
 
-                if (secondsGap < maxSecondsGap)
+                if (distance < deadZoneMeters)
+                    return false;
+
+                var stepDistance = gprmc.Speed * distanceToSpeedRatio;
+
+                if (distance >= stepDistance)
                 {
-                    var distanceGap = Math.Abs(Interfaces.GPS.Helpers.GetDistance(lastGprmc.Location, gprmc.Location));
-
-                    if (distanceGap < maxMetersGap)
-                        return false;
+                    lastGprmc = gprmc;
+                    return true;
                 }
+                else
+                    return false;
             }
-
-            lastGprmc = gprmc;
-
-            return true;
+            else
+            {
+                lastGprmc = gprmc;
+                return true;
+            }
         }
     }
 }

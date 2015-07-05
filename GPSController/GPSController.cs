@@ -136,9 +136,9 @@ namespace GPSController
                             handler(concatenatedStr);
                     }
                 }
-
-                UpdateMetrics(false);
             }
+
+            UpdateMetrics(lastGprmc == null || !lastGprmc.Active);
         }
 
         private void UpdateMetrics(bool is_error)
@@ -153,7 +153,7 @@ namespace GPSController
                 metrics.Add(1, "NMEA", nmeaSentencesCount);
                 metrics.Add(2, "GPRMC", gprmcCount);
                 metrics.Add(3, "Loc", lastGprmc.Location);
-                metrics.Add(4, "_is_error", false);
+                metrics.Add(4, "_is_error", is_error);
 
                 dispatcher.Invoke(this, null, new EventHandler((s, e) => handler(this, metrics)));
             }

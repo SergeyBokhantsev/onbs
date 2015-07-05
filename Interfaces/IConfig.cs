@@ -79,9 +79,10 @@ namespace Interfaces
         public static readonly string TravelServiceKey = "TravelServiceKey";
         public static readonly string TravelServiceExportRateSeconds = "TravelServiceExportRateSeconds";
         public static readonly string TravelServiceMinutesGapToOpenNewTravel = "TravelServiceMinutesGapToOpenNewTravel";
-        public static readonly string TravelServiceGPSFilterMaxGapSeconds = "TravelServiceGPSFilterMaxGapSeconds";
-        public static readonly string TravelServiceGPSFilterMaxGapMeters = "TravelServiceGPSFilterMaxGapMeters";
-
+        public static readonly string TravelServiceMinPointsCountToStart = "TravelServiceMinPointsCountToStart";
+        public static readonly string TravelServiceGPSFilterDistanceToSpeedRatio = "TravelServiceGPSFilterDistanceToSpeedRatio";
+        public static readonly string TravelServiceGPSFilterDeadZoneMeters = "TravelServiceGPSFilterDeadZoneMeters";
+        
         public static readonly string InetKeeperEnabled = "InetKeeperEnabled";
         public static readonly string InetKeeperCheckUrl = "InetKeeperCheckUrl";
         public static readonly string InetKeeperCheckMethod = "InetKeeperCheckMethod";
