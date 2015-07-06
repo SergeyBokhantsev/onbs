@@ -119,7 +119,7 @@ namespace UIModels
                             () =>
                             { // YES
                                 var travelController = hostController.GetController<ITravelController>();
-                                travelController.RequestNewTravel(DateTime.Now.ToString("Manual at HH:mm"));
+                                travelController.RequestNewTravel(DateTime.Now.AddHours(hostController.Config.GetInt(ConfigNames.SystemTimeLocalZone)).ToString("Manual at HH:mm"));
                                 hostController.GetController<IUIController>().ShowDefaultPage();
                             },
                             () =>

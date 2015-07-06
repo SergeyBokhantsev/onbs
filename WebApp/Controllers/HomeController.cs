@@ -79,6 +79,17 @@ namespace WebApp.Controllers
 
             if (sortedPoints.Any())
             {
+                TravelPoint maxSpeedPoint = sortedPoints.First();
+
+                foreach (var p in sortedPoints)
+                {
+                    if (p.Speed > maxSpeedPoint.Speed)
+                        maxSpeedPoint = p;
+                }
+
+                ViewBag.MaxSpeedPopup = maxSpeedPoint.Speed.ToString("0.##");
+                ViewBag.MaxSpeedLocation = string.Format(gpointTemplate, maxSpeedPoint.Lat, maxSpeedPoint.Lon);
+
                 var activePoint = sortedPoints.Last();
 
                 var timeAgo = (int)(DateTime.Now - activePoint.Time).TotalMinutes;

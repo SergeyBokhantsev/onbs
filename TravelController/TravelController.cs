@@ -154,7 +154,7 @@ namespace TravelController
 
         private string CreateNewTravelName()
         {
-            return DateTime.Now.ToString("Auto at HH:mm");
+            return DateTime.Now.AddHours(hc.Config.GetInt(ConfigNames.SystemTimeLocalZone)).ToString("Auto at HH:mm");
         }
 
         public void RequestNewTravel(string name)

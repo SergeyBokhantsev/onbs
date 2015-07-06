@@ -26,6 +26,7 @@ namespace WebApp.Controllers
                     var point = new TravelPoint { Description = description, Lat = lat, Lon = lon, Speed = speed, Time = DateTime.Now, Type = (TravelPointTypes)type };
 
                     travel.Track.Add(point);
+                    travel.EndTime = point.Time;
 
                     db.SaveChanges();
 
@@ -40,6 +41,8 @@ namespace WebApp.Controllers
             return Monitor(key, () =>
             {
                 var travel = db.GetTravel(travel_id);
+
+                DateTime maxTime = new DateTime();
 
                 var readTask = Request.Content.ReadAsStringAsync();
                 if (readTask.Wait(5 * 60 * 1000))
@@ -80,6 +83,8 @@ namespace WebApp.Controllers
 
                                     case "time":
                                         tp.Time = DateTime.Parse(value);
+                                        if (tp.Time > maxTime)
+                                            maxTime = tp.Time;
                                         break;
                                 }
                             }
@@ -91,6 +96,9 @@ namespace WebApp.Controllers
                     {
                         return Request.CreateErrorResponse(HttpStatusCode.BadRequest, string.Concat("Unable to parse body: ", ex.Message));
                     }
+
+                    if (travel.EndTime < maxTime)
+                        travel.EndTime = maxTime;
 
                     db.SaveChanges();
 
