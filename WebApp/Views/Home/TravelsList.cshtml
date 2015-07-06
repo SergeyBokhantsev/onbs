@@ -1,0 +1,32 @@
+﻿@model WebApp.Models.TravelsList
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>TravelsList</title>
+</head>
+<body>
+    <div>
+        <h1>Сегодня поездок: @Model.Today.Count()</h1>
+        <ul>
+            @foreach(WebApp.Models.LinkItem item in @Model.Today)
+            { 
+            <li>@Html.ActionLink(item.Caption, item.Action, item.Args)</li>
+            }
+        </ul>
+        <h1>Вчера поездок: @Model.Yesterday.Count()</h1>
+        <ul>
+            @foreach (WebApp.Models.LinkItem item in @Model.Yesterday)
+            {
+                <li>@Html.ActionLink(item.Caption, item.Action, item.Args)</li>
+            }
+        </ul>
+    </div>
+</body>
+</html>
