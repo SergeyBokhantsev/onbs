@@ -26,29 +26,109 @@ namespace WebApp.Controllers
                                  orderby t.StartTime descending
                                  select t).First();
 
-            var sortedPoints = from p in currentTravel.Track
+            if (currentTravel == null)
+            {
+                ViewBag.Message = "Нет поездок :(";
+                return View("EmptyTravel");
+            }
+
+            var sortedPoints = (from p in currentTravel.Track
                                orderby p.Time ascending
-                               select p;
+                               select p).ToList();
 
-            var activePoint = sortedPoints.Last();
+            if (sortedPoints.Any())
+            {
+                var activePoint = sortedPoints.Last();
 
-            var timeAgo = (int)(DateTime.Now - activePoint.Time).TotalMinutes;
+                var timeAgo = (int)(DateTime.Now - activePoint.Time).TotalMinutes;
 
-            ViewBag.Popup = string.Format("Мы были здесь {0} минут назад", timeAgo);
+                ViewBag.Popup = string.Format("Мы были здесь {0} минут назад", timeAgo);
 
-            ViewBag.InfoHeading = string.Concat(timeAgo, " минут назад");
-            ViewBag.InfoLine1 = string.Concat("Скорость: ", activePoint.Speed.ToString("0.#"));
-            ViewBag.InfoLine2 = string.Concat("Начало ", currentTravel.StartTime.AddHours(3));
-            ViewBag.InfoLine3 = string.Concat("Время поездки, минут: ", (int)(activePoint.Time - currentTravel.StartTime).TotalMinutes);
+                ViewBag.InfoHeading = string.Concat(timeAgo, " минут назад");
+                ViewBag.InfoLine1 = string.Concat("Скорость: ", activePoint.Speed.ToString("0.#"));
+                ViewBag.InfoLine2 = string.Concat("Начало ", currentTravel.StartTime.AddHours(3));
+                ViewBag.InfoLine3 = string.Concat("Время поездки, минут: ", (int)(activePoint.Time - currentTravel.StartTime).TotalMinutes);
 
-            if (timeAgo > 10 && activePoint.Speed < 10)
-                ViewBag.InfoLine4 = "Видимо поездка закончена";
+                if (timeAgo > 10 && activePoint.Speed < 10)
+                    ViewBag.InfoLine4 = "Видимо поездка закончена";
 
-            ViewBag.MapCenter = string.Format(gpointTemplate, sortedPoints.Last().Lat, sortedPoints.Last().Lon);
-            ViewBag.TravelPoints = string.Join(",", sortedPoints.Select(p => string.Format(gpointTemplate, p.Lat, p.Lon)));
+                ViewBag.MapCenter = string.Format(gpointTemplate, sortedPoints.Last().Lat, sortedPoints.Last().Lon);
+                ViewBag.TravelPoints = string.Join(",", sortedPoints.Select(p => string.Format(gpointTemplate, p.Lat, p.Lon)));
 
-            return View();
+                return View("CurrentTravel");
+            }
+            else
+                return View("EmptyTravel");
         }
 
+        public ActionResult ShowTravel(int id)
+        {
+            var db = new ONBSContext();
+
+            var currentTravel = db.Travels.Find(id);
+
+            if (currentTravel == null)
+            {
+                ViewBag.Message = "Нет такой поездки :(";
+                return View("EmptyTravel");
+            }
+
+            var sortedPoints = (from p in currentTravel.Track
+                                orderby p.Time ascending
+                                select p).ToList();
+
+            if (sortedPoints.Any())
+            {
+                var activePoint = sortedPoints.Last();
+
+                var timeAgo = (int)(DateTime.Now - activePoint.Time).TotalMinutes;
+
+                ViewBag.Popup = string.Format("Мы были здесь {0} минут назад", timeAgo);
+
+                ViewBag.InfoHeading = string.Concat(timeAgo, " минут назад");
+                ViewBag.InfoLine1 = string.Concat("Скорость: ", activePoint.Speed.ToString("0.#"));
+                ViewBag.InfoLine2 = string.Concat("Начало ", currentTravel.StartTime.AddHours(3));
+                ViewBag.InfoLine3 = string.Concat("Время поездки, минут: ", (int)(activePoint.Time - currentTravel.StartTime).TotalMinutes);
+
+                if (timeAgo > 10 && activePoint.Speed < 10)
+                    ViewBag.InfoLine4 = "Видимо поездка закончена";
+
+                ViewBag.MapCenter = string.Format(gpointTemplate, sortedPoints.Last().Lat, sortedPoints.Last().Lon);
+                ViewBag.TravelPoints = string.Join(",", sortedPoints.Select(p => string.Format(gpointTemplate, p.Lat, p.Lon)));
+
+                return View("CurrentTravel");
+            }
+            else
+            {
+                ViewBag.Message = "Эта поездка еще не содержит точек :(";
+                return View("EmptyTravel");
+            }
+        }
+
+        public ActionResult TravelsList()
+        {
+            var db = new ONBSContext();
+            var result = new TravelsList();
+
+            result.Today = GetTravelsFor(db, DateTime.Now).ToArray();
+            result.Yesterday = GetTravelsFor(db, DateTime.Now.AddDays(-1)).ToArray();
+
+            return View(result);
+        }
+
+        private IEnumerable<LinkItem> GetTravelsFor(ONBSContext db, DateTime day)
+        {
+            var travels = (from t in db.Travels
+                           where t.StartTime.Year == day.Year
+                         && t.StartTime.Month == day.Month
+                         && t.StartTime.Day == day.Day
+                           orderby t.StartTime descending
+                           select t).ToList();
+
+            foreach (var travel in travels)
+            {
+                yield return new LinkItem { Caption = travel.Name, Action = "ShowTravel", Args = new { id = travel.ID } };
+            }
+        }
     }
 }

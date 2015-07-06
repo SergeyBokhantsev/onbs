@@ -35,7 +35,7 @@ namespace TravelController
         private bool metricsError = true;
 
         private bool disposed;
-        private bool requestNewTrawel;
+        private string requestNewTrawel;
 
         public TravelController(IHostController hc)
         {
@@ -127,7 +127,7 @@ namespace TravelController
                     state.Value = States.Ready;
                     hc.Logger.Log(this, string.Format("New travel was opened succesfully, Id={0}", result.Travel.ID), LogLevels.Info);
                     metricsError = false;
-                    requestNewTrawel = false;
+                    requestNewTrawel = null;
                 }
                 else
                 {
@@ -154,12 +154,12 @@ namespace TravelController
 
         private string CreateNewTravelName()
         {
-            return DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            return DateTime.Now.ToString("Auto at HH:mm");
         }
 
-        public void RequestNewTravel()
+        public void RequestNewTravel(string name)
         {
-            requestNewTrawel = true;
+            requestNewTrawel = name;
             state.Value = States.NotStarted;
             timer.Span = preparingRateMs;
         }
@@ -184,7 +184,7 @@ namespace TravelController
                 {
                     case States.NotStarted:
 
-                        if (requestNewTrawel)
+                        if (!string.IsNullOrWhiteSpace(requestNewTrawel))
                         {
                             timer.Span = preparingRateMs;
                             state.Value = States.ToOpenNewTravel;

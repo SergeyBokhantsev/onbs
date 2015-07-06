@@ -130,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\toDay.cs" />
     <Compile Include="Controllers\TravelApiControllerBase.cs" />
     <Compile Include="Controllers\TravelPointsController.cs" />
     <Compile Include="Controllers\TravelsController.cs" />
@@ -140,8 +141,10 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Extensions.cs" />
     <Compile Include="Models\ONBSContext.cs" />
+    <Compile Include="Models\LinkItem.cs" />
     <Compile Include="Models\TravelPoint.cs" />
     <Compile Include="Models\Travel.cs" />
+    <Compile Include="Models\TravelsList.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -168,6 +171,8 @@
   <ItemGroup>
     <None Include="Properties\PublishProfiles\onbs2.pubxml" />
     <Content Include="Views\Home\CurrentTravel.cshtml" />
+    <Content Include="Views\Home\EmptyTravel.cshtml" />
+    <Content Include="Views\Home\TravelsList.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

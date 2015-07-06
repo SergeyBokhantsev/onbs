@@ -10,7 +10,7 @@ namespace Interfaces
     {
         //string TravelName { get; }
         //DateTime TravelStarted { get; }
-        void RequestNewTravel();
+        void RequestNewTravel(string name);
         //void RenameTravel(string name);
     }
 }
