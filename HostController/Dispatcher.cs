@@ -167,22 +167,44 @@ namespace HostController
         private readonly EventHandler callback;
         private DateTime lastExecutedTime;
 
+        private volatile int span;
+        private volatile bool enabled;
+        private volatile bool disposed;
+
         public bool Disposed
         {
-            get;
-            private set;
+            get
+            {
+                return disposed;
+            }
+            private set
+            {
+                disposed = value;
+            }
         }
 
         public int Span
         {
-            get;
-            set;
+            get
+            {
+                return span;
+            }
+            set
+            {
+                span = value;
+            }
         }
 
         public bool Enabled
         {
-            get;
-            set;
+            get
+            {
+                return enabled;
+            }
+            set
+            {
+                enabled = value;
+            }
         }
 
         public DispatcherTimer(int span, EventHandler callback)

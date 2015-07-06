@@ -14,7 +14,7 @@ namespace TravelController
     {
         public event MetricsUpdatedEventHandler MetricsUpdated;
 
-        private enum States { NotStarted, FindingOpenedTravel, OpenedTravelNotFound, CreatingNewTravel, ExportingPoints, Ready }
+        private enum States { NotStarted, FindingOpenedTravel, ToOpenNewTravel, CreatingNewTravel, ExportingPoints, Ready }
 
         private readonly IHostController hc;
         private readonly AsyncClient client;
@@ -24,6 +24,7 @@ namespace TravelController
 
         private const int minimalExportRateMs = 5000;
         private readonly int exportRateMs;
+        private const int preparingRateMs = 5000;
 
         private Travel travel;
 
@@ -34,6 +35,7 @@ namespace TravelController
         private bool metricsError = true;
 
         private bool disposed;
+        private bool requestNewTrawel;
 
         public TravelController(IHostController hc)
         {
@@ -50,7 +52,7 @@ namespace TravelController
             if ((client = CreateClient(hc.Config, hc.Logger)) != null)
             {
                 hc.GetController<IGPSController>().GPRMCReseived += GPRMCReseived;
-                this.timer = hc.Dispatcher.CreateTimer(3000, Operate);
+                this.timer = hc.Dispatcher.CreateTimer(preparingRateMs, Operate);
                 hc.Dispatcher.Invoke(this, null, (s, e) => timer.Enabled = true);
             }
         }
@@ -68,13 +70,13 @@ namespace TravelController
                             if (result.Travel.Closed)
                             {
                                 this.travel = null;
-                                state.Value = States.OpenedTravelNotFound;
+                                state.Value = States.ToOpenNewTravel;
                                 hc.Logger.Log(this, string.Format("Found travel is closed. Id={0}", result.Travel.ID), LogLevels.Warning);
                             }
                             else if (result.Travel.EndTime.AddMinutes(minutesGapToOpenNewTravel) <= DateTime.Now.ToUniversalTime())
                             {
                                 this.travel = null;
-                                state.Value = States.OpenedTravelNotFound;
+                                state.Value = States.ToOpenNewTravel;
                                 hc.Logger.Log(this, string.Format("Found travel Id={0} was closed more than {1} minutes ago. New travel will be created.", result.Travel.ID, minutesGapToOpenNewTravel), LogLevels.Info);
                             }
                             else
@@ -87,7 +89,7 @@ namespace TravelController
                         else
                         {
                             this.travel = null;
-                            state.Value = States.OpenedTravelNotFound;
+                            state.Value = States.ToOpenNewTravel;
                             hc.Logger.Log(this, "Opened travel not found", LogLevels.Info);
                         }
 
@@ -97,7 +99,6 @@ namespace TravelController
                     {
                         hc.Logger.Log(this, "Error while finding opened travel:", LogLevels.Warning);
                         hc.Logger.Log(this, result.Error, LogLevels.Warning);
-                        state.Value = States.OpenedTravelNotFound;
                         metricsError = true;
                     }
                 }))
@@ -126,6 +127,7 @@ namespace TravelController
                     state.Value = States.Ready;
                     hc.Logger.Log(this, string.Format("New travel was opened succesfully, Id={0}", result.Travel.ID), LogLevels.Info);
                     metricsError = false;
+                    requestNewTrawel = false;
                 }
                 else
                 {
@@ -155,6 +157,13 @@ namespace TravelController
             return DateTime.Now.ToString("dd/MM/yyyy HH:mm");
         }
 
+        public void RequestNewTravel()
+        {
+            requestNewTrawel = true;
+            state.Value = States.NotStarted;
+            timer.Span = preparingRateMs;
+        }
+
         private void Operate(object sender, EventArgs e)
         {
             if (disposed)
@@ -174,23 +183,37 @@ namespace TravelController
                 switch (state.Value)
                 {
                     case States.NotStarted:
-                        int count = 0;
-                        lock (bufferedPoints)
+
+                        if (requestNewTrawel)
                         {
-                            count = bufferedPoints.Count;
-                        }
-                        var minPointsToStart = hc.Config.GetInt(ConfigNames.TravelServiceMinPointsCountToStart);
-                        if (bufferedPoints.Count < minPointsToStart)
-                        {
-                            hc.Logger.Log(this, string.Concat("Skipping export because points < ", minPointsToStart), LogLevels.Info);
+                            timer.Span = preparingRateMs;
+                            state.Value = States.ToOpenNewTravel;
                         }
                         else
                         {
-                            FindOpenedTravel();
+                            int count = 0;
+
+                            lock (bufferedPoints)
+                            {
+                                count = bufferedPoints.Count;
+                            }
+
+                            var minPointsToStart = hc.Config.GetInt(ConfigNames.TravelServiceMinPointsCountToStart);
+
+                            if (bufferedPoints.Count >= minPointsToStart)
+                            {
+                                timer.Span = preparingRateMs;
+                                FindOpenedTravel();
+                            }
+                            else
+                            {
+                                hc.Logger.Log(this, string.Concat("Skipping export because points < ", minPointsToStart), LogLevels.Info);
+                            }
                         }
+                        
                         break;
 
-                    case States.OpenedTravelNotFound:
+                    case States.ToOpenNewTravel:
                         OpenNewTravel(null);
                         break;
 
