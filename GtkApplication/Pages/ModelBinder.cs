@@ -167,10 +167,14 @@ namespace GtkApplication.Pages
     {
         public static readonly Gdk.Color Qpaque = new Gdk.Color(137, 217, 28);
 
-        private readonly IPageModel model;
 		private readonly ILogger logger;
 
         private readonly List<Binding> bindings = new List<Binding>();
+
+		public IPageModel Model {
+			get;
+			private set;
+		}
 
 		public ModelBinder(IPageModel model, ILogger logger)
         {
@@ -180,7 +184,7 @@ namespace GtkApplication.Pages
 			if (logger == null)
 				throw new ArgumentNullException("logger");
 
-            this.model = model;
+            this.Model = model;
 			this.logger = logger;
 
             model.PropertyChanged += PropertyChanged;
@@ -195,7 +199,7 @@ namespace GtkApplication.Pages
         {
             if (binds.Any())
             {
-                var value = model.GetProperty<object>(binds.First().PropertyName);
+				var value = Model.GetProperty<object>(binds.First().PropertyName);
 
                 Application.Invoke(new EventHandler((s, a) =>
                 {
@@ -216,7 +220,7 @@ namespace GtkApplication.Pages
 
         private void UpdateBinding(Binding binding)
         {
-            var value = model.GetProperty<object>(binding.PropertyName);
+			var value = Model.GetProperty<object>(binding.PropertyName);
 
             Application.Invoke(new EventHandler((s, a) =>
             {
@@ -256,12 +260,12 @@ namespace GtkApplication.Pages
 
         public void BindButtonClick(Button button, string actionName)
         {
-            button.Clicked += (s, a) => model.Action(new PageModelActionEventArgs(actionName, Interfaces.Input.ButtonStates.Press));
+			button.Clicked += (s, a) => Model.Action(new PageModelActionEventArgs(actionName, Interfaces.Input.ButtonStates.Press));
         }
 
 		public void BindFlatButtonClick(FlatButton button, string actionName)
 		{
-			button.Clicked += () => model.Action(new PageModelActionEventArgs(actionName, Interfaces.Input.ButtonStates.Press));
+			button.Clicked += () => Model.Action(new PageModelActionEventArgs(actionName, Interfaces.Input.ButtonStates.Press));
 		}
 
         public void BindButtonLabel(Button button, string propName, string prefix = null)

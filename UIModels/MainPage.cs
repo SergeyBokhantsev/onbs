@@ -34,7 +34,7 @@ namespace UIModels
 
             SetProperty(ModelNames.ButtonF1Label, "Navigation");
             SetProperty(ModelNames.ButtonF2Label, "Camera");
-			SetProperty (ModelNames.ButtonF3Label, "Set time test");
+            SetProperty(ModelNames.ButtonF5Label, "Start new Travel");
 			SetProperty(ModelNames.ButtonF8Label, "Configuration");
             SetProperty(ModelNames.ButtonCancelLabel, "Power");
 
@@ -111,12 +111,25 @@ namespace UIModels
                     }
                     break;
 
-			case ModelNames.ButtonF3:
+			case ModelNames.ButtonF5:
 				{
-					if (args.State == ButtonStates.Press) {
-						var pr = hostController.ProcessRunnerFactory.Create ("settime");
-						pr.Run ();
-						
+					if (args.State == ButtonStates.Press) 
+                    {
+                        var dialog = new UIModels.CommonTemplates.YesNoDialog(hostController,
+                            () =>
+                            { // YES
+                                var travelController = hostController.GetController<ITravelController>();
+                                travelController.RequestNewTravel();
+                                hostController.GetController<IUIController>().ShowDefaultPage();
+                            },
+                            () =>
+                            { // NO
+                                hostController.GetController<IUIController>().ShowDefaultPage();
+                            },
+                            "Confirm opening new travel",
+                            "Do you really want to request new travel?");
+
+                        hostController.GetController<IUIController>().ShowPage(dialog);
 					}
 				}
 				break;

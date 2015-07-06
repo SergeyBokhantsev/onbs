@@ -17,7 +17,7 @@ namespace UIModels.ConfigPages
         private readonly IConfig cfg;
 
         public NavitCommonConfigPage(IHostController hc)
-            :base("SystemConfigurationPage", hc.Dispatcher, hc.Logger)
+            :base("CommonVertcalStackPage", hc.Dispatcher, hc.Logger)
         {
             this.hc = hc;
             this.cfg = hc.Config;

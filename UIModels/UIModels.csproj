@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonTemplates\YesNoDialog.cs" />
     <Compile Include="ConfigPages\CommonConfigPage.cs" />
     <Compile Include="ConfigPages\ConfigGPSPage.cs" />
     <Compile Include="ConfigPages\NavitCommonConfigPage.cs" />
@@ -63,6 +64,7 @@
       <Name>NavitConfigGenerator</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

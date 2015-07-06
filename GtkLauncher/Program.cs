@@ -13,7 +13,7 @@ namespace GtkLauncher
 			{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-				app.ShowPage(GetMainPage());
+				app.ShowPage(GetCommonYesNoPage());
 
 				app.Run();
 			}
@@ -56,14 +56,14 @@ namespace GtkLauncher
 		{
 			bool gpsdEnabled = true;
 
-			var page = new EmptyPageModel ("SystemConfigurationPage");
+			var page = new EmptyPageModel ("CommonVertcalStackPage");
 
 			page.SetProperty ("label_caption", "Custom configuration");
 
-			page.SetProperty("label_CANCEL", "Return");
-			page.SetProperty("label_ACCEPT", "Next page");
+			page.SetProperty(ModelNames.ButtonCancelLabel, "Return");
+			page.SetProperty(ModelNames.ButtonAcceptLabel, "Next page");
 
-			page.SetProperty("label_F1", "GPSD Enabled");
+			page.SetProperty(ModelNames.ButtonF1Label, "GPSD Enabled");
 
 			page.OnAction += arg => {
 
@@ -73,12 +73,27 @@ namespace GtkLauncher
 						if (arg.State == Interfaces.Input.ButtonStates.Press)
 						{
 							gpsdEnabled = !gpsdEnabled;
-							page.SetProperty("label_F1", gpsdEnabled ? "GPSD Enabled" : "GPSD Disabled");
+						page.SetProperty(ModelNames.ButtonF1Label, gpsdEnabled ? "GPSD Enabled" : "GPSD Disabled");
 						}
 						break;
 				}
 
 			};
+
+			return page;
+		}
+
+		private static IPageModel GetCommonYesNoPage()
+		{
+			bool gpsdEnabled = true;
+
+			var page = new EmptyPageModel ("CommonYesNoPage");
+
+			page.SetProperty ("label_caption", "Custom yes/no dialog");
+			page.SetProperty ("label_message", "Do you?");
+
+			page.SetProperty(ModelNames.ButtonCancelLabel, "Surely YES");
+			page.SetProperty(ModelNames.ButtonAcceptLabel, "Maybe later");
 
 			return page;
 		}

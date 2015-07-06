@@ -20,7 +20,7 @@ namespace UIModels.ConfigPages
         private readonly IConfig config;
 
         public ConfigGPSPage(IHostController hostController)
-            : base("SystemConfigurationPage", hostController.Dispatcher, hostController.Logger)
+            : base("CommonVertcalStackPage", hostController.Dispatcher, hostController.Logger)
         {
             this.hostController = hostController;
             this.config = hostController.Config;

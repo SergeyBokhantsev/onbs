@@ -20,6 +20,7 @@ namespace GtkApplication
 			this.Name = "GtkApplication.ExternalApplicationPage";
 			// Container child GtkApplication.ExternalApplicationPage.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox ();
+			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.eventbox1 = new global::Gtk.EventBox ();
