@@ -36,10 +36,11 @@
         ];
 
         var pinColor = "FFFFFF";
-        var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
-            new google.maps.Size(21, 34),
-            new google.maps.Point(0,0),
-            new google.maps.Point(10, 34));
+
+        //var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+        //    new google.maps.Size(21, 34),
+        //    new google.maps.Point(0,0),
+        //    new google.maps.Point(10, 34));
 
         var marker = new google.maps.Marker({
             position: @ViewBag.MapCenter,
@@ -47,12 +48,16 @@
             title: '@ViewBag.Popup'
         });
 
-        var max_speed_marker = new google.maps.Marker({
+        @Html.Raw(@ViewBag.StopMarkers)
+
+        @Html.Raw(@ViewBag.MaxSpeedMarker)
+
+        @*var max_speed_marker = new google.maps.Marker({
             position: @ViewBag.MaxSpeedLocation,
             map: map,
-            icon: pinImage,
+            icon: '/content/images/speed.png',
             title: 'Максимальная скорость поездки: @ViewBag.MaxSpeedPopup км/ч'
-        });
+        });*@
 
         var infowindow = new google.maps.InfoWindow({
             content: '<h2>@ViewBag.InfoHeading</h2><p>@ViewBag.InfoLine1</p><p>@ViewBag.InfoLine2</p><p>@ViewBag.InfoLine3</p><p>@ViewBag.InfoLine4</p><p>@ViewBag.InfoLine5</p>'

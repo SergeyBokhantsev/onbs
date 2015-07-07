@@ -11,6 +11,12 @@ namespace WebApp.Controllers
     {
         private const string gpointTemplate = "new google.maps.LatLng({0}, {1})";
 
+        private const string markerTemplate = "var {0}_marker = new google.maps.Marker({{"
+                                            + "position: {1},"
+                                            + "map: map,"
+                                            + "icon: '/content/images/{2}',"
+                                            + "title: '{3}' }});";
+        
         //
         // GET: /Home/
         public string Index()
@@ -24,46 +30,19 @@ namespace WebApp.Controllers
 
             var currentTravel = (from t in db.Travels
                                  orderby t.StartTime descending
-                                 select t).First();
+                                 select t.ID).First();
 
-            if (currentTravel == null)
-            {
-                ViewBag.Message = "Нет поездок :(";
-                return View("EmptyTravel");
-            }
-
-            var sortedPoints = (from p in currentTravel.Track
-                               orderby p.Time ascending
-                               select p).ToList();
-
-            if (sortedPoints.Any())
-            {
-                var activePoint = sortedPoints.Last();
-
-                var timeAgo = (int)(DateTime.Now - activePoint.Time).TotalMinutes;
-
-                ViewBag.Popup = string.Format("Мы были здесь {0} минут назад", timeAgo);
-
-                ViewBag.InfoHeading = string.Concat(timeAgo, " минут назад");
-                ViewBag.InfoLine1 = string.Concat("Скорость: ", activePoint.Speed.ToString("0.#"));
-                ViewBag.InfoLine2 = string.Concat("Начало ", currentTravel.StartTime.AddHours(3));
-                ViewBag.InfoLine3 = string.Concat("Время поездки, минут: ", (int)(activePoint.Time - currentTravel.StartTime).TotalMinutes);
-
-                if (timeAgo > 10 && activePoint.Speed < 10)
-                    ViewBag.InfoLine4 = "Видимо поездка закончена";
-
-                ViewBag.MapCenter = string.Format(gpointTemplate, sortedPoints.Last().Lat, sortedPoints.Last().Lon);
-                ViewBag.TravelPoints = string.Join(",", sortedPoints.Select(p => string.Format(gpointTemplate, p.Lat, p.Lon)));
-
-                return View("CurrentTravel");
-            }
-            else
-                return View("EmptyTravel");
+            return CreateTravelMap(currentTravel, db);
         }
 
         public ActionResult ShowTravel(int id)
         {
-            var db = new ONBSContext();
+            return CreateTravelMap(id, null);
+        }
+
+        private ActionResult CreateTravelMap(int id, ONBSContext _db)
+        {
+            var db = _db ?? new ONBSContext();
 
             var currentTravel = db.Travels.Find(id);
 
@@ -85,10 +64,15 @@ namespace WebApp.Controllers
                 {
                     if (p.Speed > maxSpeedPoint.Speed)
                         maxSpeedPoint = p;
+
+
                 }
 
-                ViewBag.MaxSpeedPopup = maxSpeedPoint.Speed.ToString("0.##");
-                ViewBag.MaxSpeedLocation = string.Format(gpointTemplate, maxSpeedPoint.Lat, maxSpeedPoint.Lon);
+                ViewBag.MaxSpeedMarker = string.Format(markerTemplate,
+                                                      "max_speed",
+                                                      string.Format(gpointTemplate, maxSpeedPoint.Lat, maxSpeedPoint.Lon),
+                                                      "speed.png",
+                                                      string.Format("Максимальная скорость поездки: {0} км/ч", maxSpeedPoint.Speed.ToString("0.##")));
 
                 var activePoint = sortedPoints.Last();
 
@@ -96,9 +80,20 @@ namespace WebApp.Controllers
 
                 ViewBag.Popup = string.Format("Мы были здесь {0} минут назад", timeAgo);
 
+                double distance;
+                List<Tuple<TravelPoint, TimeSpan>> stopPoints;
+                GetStatistics(sortedPoints, out distance, out stopPoints);
+
+                ViewBag.StopMarkers = string.Concat(stopPoints.Select(p => string.Format(markerTemplate,
+                    string.Concat("stop_", p.Item1.ID),
+                    string.Format(gpointTemplate, p.Item1.Lat, p.Item1.Lon),
+                    "stop.png",
+                    string.Format("{0} - остановка {1} мин.", p.Item1.Time.ToString("HH:mm"), p.Item2.TotalMinutes.ToString("0"))
+                    )));
+
                 ViewBag.InfoHeading = string.Concat(timeAgo, " минут назад");
                 ViewBag.InfoLine1 = string.Concat("Скорость: ", activePoint.Speed.ToString("0.#"));
-                ViewBag.InfoLine2 = string.Concat("Проехано: ", (GetDistance(sortedPoints)/1000).ToString("0.#"), " км");
+                ViewBag.InfoLine2 = string.Concat("Проехано: ", (distance/1000).ToString("0.#"), " км");
                 ViewBag.InfoLine3 = string.Concat("Начало ", currentTravel.StartTime.AddHours(3));
                 ViewBag.InfoLine4 = string.Concat("Время поездки, минут: ", (int)(activePoint.Time - currentTravel.StartTime).TotalMinutes);
 
@@ -143,9 +138,10 @@ namespace WebApp.Controllers
             }
         }
 
-        private double GetDistance(List<TravelPoint> points)
+        private void GetStatistics(List<TravelPoint> points, out double distance, out List<Tuple<TravelPoint, TimeSpan>> stopPoints)
         {
-            double result = 0;
+            distance = 0;
+            stopPoints = new List<Tuple<TravelPoint, TimeSpan>>();
 
             if (points != null && points.Count > 1)
             {
@@ -153,14 +149,17 @@ namespace WebApp.Controllers
 
                 for (int i=1; i< points.Count; ++i)
                 {
-                    result += Interfaces.GPS.Helpers.GetDistance(new Interfaces.GPS.GeoPoint(prevPoint.Lat, prevPoint.Lon), 
+                    distance += Interfaces.GPS.Helpers.GetDistance(new Interfaces.GPS.GeoPoint(prevPoint.Lat, prevPoint.Lon), 
                                                                 new Interfaces.GPS.GeoPoint(points[i].Lat, points[i].Lon));
+
+                    var span = points[i].Time - prevPoint.Time;
+                    if (span.TotalMinutes > 2)
+                        stopPoints.Add(new Tuple<TravelPoint, TimeSpan>(points[i], span));
 
                     prevPoint = points[i];
                 }
             }
-
-            return result;
+            
         }
     }
 }
