@@ -51,7 +51,6 @@
     </Reference>
     <Reference Include="Mono.Posix" />
     <Reference Include="System.Drawing" />
-    <Reference Include="gtk-dotnet, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">

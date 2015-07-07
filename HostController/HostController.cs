@@ -92,7 +92,7 @@ namespace HostController
             {
                 logFolder = Path.Combine(workingDir, Config.GetString(ConfigNames.LogFolder));
             }
-            catch (Exception ex)
+            catch
             {
                 logFolder = Path.Combine(workingDir, "Logs");
             }
@@ -147,11 +147,10 @@ namespace HostController
 
         private void Initialize(object sender, EventArgs args)
         {
-            netKeeper = new InternetConnectionKeeper(ProcessRunnerFactory, Config, Logger);
+            netKeeper = new InternetConnectionKeeper(Config, Logger);
             netKeeper.InternetConnectionStatus += connected => config.IsInternetConnected = connected;
             netKeeper.InternetTime += CheckSystemTimeFromInternet;
             netKeeper.StartChecking();
-            netKeeper.WaitForConnection(5000);
 
             inputController = new InputController.InputController(Logger);
 
