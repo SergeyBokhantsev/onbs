@@ -34,7 +34,8 @@ namespace UIModels
 
             SetProperty(ModelNames.ButtonF1Label, "Navigation");
             SetProperty(ModelNames.ButtonF2Label, "Camera");
-            SetProperty(ModelNames.ButtonF5Label, "Start new Travel");
+            SetProperty(ModelNames.ButtonF5Label, "Save this GPS point");
+            SetProperty(ModelNames.ButtonF6Label, "Start new Travel");
 			SetProperty(ModelNames.ButtonF8Label, "Configuration");
             SetProperty(ModelNames.ButtonCancelLabel, "Power");
 
@@ -49,6 +50,9 @@ namespace UIModels
         {
             SetProperty("time", DateTime.Now.ToUniversalTime().AddHours(localTimeZone));
             SetProperty("time_valid", hostController.Config.IsSystemTimeValid ? "1" : "0");
+
+            SetProperty("label_inet_status", hostController.Config.IsInternetConnected ? "Internet OK" : "NO INTERNET CONNECTION");
+            SetProperty("inet_status", hostController.Config.IsInternetConnected ? "1" : "0");
         }
 
         private void SubscribeMetricsProviders()
@@ -111,9 +115,18 @@ namespace UIModels
                     }
                     break;
 
-			case ModelNames.ButtonF5:
-				{
-					if (args.State == ButtonStates.Press) 
+            case ModelNames.ButtonF5:
+                {
+                    if (args.State == ButtonStates.Press)
+                    {
+                        hostController.GetController<ITravelController>().MarkCurrentPositionWithCustomPoint();
+                    }
+                }
+                break;
+
+            case ModelNames.ButtonF6:
+                {
+                    if (args.State == ButtonStates.Press)
                     {
                         var dialog = new UIModels.CommonTemplates.YesNoDialog(hostController,
                             () =>
@@ -130,10 +143,9 @@ namespace UIModels
                             "Do you really want to request new travel?");
 
                         hostController.GetController<IUIController>().ShowPage(dialog);
-					}
-				}
-				break;
-
+                    }
+                }
+                break;
 
                 case ModelNames.ButtonF8:
                     {

@@ -28,6 +28,9 @@ namespace HostController
             this.logger = logger;
 
             checkFolder = config.GetString(ConfigNames.InetKeeperCheckFolder);
+
+            if (string.IsNullOrWhiteSpace(checkFolder))
+                throw new ArgumentNullException("ConfigNames.InetKeeperCheckFolder");
         }
 
         public void StartChecking()

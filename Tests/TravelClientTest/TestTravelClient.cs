@@ -182,11 +182,17 @@ namespace Tests.TravelClientTest
             var name = Guid.NewGuid().ToString();
             var travel = CreateTravel(client, name);
 
+            Assert.AreEqual(travel.StartTime, travel.EndTime);
+
             //ACT
+            Thread.Sleep(1000);
             var tp = new TravelPoint { Description = Guid.NewGuid().ToString(), Lat = 50, Lon = 30, Speed = 15.57, Type = TravelPointTypes.AutoTrackPoint };
             client.AddTravelPoint(tp, travel);
+            travel = client.GetTravel(travel.ID).Travel;
 
             //ASSERT
+            Assert.IsNotNull(travel);
+            Assert.AreNotEqual(travel.StartTime, travel.EndTime);
 
             //Cleanup
             DeleteTravel(client, travel);
@@ -200,6 +206,8 @@ namespace Tests.TravelClientTest
             var name = Guid.NewGuid().ToString();
             var travel = CreateTravel(client, name);
 
+            Assert.AreEqual(travel.StartTime, travel.EndTime);
+
             //ACT
             for (int i = 0; i < 10; ++i)
             {
@@ -207,7 +215,10 @@ namespace Tests.TravelClientTest
                 client.AddTravelPoint(tp, travel);
             }
 
+            travel = client.GetTravel(travel.ID).Travel;
+
             //ASSERT
+            Assert.AreNotEqual(travel.StartTime, travel.EndTime);
 
             //Cleanup
             DeleteTravel(client, travel);
@@ -221,8 +232,10 @@ namespace Tests.TravelClientTest
             var name = Guid.NewGuid().ToString();
             var travel = CreateTravel(client, name);
 
-            //ACT
+            Assert.AreEqual(travel.StartTime, travel.EndTime);
 
+            //ACT
+            Thread.Sleep(1000);
             var tps = new List<TravelPoint>();
             for (int i = 0; i < 10; ++i)
             {
@@ -230,10 +243,12 @@ namespace Tests.TravelClientTest
                 Thread.Sleep(100);
                 tps.Add(tp);
             }
-
             client.AddTravelPoint(tps, travel);
 
+            travel = client.GetTravel(travel.ID).Travel;
+
             //ASSERT
+            Assert.AreNotEqual(travel.StartTime, travel.EndTime);
 
             //Cleanup
             DeleteTravel(client, travel);

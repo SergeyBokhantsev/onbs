@@ -98,11 +98,12 @@ namespace WebApp.Controllers
 
                 ViewBag.InfoHeading = string.Concat(timeAgo, " минут назад");
                 ViewBag.InfoLine1 = string.Concat("Скорость: ", activePoint.Speed.ToString("0.#"));
-                ViewBag.InfoLine2 = string.Concat("Начало ", currentTravel.StartTime.AddHours(3));
-                ViewBag.InfoLine3 = string.Concat("Время поездки, минут: ", (int)(activePoint.Time - currentTravel.StartTime).TotalMinutes);
+                ViewBag.InfoLine2 = string.Concat("Проехано: ", (GetDistance(sortedPoints)/1000).ToString("0.#"), " км");
+                ViewBag.InfoLine3 = string.Concat("Начало ", currentTravel.StartTime.AddHours(3));
+                ViewBag.InfoLine4 = string.Concat("Время поездки, минут: ", (int)(activePoint.Time - currentTravel.StartTime).TotalMinutes);
 
                 if (timeAgo > 10 && activePoint.Speed < 10)
-                    ViewBag.InfoLine4 = "Видимо поездка закончена";
+                    ViewBag.InfoLine5 = "Видимо поездка закончена";
 
                 ViewBag.MapCenter = string.Format(gpointTemplate, sortedPoints.Last().Lat, sortedPoints.Last().Lon);
                 ViewBag.TravelPoints = string.Join(",", sortedPoints.Select(p => string.Format(gpointTemplate, p.Lat, p.Lon)));
@@ -140,6 +141,26 @@ namespace WebApp.Controllers
             {
                 yield return new LinkItem { Caption = travel.Name, Action = "ShowTravel", Args = new { id = travel.ID } };
             }
+        }
+
+        private double GetDistance(List<TravelPoint> points)
+        {
+            double result = 0;
+
+            if (points != null && points.Count > 1)
+            {
+                var prevPoint = points.First();
+
+                for (int i=1; i< points.Count; ++i)
+                {
+                    result += Interfaces.GPS.Helpers.GetDistance(new Interfaces.GPS.GeoPoint(prevPoint.Lat, prevPoint.Lon), 
+                                                                new Interfaces.GPS.GeoPoint(points[i].Lat, points[i].Lon));
+
+                    prevPoint = points[i];
+                }
+            }
+
+            return result;
         }
     }
 }

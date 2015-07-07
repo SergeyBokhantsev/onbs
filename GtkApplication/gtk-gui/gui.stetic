@@ -4,6 +4,7 @@
     <images-root-path>..</images-root-path>
   </configuration>
   <import>
+    <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../../_bin/Application/GtkApplication.dll" internal="true" />
   </import>
   <widget class="Gtk.Window" id="MainWindow" design-size="800 480">
@@ -180,19 +181,56 @@
           <widget class="Gtk.HBox" id="hbox2">
             <property name="MemberName" />
             <property name="Spacing">6</property>
+            <property name="BorderWidth">10</property>
             <child>
-              <placeholder />
+              <widget class="Gtk.EventBox" id="eventbox_inet_status">
+                <property name="MemberName" />
+                <property name="HeightRequest">30</property>
+                <child>
+                  <widget class="Gtk.Label" id="label_inet_status">
+                    <property name="MemberName" />
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">False</property>
+              </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gtk.EventBox" id="eventbox2">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Label" id="label2">
+                    <property name="MemberName" />
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">False</property>
+              </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gtk.EventBox" id="eventbox3">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Label" id="label3">
+                    <property name="MemberName" />
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">False</property>
+              </packing>
             </child>
           </widget>
           <packing>
             <property name="Position">2</property>
             <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
           </packing>
         </child>
         <child>

@@ -36,6 +36,7 @@ namespace TravelController
 
         private bool disposed;
         private string requestNewTrawel;
+        private volatile int requestCustomPoint;
 
         public TravelController(IHostController hc)
         {
@@ -162,6 +163,12 @@ namespace TravelController
             requestNewTrawel = name;
             state.Value = States.NotStarted;
             timer.Span = preparingRateMs;
+        }
+
+        public void MarkCurrentPositionWithCustomPoint()
+        {
+            //4 tries to add custom points (if current GPRMC is not active)
+            requestCustomPoint = 4;
         }
 
         private void Operate(object sender, EventArgs e)
@@ -302,24 +309,35 @@ namespace TravelController
 
         private void GPRMCReseived(GPRMC gprmc)
         {
-            if (!disposed && gprmc.Active && logFilter.Match(gprmc))
+            if (!disposed)
             {
-                lock (bufferedPoints)
+                if (gprmc.Active)
                 {
-                    bufferedPoints.Add(new TravelPoint
+                    if (requestCustomPoint > 0 || logFilter.Match(gprmc))
                     {
-                        Type = TravelPointTypes.AutoTrackPoint,
-                        Lat = gprmc.Location.Lat.Degrees,
-                        Lon = gprmc.Location.Lon.Degrees,
-                        Speed = gprmc.Speed,
-                        Time = gprmc.Time.ToUniversalTime()
-                    });
+                        lock (bufferedPoints)
+                        {
+                            bufferedPoints.Add(new TravelPoint
+                            {
+                                Type = requestCustomPoint > 0 ? TravelPointTypes.ManualTrackPoint : TravelPointTypes.AutoTrackPoint,
+                                Lat = gprmc.Location.Lat.Degrees,
+                                Lon = gprmc.Location.Lon.Degrees,
+                                Speed = gprmc.Speed,
+                                Time = gprmc.Time.ToUniversalTime()
+                            });
 
-                    metricsBufferedPoints = bufferedPoints.Count;
+                            metricsBufferedPoints = bufferedPoints.Count;
+                        }
+
+                        hc.Logger.LogIfDebug(this, "GPRMC was added to Travel Controller");
+                        UpdateMetrics();
+                        requestCustomPoint = 0;
+                    }
                 }
-
-                hc.Logger.LogIfDebug(this, "GPRMC was added to Travel Controller");
-                UpdateMetrics();
+                else if (requestCustomPoint > 0)
+                {
+                    requestCustomPoint--;
+                }
             }
         }
 

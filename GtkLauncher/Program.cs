@@ -13,7 +13,7 @@ namespace GtkLauncher
 			{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-				app.ShowPage(GetCommonYesNoPage());
+				app.ShowPage(GetMainPage());
 
 				app.Run();
 			}
@@ -35,6 +35,9 @@ namespace GtkLauncher
 
 			page.SetProperty("time_valid", "1");
 			var timer = new Timer (new TimerCallback (o => page.SetProperty("time", DateTime.Now)), null, 500, 1000);
+
+			page.SetProperty ("label_inet_status", "CONNECTED");
+			page.SetProperty ("inet_status", "0");
 
 			page.SetProperty("_timer", timer);
 

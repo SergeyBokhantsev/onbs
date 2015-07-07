@@ -10,7 +10,7 @@ namespace HttpClient
 {
     public class ClientResponse : IDisposable
     {
-        private readonly HttpWebResponse webResponse;
+        private HttpWebResponse webResponse;
 
         public HttpStatusCode Status { get; protected set; }
 
@@ -23,6 +23,7 @@ namespace HttpClient
 
             this.webResponse = webResponse;
             Status = webResponse.StatusCode;
+            Error = webResponse.StatusDescription;
         }
 
         public ClientResponse(HttpStatusCode status, string error)
@@ -38,7 +39,11 @@ namespace HttpClient
 
         public void Dispose()
         {
-            webResponse.Dispose();
+            if (webResponse != null)
+            {
+                webResponse.Dispose();
+                webResponse = null;
+            }
         }
     }
 }

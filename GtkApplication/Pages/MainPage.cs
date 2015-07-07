@@ -45,6 +45,11 @@ namespace GtkApplication
 
 			style.TextBox.Apply(label_time, eventbox_time);
 
+			style.TextBox.Apply(label_inet_status, eventbox_inet_status);
+
+			style.TextBox.Apply(label2, eventbox2);
+			style.TextBox.Apply(label3, eventbox3);
+
             binder = new ModelBinder(model, logger);
 
 			InitializeButton(box_Cancel, style.CancelButton, ModelNames.ButtonCancel, TextAligment.CenterMiddle);
@@ -86,6 +91,14 @@ namespace GtkApplication
 				{ "0", new Gdk.Color(255,0,0) },
 				{ "1", style.Window.Bg }
 			});
+
+			binder.BindLabelText (label_inet_status);
+			binder.BindEventBoxBgColor(eventbox_inet_status, "inet_status", 
+				new System.Collections.Generic.Dictionary<string, Gdk.Color> () 
+				{ 
+					{ "0", new Gdk.Color(255,0,0) },
+					{ "1", style.Window.Bg }
+				});
 		}
 
 		private void InitializeButton(EventBox box, LookAndFeel lf, string buttonName, TextAligment align)
