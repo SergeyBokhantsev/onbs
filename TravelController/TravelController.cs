@@ -100,6 +100,7 @@ namespace TravelController
                     {
                         hc.Logger.Log(this, "Error while finding opened travel:", LogLevels.Warning);
                         hc.Logger.Log(this, result.Error, LogLevels.Warning);
+                        state.Value = States.NotStarted;
                         metricsError = true;
                     }
                 }))
