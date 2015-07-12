@@ -10,6 +10,8 @@ public partial class MainWindow: Gtk.Window
 		Build();
 
         logger.Log(this, "MainWindow created", Interfaces.LogLevels.Debug);
+
+		//this.Fullscreen();
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)

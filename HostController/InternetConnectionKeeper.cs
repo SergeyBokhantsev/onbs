@@ -86,54 +86,49 @@ namespace HostController
         {
             try
             {
-				if (!Directory.Exists(checkFolder))
-					return false;
+                if (!Directory.Exists(checkFolder))
+                    return false;
 
-				if (InternetTime != null)
-				{
-	                var request = WebRequest.Create(config.GetString
-					                                (ConfigNames.InetKeeperCheckUrl)) as HttpWebRequest;
-	                request.Method = config.GetString(ConfigNames.InetKeeperCheckMethod);
+                var request = WebRequest.Create(config.GetString
+                                                (ConfigNames.InetKeeperCheckUrl)) as HttpWebRequest;
+                request.Method = config.GetString(ConfigNames.InetKeeperCheckMethod);
 
-	                using (var response = request.GetResponse() as HttpWebResponse)
-	                {
-	                    if (response.StatusCode == HttpStatusCode.OK)
-	                    {
-	                        if (InternetTime != null)
-	                        {
-	                            try
-	                            {
-	                                var date = response.Headers[HttpResponseHeader.Date];
-	                                var dateTime = DateTime.Parse(date);
-	                                OnInternetTime(dateTime.ToUniversalTime());
-	                            }
-	                            catch (Exception ex)
-	                            {
-	                                logger.Log(this, "Exception trying to get internet datetime.", LogLevels.Warning);
-	                                logger.Log(this, ex);
-	                            }
-	                        }
+                using (var response = request.GetResponse() as HttpWebResponse)
+                {
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        if (InternetTime != null)
+                        {
+                            try
+                            {
+                                var date = response.Headers[HttpResponseHeader.Date];
+                                var dateTime = DateTime.Parse(date);
+                                OnInternetTime(dateTime.ToUniversalTime());
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.Log(this, "Exception trying to get internet datetime.", LogLevels.Warning);
+                                logger.Log(this, ex);
+                            }
+                        }
 
-	                        return true;
-	                    }
-	                    else
-	                    {
-	                        return false;
-	                    }
-	                }
-				}
-				else 
-					return true;
-			}
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
             catch (WebException)
             {
                 return false;
             }
-			catch (Exception ex) 
-			{
-				logger.Log (this, ex);
-				return false;
-			}
+            catch (Exception ex)
+            {
+                logger.Log(this, ex);
+                return false;
+            }
         }
 
         public void Dispose()

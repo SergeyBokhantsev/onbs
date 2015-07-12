@@ -170,7 +170,7 @@ namespace HostController
 
             travelController = new TravelController.TravelController(this);
 
-            uiController = new UIController.UIController(Config.GetString(ConfigNames.UIHostAssemblyName), Config.GetString(ConfigNames.UIHostClass), this, () => new UIModels.MainPage(this));
+            uiController = new UIController.UIController(Config.GetString(ConfigNames.UIHostAssemblyName), Config.GetString(ConfigNames.UIHostClass), this, () => new UIModels.DrivePage(this));
             uiController.ShowDefaultPage();
 
             gpsCtrl.GPRMCReseived += CheckSystemTimeFromGPS;

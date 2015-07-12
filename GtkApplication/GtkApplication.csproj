@@ -70,11 +70,16 @@
     <Compile Include="gtk-gui\GtkApplication.ExternalApplicationPage.cs" />
     <Compile Include="Controls\FlatButton.cs" />
     <Compile Include="Controls\LookAndFeel.cs" />
-    <Compile Include="Pages\CommonVertcalStackPage.cs" />
+    <Compile Include="Pages\CommonVertcalStackPage.cs">
+      <DependentUpon>CommonYesNoPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pages\CommonYesNoPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.CommonYesNoPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.CommonVertcalStackPage.cs" />
     <Compile Include="Pages\Exctensions.cs" />
+    <Compile Include="Pages\DrivePage.cs" />
+    <Compile Include="gtk-gui\GtkApplication.DrivePage.cs" />
+    <Compile Include="Controls\MarkupLabel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
@@ -85,4 +90,14 @@
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="static-maps.yandex.ru.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Car.png">
+      <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

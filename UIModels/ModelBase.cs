@@ -38,7 +38,7 @@ namespace UIModels
 
         public T GetProperty<T>(string name)
         {
-            logger.LogIfDebug(this, string.Format("Getting PageModel property '{0}'", name));
+            //logger.LogIfDebug(this, string.Format("Getting PageModel property '{0}'", name));
 
             lock (properties)
             {
@@ -51,7 +51,7 @@ namespace UIModels
 
         public void SetProperty(string name, object value)
         {
-            logger.LogIfDebug(this, string.Format("Setting PageModel property '{0}' with value of type '{1}'", name, value != null ? value.GetType().ToString() : "NULL"));
+            //logger.LogIfDebug(this, string.Format("Setting PageModel property '{0}' with value of type '{1}'", name, value != null ? value.GetType().ToString() : "NULL"));
 
             lock (properties)
             {

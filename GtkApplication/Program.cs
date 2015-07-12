@@ -79,7 +79,7 @@ namespace GtkApplication
                 win = new MainWindow(logger);
 
 				win.ModifyBg(StateType.Normal, style.Window.Bg);
-
+                
                 win.Show();
                 Application.Run();
             }
@@ -105,7 +105,7 @@ namespace GtkApplication
             win.ShowAll();
         }
 
-		Gtk.Bin CreatePage(IPageModel model)
+		private Gtk.Bin CreatePage(IPageModel model)
 		{
 			try
 			{
@@ -115,7 +115,7 @@ namespace GtkApplication
 
 				if (page == null)
 					throw new Exception();
-
+			
 				return page ;
 			} catch (Exception ex)
 			{

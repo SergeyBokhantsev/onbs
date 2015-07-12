@@ -34,9 +34,36 @@ namespace TravelController
         private volatile int metricsSendedPoints;
         private bool metricsError = true;
 
+        private double travelDistance;
+        private GPRMC firstGprmc;
+        private GPRMC previousGprmc;
+
         private bool disposed;
         private string requestNewTrawel;
         private volatile int requestCustomPoint;
+
+        public int BufferedPoints
+        {
+            get { return metricsBufferedPoints; }
+        }
+        public int SendedPoints
+        {
+            get { return metricsSendedPoints; }
+        }
+        public TimeSpan TravelTime
+        {
+            get 
+            {
+                if (firstGprmc == null || previousGprmc == null)
+                    return TimeSpan.FromMinutes(0);
+
+                return (previousGprmc.Time - firstGprmc.Time);
+            }
+        }
+        public double TravelDistance
+        {
+            get { return travelDistance; }
+        }
 
         public TravelController(IHostController hc)
         {
@@ -314,6 +341,8 @@ namespace TravelController
             {
                 if (gprmc.Active)
                 {
+                    ProcessStatistics(gprmc);
+
                     if (requestCustomPoint > 0 || logFilter.Match(gprmc))
                     {
                         lock (bufferedPoints)
@@ -340,6 +369,20 @@ namespace TravelController
                     requestCustomPoint--;
                 }
             }
+        }
+
+        private void ProcessStatistics(GPRMC gprmc)
+        {
+            if (firstGprmc == null)
+            {
+                firstGprmc = gprmc;
+            }
+            else
+            {
+                travelDistance += Interfaces.GPS.Helpers.GetDistance(previousGprmc.Location, gprmc.Location);
+            }
+
+            previousGprmc = gprmc;
         }
 
         private AsyncClient CreateClient(IConfig config, ILogger logger)

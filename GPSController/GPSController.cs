@@ -109,7 +109,7 @@ namespace GPSController
             {
                 Interlocked.Increment(ref gpsFramesCount);
 
-				LogIncomingRaw (frames);
+				//LogIncomingRaw (frames);
 
                 var concatenatedNmea = new StringBuilder();
 

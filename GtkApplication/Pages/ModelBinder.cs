@@ -159,9 +159,26 @@ namespace GtkApplication.Pages
 
         public override void Update(object value)
         {
-            updater(value as IMetrics);
+			updater(value as IMetrics);
         }
     }
+
+	internal class CustomActionBinding<T> : Binding
+	{
+		private readonly Action<T> action;
+
+		public CustomActionBinding(Action<T> action, string propertyName)
+			: base(propertyName)
+		{
+			this.action = action;
+		}
+
+		public override void Update(object value)
+		{
+			if (value is T)
+				action((T)value);
+		}
+	}
 
     internal class ModelBinder
     {
@@ -286,5 +303,10 @@ namespace GtkApplication.Pages
         {
             bindings.Add(new MetricsBinding(updater, propName));
         }
+
+		public void BindCustomAction<T>(Action<T> action, string propName)
+		{
+			bindings.Add(new CustomActionBinding<T>(action, propName));
+		}
     }
 }

@@ -2,6 +2,7 @@
 using Interfaces.UI;
 using Interfaces;
 using System.Threading;
+using Interfaces.GPS;
 
 namespace GtkLauncher
 {
@@ -13,7 +14,7 @@ namespace GtkLauncher
 			{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-				app.ShowPage(GetMainPage());
+				app.ShowPage(GetDrivePage());
 
 				app.Run();
 			}
@@ -97,6 +98,39 @@ namespace GtkLauncher
 
 			page.SetProperty(ModelNames.ButtonCancelLabel, "Surely YES");
 			page.SetProperty(ModelNames.ButtonAcceptLabel, "Maybe later");
+
+			return page;
+		}
+
+		private static IPageModel GetDrivePage()
+		{
+			var page = new EmptyPageModel ("DrivePage");
+            
+			double speed = 0;
+
+			var timer = new Timer (new TimerCallback (o =>
+			{
+				page.SetProperty("time", DateTime.Now);
+
+				page.SetProperty("ard_status", !page.GetProperty<bool>("ard_status"));
+				page.SetProperty("gps_status", !page.GetProperty<bool>("gps_status"));
+				page.SetProperty("inet_status", !page.GetProperty<bool>("inet_status"));
+
+				page.SetProperty("speed", speed++);
+				page.SetProperty("time", DateTime.Now);
+
+				page.SetProperty("travel_span", speed);
+				page.SetProperty("distance", speed * 1000);
+
+				page.SetProperty("location", new GeoPoint(50.56897 + speed/1000, 30.76539 + speed/1000));
+
+				page.SetProperty("exported_points", string.Concat(speed, "/", speed));
+				page.SetProperty("heading", "West" + speed.ToString());
+				page.SetProperty("air_temp", speed);
+			}), 
+				null, 500, 200);
+
+			page.SetProperty("_timer", timer);
 
 			return page;
 		}

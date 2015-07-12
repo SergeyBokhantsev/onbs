@@ -65,7 +65,7 @@ namespace HostController
                 mre.Set();
             }
 
-            logger.LogIfDebug(this, string.Format("Invoke call from {0} with handler '{1}' sheduled", sender ?? "NULL", handler.Method));
+           // logger.LogIfDebug(this, string.Format("Invoke call from {0} with handler '{1}' sheduled", sender ?? "NULL", handler.Method));
         }
 
         [Conditional("DEBUG")]
@@ -99,7 +99,7 @@ namespace HostController
                         try
                         {
                             itemToInvoke.Invoke();
-                            logger.LogIfDebug(this, string.Format("Invoke handler '{0}' executed", itemToInvoke));
+                           // logger.LogIfDebug(this, string.Format("Invoke handler '{0}' executed", itemToInvoke));
                         }
                         catch (Exception ex)
                         {
