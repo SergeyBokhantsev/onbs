@@ -1,5 +1,6 @@
 ﻿using Interfaces;
 using Interfaces.GPS;
+using Interfaces.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,8 @@ namespace UIModels
             if (hc == null)
                 throw new ArgumentNullException("IHostController");
 
+            onlyPressButtonEvents = true;
+
             this.hc = hc;
             this.tc = hc.GetController<ITravelController>();
 
@@ -34,6 +37,7 @@ namespace UIModels
 
         private void OnTimer(object sender, EventArgs e)
         {
+            SetProperty("ard_status", hc.GetController<IArduinoController>().IsCommunicationOk);
             SetProperty("inet_status", hc.Config.IsInternetConnected);
 
             SetProperty("exported_points", string.Format("{0}/{1}", tc.BufferedPoints, tc.SendedPoints));
@@ -59,7 +63,12 @@ namespace UIModels
 
         protected override void DoAction(Interfaces.UI.PageModelActionEventArgs actionArgs)
         {
-            
+            switch (actionArgs.ActionName)
+            {
+                case ModelNames.ButtonCancel:
+                    hc.GetController<IUIController>().ShowPage(new UIModels.MainPage(hc));
+                    break;
+            }
         }
     }
 }

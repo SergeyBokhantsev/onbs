@@ -9,6 +9,7 @@ namespace Interfaces
 {
     public interface IArduinoController : IController, IMetricsProvider
     {
+        bool IsCommunicationOk { get; }
         void RegisterFrameAcceptor(IFramesAcceptor acceptor);
         void UnregisterFrameAcceptor(IFramesAcceptor acceptor);
     }

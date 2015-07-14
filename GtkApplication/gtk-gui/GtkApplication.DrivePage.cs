@@ -64,7 +64,7 @@ namespace GtkApplication
 		
 		private global::Gtk.Label label8;
 		
-		private global::Gtk.Label label9;
+		private global::Gtk.Label label_options;
 
 		protected virtual void Build ()
 		{
@@ -242,7 +242,6 @@ namespace GtkApplication
 			// Container child hbox4.Gtk.Box+BoxChild
 			this.image1 = new global::Gtk.Image ();
 			this.image1.Name = "image1";
-			this.image1.Pixbuf = new global::Gdk.Pixbuf (global::System.IO.Path.Combine (global::System.AppDomain.CurrentDomain.BaseDirectory, ".\\Car.png"));
 			this.hbox4.Add (this.image1);
 			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.image1]));
 			w16.Position = 1;
@@ -373,12 +372,12 @@ namespace GtkApplication
 			w28.Expand = false;
 			w28.Fill = false;
 			// Container child hbox5.Gtk.Box+BoxChild
-			this.label9 = new global::Gtk.Label ();
-			this.label9.Name = "label9";
-			this.label9.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#606060\' size=\'15000\'>OPT</span>");
-			this.label9.UseMarkup = true;
-			this.hbox5.Add (this.label9);
-			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.label9]));
+			this.label_options = new global::Gtk.Label ();
+			this.label_options.Name = "label_options";
+			this.label_options.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#606060\' size=\'15000\'>OPT</span>");
+			this.label_options.UseMarkup = true;
+			this.hbox5.Add (this.label_options);
+			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.label_options]));
 			w29.Position = 4;
 			w29.Expand = false;
 			w29.Fill = false;

@@ -929,7 +929,6 @@
             <child>
               <widget class="Gtk.Image" id="image1">
                 <property name="MemberName" />
-                <property name="Pixbuf">file:.\Car.png</property>
               </widget>
               <packing>
                 <property name="Position">1</property>
@@ -1099,7 +1098,7 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Label" id="label9">
+              <widget class="Gtk.Label" id="label_options">
                 <property name="MemberName" />
                 <property name="LabelProp" translatable="yes">&lt;span foreground='#606060' size='15000'&gt;OPT&lt;/span&gt;</property>
                 <property name="UseMarkup">True</property>

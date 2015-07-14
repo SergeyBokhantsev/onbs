@@ -29,6 +29,12 @@ namespace ArduinoController
 
         private long decodedFramesCount;
 
+        public bool IsCommunicationOk
+        {
+            get;
+            private set;
+        }
+
         public ArduinoController(IPort port, IDispatcher dispatcher, ILogger logger)
         {
             this.port = port;
@@ -53,7 +59,7 @@ namespace ArduinoController
         {
             logger.LogIfDebug(this, "DataReceived event");
 
-            bool is_error = false;
+            bool is_error;
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
@@ -76,6 +82,8 @@ namespace ArduinoController
                         logger.LogIfDebug(this, string.Format("Frames were dispatched for {0} acceptor", acceptor.FrameType));
                     }
                 }
+
+                is_error = false;
             }
             catch (Exception ex)
             {
@@ -85,6 +93,7 @@ namespace ArduinoController
 
             sw.Stop();
             UpdateMetrics(is_error, sw.ElapsedMilliseconds);
+            IsCommunicationOk = !is_error;
         }
 
         private void UpdateMetrics(bool is_error, long elapsed)

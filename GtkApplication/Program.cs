@@ -75,12 +75,15 @@ namespace GtkApplication
 		{
             try
             {
+                AppDomain.CurrentDomain.UnhandledException += (s, e) => logger.Log(s, e.ExceptionObject as Exception);
+
                 Application.Init();
                 win = new MainWindow(logger);
 
 				win.ModifyBg(StateType.Normal, style.Window.Bg);
                 
                 win.Show();
+                win.Fullscreen();
                 Application.Run();
             }
             catch (Exception ex)

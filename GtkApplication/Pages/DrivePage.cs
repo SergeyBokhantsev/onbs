@@ -93,7 +93,7 @@ namespace GtkApplication
 			binder.BindCustomAction<double>(air_temp =>
 				label_air_temp.Markup = CreateMarkup(m_AIR_TEMP, m_FG_WHITE, m_BG_EMPTY, air_temp.ToString("0"))
 				, "air_temp");
-
+			
 			model.RefreshAllProps();
 		}
 
