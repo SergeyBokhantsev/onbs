@@ -75,7 +75,7 @@ namespace GtkApplication
 		{
             try
             {
-                AppDomain.CurrentDomain.UnhandledException += (s, e) => logger.Log(s, e.ExceptionObject as Exception);
+                GLib.ExceptionManager.UnhandledException += ProcessUnhandledException;
 
                 Application.Init();
                 win = new MainWindow(logger);
@@ -92,6 +92,11 @@ namespace GtkApplication
                 logger.Log(this, ex);
             }
 		}
+
+        void ProcessUnhandledException(GLib.UnhandledExceptionArgs args)
+        {
+            logger.Log(this, args.ExceptionObject as Exception);
+        }
 
         private void ShowPage(object sender, EventArgs args)
         {
