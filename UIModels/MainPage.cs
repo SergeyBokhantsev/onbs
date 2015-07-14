@@ -32,12 +32,12 @@ namespace UIModels
 
             SubscribeMetricsProviders();
 
-            SetProperty(ModelNames.ButtonF1Label, "Navigation");
+            SetProperty(ModelNames.ButtonF1Label, "Power");
             SetProperty(ModelNames.ButtonF2Label, "Camera");
             SetProperty(ModelNames.ButtonF5Label, "Save this GPS point");
             SetProperty(ModelNames.ButtonF6Label, "Start new Travel");
 			SetProperty(ModelNames.ButtonF8Label, "Configuration");
-            SetProperty(ModelNames.ButtonCancelLabel, "Power");
+            SetProperty(ModelNames.ButtonCancelLabel, "Drive");
 
 			SetProperty("time_valid", "1");
 			SetProperty("time", null);
@@ -93,13 +93,12 @@ namespace UIModels
         {
             switch (args.ActionName)
             {
-                case ModelNames.ButtonF1:
+                case ModelNames.ButtonCancel:
                     {
                         if (args.State == ButtonStates.Press)
                         {
-                            var page = new NavigationAppPage(hostController);
+                            var page = new DrivePage(hostController);
                             hostController.GetController<IUIController>().ShowPage(page);
-                            page.Run();
                         }
                     }
                     break;
@@ -156,7 +155,7 @@ namespace UIModels
                     }
                     break;
 
-                case ModelNames.ButtonCancel:
+                case ModelNames.ButtonF1:
                     {
                         if (args.State == ButtonStates.Press)
                         {

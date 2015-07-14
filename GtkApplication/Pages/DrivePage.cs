@@ -45,6 +45,13 @@ namespace GtkApplication
 
 			this.Build();
 
+			style.Window.Apply(eventbox_drive);
+			style.Window.Apply(eventbox_nav);
+			style.Window.Apply(eventbox_cam);
+			style.Window.Apply(eventbox_weather);
+			style.Window.Apply(eventbox_traffic);
+			style.Window.Apply(eventbox_options);
+
 			var binder = new ModelBinder (model, logger);
 
             binder.BindCustomAction<bool>(ardStatus => 
@@ -93,7 +100,14 @@ namespace GtkApplication
 			binder.BindCustomAction<double>(air_temp =>
 				label_air_temp.Markup = CreateMarkup(m_AIR_TEMP, m_FG_WHITE, m_BG_EMPTY, air_temp.ToString("0"))
 				, "air_temp");
-			
+
+			//binder.BindEventBoxClick(eventbox_drive, ModelNames.ButtonF1);
+			binder.BindEventBoxClick(eventbox_nav, ModelNames.ButtonF1);
+			binder.BindEventBoxClick(eventbox_cam, ModelNames.ButtonF2);
+			binder.BindEventBoxClick(eventbox_weather, ModelNames.ButtonF3);
+			binder.BindEventBoxClick(eventbox_traffic, ModelNames.ButtonF4);
+			binder.BindEventBoxClick(eventbox_options, ModelNames.ButtonCancel);
+
 			model.RefreshAllProps();
 		}
 

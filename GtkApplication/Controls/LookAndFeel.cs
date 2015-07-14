@@ -69,9 +69,20 @@ namespace GtkApplication
 
 	public static class StyleExtensions
 	{
+		public static void Apply(this LookAndFeel lf, EventBox parent)
+		{
+			if (parent != null) 
+			{
+				parent.ModifyBg (StateType.Normal, lf.Bg);
+			}
+		}
+
 		public static void Apply(this LookAndFeel lf, Label label, EventBox parent)
 		{
-			label.ModifyFg (StateType.Normal, lf.Fg);
+			if (label != null)
+			{
+				label.ModifyFg(StateType.Normal, lf.Fg);
+			}
 
 			if (parent != null) 
 			{

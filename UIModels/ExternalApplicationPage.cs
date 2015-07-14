@@ -20,10 +20,19 @@ namespace UIModels
             this.runner = runner;
             this.ui = ui;
 
-            runner.Exited += RunnerExited;
+            if (runner != null)
+            {
+                runner.Exited += RunnerExited;
 
-            SetProperty("label_launch_info", string.Format("Launching {0}...", runner.Name));
-            SetProperty("is_error", "0");
+                SetProperty("label_launch_info", string.Format("Launching {0}...", runner.Name));
+                SetProperty("is_error", "0");
+            }
+            else
+            {
+                SetProperty("label_launch_info", "Runner was not provided");
+                SetProperty("is_error", "1");
+            }
+
             SetProperty("button_exit_label", "Close and back");
         }
 
@@ -32,20 +41,23 @@ namespace UIModels
             dispatcher.Invoke(this, null, new EventHandler((s, e) => ui.ShowDefaultPage()));
         }
 
-        public virtual void Run()
+        public virtual bool Run()
         {
+            if (runner == null)
+                return false;
+
             try
             {
-                if (runner == null)
-                    throw new Exception("Runner was not provided");
-
                 runner.Run();
                 SetProperty("label_launch_info", string.Format("{0} now launched", runner.Name));
+
+                return true;
             }
             catch (Exception ex)
             {
                 SetProperty("is_error", "1");
                 SetProperty("label_launch_info", string.Format("Error launching {0}...{1}{2}", runner.Name, Environment.NewLine, ex.Message));
+                return false;
             }
         }
 
@@ -56,7 +68,10 @@ namespace UIModels
                 case "Cancel":
                     if (args.State == ButtonStates.Press)
                     {
-                        runner.Exit();
+                        if (runner != null)
+                            runner.Exit();
+                        else
+                            RunnerExited(false);
                     }
                     break;
             }

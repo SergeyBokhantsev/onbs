@@ -90,14 +90,17 @@ namespace UIModels
             this.Disposing += WebCamPageDisposing;
         }
 
-        public override void Run()
+        public override bool Run()
         {
-            base.Run();
-
-            Thread.Sleep(3000);
-
-            UpdateColor();
-            UpdateContrast();
+            if (base.Run())
+            {
+                Thread.Sleep(3000);
+                UpdateColor();
+                UpdateContrast();
+                return true;
+            }
+            else
+                return false;
         }
 
         void WebCamPageDisposing(object sender, EventArgs e)

@@ -285,6 +285,12 @@ namespace GtkApplication.Pages
 			button.Clicked += () => Model.Action(new PageModelActionEventArgs(actionName, Interfaces.Input.ButtonStates.Press));
 		}
 
+		public void BindEventBoxClick(EventBox eventBox, string actionName)
+		{
+			eventBox.ButtonPressEvent += (s, e) => Model.Action(new PageModelActionEventArgs(actionName, Interfaces.Input.ButtonStates.Press));
+			eventBox.ButtonReleaseEvent += (s, e) => Model.Action(new PageModelActionEventArgs(actionName, Interfaces.Input.ButtonStates.Release));
+		}
+
         public void BindButtonLabel(Button button, string propName, string prefix = null)
         {
             var binding = new ButtonLabelBinding(button, propName, prefix);

@@ -132,6 +132,16 @@ namespace GtkLauncher
 
 			page.SetProperty("_timer", timer);
 
+			page.OnAction += (PageModelActionEventArgs obj) =>
+			{
+				switch (obj.ActionName)
+				{
+					case ModelNames.ButtonF1:
+						page.SetProperty("a", 1);
+						break;
+				}
+			};
+
 			return page;
 		}
 	}

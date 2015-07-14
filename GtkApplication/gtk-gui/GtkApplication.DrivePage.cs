@@ -56,13 +56,27 @@ namespace GtkApplication
 		
 		private global::Gtk.HBox hbox5;
 		
+		private global::Gtk.EventBox eventbox_drive;
+		
 		private global::Gtk.Label label5;
+		
+		private global::Gtk.EventBox eventbox_nav;
 		
 		private global::Gtk.Label label6;
 		
+		private global::Gtk.EventBox eventbox_cam;
+		
 		private global::Gtk.Label label7;
 		
+		private global::Gtk.EventBox eventbox_weather;
+		
 		private global::Gtk.Label label8;
+		
+		private global::Gtk.EventBox eventbox_traffic;
+		
+		private global::Gtk.Label label9;
+		
+		private global::Gtk.EventBox eventbox_options;
 		
 		private global::Gtk.Label label_options;
 
@@ -332,61 +346,85 @@ namespace GtkApplication
 			this.hbox5.Spacing = 6;
 			this.hbox5.BorderWidth = ((uint)(10));
 			// Container child hbox5.Gtk.Box+BoxChild
+			this.eventbox_drive = new global::Gtk.EventBox ();
+			this.eventbox_drive.Name = "eventbox_drive";
+			// Container child eventbox_drive.Gtk.Container+ContainerChild
 			this.label5 = new global::Gtk.Label ();
 			this.label5.Name = "label5";
 			this.label5.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#d39c2f\' size=\'15000\'><b>DRIVE</b></span>");
 			this.label5.UseMarkup = true;
-			this.hbox5.Add (this.label5);
-			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.label5]));
-			w25.Position = 0;
-			w25.Expand = false;
-			w25.Fill = false;
+			this.eventbox_drive.Add (this.label5);
+			this.hbox5.Add (this.eventbox_drive);
+			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.eventbox_drive]));
+			w26.Position = 0;
 			// Container child hbox5.Gtk.Box+BoxChild
+			this.eventbox_nav = new global::Gtk.EventBox ();
+			this.eventbox_nav.Name = "eventbox_nav";
+			// Container child eventbox_nav.Gtk.Container+ContainerChild
 			this.label6 = new global::Gtk.Label ();
 			this.label6.Name = "label6";
 			this.label6.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#606060\' size=\'15000\'>NAV</span>");
 			this.label6.UseMarkup = true;
-			this.hbox5.Add (this.label6);
-			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.label6]));
-			w26.Position = 1;
-			w26.Expand = false;
-			w26.Fill = false;
+			this.eventbox_nav.Add (this.label6);
+			this.hbox5.Add (this.eventbox_nav);
+			global::Gtk.Box.BoxChild w28 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.eventbox_nav]));
+			w28.Position = 1;
 			// Container child hbox5.Gtk.Box+BoxChild
+			this.eventbox_cam = new global::Gtk.EventBox ();
+			this.eventbox_cam.Name = "eventbox_cam";
+			// Container child eventbox_cam.Gtk.Container+ContainerChild
 			this.label7 = new global::Gtk.Label ();
 			this.label7.Name = "label7";
 			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#606060\' size=\'15000\'>CAM</span>");
 			this.label7.UseMarkup = true;
-			this.hbox5.Add (this.label7);
-			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.label7]));
-			w27.Position = 2;
-			w27.Expand = false;
-			w27.Fill = false;
+			this.eventbox_cam.Add (this.label7);
+			this.hbox5.Add (this.eventbox_cam);
+			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.eventbox_cam]));
+			w30.Position = 2;
 			// Container child hbox5.Gtk.Box+BoxChild
+			this.eventbox_weather = new global::Gtk.EventBox ();
+			this.eventbox_weather.Name = "eventbox_weather";
+			// Container child eventbox_weather.Gtk.Container+ContainerChild
 			this.label8 = new global::Gtk.Label ();
 			this.label8.Name = "label8";
 			this.label8.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#606060\' size=\'15000\'>WTHR</span>");
 			this.label8.UseMarkup = true;
-			this.hbox5.Add (this.label8);
-			global::Gtk.Box.BoxChild w28 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.label8]));
-			w28.Position = 3;
-			w28.Expand = false;
-			w28.Fill = false;
+			this.eventbox_weather.Add (this.label8);
+			this.hbox5.Add (this.eventbox_weather);
+			global::Gtk.Box.BoxChild w32 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.eventbox_weather]));
+			w32.Position = 3;
 			// Container child hbox5.Gtk.Box+BoxChild
+			this.eventbox_traffic = new global::Gtk.EventBox ();
+			this.eventbox_traffic.Name = "eventbox_traffic";
+			// Container child eventbox_traffic.Gtk.Container+ContainerChild
+			this.label9 = new global::Gtk.Label ();
+			this.label9.Name = "label9";
+			this.label9.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#606060\' size=\'15000\'>TRAF</span>");
+			this.label9.UseMarkup = true;
+			this.eventbox_traffic.Add (this.label9);
+			this.hbox5.Add (this.eventbox_traffic);
+			global::Gtk.Box.BoxChild w34 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.eventbox_traffic]));
+			w34.Position = 4;
+			w34.Expand = false;
+			w34.Fill = false;
+			// Container child hbox5.Gtk.Box+BoxChild
+			this.eventbox_options = new global::Gtk.EventBox ();
+			this.eventbox_options.Name = "eventbox_options";
+			// Container child eventbox_options.Gtk.Container+ContainerChild
 			this.label_options = new global::Gtk.Label ();
 			this.label_options.Name = "label_options";
 			this.label_options.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#606060\' size=\'15000\'>OPT</span>");
 			this.label_options.UseMarkup = true;
-			this.hbox5.Add (this.label_options);
-			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.label_options]));
-			w29.Position = 4;
-			w29.Expand = false;
-			w29.Fill = false;
+			this.eventbox_options.Add (this.label_options);
+			this.hbox5.Add (this.eventbox_options);
+			global::Gtk.Box.BoxChild w36 = ((global::Gtk.Box.BoxChild)(this.hbox5 [this.eventbox_options]));
+			w36.Position = 5;
 			this.vbox1.Add (this.hbox5);
-			global::Gtk.Box.BoxChild w30 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox5]));
-			w30.PackType = ((global::Gtk.PackType)(1));
-			w30.Position = 4;
-			w30.Expand = false;
-			w30.Fill = false;
+			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox5]));
+			w37.PackType = ((global::Gtk.PackType)(1));
+			w37.Position = 4;
+			w37.Expand = false;
+			w37.Fill = false;
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();

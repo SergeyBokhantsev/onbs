@@ -1,5 +1,6 @@
 ﻿using Interfaces;
 using Interfaces.GPS;
+using Interfaces.Input;
 using Interfaces.UI;
 using System;
 using System.Collections.Generic;
@@ -61,12 +62,24 @@ namespace UIModels
             SetProperty("location", gprmc.Location);
         }
 
-        protected override void DoAction(Interfaces.UI.PageModelActionEventArgs actionArgs)
+        protected override void DoAction(Interfaces.UI.PageModelActionEventArgs args)
         {
-            switch (actionArgs.ActionName)
+            switch (args.ActionName)
             {
                 case ModelNames.ButtonCancel:
                     hc.GetController<IUIController>().ShowPage(new UIModels.MainPage(hc));
+                    break;
+
+                case ModelNames.ButtonF1:
+                    ExternalApplicationPage page = new NavigationAppPage(hc);
+                    hc.GetController<IUIController>().ShowPage(page);
+                    page.Run();
+                    break;
+
+                case ModelNames.ButtonF2:
+                    page = new WebCamPage(hc, "cam");
+                    hc.GetController<IUIController>().ShowPage(page);
+                    page.Run();
                     break;
             }
         }
