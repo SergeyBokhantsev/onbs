@@ -46,7 +46,7 @@ namespace UIModels
             SetProperty("distance", tc.TravelDistance);
 
             if (hc.Config.IsSystemTimeValid)
-                SetProperty("time", DateTime.Now);
+                SetProperty("time", DateTime.Now.AddHours(hc.Config.GetInt(ConfigNames.SystemTimeLocalZone)));
         }
 
         void DrivePage_Disposing(object sender, EventArgs e)
