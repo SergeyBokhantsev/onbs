@@ -14,7 +14,7 @@ namespace GtkLauncher
 			{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-				app.ShowPage(GetDrivePage());
+				app.ShowPage(GetWeatherPage());
 
 				app.Run();
 			}
@@ -126,11 +126,65 @@ namespace GtkLauncher
 
 				page.SetProperty("exported_points", string.Concat(speed, "/", speed));
 				page.SetProperty("heading", "West" + speed.ToString());
-				page.SetProperty("air_temp", speed);
+					page.SetProperty("air_temp", speed.ToString());
 			}), 
 				null, 500, 200);
 
 			page.SetProperty("_timer", timer);
+
+			page.OnAction += (PageModelActionEventArgs obj) =>
+			{
+				switch (obj.ActionName)
+				{
+					case ModelNames.ButtonF1:
+						page.SetProperty("a", 1);
+						break;
+				}
+			};
+
+			return page;
+		}
+
+		private static IPageModel GetWeatherPage()
+		{
+			var page = new EmptyPageModel ("WeatherPage");
+
+			double counter = 0;
+
+			var timer = new Timer (new TimerCallback (o =>
+				{
+					page.SetProperty("time", DateTime.Now);
+
+					page.SetProperty("ard_status", !page.GetProperty<bool>("ard_status"));
+					page.SetProperty("gps_status", !page.GetProperty<bool>("gps_status"));
+					page.SetProperty("inet_status", !page.GetProperty<bool>("inet_status"));
+
+					page.SetProperty("time", DateTime.Now);
+
+				}), 
+				null, 500, 200);
+
+			page.SetProperty("_timer", timer);
+
+			page.SetProperty ("now_icon_path", @"D:\onbs\HostController\Data\weather\bkn_sn_d.png");
+			page.SetProperty ("now_condition", "облачно, большой дождь");
+			page.SetProperty ("now_temp", 15);
+
+			page.SetProperty ("next1_caption", "Вечером");
+			page.SetProperty ("next1_icon_path", @"D:\onbs\HostController\Data\weather\bkn_sn_d.png");
+			page.SetProperty ("next1_condition", "облачно");
+			page.SetProperty ("next1_temp", 25);
+
+			page.SetProperty ("next2_caption", "Ночью");
+			page.SetProperty ("next2_icon_path", @"D:\onbs\HostController\Data\weather\bkn_sn_d.png");
+			page.SetProperty ("next2_condition", "облачно");
+			page.SetProperty ("next2_temp", 35);
+
+			page.SetProperty ("info1", "Восход: 05:05Закат: 21:02");
+			page.SetProperty ("info2", "Ветер: 4,0 м/с З");
+			page.SetProperty ("info3", "Влажность: 42%");
+			page.SetProperty ("info4", "Давление: 746 мм рт. ст.");
+			page.SetProperty ("info5", "Данные на 18:30");
 
 			page.OnAction += (PageModelActionEventArgs obj) =>
 			{

@@ -264,7 +264,6 @@ namespace GtkApplication
 			// Container child hbox4.Gtk.Box+BoxChild
 			this.vbox2 = new global::Gtk.VBox ();
 			this.vbox2.WidthRequest = 260;
-			this.vbox2.Name = "vbox2";
 			this.vbox2.Spacing = 6;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.label_speed = new global::Gtk.Label ();

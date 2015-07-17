@@ -9,29 +9,6 @@ using System.Threading;
 
 namespace YandexServicesProvider
 {
-    public class WeatherReport
-    {
-        public int Temperature { get; private set; }
-
-        public string Conditions { get; private set; }
-
-        public WeatherReport(forecastFact f)
-        {
-            Temperature = int.Parse(f.temperature.Value);
-            Conditions = f.weather_type;
-        }
-    }
-
-    public class WeatherForecast
-    {
-        public WeatherReport Fact { get; private set; }
-
-        internal WeatherForecast(forecast f)
-        {
-            Fact = new WeatherReport(f.fact.First());
-        }
-    }
-
     public class WeatherProvider
     {
         private readonly ILogger logger;
@@ -42,7 +19,7 @@ namespace YandexServicesProvider
             this.logger = logger;
         }
 
-        public WeatherForecast GetForecast(string cityId)
+        public forecast GetForecast(string cityId)
         {
             string url = string.Format("http://export.yandex.ru/weather-ng/forecasts/{0}.xml", cityId);
 
@@ -58,7 +35,7 @@ namespace YandexServicesProvider
                             
                             var fc = serializer.Deserialize(inputStream) as forecast;
 
-                            return new WeatherForecast(fc);
+                            return fc;
                         }
                     }
                     else
@@ -76,7 +53,7 @@ namespace YandexServicesProvider
             }
         }
 
-        public void GetForecastAsync(string cityId, Action<WeatherForecast> callback)
+        public void GetForecastAsync(string cityId, Action<forecast> callback)
         {
             ThreadPool.QueueUserWorkItem(state =>
             {

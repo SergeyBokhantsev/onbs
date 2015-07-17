@@ -77,9 +77,12 @@
     <Compile Include="gtk-gui\GtkApplication.CommonYesNoPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.CommonVertcalStackPage.cs" />
     <Compile Include="Pages\Exctensions.cs" />
-    <Compile Include="Pages\DrivePage.cs" />
     <Compile Include="gtk-gui\GtkApplication.DrivePage.cs" />
     <Compile Include="Controls\MarkupLabel.cs" />
+    <Compile Include="gtk-gui\GtkApplication.WeatherPage.cs" />
+    <Compile Include="Pages\DrivePages\DrivePage.cs" />
+    <Compile Include="Pages\DrivePages\WeatherPage.cs" />
+    <Compile Include="Pages\DrivePages\CommonBindings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
@@ -99,5 +102,8 @@
       <DeployService-UseProjectRelativePath>True</DeployService-UseProjectRelativePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pages\DrivePages\" />
   </ItemGroup>
 </Project>

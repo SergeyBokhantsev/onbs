@@ -175,8 +175,7 @@ namespace GtkApplication.Pages
 
 		public override void Update(object value)
 		{
-			if (value is T)
-				action((T)value);
+			action((T)value);
 		}
 	}
 
@@ -251,6 +250,17 @@ namespace GtkApplication.Pages
 						}
             }));
         }
+
+		public void UpdateBindings()
+		{
+			lock (bindings) 
+			{
+				foreach (var b in bindings) 
+				{
+					UpdateBinding(b);
+				}
+			}
+		}
 
 		public void BindLabelText(Label label, string propName = null, Func<object, string> formatter = null)
         {
