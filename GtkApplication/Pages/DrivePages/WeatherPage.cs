@@ -5,6 +5,7 @@ using System.Diagnostics;
 using GtkApplication.Pages;
 using Interfaces.GPS;
 using CB = GtkApplication.CommonBindings;
+using Gdk;
 
 namespace GtkApplication
 {
@@ -13,8 +14,9 @@ namespace GtkApplication
 	{
 		private readonly CommonBindings commonBindings;
 
-		private const string m_WEATHER_CONDITION_LARGE = "<span {0} {1} size='12000'>{2}</span>";
+		private const string m_WEATHER_CONDITION_LARGE = "<span {0} {1} size='10000'>{2}</span>";
 		private const string m_TEMP_LARGE = "<span {0} {1} size='18000'>{2} C°</span>";
+		private const string m_TEMP_MEDIUM = "<span {0} {1} size='13000'>{2} C°</span>";
 		private const string m_WEATHER_CAPTION = "<span {0} {1} size='12000'>{2}</span>";
 		private const string m_WEATHER_INFO = "<span {0} {1} size='10000'>{2}</span>";
 
@@ -62,8 +64,8 @@ namespace GtkApplication
 			binder.BindCustomAction<string>(now_condition => 
 				label_weather_now_condition.Markup = CB.CreateMarkup(m_WEATHER_CONDITION_LARGE, CB.m_BG_EMPTY, CB.m_FG_GRAY, now_condition)
 				, "now_condition");
-			binder.BindCustomAction<object>(now_temp => 
-				label_temp_now.Markup = CB.CreateMarkup(m_TEMP_LARGE, CB.m_BG_EMPTY, CB.m_FG_GRAY, now_temp.ToString())
+			binder.BindCustomAction<string>(now_temp => 
+				label_temp_now.Markup = CB.CreateMarkup(m_TEMP_LARGE, CB.m_BG_EMPTY, CB.m_FG_GRAY, now_temp)
 				, "now_temp");
 
 			// NEXT 1
@@ -73,8 +75,8 @@ namespace GtkApplication
 			binder.BindCustomAction<string>(condition => 
 				label_weather_next1_condition.Markup = CB.CreateMarkup(m_WEATHER_CONDITION_LARGE, CB.m_BG_EMPTY, CB.m_FG_GRAY, condition)
 				, "next1_condition");
-			binder.BindCustomAction<object>(temp => 
-				label_weather_next1_temp.Markup = CB.CreateMarkup(m_TEMP_LARGE, CB.m_BG_EMPTY, CB.m_FG_GRAY, temp.ToString())
+			binder.BindCustomAction<string>(temp => 
+				label_weather_next1_temp.Markup = CB.CreateMarkup(m_TEMP_MEDIUM, CB.m_BG_EMPTY, CB.m_FG_GRAY, temp)
 				, "next1_temp");
 
 			// NEXT 2
@@ -84,8 +86,8 @@ namespace GtkApplication
 			binder.BindCustomAction<string>(condition => 
 				label_weather_next2_condition.Markup = CB.CreateMarkup(m_WEATHER_CONDITION_LARGE, CB.m_BG_EMPTY, CB.m_FG_GRAY, condition)
 				, "next2_condition");
-			binder.BindCustomAction<object>(temp => 
-				label_weather_next2_temp.Markup = CB.CreateMarkup(m_TEMP_LARGE, CB.m_BG_EMPTY, CB.m_FG_GRAY, temp.ToString())
+			binder.BindCustomAction<string>(temp => 
+				label_weather_next2_temp.Markup = CB.CreateMarkup(m_TEMP_MEDIUM, CB.m_BG_EMPTY, CB.m_FG_GRAY, temp)
 				, "next2_temp");
 
 			//INFO
@@ -100,7 +102,17 @@ namespace GtkApplication
 			binder.BindCustomAction<string>(info => label_info5.Markup = CB.CreateMarkup(m_WEATHER_INFO, CB.m_BG_EMPTY, CB.m_FG_GRAY_DARK, info)
 				, "info5");
 
+
+
+			// DAY 1 (TOMORROW)
+			binder.BindCustomAction<string>(icon_path => image_day1.Pixbuf = Scale(icon_path, 24), "day1_icon_path");
+
 			binder.UpdateBindings();
+		}
+
+		private Pixbuf Scale(string filePath, int size)
+		{
+			return new Pixbuf (filePath).ScaleSimple(size, size, InterpType.Bilinear);
 		}
 	}
 }

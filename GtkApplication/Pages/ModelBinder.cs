@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Gtk;
 using Interfaces;
 using Interfaces.UI;
+using System.Diagnostics;
 
 namespace GtkApplication.Pages
 {
@@ -175,7 +176,10 @@ namespace GtkApplication.Pages
 
 		public override void Update(object value)
 		{
-			action((T)value);
+            if (value == null)
+                action(default(T));
+            else
+			    action((T)value);
 		}
 	}
 
@@ -186,6 +190,8 @@ namespace GtkApplication.Pages
 		private readonly ILogger logger;
 
         private readonly List<Binding> bindings = new List<Binding>();
+
+        private bool disposed;
 
 		public IPageModel Model {
 			get;
@@ -204,16 +210,29 @@ namespace GtkApplication.Pages
 			this.logger = logger;
 
             model.PropertyChanged += PropertyChanged;
+            model.Disposing += model_Disposing;
+        }
+
+        void model_Disposing(object sender, EventArgs e)
+        {
+            lock (bindings)
+            {
+                bindings.Clear();
+                disposed = true;
+            }
         }
 
         private void PropertyChanged(string propertyName)
         {
-            UpdateBindings(bindings.Where(b => b.PropertyName == propertyName));
+            lock (bindings)
+            {
+                UpdateBindings(bindings.Where(b => b.PropertyName == propertyName));
+            }
         }
 
         private void UpdateBindings(IEnumerable<Binding> binds)
         {
-            if (binds.Any())
+            if (!disposed && binds.Any())
             {
 				var value = Model.GetProperty<object>(binds.First().PropertyName);
 
@@ -227,6 +246,7 @@ namespace GtkApplication.Pages
 							}
 							catch (Exception ex)
 							{
+                                logger.Log(this, string.Concat("Exception updating binding: ", b != null ? b.PropertyName : "NULL BINDING"), LogLevels.Error);
 								logger.Log(this, ex);
 							}
 						}
@@ -246,6 +266,7 @@ namespace GtkApplication.Pages
 						}
 						catch (Exception ex)
 						{
+                            logger.Log(this, string.Concat("Exception updating binding: ", binding != null ? binding.PropertyName : "NULL BINDING"), LogLevels.Error);
 							logger.Log(this, ex);
 						}
             }));
@@ -253,17 +274,28 @@ namespace GtkApplication.Pages
 
 		public void UpdateBindings()
 		{
-			lock (bindings) 
-			{
-				foreach (var b in bindings) 
-				{
-					UpdateBinding(b);
-				}
-			}
+            if (!disposed)
+            {
+                lock (bindings)
+                {
+                    foreach (var b in bindings)
+                    {
+                        UpdateBinding(b);
+                    }
+                }
+            }
 		}
+
+        [Conditional("DEBUG")]
+        private void AssertDisposed()
+        {
+            if (disposed)
+                throw new InvalidOperationException("Model is disposed");
+        }
 
 		public void BindLabelText(Label label, string propName = null, Func<object, string> formatter = null)
         {
+            AssertDisposed();
             propName = propName ?? label.Name;
             var binding = new LabelTextBinding(label, propName, formatter);
             bindings.Add(binding);
@@ -272,6 +304,7 @@ namespace GtkApplication.Pages
 
 		public void BindLabelMarkup(Label label, string propName = null, Func<object, string> formatter = null)
 		{
+            AssertDisposed();
 			propName = propName ?? label.Name;
 			var binding = new LabelMarkupBinding(label, propName, formatter);
 			bindings.Add(binding);
@@ -280,6 +313,7 @@ namespace GtkApplication.Pages
 
         public void BindEventBoxBgColor(EventBox box, string propName, Dictionary<string, Gdk.Color> colorMap)
         {
+            AssertDisposed();
             var binding = new EventBoxBgColorBinding(box, propName, colorMap);
             bindings.Add(binding);
             UpdateBinding(binding);
@@ -287,22 +321,26 @@ namespace GtkApplication.Pages
 
         public void BindButtonClick(Button button, string actionName)
         {
+            AssertDisposed();
 			button.Clicked += (s, a) => Model.Action(new PageModelActionEventArgs(actionName, Interfaces.Input.ButtonStates.Press));
         }
 
 		public void BindFlatButtonClick(FlatButton button, string actionName)
 		{
+            AssertDisposed();
 			button.Clicked += () => Model.Action(new PageModelActionEventArgs(actionName, Interfaces.Input.ButtonStates.Press));
 		}
 
 		public void BindEventBoxClick(EventBox eventBox, string actionName)
 		{
+            AssertDisposed();
 			eventBox.ButtonPressEvent += (s, e) => Model.Action(new PageModelActionEventArgs(actionName, Interfaces.Input.ButtonStates.Press));
 			eventBox.ButtonReleaseEvent += (s, e) => Model.Action(new PageModelActionEventArgs(actionName, Interfaces.Input.ButtonStates.Release));
 		}
 
         public void BindButtonLabel(Button button, string propName, string prefix = null)
         {
+            AssertDisposed();
             var binding = new ButtonLabelBinding(button, propName, prefix);
             bindings.Add(binding);
             UpdateBinding(binding);
@@ -310,6 +348,7 @@ namespace GtkApplication.Pages
 
 		public void BindFlatButtonLabel(FlatButton button, string propName, string prefix = null)
 		{
+            AssertDisposed();
 			var binding = new FlatButtonLabelBinding(button, propName, prefix);
 			bindings.Add(binding);
 			UpdateBinding(binding);
@@ -317,11 +356,13 @@ namespace GtkApplication.Pages
 
         public void BindMetrics(Action<IMetrics> updater, string propName)
         {
+            AssertDisposed();
             bindings.Add(new MetricsBinding(updater, propName));
         }
 
 		public void BindCustomAction<T>(Action<T> action, string propName)
 		{
+            AssertDisposed();
 			bindings.Add(new CustomActionBinding<T>(action, propName));
 		}
     }

@@ -30,7 +30,7 @@ namespace UIModels
 
         protected override void OnSecondaryTimer(object sender, EventArgs e)
         {
-            if (!weatherProviderBusy)
+            if (!weatherProviderBusy && hc.Config.IsInternetConnected)
             {
                 weatherProviderBusy = true;
                 weather.GetForecastAsync(hc.Config.GetString(ConfigNames.WeatherCityId), OnWeatherForecast);

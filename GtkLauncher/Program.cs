@@ -168,23 +168,25 @@ namespace GtkLauncher
 
 			page.SetProperty ("now_icon_path", @"D:\onbs\HostController\Data\weather\bkn_sn_d.png");
 			page.SetProperty ("now_condition", "облачно, большой дождь");
-			page.SetProperty ("now_temp", 15);
+			page.SetProperty ("now_temp", "15");
 
 			page.SetProperty ("next1_caption", "Вечером");
 			page.SetProperty ("next1_icon_path", @"D:\onbs\HostController\Data\weather\bkn_sn_d.png");
 			page.SetProperty ("next1_condition", "облачно");
-			page.SetProperty ("next1_temp", 25);
+			page.SetProperty ("next1_temp", "25");
 
 			page.SetProperty ("next2_caption", "Ночью");
 			page.SetProperty ("next2_icon_path", @"D:\onbs\HostController\Data\weather\bkn_sn_d.png");
-			page.SetProperty ("next2_condition", "облачно");
-			page.SetProperty ("next2_temp", 35);
+			page.SetProperty ("next2_condition", "облачно, возможен небольшой дождь");
+			page.SetProperty ("next2_temp", "35");
 
 			page.SetProperty ("info1", "Восход: 05:05Закат: 21:02");
 			page.SetProperty ("info2", "Ветер: 4,0 м/с З");
 			page.SetProperty ("info3", "Влажность: 42%");
 			page.SetProperty ("info4", "Давление: 746 мм рт. ст.");
 			page.SetProperty ("info5", "Данные на 18:30");
+
+			page.SetProperty("day1_icon_path", @"D:\onbs\HostController\Data\weather\bkn_sn_d.png");
 
 			page.OnAction += (PageModelActionEventArgs obj) =>
 			{
