@@ -59,6 +59,31 @@ namespace Tests
 
             //ASSERT
             Assert.IsNotNull(forecast);
+            Assert.IsTrue(forecast.Fact.Temperature != -1);
+        }
+
+        [TestMethod]
+        public void GetForecastAsync()
+        {
+            //INIT
+            var provider = new WeatherProvider(new Mocks.Logger());
+            WeatherForecast forecast = null;
+            var callbackExecuted = false;
+
+            Action<WeatherForecast> callback = fc =>
+            {
+                forecast = fc;
+                callbackExecuted = true;
+            };
+
+            //ACT
+            provider.GetForecastAsync("33345", callback);
+
+            while (!callbackExecuted)
+                Thread.Sleep(1000);
+
+            //ASSERT
+            Assert.IsNotNull(forecast);
         }
     }
 }

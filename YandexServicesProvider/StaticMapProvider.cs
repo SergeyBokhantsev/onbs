@@ -100,7 +100,9 @@ namespace YandexServicesProvider
             ThreadPool.QueueUserWorkItem(state =>
                 {
                     var mapStream = GetMap(center, width, height, zoom, layers);
-                    callback(mapStream);
+
+                    if (callback != null)
+                        callback(mapStream);
                 });
         }
     }

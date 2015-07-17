@@ -5,17 +5,31 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Interfaces;
+using System.Threading;
 
 namespace YandexServicesProvider
 {
     public class WeatherReport
     {
+        public int Temperature { get; private set; }
 
+        public string Conditions { get; private set; }
+
+        public WeatherReport(forecastFact f)
+        {
+            Temperature = int.Parse(f.temperature.Value);
+            Conditions = f.weather_type;
+        }
     }
 
     public class WeatherForecast
     {
         public WeatherReport Fact { get; private set; }
+
+        internal WeatherForecast(forecast f)
+        {
+            Fact = new WeatherReport(f.fact.First());
+        }
     }
 
     public class WeatherProvider
@@ -44,7 +58,7 @@ namespace YandexServicesProvider
                             
                             var fc = serializer.Deserialize(inputStream) as forecast;
 
-                            return null;
+                            return new WeatherForecast(fc);
                         }
                     }
                     else
@@ -60,6 +74,17 @@ namespace YandexServicesProvider
                 logger.Log(this, ex);
                 return null;
             }
+        }
+
+        public void GetForecastAsync(string cityId, Action<WeatherForecast> callback)
+        {
+            ThreadPool.QueueUserWorkItem(state =>
+            {
+                var forecast = GetForecast(cityId);
+
+                if (callback != null)
+                    callback(forecast);
+            });
         }
     }
 }

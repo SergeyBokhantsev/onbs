@@ -64,6 +64,10 @@
       <Project>{34252C77-00D2-4E38-B432-274B6D6A0032}</Project>
       <Name>NavitConfigGenerator</Name>
     </ProjectReference>
+    <ProjectReference Include="..\YandexServicesProvider\YandexServicesProvider.csproj">
+      <Project>{a8956707-42dd-4bf5-b4b2-955598a60b97}</Project>
+      <Name>YandexServicesProvider</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

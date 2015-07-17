@@ -32,7 +32,7 @@ namespace GtkApplication
 
 		private const string m_EXPORTED_POINTS = "<span {0} {1} size='14000'>Track: </span><span {0} {1} size='20000'>{2}</span>";
 		private const string m_HEADING = "<span {0} {1} size='14000'>Heading: </span><span {0} {1} size='20000'>{2}</span>";
-		private const string m_AIR_TEMP = "<span {0} {1} size='14000'>Air temp: </span><span {0} {1} size='20000'>{2}</span>";
+        private const string m_AIR_TEMP = "<span {0} {1} size='14000'>Air temp: </span><span {0} {1} size='20000'>{2}</span>";
 
         private readonly IPageModel model;
         private readonly int threadId;
@@ -97,8 +97,8 @@ namespace GtkApplication
 				label_heading.Markup = CreateMarkup(m_HEADING, m_FG_GRAY, m_BG_EMPTY, heading)
 				, "heading");
 
-			binder.BindCustomAction<double>(air_temp =>
-				label_air_temp.Markup = CreateMarkup(m_AIR_TEMP, m_FG_WHITE, m_BG_EMPTY, air_temp.ToString("0"))
+			binder.BindCustomAction<string>(air_temp =>
+				label_air_temp.Markup = CreateMarkup(m_AIR_TEMP, m_FG_WHITE, m_BG_EMPTY, air_temp)
 				, "air_temp");
 
 			//binder.BindEventBoxClick(eventbox_drive, ModelNames.ButtonF1);
