@@ -68,9 +68,47 @@ namespace UIModels
                 SetProperty("info3", string.Format("Влажность: {0}%", fact.humidity));
                 SetProperty("info4", string.Format("Давление: {0} мм рт. ст.", fact.pressure.First().Value));
                 SetProperty("info5", string.Format("Данные на {0}", DateTime.Parse(fact.observation_time).ToString("HH:mm")));
+
+                for (int i = 1; i <= 6; ++i)
+                {
+                    if (f.day.Length <= i)
+                        break;
+
+                    var day = f.day[i];
+                    SetProperty(string.Format("day{0}_caption", i), i == 1 ? "Завтра" : GetDayOfWeek(DateTime.Now.AddDays(i).DayOfWeek));
+                    SetProperty(string.Format("day{0}_date", i), day.date);
+                    var dPart = day.day_part.First(dp => dp.type == "day");
+                    var nPart = day.day_part.First(dp => dp.type == "night");
+                    SetProperty(string.Format("day{0}_image_path", i), GetWeatherIcon(dPart.imagev3.First().Value));
+                    SetProperty(string.Format("day{0}_day_temp", i), string.Format("{0}-{1}", dPart.temperature_from, dPart.temperature_to));
+                    SetProperty(string.Format("day{0}_night_temp", i), string.Format("{0}-{1}", nPart.temperature_from, nPart.temperature_to));
+                }
             }
 
             weatherProviderBusy = false;
+        }
+
+        private string GetDayOfWeek(DayOfWeek day)
+        {
+            switch (day)
+            {
+                case DayOfWeek.Sunday:
+                    return "Вс";
+                case DayOfWeek.Monday:
+                    return "Пн";
+                case DayOfWeek.Tuesday:
+                    return "Вт";
+                case DayOfWeek.Wednesday:
+                    return "Ср";
+                case DayOfWeek.Thursday:
+                    return "Чт";
+                case DayOfWeek.Friday:
+                    return "Пт";
+                case DayOfWeek.Saturday:
+                    return "Сб";
+                default:
+                    return string.Empty;
+            }
         }
 
         private string GetWeatherIcon(string code)

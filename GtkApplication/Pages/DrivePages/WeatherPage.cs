@@ -20,6 +20,10 @@ namespace GtkApplication
 		private const string m_WEATHER_CAPTION = "<span {0} {1} size='12000'>{2}</span>";
 		private const string m_WEATHER_INFO = "<span {0} {1} size='10000'>{2}</span>";
 
+		private readonly Color ColorNow = new Color (30, 60, 100);
+		private readonly Color ColorNext1 = new Color (20, 50, 80);
+		private readonly Color ColorNext2 = new Color (100, 20, 5);
+
 		public WeatherPage (IPageModel model, Style style, ILogger logger)
 		{
 			this.Build();
@@ -37,15 +41,15 @@ namespace GtkApplication
 				label_inet_status,
 				label_time);
 
-			// FACT
-			style.Window.Apply (eventbox_weather_now_caption);
-			style.Window.Apply (eventbox_weather_now_condition);
-			style.Window.Apply (eventbox_temp_now);
-
-			// NEXT 1
-			style.Window.Apply (eventbox_weather_next1_caption);
-			style.Window.Apply (eventbox_weather_next1_condition);
-			style.Window.Apply (eventbox_weather_next1_temp);
+//			// FACT
+//			style.Window.Apply (eventbox_weather_now_caption);
+//			style.Window.Apply (eventbox_weather_now_condition);
+//			style.Window.Apply (eventbox_temp_now);
+//
+//			// NEXT 1
+//			style.Window.Apply (eventbox_weather_next1_caption);
+//			style.Window.Apply (eventbox_weather_next1_condition);
+//			style.Window.Apply (eventbox_weather_next1_temp);
 
 			// NEXT 2
 			style.Window.Apply (eventbox_weather_next2_caption);
@@ -58,6 +62,19 @@ namespace GtkApplication
 			style.Window.Apply (eventbox_info3);
 			style.Window.Apply (eventbox_info4);
 			style.Window.Apply (eventbox_info5);
+
+			eventbox_image_weather_now.ModifyBg(Gtk.StateType.Normal, ColorNow);
+			eventbox_weather_now_condition.ModifyBg(Gtk.StateType.Normal, ColorNow);
+			eventbox_temp_now.ModifyBg(Gtk.StateType.Normal, ColorNow);
+			eventbox_weather_now_caption.ModifyBg(Gtk.StateType.Normal, ColorNow);
+			style.Window.Apply(eventbox_weather_now_separator);
+			//eventbox_weather_now_separator.ModifyBg(Gtk.StateType.Normal, ColorNow);
+
+			eventbox_image_weather_next1.ModifyBg(Gtk.StateType.Normal, ColorNext1);
+			eventbox_weather_next1_condition.ModifyBg(Gtk.StateType.Normal, ColorNext1);
+			eventbox_weather_next1_temp.ModifyBg(Gtk.StateType.Normal, ColorNext1);
+			eventbox_weather_next1_caption.ModifyBg(Gtk.StateType.Normal, ColorNext1);
+			eventbox_weather_next1_separator.ModifyBg(Gtk.StateType.Normal, ColorNext1);
 
 			// FACT
 			binder.BindCustomAction<string>(now_icon_path => image_weather_now.File = now_icon_path, "now_icon_path");
@@ -102,12 +119,49 @@ namespace GtkApplication
 			binder.BindCustomAction<string>(info => label_info5.Markup = CB.CreateMarkup(m_WEATHER_INFO, CB.m_BG_EMPTY, CB.m_FG_GRAY_DARK, info)
 				, "info5");
 
-
-
-			// DAY 1 (TOMORROW)
-			binder.BindCustomAction<string>(icon_path => image_day1.Pixbuf = Scale(icon_path, 24), "day1_icon_path");
+			CreateAndBindForecast(binder, 1);
+			CreateAndBindForecast(binder, 2);
+			CreateAndBindForecast(binder, 3);
+			CreateAndBindForecast(binder, 4);
+			CreateAndBindForecast(binder, 5);
+			CreateAndBindForecast(binder, 6);
 
 			binder.UpdateBindings();
+		}
+
+		private void CreateAndBindForecast(ModelBinder binder, int day)
+		{
+			var label_caption = new Gtk.Label () { UseMarkup = true };
+			binder.BindCustomAction<string>(text => label_caption.Markup = 
+				CB.CreateMarkup("<span {0} {1} size='12000'>{2}</span>", CB.m_BG_EMPTY, CB.m_FG_GRAY, text), 
+				string.Format("day{0}_caption", day));
+
+			var label_date = new Gtk.Label () { UseMarkup = true };
+			binder.BindCustomAction<string>(text => label_date.Markup = 
+				CB.CreateMarkup("<span {0} {1} size='9000'>{2}</span>", CB.m_BG_EMPTY, CB.m_FG_GRAY_DARK, text), 
+				string.Format("day{0}_date", day));
+
+			var image = new Gtk.Image ();
+			binder.BindCustomAction<string>(image_path => image.Pixbuf = Scale(image_path, 24), 
+				string.Format("day{0}_image_path", day));
+
+			var label_day_temp = new Gtk.Label () { UseMarkup = true };
+			binder.BindCustomAction<string>(text => label_day_temp.Markup = 
+				CB.CreateMarkup("<span {0} {1} size='12000'>{2}°</span>", CB.m_BG_EMPTY, CB.m_FG_GRAY, text), 
+				string.Format("day{0}_day_temp", day));
+
+			var label_night_temp = new Gtk.Label () { UseMarkup = true };
+			binder.BindCustomAction<string>(text => label_night_temp.Markup = 
+				CB.CreateMarkup("<span {0} {1} size='9000'>{2}°</span>", CB.m_BG_EMPTY, CB.m_FG_GRAY_DARK, text), 
+				string.Format("day{0}_night_temp", day));
+
+			var stack = new Gtk.VBox () { BorderWidth = 15 };
+			stack.Add(label_caption);
+			stack.Add(label_date);
+			stack.Add(image);
+			stack.Add(label_day_temp);
+			stack.Add(label_night_temp);
+			box_forecast.Add(stack);
 		}
 
 		private Pixbuf Scale(string filePath, int size)

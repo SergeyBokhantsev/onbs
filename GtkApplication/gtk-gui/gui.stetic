@@ -1268,42 +1268,7 @@
             <property name="MemberName" />
             <property name="NRows">6</property>
             <property name="NColumns">12</property>
-            <property name="RowSpacing">6</property>
-            <property name="ColumnSpacing">6</property>
             <property name="BorderWidth">10</property>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
-            <child>
-              <placeholder />
-            </child>
             <child>
               <placeholder />
             </child>
@@ -1342,753 +1307,25 @@
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
                 <child>
-                  <widget class="Gtk.VBox" id="vbox5">
-                    <property name="MemberName" />
-                    <property name="Spacing">6</property>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_day1_caption">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label18">
-                            <property name="MemberName" />
-                            <property name="Xalign">0.1</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;Завтра&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">0</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_day1_date">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_day1_date">
-                            <property name="MemberName" />
-                            <property name="Xalign">0.1</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='9000'&gt;18 июля&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Image" id="image_day1">
-                        <property name="MemberName" />
-                        <property name="Xalign">0.3</property>
-                        <property name="Yalign">0.9</property>
-                      </widget>
-                      <packing>
-                        <property name="Position">2</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_day1_day_temp">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_day1_day_temp">
-                            <property name="MemberName" />
-                            <property name="WidthRequest">100</property>
-                            <property name="Xalign">0.1</property>
-                            <property name="Yalign">0.45</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;+24 днем&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                            <property name="Wrap">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">3</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_condition5">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_weather_condition5">
-                            <property name="MemberName" />
-                            <property name="WidthRequest">100</property>
-                            <property name="Xalign">0.1</property>
-                            <property name="Yalign">0.45</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='9000'&gt;+14 ночью&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                            <property name="Wrap">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">4</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">0</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
+                  <placeholder />
                 </child>
                 <child>
-                  <widget class="Gtk.VBox" id="vbox6">
-                    <property name="MemberName" />
-                    <property name="Spacing">6</property>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_add1_caption3">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label20">
-                            <property name="MemberName" />
-                            <property name="Xalign">0.1</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;Завтра&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">0</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_add1_caption4">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label21">
-                            <property name="MemberName" />
-                            <property name="Xalign">0.1</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='9000'&gt;18 июля&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Image" id="image_weather_now4">
-                        <property name="MemberName" />
-                        <property name="Xalign">0.3</property>
-                        <property name="Yalign">0.9</property>
-                      </widget>
-                      <packing>
-                        <property name="Position">2</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_condition7">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_weather_condition7">
-                            <property name="MemberName" />
-                            <property name="WidthRequest">100</property>
-                            <property name="Xalign">0.1</property>
-                            <property name="Yalign">0.45</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;+24 днем&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                            <property name="Wrap">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">3</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_condition8">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_weather_condition8">
-                            <property name="MemberName" />
-                            <property name="WidthRequest">100</property>
-                            <property name="Xalign">0.1</property>
-                            <property name="Yalign">0.45</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='9000'&gt;+14 ночью&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                            <property name="Wrap">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">4</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">1</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
+                  <placeholder />
                 </child>
                 <child>
-                  <widget class="Gtk.VBox" id="vbox8">
-                    <property name="MemberName" />
-                    <property name="Spacing">6</property>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_add1_caption7">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label24">
-                            <property name="MemberName" />
-                            <property name="Xalign">0.1</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;Завтра&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">0</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_add1_caption8">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label25">
-                            <property name="MemberName" />
-                            <property name="Xalign">0.1</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='9000'&gt;18 июля&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Image" id="image_weather_now6">
-                        <property name="MemberName" />
-                        <property name="Xalign">0.3</property>
-                        <property name="Yalign">0.9</property>
-                      </widget>
-                      <packing>
-                        <property name="Position">2</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_condition13">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_weather_condition13">
-                            <property name="MemberName" />
-                            <property name="WidthRequest">100</property>
-                            <property name="Xalign">0.1</property>
-                            <property name="Yalign">0.45</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;+24 днем&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                            <property name="Wrap">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">3</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_condition14">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_weather_condition14">
-                            <property name="MemberName" />
-                            <property name="WidthRequest">100</property>
-                            <property name="Xalign">0.1</property>
-                            <property name="Yalign">0.45</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='9000'&gt;+14 ночью&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                            <property name="Wrap">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">4</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">2</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
+                  <placeholder />
                 </child>
                 <child>
-                  <widget class="Gtk.VBox" id="vbox9">
-                    <property name="MemberName" />
-                    <property name="Spacing">6</property>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_add1_caption9">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label26">
-                            <property name="MemberName" />
-                            <property name="Xalign">0.1</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;Завтра&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">0</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_add1_caption10">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label27">
-                            <property name="MemberName" />
-                            <property name="Xalign">0.1</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='9000'&gt;18 июля&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Image" id="image_weather_now7">
-                        <property name="MemberName" />
-                        <property name="Xalign">0.3</property>
-                        <property name="Yalign">0.9</property>
-                      </widget>
-                      <packing>
-                        <property name="Position">2</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_condition16">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_weather_condition16">
-                            <property name="MemberName" />
-                            <property name="WidthRequest">100</property>
-                            <property name="Xalign">0.1</property>
-                            <property name="Yalign">0.45</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;+24 днем&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                            <property name="Wrap">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">3</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_condition17">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_weather_condition17">
-                            <property name="MemberName" />
-                            <property name="WidthRequest">100</property>
-                            <property name="Xalign">0.1</property>
-                            <property name="Yalign">0.45</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='9000'&gt;+14 ночью&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                            <property name="Wrap">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">4</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">3</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
+                  <placeholder />
                 </child>
                 <child>
-                  <widget class="Gtk.VBox" id="vbox11">
-                    <property name="MemberName" />
-                    <property name="Spacing">6</property>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_add1_caption13">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label30">
-                            <property name="MemberName" />
-                            <property name="Xalign">0.1</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;Завтра&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">0</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_add1_caption14">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label31">
-                            <property name="MemberName" />
-                            <property name="Xalign">0.1</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='9000'&gt;18 июля&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Image" id="image_weather_now9">
-                        <property name="MemberName" />
-                        <property name="Xalign">0.3</property>
-                        <property name="Yalign">0.9</property>
-                      </widget>
-                      <packing>
-                        <property name="Position">2</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_condition22">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_weather_condition22">
-                            <property name="MemberName" />
-                            <property name="WidthRequest">100</property>
-                            <property name="Xalign">0.1</property>
-                            <property name="Yalign">0.45</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;+24 днем&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                            <property name="Wrap">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">3</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_condition23">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_weather_condition23">
-                            <property name="MemberName" />
-                            <property name="WidthRequest">100</property>
-                            <property name="Xalign">0.1</property>
-                            <property name="Yalign">0.45</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='9000'&gt;+14 ночью&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                            <property name="Wrap">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">4</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">4</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
+                  <placeholder />
                 </child>
                 <child>
-                  <widget class="Gtk.VBox" id="vbox10">
-                    <property name="MemberName" />
-                    <property name="Spacing">6</property>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_add1_caption11">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label28">
-                            <property name="MemberName" />
-                            <property name="Xalign">0.1</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;Завтра&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">0</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_add1_caption12">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label29">
-                            <property name="MemberName" />
-                            <property name="Xalign">0.1</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='9000'&gt;18 июля&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Image" id="image_weather_now8">
-                        <property name="MemberName" />
-                        <property name="Xalign">0.3</property>
-                        <property name="Yalign">0.9</property>
-                      </widget>
-                      <packing>
-                        <property name="Position">2</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_condition19">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_weather_condition19">
-                            <property name="MemberName" />
-                            <property name="WidthRequest">100</property>
-                            <property name="Xalign">0.1</property>
-                            <property name="Yalign">0.45</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;+24 днем&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                            <property name="Wrap">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">3</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_condition20">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_weather_condition20">
-                            <property name="MemberName" />
-                            <property name="WidthRequest">100</property>
-                            <property name="Xalign">0.1</property>
-                            <property name="Yalign">0.45</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='9000'&gt;+14 ночью&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                            <property name="Wrap">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">4</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">5</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
+                  <placeholder />
                 </child>
                 <child>
-                  <widget class="Gtk.VBox" id="vbox7">
-                    <property name="MemberName" />
-                    <property name="Spacing">6</property>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_add1_caption5">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label22">
-                            <property name="MemberName" />
-                            <property name="Xalign">0.1</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;Завтра&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">0</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_add1_caption6">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label23">
-                            <property name="MemberName" />
-                            <property name="Xalign">0.1</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='9000'&gt;18 июля&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">1</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.Image" id="image_weather_now5">
-                        <property name="MemberName" />
-                        <property name="Xalign">0.3</property>
-                        <property name="Yalign">0.9</property>
-                      </widget>
-                      <packing>
-                        <property name="Position">2</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_condition10">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_weather_condition10">
-                            <property name="MemberName" />
-                            <property name="WidthRequest">100</property>
-                            <property name="Xalign">0.1</property>
-                            <property name="Yalign">0.45</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;+24 днем&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                            <property name="Wrap">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">3</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <widget class="Gtk.EventBox" id="eventbox_weather_condition11">
-                        <property name="MemberName" />
-                        <child>
-                          <widget class="Gtk.Label" id="label_weather_condition11">
-                            <property name="MemberName" />
-                            <property name="WidthRequest">100</property>
-                            <property name="Xalign">0.1</property>
-                            <property name="Yalign">0.45</property>
-                            <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='9000'&gt;+14 ночью&lt;/span&gt;</property>
-                            <property name="UseMarkup">True</property>
-                            <property name="Wrap">True</property>
-                          </widget>
-                        </child>
-                      </widget>
-                      <packing>
-                        <property name="Position">4</property>
-                        <property name="AutoSize">True</property>
-                        <property name="Expand">False</property>
-                        <property name="Fill">False</property>
-                      </packing>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">6</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
+                  <placeholder />
                 </child>
               </widget>
               <packing>
@@ -2097,9 +1334,62 @@
                 <property name="RightAttach">12</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">0</property>
-                <property name="YOptions">Fill</property>
                 <property name="XExpand">False</property>
                 <property name="XFill">False</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">True</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.EventBox" id="eventbox_image_weather_next1">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Image" id="image_weather_next1">
+                    <property name="MemberName" />
+                    <property name="Xalign">0.7</property>
+                    <property name="Yalign">0.9</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">3</property>
+                <property name="LeftAttach">4</property>
+                <property name="RightAttach">5</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.EventBox" id="eventbox_image_weather_now">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Image" id="image_weather_now">
+                    <property name="MemberName" />
+                    <property name="Xalign">0.7</property>
+                    <property name="Yalign">0.9</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="TopAttach">1</property>
+                <property name="BottomAttach">3</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">2</property>
+                <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
                 <property name="XShrink">False</property>
                 <property name="YExpand">False</property>
                 <property name="YFill">True</property>
@@ -2180,6 +1470,29 @@
                 <property name="LeftAttach">5</property>
                 <property name="RightAttach">6</property>
                 <property name="AutoSize">True</property>
+                <property name="XOptions">Fill</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">True</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.EventBox" id="eventbox_weather_next1_separator">
+                <property name="MemberName" />
+                <property name="WidthRequest">10</property>
+                <child>
+                  <placeholder />
+                </child>
+              </widget>
+              <packing>
+                <property name="BottomAttach">4</property>
+                <property name="LeftAttach">3</property>
+                <property name="RightAttach">4</property>
+                <property name="AutoSize">False</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
                 <property name="XExpand">False</property>
@@ -2316,7 +1629,7 @@
               </widget>
               <packing>
                 <property name="LeftAttach">1</property>
-                <property name="RightAttach">4</property>
+                <property name="RightAttach">3</property>
                 <property name="AutoSize">False</property>
                 <property name="XOptions">Shrink, Fill</property>
                 <property name="YOptions">Fill</property>
@@ -2359,16 +1672,35 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Image" id="image_weather_next1">
+              <widget class="Gtk.EventBox" id="eventbox_weather_now_separator">
                 <property name="MemberName" />
-                <property name="Xalign">0.7</property>
-                <property name="Yalign">0.9</property>
+                <property name="WidthRequest">10</property>
+                <child>
+                  <placeholder />
+                </child>
               </widget>
               <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">3</property>
-                <property name="LeftAttach">4</property>
-                <property name="RightAttach">5</property>
+                <property name="BottomAttach">4</property>
+                <property name="AutoSize">False</property>
+                <property name="XOptions">0</property>
+                <property name="YOptions">Fill</property>
+                <property name="XExpand">False</property>
+                <property name="XFill">False</property>
+                <property name="XShrink">False</property>
+                <property name="YExpand">False</property>
+                <property name="YFill">True</property>
+                <property name="YShrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.HSeparator" id="hseparator3">
+                <property name="MemberName" />
+              </widget>
+              <packing>
+                <property name="TopAttach">4</property>
+                <property name="BottomAttach">5</property>
+                <property name="LeftAttach">1</property>
+                <property name="RightAttach">11</property>
                 <property name="AutoSize">True</property>
                 <property name="XOptions">Fill</property>
                 <property name="YOptions">Fill</property>
@@ -2403,31 +1735,10 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.Image" id="image_weather_now">
-                <property name="MemberName" />
-                <property name="Xalign">0.7</property>
-                <property name="Yalign">0.9</property>
-              </widget>
-              <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">3</property>
-                <property name="LeftAttach">1</property>
-                <property name="RightAttach">2</property>
-                <property name="AutoSize">False</property>
-                <property name="XOptions">Fill</property>
-                <property name="YOptions">Fill</property>
-                <property name="XExpand">False</property>
-                <property name="XFill">True</property>
-                <property name="XShrink">False</property>
-                <property name="YExpand">False</property>
-                <property name="YFill">True</property>
-                <property name="YShrink">False</property>
-              </packing>
-            </child>
-            <child>
               <widget class="Gtk.VBox" id="vbox4">
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
+                <property name="BorderWidth">6</property>
                 <child>
                   <widget class="Gtk.EventBox" id="eventbox_info1">
                     <property name="MemberName" />
@@ -2538,46 +1849,6 @@
                 <property name="XShrink">False</property>
                 <property name="YExpand">False</property>
                 <property name="YFill">False</property>
-                <property name="YShrink">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.VSeparator" id="vseparator2">
-                <property name="MemberName" />
-              </widget>
-              <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">4</property>
-                <property name="LeftAttach">3</property>
-                <property name="RightAttach">4</property>
-                <property name="AutoSize">True</property>
-                <property name="XOptions">Fill</property>
-                <property name="YOptions">Fill</property>
-                <property name="XExpand">False</property>
-                <property name="XFill">True</property>
-                <property name="XShrink">False</property>
-                <property name="YExpand">False</property>
-                <property name="YFill">True</property>
-                <property name="YShrink">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.VSeparator" id="vseparator4">
-                <property name="MemberName" />
-              </widget>
-              <packing>
-                <property name="TopAttach">1</property>
-                <property name="BottomAttach">4</property>
-                <property name="LeftAttach">6</property>
-                <property name="RightAttach">7</property>
-                <property name="AutoSize">True</property>
-                <property name="XOptions">Fill</property>
-                <property name="YOptions">Fill</property>
-                <property name="XExpand">False</property>
-                <property name="XFill">True</property>
-                <property name="XShrink">False</property>
-                <property name="YExpand">False</property>
-                <property name="YFill">True</property>
                 <property name="YShrink">False</property>
               </packing>
             </child>

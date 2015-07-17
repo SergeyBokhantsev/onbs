@@ -186,7 +186,11 @@ namespace GtkLauncher
 			page.SetProperty ("info4", "Давление: 746 мм рт. ст.");
 			page.SetProperty ("info5", "Данные на 18:30");
 
-			page.SetProperty("day1_icon_path", @"D:\onbs\HostController\Data\weather\bkn_sn_d.png");
+			page.SetProperty("day1_caption", "Завтра");
+			page.SetProperty("day1_date", "12.13.1555");
+			page.SetProperty("day1_image_path", @"D:\onbs\HostController\Data\weather\bkn_sn_d.png");
+			page.SetProperty("day1_day_temp", "35");
+			page.SetProperty("day1_night_temp", "12");
 
 			page.OnAction += (PageModelActionEventArgs obj) =>
 			{
