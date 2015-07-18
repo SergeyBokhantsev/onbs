@@ -16,6 +16,8 @@ namespace UIModels
         protected readonly IDispatcherTimer primaryTimer;
         protected readonly IDispatcherTimer secondaryTimer;
 
+        protected bool Disposed { get; private set; }
+
         protected CommonPageBase(IHostController hc, string modelName)
             :base(modelName, hc.Dispatcher, hc.Logger)
         {
@@ -36,6 +38,9 @@ namespace UIModels
 
         protected virtual void OnPrimaryTick(object sender, EventArgs e)
         {
+            if (Disposed)
+                return;
+
             SetProperty("ard_status", hc.GetController<IArduinoController>().IsCommunicationOk);
             SetProperty("inet_status", hc.Config.IsInternetConnected);
 
@@ -49,6 +54,9 @@ namespace UIModels
 
         protected override void DoAction(Interfaces.UI.PageModelActionEventArgs args)
         {
+            if (Disposed)
+                return;
+
             switch (args.ActionName)
             {
                 case ModelNames.ButtonCancel:
@@ -83,6 +91,7 @@ namespace UIModels
         {
             primaryTimer.Dispose();
             secondaryTimer.Dispose();
+            Disposed = true;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace UIModels
 
         protected override void OnSecondaryTimer(object sender, EventArgs e)
         {
-            if (!weatherProviderBusy && hc.Config.IsInternetConnected)
+            if (!Disposed && !weatherProviderBusy && hc.Config.IsInternetConnected)
             {
                 weatherProviderBusy = true;
                 weather.GetForecastAsync(hc.Config.GetString(ConfigNames.WeatherCityId), OnWeatherForecast);
@@ -41,7 +41,7 @@ namespace UIModels
 
         private void OnWeatherForecast(forecast f)
         {
-            if (f != null)
+            if (f != null && !Disposed)
             {
                 var fact = f.fact.First();
 

@@ -30,7 +30,7 @@ namespace UIModels
 
         protected override void OnSecondaryTimer(object sender, EventArgs e)
         {
-            if (!weatherProviderBusy && hc.Config.IsInternetConnected)
+            if (!Disposed && !weatherProviderBusy && hc.Config.IsInternetConnected)
             {
                 weatherProviderBusy = true;
                 weather.GetForecastAsync(hc.Config.GetString(ConfigNames.WeatherCityId), OnWeatherForecast);
@@ -41,18 +41,24 @@ namespace UIModels
 
         private void OnWeatherForecast(forecast f)
         {
-            SetProperty("air_temp", f != null
-                ? string.Format("{0}°, {1}", f.fact.First().temperature.Value, f.fact.First().weather_type)
-                : "--");
+            if (!Disposed)
+            {
+                SetProperty("air_temp", f != null
+                    ? string.Format("{0}°, {1}", f.fact.First().temperature.Value, f.fact.First().weather_type)
+                    : "--");
+            }
 
             weatherProviderBusy = false;
         }
 
         protected override void OnPrimaryTick(object sender, EventArgs e)
         {
-            SetProperty("exported_points", string.Format("{0}/{1}", tc.BufferedPoints, tc.SendedPoints));
-            SetProperty("travel_span", tc.TravelTime.TotalMinutes);
-            SetProperty("distance", tc.TravelDistance);
+            if (!Disposed)
+            {
+                SetProperty("exported_points", string.Format("{0}/{1}", tc.BufferedPoints, tc.SendedPoints));
+                SetProperty("travel_span", tc.TravelTime.TotalMinutes);
+                SetProperty("distance", tc.TravelDistance);
+            }
 
             base.OnPrimaryTick(sender, e);
         }
@@ -65,9 +71,12 @@ namespace UIModels
 
         void GPRMCReseived(GPRMC gprmc)
         {
-            SetProperty("gps_status", gprmc.Active);
-            SetProperty("speed", gprmc.Active ? gprmc.Speed : 0);
-            SetProperty("location", gprmc.Location);
+            if (!Disposed)
+            {
+                SetProperty("gps_status", gprmc.Active);
+                SetProperty("speed", gprmc.Active ? gprmc.Speed : 0);
+                SetProperty("location", gprmc.Location);
+            }
         }
     }
 }
