@@ -83,7 +83,7 @@ namespace GtkApplication
 				win.ModifyBg(StateType.Normal, style.Window.Bg);
                 
                 win.Show();
-               // win.Fullscreen();
+                win.Fullscreen();
                 Application.Run();
             }
             catch (Exception ex)

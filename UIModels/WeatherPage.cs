@@ -25,7 +25,7 @@ namespace UIModels
         {
             this.weather = new WeatherProvider(hc.Logger);
 
-            this.iconPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data\\Weather");
+            this.iconPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data", "weather");
         }
 
         protected override void OnSecondaryTimer(object sender, EventArgs e)
