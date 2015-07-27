@@ -115,12 +115,24 @@ namespace ArduinoController
 
         public void RegisterFrameAcceptor(IFramesAcceptor acceptor)
         {
-            acceptors.Add(acceptor);
+            lock (acceptors)
+            {
+                if (!acceptors.Contains(acceptor))
+                    acceptors.Add(acceptor);
+                else
+                    throw new Exception("Acceptor already exist");
+            }
         }
 
         public void UnregisterFrameAcceptor(IFramesAcceptor acceptor)
         {
-            acceptors.Remove(acceptor);
+            lock (acceptors)
+            {
+                if (acceptors.Contains(acceptor))
+                    acceptors.Remove(acceptor);
+                else
+                    throw new Exception("Acceptor is not exist");
+            }
         }
     }
 }
