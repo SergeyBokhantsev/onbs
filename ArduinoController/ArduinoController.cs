@@ -22,6 +22,7 @@ namespace ArduinoController
 
         private readonly IPort port;
         private readonly IDispatcher dispatcher;
+        private readonly IDispatcherTimer arduinoWatchdogTimer;
         private readonly ILogger logger;
         private readonly ISTPCodec codec;
 		private readonly ISTPCodec arduinoCommandCodec;
@@ -45,14 +46,56 @@ namespace ArduinoController
             var frameEndMarker = Encoding.UTF8.GetBytes(":>:");
             codec = new STPCodec(frameBeginMarker, frameEndMarker);
 
-			
 			var arduFrameBeginMarker = Encoding.UTF8.GetBytes("ac{");
 			var arduFrameEndMarker = Encoding.UTF8.GetBytes("}");
 			arduinoCommandCodec = new STPCodec(arduFrameBeginMarker, arduFrameEndMarker);
 
+            arduinoWatchdogTimer = dispatcher.CreateTimer(5000, (s, e) => 
+            {
+                Send(new byte[] { (byte)'d' });
+                logger.LogIfDebug(this, "Ping command sended to Arduino");
+            });
+            arduinoWatchdogTimer.Enabled = true;
+
             logger.Log(this, string.Format("{0} created.", this.GetType().Name), LogLevels.Info);
 
             port.DataReceived += DataReceived;
+        }
+
+        private void Send(byte[] data)
+        {
+            try
+            {
+                var serializedFrame = codec.Encode(new STPFrame(data, STPFrame.Types.ArduCommand));
+                port.Write(serializedFrame, 0, serializedFrame.Length);
+            }
+            catch (Exception ex)
+            {
+                logger.Log(this, "Exception sending data to Arduino", LogLevels.Error);
+                logger.Log(this, ex);
+            }
+        }
+
+        private IEnumerable<STPFrame> ProcessArduinoCommands(IEnumerable<STPFrame> inputFrames)
+        {
+            var convertedFrames = arduinoCommandCodec.Decode(inputFrames);
+            if (convertedFrames != null)
+            {
+                foreach (var frame in convertedFrames)
+                {
+                    if (frame.Type == STPFrame.Types.ArduCommand)
+                    {
+                        if ((char)frame.Data[0] == 'D')
+                        {
+                            logger.LogIfDebug(this, "Arduino ping received");
+                        }
+                        else
+                            yield return frame;
+                    }
+                }
+            }
+
+            yield break;
         }
 
         private void DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -72,9 +115,9 @@ namespace ArduinoController
 					decodedFramesCount += frames.Count;
 
                     //Converting ArduCommands
-                    var convertedFrames = arduinoCommandCodec.Decode(frames.Where(f => f.Type == STPFrame.Types.ArduCommand));
-                    if (convertedFrames != null)
-                        frames.AddRange(convertedFrames);
+                    var arduinoFrames = ProcessArduinoCommands(frames.Where(f => f.Type == STPFrame.Types.ArduCommand));
+                    if (arduinoFrames != null)
+                        frames.AddRange(arduinoFrames);
 
                     foreach (var acceptor in acceptors)
                     {

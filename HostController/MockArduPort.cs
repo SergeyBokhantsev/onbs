@@ -99,5 +99,9 @@ namespace HostController
 
             return readed;
         }
+
+        public void Write(byte[] buffer, int offset, int count)
+        {
+        }
     }
 }

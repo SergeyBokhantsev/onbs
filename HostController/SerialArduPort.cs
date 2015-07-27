@@ -119,6 +119,17 @@ namespace HostController
                     return 0;
             }
         }
+
+        public void Write(byte[] buffer, int offset, int count)
+        {
+            lock (portLocker)
+            {
+                if (port != null)
+                {
+                    port.Write(buffer, offset, count);
+                }
+            }
+        }
     }
 }
 

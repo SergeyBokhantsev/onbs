@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArduinoCommandProcessor.cs" />
     <Compile Include="ArduinoController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
