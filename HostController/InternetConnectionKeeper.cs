@@ -15,10 +15,13 @@ namespace HostController
     {
         public event Action<bool> InternetConnectionStatus;
         public event Action<DateTime> InternetTime;
+        public event Action RestartNeeded;
 
         private readonly IConfig config;
         private readonly ILogger logger;
         private readonly string checkFolder;
+
+        private DateTime? inetDisconnectedAt;
 
         private bool disposed;
 
@@ -70,9 +73,39 @@ namespace HostController
 
         private void OnInternetConnectionStatus(bool connected)
         {
+            if (config.GetBool(ConfigNames.InetRestartIfNoConnectEnabled))
+            {
+                if (connected)
+                {
+                    inetDisconnectedAt = null;
+                }
+                else if (config.IsSystemTimeValid)
+                {
+                    if (inetDisconnectedAt.HasValue)
+                    {
+                        var restartMinutes = config.GetInt(ConfigNames.InetRestartIfNoConnectMinutes);
+                        if ((DateTime.Now - inetDisconnectedAt.Value).Minutes >= restartMinutes)
+                        {
+                            OnRestartNeeded();
+                        }
+                    }
+                    else
+                    {
+                        inetDisconnectedAt = DateTime.Now;
+                    }
+                }
+            }
+
             var handler = InternetConnectionStatus;
             if (handler != null)
                 handler(connected);
+        }
+
+        private void OnRestartNeeded()
+        {
+            var handler = RestartNeeded;
+            if (handler != null)
+                handler();
         }
 
         private void OnInternetTime(DateTime time)

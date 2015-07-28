@@ -150,6 +150,7 @@ namespace HostController
             netKeeper = new InternetConnectionKeeper(Config, Logger);
             netKeeper.InternetConnectionStatus += connected => config.IsInternetConnected = connected;
             netKeeper.InternetTime += CheckSystemTimeFromInternet;
+            netKeeper.RestartNeeded += InetKeeperRestartNeeded;
             netKeeper.StartChecking();
 
             inputController = new InputController.InputController(Logger);
@@ -174,6 +175,13 @@ namespace HostController
             uiController.ShowDefaultPage();
 
             gpsCtrl.GPRMCReseived += CheckSystemTimeFromGPS;
+        }
+
+        void InetKeeperRestartNeeded()
+        {
+            Logger.Log(this, "Begin restart because of Internet keeper request...", LogLevels.Warning);
+            Dispatcher.Invoke(this, null, (s, e) =>
+                Shutdown(HostControllerShutdownModes.Restart));
         }
 
         private void CheckSystemTimeFromGPS(Interfaces.GPS.GPRMC gprmc)
@@ -218,7 +226,16 @@ namespace HostController
             ((Dispatcher)Dispatcher).Exit();
 
             if (mode != HostControllerShutdownModes.UnhandledException)
-                Config.Save();
+            {
+                try
+                {
+                    Config.Save();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(ex);
+                }
+            }
 
             Logger.Log(this, "--- Logging finished ---", LogLevels.Info);
 

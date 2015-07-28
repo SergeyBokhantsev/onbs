@@ -86,6 +86,8 @@ namespace Interfaces
         public static readonly string TravelServiceGPSFilterDeadZoneMeters = "TravelServiceGPSFilterDeadZoneMeters";
         
         public static readonly string InetKeeperEnabled = "InetKeeperEnabled";
+        public static readonly string InetRestartIfNoConnectEnabled = "InetRestartIfNoConnectEnabled";
+        public static readonly string InetRestartIfNoConnectMinutes = "InetRestartIfNoConnectMinutes";
         public static readonly string InetKeeperCheckUrl = "InetKeeperCheckUrl";
         public static readonly string InetKeeperCheckMethod = "InetKeeperCheckMethod";
         public static readonly string InetKeeperCheckFolder = "InetKeeperCheckFolder";
