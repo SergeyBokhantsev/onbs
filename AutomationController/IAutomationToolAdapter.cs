@@ -10,5 +10,6 @@ namespace AutomationController
     internal interface IAutomationToolAdapter
     {
         void Key(params AutomationKeys[] key);
+        void MouseMove(int x, int y);
     }
 }

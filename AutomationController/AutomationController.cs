@@ -35,6 +35,9 @@ namespace AutomationController
             tool.Key(key);
         }
 
-        
+        public void MouseMove(int x, int y)
+        {
+            tool.MouseMove(x, y);
+        }
     }
 }

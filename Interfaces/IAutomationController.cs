@@ -28,5 +28,6 @@ namespace Interfaces
     public interface IAutomationController : IController
     {
         void Key(params AutomationKeys[] key);
+        void MouseMove(int x, int y);
     }
 }

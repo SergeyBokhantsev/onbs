@@ -35,6 +35,12 @@ namespace AutomationController.ToolAdapters
             var args = string.Concat("key ", string.Join("+", key));
             return processRunnerFactory.Create(automationTool, args, waitForUI);
         }
+
+        public void MouseMove(int x, int y)
+        {
+            var args = string.Format("mousemove {0} {1}", x, y);
+            processRunnerFactory.Create(automationTool, args, waitForUI).Run();
+        }
     }
 }
 

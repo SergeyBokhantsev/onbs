@@ -233,7 +233,7 @@ namespace HostController
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex);
+                    Logger.Log(this, ex);
                 }
             }
 

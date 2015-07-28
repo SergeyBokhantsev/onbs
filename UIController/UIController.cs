@@ -23,6 +23,8 @@ namespace UIController
         private readonly IHostController hostController;
         private readonly Func<IPageModel> startPageConstructor;
 
+        private int mouseLocation;
+
         private bool shutdowning;
 
         public UIController(string uiHostAssemblyPath, string uiHostClassName, IHostController hostController, Func<IPageModel> startPageConstructor)
@@ -32,9 +34,14 @@ namespace UIController
             this.hostController = hostController;
             this.startPageConstructor = startPageConstructor;
 
-			hostController.Dispatcher.CreateTimer (3 * 60 * 1000, (s, e) => 
-				hostController.ProcessRunnerFactory.Create (ConfigNames.XScreenForceOn).Run()
-				).Enabled = true;
+            hostController.Dispatcher.CreateTimer(3 * 60 * 1000, (s, e) =>
+                {
+                    hostController.ProcessRunnerFactory.Create(ConfigNames.XScreenForceOn).Run();
+                    hostController.GetController<IAutomationController>().MouseMove(mouseLocation++, mouseLocation++);
+                    if (mouseLocation > 3)
+                        mouseLocation = 0;
+                }
+                ).Enabled = true;
 
             StartUIThread();
             

@@ -11,5 +11,9 @@ namespace AutomationController.ToolAdapters
         public void Key(params Interfaces.AutomationKeys[] key)
         {
         }
+
+        public void MouseMove(int x, int y)
+        {
+        }
     }
 }
