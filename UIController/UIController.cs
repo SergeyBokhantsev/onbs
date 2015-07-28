@@ -32,6 +32,10 @@ namespace UIController
             this.hostController = hostController;
             this.startPageConstructor = startPageConstructor;
 
+			hostController.Dispatcher.CreateTimer (3 * 60 * 1000, (s, e) => 
+				hostController.ProcessRunnerFactory.Create (ConfigNames.XScreenForceOn).Run()
+				).Enabled = true;
+
             StartUIThread();
             
             hostController.GetController<IInputController>().ButtonPressed += ButtonPressed;
