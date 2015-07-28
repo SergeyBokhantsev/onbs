@@ -84,6 +84,11 @@ namespace UIModels
                     var wp = new WeatherPage(hc);
                     hc.GetController<IUIController>().ShowPage(wp);
                     break;
+
+                case ModelNames.ButtonF5:
+                    var tp = new TrafficPage(hc);
+                    hc.GetController<IUIController>().ShowPage(tp);
+                    break;
             }
         }
 

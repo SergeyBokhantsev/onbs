@@ -14,7 +14,7 @@ namespace GtkLauncher
 			{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-				app.ShowPage(GetWeatherPage());
+				app.ShowPage(GetTrafficPage());
 
 				app.Run();
 			}
@@ -201,6 +201,15 @@ namespace GtkLauncher
 						break;
 				}
 			};
+
+			return page;
+		}
+
+		private static IPageModel GetTrafficPage()
+		{
+			var page = new EmptyPageModel ("TrafficPage");
+
+			page.SetProperty("traffic_image_path", @"C:\Users\sergeyb\Desktop\static-maps.yandex.ru.png");
 
 			return page;
 		}

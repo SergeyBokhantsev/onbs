@@ -79,10 +79,12 @@
     <Compile Include="Pages\Exctensions.cs" />
     <Compile Include="gtk-gui\GtkApplication.DrivePage.cs" />
     <Compile Include="Controls\MarkupLabel.cs" />
-    <Compile Include="gtk-gui\GtkApplication.WeatherPage.cs" />
     <Compile Include="Pages\DrivePages\DrivePage.cs" />
     <Compile Include="Pages\DrivePages\WeatherPage.cs" />
     <Compile Include="Pages\DrivePages\CommonBindings.cs" />
+    <Compile Include="gtk-gui\GtkApplication.WeatherPage.cs" />
+    <Compile Include="Pages\DrivePages\TrafficPage.cs" />
+    <Compile Include="gtk-gui\GtkApplication.TrafficPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">

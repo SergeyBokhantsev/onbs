@@ -55,6 +55,7 @@
     <Compile Include="IInputController.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="Input\Buttons.cs" />
+    <Compile Include="InterlockedScope.cs" />
     <Compile Include="IPort.cs" />
     <Compile Include="IProcessRunner.cs" />
     <Compile Include="IMetricsProvider.cs" />
