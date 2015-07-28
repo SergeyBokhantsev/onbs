@@ -8,6 +8,7 @@ using Interfaces.SerialTransportProtocol;
 using System.IO.Ports;
 using SerialTransportProtocol;
 using System.Diagnostics;
+using System.Threading;
 
 namespace ArduinoController
 {
@@ -18,6 +19,7 @@ namespace ArduinoController
         private const string metricReadedBytes = "Bytes received";
         private const string metricDecodedFrames = "Frames decoded";
         private const string metricElapsed = "Process time";
+		private const string metricPendingPing = "Pending ping";
         private const string metricIsError = "_is_error";
 
         private readonly IPort port;
@@ -29,11 +31,14 @@ namespace ArduinoController
         private readonly List<IFramesAcceptor> acceptors = new List<IFramesAcceptor>();
 
         private long decodedFramesCount;
+		private int ardPingPendings;
 
         public bool IsCommunicationOk
         {
-            get;
-            private set;
+            get
+			{
+				return ardPingPendings < 2;
+			}
         }
 
         public ArduinoController(IPort port, IDispatcher dispatcher, ILogger logger)
@@ -53,6 +58,7 @@ namespace ArduinoController
             arduinoWatchdogTimer = dispatcher.CreateTimer(5000, (s, e) => 
             {
                 Send(new byte[] { (byte)'d' });
+				Interlocked.Increment(ref ardPingPendings);
                 logger.LogIfDebug(this, "Ping command sended to Arduino");
             });
             arduinoWatchdogTimer.Enabled = true;
@@ -87,11 +93,14 @@ namespace ArduinoController
                     {
                         if ((char)frame.Data[0] == 'D')
                         {
+							Interlocked.Exchange(ref ardPingPendings, 0);
                             logger.LogIfDebug(this, "Arduino ping received");
                         }
                         else
                             yield return frame;
                     }
+					else 
+						yield return frame;
                 }
             }
 
@@ -102,7 +111,6 @@ namespace ArduinoController
         {
             logger.LogIfDebug(this, "DataReceived event");
 
-            bool is_error;
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
@@ -125,32 +133,29 @@ namespace ArduinoController
                         logger.LogIfDebug(this, string.Format("Frames were dispatched for {0} acceptor", acceptor.FrameType));
                     }
                 }
-
-                is_error = false;
             }
             catch (Exception ex)
             {
                 logger.Log(this, ex);
-                is_error = true;
             }
 
             sw.Stop();
-            UpdateMetrics(is_error, sw.ElapsedMilliseconds);
-            IsCommunicationOk = !is_error;
+            UpdateMetrics(sw.ElapsedMilliseconds);
         }
 
-        private void UpdateMetrics(bool is_error, long elapsed)
+        private void UpdateMetrics(long elapsed)
         {
             var handler = MetricsUpdated;
 
             if (handler != null)
             {
-                var metrics = new Metrics("Arduino Controller", 4);
+                var metrics = new Metrics("Arduino Controller", 5);
 
                 metrics.Add(0, metricReadedBytes, port.OverallReadedBytes);
                 metrics.Add(1, metricDecodedFrames, decodedFramesCount);
                 metrics.Add(2, metricElapsed, elapsed);
-                metrics.Add(3, metricIsError, is_error);
+				metrics.Add(3, metricPendingPing, ardPingPendings);
+                metrics.Add(4, metricIsError, !IsCommunicationOk);
 
                 dispatcher.Invoke(this, null, new EventHandler((s,e) => handler(this, metrics)));
             }
