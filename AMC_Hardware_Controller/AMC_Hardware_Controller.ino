@@ -6,7 +6,7 @@
 
 #include <DueTimer.h>
 
-#define comm_port Serial
+#define comm_port Serial1
 
 #define gps_port Serial3
 #define gps_port_speed 38400
