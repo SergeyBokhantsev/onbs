@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using YandexServicesProvider;
 
@@ -17,9 +18,9 @@ namespace UIModels
 
         private readonly WeatherProvider weather;
         private readonly GeocodingProvider geocoder;
-        private bool weatherProviderBusy;
 
-        private DateTime lastGeocodeCall;
+        private readonly ManualResetGuard weatherGuard = new ManualResetGuard();
+        private readonly IOperationGuard geocoderGuard = new TimedGuard(new TimeSpan(0, 0, 3));
 
         public DrivePage(IHostController hc)
             :base(hc, "DrivePage")
@@ -34,10 +35,10 @@ namespace UIModels
 
         protected override void OnSecondaryTimer(object sender, EventArgs e)
         {
-            if (!Disposed && !weatherProviderBusy && hc.Config.IsInternetConnected)
+            if (!Disposed && hc.Config.IsInternetConnected)
             {
-                weatherProviderBusy = true;
-                weather.GetForecastAsync(hc.Config.GetString(ConfigNames.WeatherCityId), OnWeatherForecast);
+                weatherGuard.ExecuteIfFree(() => 
+                    weather.GetForecastAsync(hc.Config.GetString(ConfigNames.WeatherCityId), OnWeatherForecast));
             }
 
             base.OnSecondaryTimer(sender, e);
@@ -52,7 +53,7 @@ namespace UIModels
                     : "--");
             }
 
-            weatherProviderBusy = false;
+            weatherGuard.Reset();
         }
 
         protected override void OnPrimaryTick(object sender, EventArgs e)
@@ -69,6 +70,9 @@ namespace UIModels
 
         protected override void OnDisposing(object sender, EventArgs e)
         {
+            weatherGuard.Dispose();
+            geocoderGuard.Dispose();
+
             hc.GetController<IGPSController>().GPRMCReseived -= GPRMCReseived;
             base.OnDisposing(sender, e);
         }
@@ -81,10 +85,9 @@ namespace UIModels
                 SetProperty("speed", gprmc.Active ? gprmc.Speed : 0);
                 SetProperty("location", gprmc.Location);
 
-                if (gprmc.Active && (DateTime.Now - lastGeocodeCall).Seconds > 3)
+                if (gprmc.Active)
                 {
-                    geocoder.GetAddresAsync(gprmc.Location, addres => SetProperty("heading", addres));
-                    lastGeocodeCall = DateTime.Now;
+                    geocoderGuard.ExecuteIfFree(() => geocoder.GetAddresAsync(gprmc.Location, addres => SetProperty("heading", addres)));
                 }
             }
         }

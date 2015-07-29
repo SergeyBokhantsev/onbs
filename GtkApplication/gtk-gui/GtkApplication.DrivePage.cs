@@ -185,6 +185,7 @@ namespace GtkApplication
 			this.label_air_temp.LabelProp = "<span foreground=\'#d6d6d6\' size=\'14000\'>Air temp: </span><span foreground=\'#d6d6d" +
 			"6\' size=\'20000\'>--</span>";
 			this.label_air_temp.UseMarkup = true;
+			this.label_air_temp.Wrap = true;
 			this.vbox3.Add (this.label_air_temp);
 			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.label_air_temp]));
 			w9.Position = 0;
@@ -197,6 +198,7 @@ namespace GtkApplication
 			this.label_heading.LabelProp = "<span foreground=\'#d6d6d6\' size=\'14000\'>Heading: </span><span foreground=\'#d6d6d6" +
 			"\' size=\'20000\'>--</span>";
 			this.label_heading.UseMarkup = true;
+			this.label_heading.Wrap = true;
 			this.vbox3.Add (this.label_heading);
 			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.label_heading]));
 			w10.Position = 1;

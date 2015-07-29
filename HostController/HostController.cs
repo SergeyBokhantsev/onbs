@@ -6,6 +6,7 @@ using System.Reflection;
 using System.IO;
 using System.Text;
 using LogLib;
+using System.Net;
 
 namespace HostController
 {
@@ -147,6 +148,8 @@ namespace HostController
 
         private void Initialize(object sender, EventArgs args)
         {
+            ServicePointManager.ServerCertificateValidationCallback = (s1, s2, s3, s4) => true;
+
             netKeeper = new InternetConnectionKeeper(Config, Logger);
             netKeeper.InternetConnectionStatus += connected => config.IsInternetConnected = connected;
             netKeeper.InternetTime += CheckSystemTimeFromInternet;

@@ -101,13 +101,13 @@ namespace HttpClient
                 if (httpResponse != null)
                     return new ClientResponse(httpResponse.StatusCode, ex.Message);
                 else
-                    return new ClientResponse(HttpStatusCode.InternalServerError, ex.Message);
+                    return new ClientResponse((HttpStatusCode)0, ex.Message);
             }
             catch (Exception ex)
             {
                 OnException(ex);
 
-                return new ClientResponse(HttpStatusCode.InternalServerError, ex.Message);
+                return new ClientResponse((HttpStatusCode)0, ex.Message);
             }
         }
 

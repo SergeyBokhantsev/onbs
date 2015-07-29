@@ -17,18 +17,19 @@ namespace UIModels
     public class TrafficPage : CommonPageBase
     {
         private readonly StaticMapProvider provider;
-        private readonly IDispatcherTimer timer;
 
-        private InterlockedScope downloadOperationScope;
+        private ManualResetGuard downloadOperationScope = new ManualResetGuard();
 
         public TrafficPage(IHostController hc)
             :base(hc, "TrafficPage")
         {
-            downloadOperationScope = new InterlockedScope();
-
             this.provider = new StaticMapProvider(hc.Logger);
-            this.timer = hc.Dispatcher.CreateTimer(10000, RefreshTraffic);
-            this.timer.Enabled = true;
+        }
+
+        protected override void OnSecondaryTimer(object sender, EventArgs e)
+        {
+            downloadOperationScope.ExecuteIfFree(BeginDownload, OnDownloadException);
+            base.OnSecondaryTimer(sender, e);
         }
 
         private void RefreshTraffic(object sender, EventArgs e)
@@ -46,11 +47,15 @@ namespace UIModels
             if (hc.Config.IsInternetConnected)
             {
                 var location = hc.GetController<IGPSController>().Location;
-                var mapStream = provider.GetMap(location, 600, 450, 12, MapLayers.map | MapLayers.trf);
-                if (mapStream != null)
-                {
-                    SetProperty("traffic_image_stream", mapStream);
-                }
+                provider.GetMapAsync(location, 600, 450, 12, MapLayers.map | MapLayers.trf,
+                    mapStream =>
+                    {
+                        if (mapStream != null)
+                        {
+                            SetProperty("traffic_image_stream", mapStream);
+                            downloadOperationScope.Reset();
+                        }
+                    });
             }
         }
     }

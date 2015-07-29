@@ -839,6 +839,7 @@
                     <property name="Yalign">0.73</property>
                     <property name="LabelProp">&lt;span foreground='#d6d6d6' size='14000'&gt;Air temp: &lt;/span&gt;&lt;span foreground='#d6d6d6' size='20000'&gt;--&lt;/span&gt;</property>
                     <property name="UseMarkup">True</property>
+                    <property name="Wrap">True</property>
                   </widget>
                   <packing>
                     <property name="Position">0</property>
@@ -853,6 +854,7 @@
                     <property name="Yalign">0.73</property>
                     <property name="LabelProp">&lt;span foreground='#d6d6d6' size='14000'&gt;Heading: &lt;/span&gt;&lt;span foreground='#d6d6d6' size='20000'&gt;--&lt;/span&gt;</property>
                     <property name="UseMarkup">True</property>
+                    <property name="Wrap">True</property>
                   </widget>
                   <packing>
                     <property name="Position">1</property>
