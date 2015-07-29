@@ -174,12 +174,45 @@ namespace Json
 
     public class JsonParser
     {
+        private class Chars
+        {
+            private readonly char[] chars;
+            private int currentIndex;
+
+            public Chars(byte[] data)
+            {
+                this.chars = Encoding.Default.GetChars(data);
+            }
+
+            public Chars(Stream stream)
+            {
+                using(var sr = new StreamReader(stream))
+                {
+                    this.chars = sr.ReadToEnd().ToCharArray();
+                }
+            }
+
+            public bool Next(out char c)
+            {
+                if (currentIndex < chars.Length)
+                {
+                    c = chars[currentIndex++];
+                    return true;
+                }
+                else
+                {
+                    c = (char)0;
+                    return false;
+                }
+            }
+        }
+
         public static bool TryParse(byte[] data, out JsonObj result)
         {
             try
             {
                 var parser = new JsonParser();
-                result = parser.Parse(new MemoryStream(data));
+                result = parser.Parse(new Chars(data));
                 return true;
             }
             catch
@@ -191,12 +224,17 @@ namespace Json
 
         public JsonObj Parse(Stream stream)
         {
-            int val;
-            while ((val = stream.ReadByte()) != -1)
+            return Parse(new Chars(stream));
+        }
+
+        private JsonObj Parse(Chars chars)
+        {
+            char val;
+            while (chars.Next(out val))
             {
                 if (val == '{')
                 {
-                    return ParseInner(stream);
+                    return ParseInner(chars);
                 }
             }
 
@@ -205,15 +243,13 @@ namespace Json
 
         private enum PM { LookingForNameQuote, LookingForDoubleDot, LookingForValueBegin, UnquotedValueReading };
 
-        private string ReadUntilQuote(Stream stream)
+        private string ReadUntilQuote(Chars chars)
         {
             var sb = new StringBuilder();
 
-            int val;
-            while ((val = stream.ReadByte()) != -1)
+            char symb;
+            while (chars.Next(out symb))
             {
-                var symb = (char)val;
-
                 if (symb != '"')
                     sb.Append(symb);
                 else
@@ -223,15 +259,13 @@ namespace Json
             throw new InvalidOperationException();
         }
 
-        private string ReadUntilComma(char first, Stream stream)
+        private string ReadUntilComma(char first, Chars chars)
         {
             var sb = new StringBuilder(first.ToString());
 
-            int val;
-            while ((val = stream.ReadByte()) != -1)
+            char symb;
+            while (chars.Next(out symb))
             {
-                var symb = (char)val;
-
                 if (symb != ',')
                     sb.Append(symb);
                 else
@@ -241,7 +275,7 @@ namespace Json
             throw new InvalidOperationException();
         }
 
-        private JsonObj ParseInner(Stream stream)
+        private JsonObj ParseInner(Chars chars)
         {
             var mode = PM.LookingForNameQuote;
 
@@ -251,11 +285,9 @@ namespace Json
 
             string stringValue = string.Empty;
 
-            int val;
-            while ((val = stream.ReadByte()) != -1)
+            char symb;
+            while (chars.Next(out symb))
             {
-                var symb = (char)val;
-
                 switch (mode)
                 {
                     case PM.LookingForNameQuote:
@@ -263,7 +295,7 @@ namespace Json
                         {
                             case '"':
                                 current = new JsonField();
-                                current.Name = ReadUntilQuote(stream);
+                                current.Name = ReadUntilQuote(chars);
                                 mode++;
                                 break;
                             case '}':
@@ -284,18 +316,18 @@ namespace Json
                         switch (symb)
                         {
                             case '"':
-                                current.Value = new JsonValue<string>(ReadUntilQuote(stream));
+                                current.Value = new JsonValue<string>(ReadUntilQuote(chars));
                                 obj.AddField(current);
                                 mode = PM.LookingForNameQuote;
                                 break;
                             case '{':
-                                current.Value = ParseInner(stream);
+                                current.Value = ParseInner(chars);
                                 obj.AddField(current);
                                 mode = PM.LookingForNameQuote;
                                 break;
 
                             case '[':
-                                current.Value = ParseArray(stream, current.Name);
+                                current.Value = ParseArray(chars, current.Name);
                                 obj.AddField(current);
                                 mode = PM.LookingForNameQuote;
                                 break;
@@ -356,29 +388,27 @@ namespace Json
                 throw new InvalidDataException(string.Format("Unable to create Json value from '{0}'", rawValue));
         }
 
-        private JsonArray ParseArray(Stream stream, string name)
+        private JsonArray ParseArray(Chars chars, string name)
         {
             var ret = new JsonArray();
 
             string item = string.Empty;
 
-            int val;
-            while ((val = stream.ReadByte()) != -1)
+            char symb;
+            while (chars.Next(out symb))
             {
-                var symb = (char)val;
-
                 switch (symb)
                 {
                     case '{':
-                        ret.Add(ParseInner(stream));
+                        ret.Add(ParseInner(chars));
                         break;
                     case '[':
-                        ret.Add(ParseArray(stream, name + "_inner"));
+                        ret.Add(ParseArray(chars, name + "_inner"));
                         item = string.Empty;
                         break;
 
                     case '"':
-                        ret.Add(new JsonValue<string>(ReadUntilQuote(stream)));
+                        ret.Add(new JsonValue<string>(ReadUntilQuote(chars)));
                         item = string.Empty;
                         break;
 

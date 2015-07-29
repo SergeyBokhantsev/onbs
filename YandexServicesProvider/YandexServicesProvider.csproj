@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="forecast.cs" />
+    <Compile Include="GeocodingProvider.cs" />
     <Compile Include="StaticMapProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WeatherProvider.cs" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YandexServicesProvider;
@@ -59,7 +60,7 @@ namespace Tests
 
             //ASSERT
             Assert.IsNotNull(forecast);
-            Assert.IsTrue(forecast.Fact.Temperature != -1);
+            Assert.IsNotNull(forecast.fact.First().temperature.Value);
         }
 
         [TestMethod]
@@ -67,10 +68,10 @@ namespace Tests
         {
             //INIT
             var provider = new WeatherProvider(new Mocks.Logger());
-            WeatherForecast forecast = null;
+            forecast forecast = null;
             var callbackExecuted = false;
 
-            Action<WeatherForecast> callback = fc =>
+            Action<forecast> callback = fc =>
             {
                 forecast = fc;
                 callbackExecuted = true;
@@ -84,6 +85,45 @@ namespace Tests
 
             //ASSERT
             Assert.IsNotNull(forecast);
+        }
+
+        [TestMethod]
+        public void GetAddres()
+        {
+            //INIT
+            var provider = new GeocodingProvider(new Mocks.Logger());
+
+            //ACT
+            var addres = provider.GetAddres(new Interfaces.GPS.GeoPoint(50.4221855, 30.6592546));
+
+            //ASSERT
+            Assert.IsNotNull(addres);
+            Assert.AreEqual("Украина, Киев, Тростянецкая улица, 53", addres);
+        }
+
+        [TestMethod]
+        public void GetAddresAsync()
+        {
+            //INIT
+            var provider = new GeocodingProvider(new Mocks.Logger());
+            string addres = null;
+            var callbackExecuted = false;
+
+            Action<string> callback = a =>
+            {
+                addres = a;
+                callbackExecuted = true;
+            };
+
+            //ACT
+            provider.GetAddresAsync(new Interfaces.GPS.GeoPoint(50.4221855, 30.6592546), callback);
+
+            while (!callbackExecuted)
+                Thread.Sleep(1000);
+
+            //ASSERT
+            Assert.IsNotNull(addres);
+            Assert.AreEqual("Украина, Киев, Тростянецкая улица, 53", addres);
         }
     }
 }

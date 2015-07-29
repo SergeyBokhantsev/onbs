@@ -16,7 +16,10 @@ namespace UIModels
         private readonly ITravelController tc;
 
         private readonly WeatherProvider weather;
+        private readonly GeocodingProvider geocoder;
         private bool weatherProviderBusy;
+
+        private DateTime lastGeocodeCall;
 
         public DrivePage(IHostController hc)
             :base(hc, "DrivePage")
@@ -24,6 +27,7 @@ namespace UIModels
             this.tc = hc.GetController<ITravelController>();
 
             this.weather = new WeatherProvider(hc.Logger);
+            this.geocoder = new GeocodingProvider(hc.Logger);
 
             hc.GetController<IGPSController>().GPRMCReseived += GPRMCReseived;
         }
@@ -76,6 +80,12 @@ namespace UIModels
                 SetProperty("gps_status", gprmc.Active);
                 SetProperty("speed", gprmc.Active ? gprmc.Speed : 0);
                 SetProperty("location", gprmc.Location);
+
+                if (gprmc.Active && (DateTime.Now - lastGeocodeCall).Seconds > 3)
+                {
+                    geocoder.GetAddresAsync(gprmc.Location, addres => SetProperty("heading", addres));
+                    lastGeocodeCall = DateTime.Now;
+                }
             }
         }
     }
