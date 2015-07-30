@@ -6,17 +6,22 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Interfaces;
 using System.Threading;
+using System.IO;
+using System.Reflection;
 
 namespace YandexServicesProvider
 {
     public class WeatherProvider
     {
+        private readonly string iconPath;
+
         private readonly ILogger logger;
         private readonly HttpClient.Client client = new HttpClient.Client();
 
         public WeatherProvider(ILogger logger)
         {
             this.logger = logger;
+            this.iconPath = Path.Combine(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), "Data", "weather");
         }
 
         public forecast GetForecast(string cityId)
@@ -62,6 +67,11 @@ namespace YandexServicesProvider
                 if (callback != null)
                     callback(forecast);
             });
+        }
+
+        public string GetWeatherIcon(string code)
+        {
+            return Path.Combine(iconPath, string.Concat(code, ".png"));
         }
     }
 }

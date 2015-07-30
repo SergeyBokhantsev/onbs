@@ -24,8 +24,6 @@ namespace UIModels
             :base(hc, "WeatherPage")
         {
             this.weather = new WeatherProvider(hc.Logger);
-
-            this.iconPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data", "weather");
         }
 
         protected override void OnSecondaryTimer(object sender, EventArgs e)
@@ -45,7 +43,7 @@ namespace UIModels
             {
                 var fact = f.fact.First();
 
-                SetProperty("now_icon_path", GetWeatherIcon(fact.imagev3.First().Value));
+                SetProperty("now_icon_path", weather.GetWeatherIcon(fact.imagev3.First().Value));
                 SetProperty("now_condition", fact.weather_type);
                 SetProperty("now_temp", fact.temperature.Value);
 
@@ -53,13 +51,13 @@ namespace UIModels
 
                 var eveningPart = today.day_part.First(dp => dp.type == "evening");
                 SetProperty("next1_caption", "Вечером");
-                SetProperty("next1_icon_path", GetWeatherIcon(eveningPart.imagev3.First().Value));
+                SetProperty("next1_icon_path", weather.GetWeatherIcon(eveningPart.imagev3.First().Value));
                 SetProperty("next1_condition", eveningPart.weather_type);
                 SetProperty("next1_temp", string.Format("{0} - {1}", eveningPart.temperature_from, eveningPart.temperature_to));
 
                 var nightPart = today.day_part.First(dp => dp.type == "night");
                 SetProperty("next2_caption", "Ночью");
-                SetProperty("next2_icon_path", GetWeatherIcon(nightPart.imagev3.First().Value));
+                SetProperty("next2_icon_path", weather.GetWeatherIcon(nightPart.imagev3.First().Value));
                 SetProperty("next2_condition", nightPart.weather_type);
                 SetProperty("next2_temp", string.Format("{0} - {1}", nightPart.temperature_from, nightPart.temperature_to));
 
@@ -79,7 +77,7 @@ namespace UIModels
                     SetProperty(string.Format("day{0}_date", i), day.date);
                     var dPart = day.day_part.First(dp => dp.type == "day");
                     var nPart = day.day_part.First(dp => dp.type == "night");
-                    SetProperty(string.Format("day{0}_image_path", i), GetWeatherIcon(dPart.imagev3.First().Value));
+                    SetProperty(string.Format("day{0}_image_path", i), weather.GetWeatherIcon(dPart.imagev3.First().Value));
                     SetProperty(string.Format("day{0}_day_temp", i), string.Format("{0}-{1}", dPart.temperature_from, dPart.temperature_to));
                     SetProperty(string.Format("day{0}_night_temp", i), string.Format("{0}-{1}", nPart.temperature_from, nPart.temperature_to));
                 }
@@ -109,11 +107,6 @@ namespace UIModels
                 default:
                     return string.Empty;
             }
-        }
-
-        private string GetWeatherIcon(string code)
-        {
-            return Path.Combine(iconPath, string.Concat(code, ".png"));
         }
     }
 }

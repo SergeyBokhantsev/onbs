@@ -14,7 +14,7 @@ namespace GtkLauncher
 			{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-				app.ShowPage(GetTrafficPage());
+				app.ShowPage(GetDrivePage());
 
 				app.Run();
 			}
@@ -125,8 +125,9 @@ namespace GtkLauncher
 				page.SetProperty("location", new GeoPoint(50.56897 + speed/1000, 30.76539 + speed/1000));
 
 				page.SetProperty("exported_points", string.Concat(speed, "/", speed));
-				page.SetProperty("heading", "West" + speed.ToString());
-					page.SetProperty("air_temp", speed.ToString());
+				page.SetProperty("heading", "Украина, Киев, Тростянецкая улица, " + speed.ToString());
+				page.SetProperty("air_temp", "Ясно, переменная облачность, дождь, гроза");
+				page.SetProperty("weather_icon", @"D:\onbs\HostController\Data\weather\bkn_sn_d.png");
 			}), 
 				null, 500, 200);
 
@@ -208,6 +209,18 @@ namespace GtkLauncher
 		private static IPageModel GetTrafficPage()
 		{
 			var page = new EmptyPageModel ("TrafficPage");
+
+			var timer = new Timer (new TimerCallback (o =>
+				{
+					page.SetProperty("time", DateTime.Now);
+
+					page.SetProperty("ard_status", !page.GetProperty<bool>("ard_status"));
+					page.SetProperty("gps_status", !page.GetProperty<bool>("gps_status"));
+					page.SetProperty("inet_status", !page.GetProperty<bool>("inet_status"));
+				}), 
+				null, 500, 200);
+
+			page.SetProperty("_timer", timer);
 
 			page.SetProperty("traffic_image_path", @"C:\Users\sergeyb\Desktop\static-maps.yandex.ru.png");
 

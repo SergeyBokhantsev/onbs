@@ -46,11 +46,18 @@ namespace UIModels
 
         private void OnWeatherForecast(forecast f)
         {
-            if (!Disposed)
+            if (!Disposed && f != null)
             {
                 SetProperty("air_temp", f != null
                     ? string.Format("{0}°, {1}", f.fact.First().temperature.Value, f.fact.First().weather_type)
                     : "--");
+
+                SetProperty("weather_icon", weather.GetWeatherIcon(f.fact.First().imagev3.First().Value));
+            }
+            else
+            {
+                SetProperty("air_temp", null);
+                SetProperty("weather_icon", null);
             }
 
             weatherGuard.Reset();
@@ -85,7 +92,7 @@ namespace UIModels
                 SetProperty("speed", gprmc.Active ? gprmc.Speed : 0);
                 SetProperty("location", gprmc.Location);
 
-                if (gprmc.Active)
+                if (gprmc.Active && hc.Config.IsInternetConnected)
                 {
                     geocoderGuard.ExecuteIfFree(() => geocoder.GetAddresAsync(gprmc.Location, addres => SetProperty("heading", addres)));
                 }
