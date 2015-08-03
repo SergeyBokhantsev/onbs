@@ -21,6 +21,7 @@ namespace GPSD.Net
     internal class GPSDClient : IDisposable
     {
         private readonly IncomingClient tcpClient;
+        private readonly ILogger logger;
 
         private readonly LockingProperty<GPRMC> gprmc = new LockingProperty<GPRMC>();
         private readonly LockingProperty<string> nmea = new LockingProperty<string>();
@@ -43,12 +44,16 @@ namespace GPSD.Net
             }
         }
 
-        public GPSDClient(IncomingClient tcpClient)
+        public GPSDClient(IncomingClient tcpClient, ILogger logger)
         {
             if (tcpClient == null)
                 throw new ArgumentNullException("tcpClient");
 
+            if (logger == null)
+                throw new ArgumentNullException("logger");
+
             this.tcpClient = tcpClient;
+            this.logger = logger;
         }
 
         public void Run()
@@ -86,8 +91,11 @@ namespace GPSD.Net
             var dm = Json.SimpleJsonSerializer.Serialize(new DevicesMsg(), Encoding.Default);
             var wm = Json.SimpleJsonSerializer.Serialize(watchInfo.Watch, enc);
 
-            WriteLn(dm);
-            WriteLn(wm);
+            RetryMonitor(() =>
+                {
+                    WriteLn(dm);
+                    WriteLn(wm);
+                }, 3);
 
             watchInfo.Responded = true;
         }
@@ -147,7 +155,7 @@ namespace GPSD.Net
         private void SendHello()
         {
             var hello = Json.SimpleJsonSerializer.Serialize(new VersionMsg(), enc);
-			WriteLn (hello);
+            RetryMonitor(() => WriteLn(hello), 3);
         }
 
         private WatchMsg ParseWatchQuery(string query)
@@ -195,7 +203,7 @@ namespace GPSD.Net
 
                 var bytes = enc.GetBytes(fake);
 
-                WriteLn(bytes);
+                RetryMonitor(() => WriteLn(bytes), 3);
         }
 
         private void SendNmea()
@@ -204,7 +212,39 @@ namespace GPSD.Net
             var data = enc.GetBytes(nmea);
             lock (tcpClient)
             {
-                tcpClient.Write(data, 0, data.Length);
+                RetryMonitor(() => tcpClient.Write(data, 0, data.Length), 3);
+            }
+        }
+
+        private void RetryMonitor(Action action, int tryCount)
+        {
+            int tryNum = 0;
+
+            while (true)
+            {
+                try
+                {
+                    action();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    logger.Log(this, ex);
+
+                    if (tryNum++ < tryCount)
+                    {
+                        logger.Log(this, "REPEATING ACTION...", LogLevels.Warning);
+                    }
+                    else
+                    {
+                        logger.Log(this, "NO MORE REPEAT", LogLevels.Error);
+                        throw;
+                    }
+                }
+                finally
+                {
+                    tryNum++;
+                }
             }
         }
 

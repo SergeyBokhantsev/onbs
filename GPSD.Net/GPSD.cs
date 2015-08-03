@@ -74,7 +74,7 @@ namespace GPSD.Net
 
         void ClientConnected(IncomingClient client)
         {
-            var gclient = new GPSDClient(client);
+            var gclient = new GPSDClient(client, logger);
             lock (clients)
             {
                 clients.Add(gclient);
