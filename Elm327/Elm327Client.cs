@@ -8,7 +8,46 @@ using Interfaces;
 
 namespace Elm327
 {
-    public enum Elm327ResponseTypes { RawString, Int, Double, Speed };
+//    at?//>AT Z?//>AT Z
+
+//ELM327 v1.5
+
+//>AT
+//?
+
+//>010C
+//SEARCHING...
+//41 0C 00 00 
+
+//>010C
+//41 0C 00 00 
+
+//>010c
+//41 0C 00 00 
+
+//>010c
+//41 0C 00 00 
+
+//>0100
+//41 00 BE 3F B8 1C 
+
+//>0105
+//41 05 70 
+
+//>010c
+//41 0C 00 00 
+
+//>ATI
+//ELM327 v1.5
+
+//>
+
+    public enum Elm327ResponseTypes : uint
+    { 
+        RawString = 0xFFFFFF,
+        SupportedFunctions = 0x0100,
+        Speed = 0x010C,
+    };
 
     public interface IElm327Response
     {
