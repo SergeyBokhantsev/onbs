@@ -68,14 +68,14 @@ namespace GPSD.Net
 
         public void Run()
         {
-            if (watchInfo != null)
-                throw new InvalidOperationException("Allready runned");
+//            if (watchInfo != null)
+//                throw new InvalidOperationException("Allready runned");
 
             updateEvent.Set();
 
             tcpClient.BytesReceived += BytesReceived;
 
-            logger.LogIfDebug(this, "GPSDClient activated");
+            logger.Log(this, "GPSDClient activated", LogLevels.Info);
 
             while (Active)
             {

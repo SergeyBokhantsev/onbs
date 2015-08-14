@@ -1,18 +1,16 @@
 ﻿<Properties StartupItem="HostController\HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="GtkApplication/Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="GPSD.Net/GPSDClient.cs">
     <Files>
-      <File FileName="HostController/InternetConnectionKeeper.cs" Line="1" Column="1" />
-      <File FileName="HttpClient/Client.cs" Line="1" Column="1" />
-      <File FileName="TravelsClient/Client.cs" Line="1" Column="1" />
-      <File FileName="TravelController/TravelController.cs" Line="1" Column="1" />
-      <File FileName="HostController/App.config" Line="1" Column="1" />
-      <File FileName="HostController/Configuration.cs" Line="1" Column="1" />
-      <File FileName="GtkApplication/Program.cs" Line="97" Column="10" />
+      <File FileName="HostController/App.config" Line="33" Column="1" />
+      <File FileName="GPSD.Net/GPSDClient.cs" Line="69" Column="22" />
+      <File FileName="GPSD.Net/GPSD.cs" Line="82" Column="27" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/home/linaro/onbs/GPSD.Net/GPSDClient.cs" line="125" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
     <Watch file="ArduinoController\ArduinoController.cs" line="42" offsetX="438" offsetY="738" expression="frames" liveUpdate="False" />
