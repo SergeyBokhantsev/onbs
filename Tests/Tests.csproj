@@ -50,6 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Elm327Test.cs" />
     <Compile Include="HttpClientTests\TestHttpClient.cs" />
     <Compile Include="Mocks\Config.cs" />
     <Compile Include="Mocks\GPSController.cs" />
@@ -67,6 +68,10 @@
     <ProjectReference Include="..\AutomationController\AutomationController.csproj">
       <Project>{85445923-f9ca-4054-b2ad-43b14791d82c}</Project>
       <Name>AutomationController</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Elm327\Elm327.csproj">
+      <Project>{03e3079e-f438-4c00-8c22-3b13afc3c644}</Project>
+      <Name>Elm327</Name>
     </ProjectReference>
     <ProjectReference Include="..\GPSController\GPSController.csproj">
       <Project>{d653b708-aae0-4b81-a9bb-06b1c3bd1edb}</Project>

@@ -38,8 +38,6 @@ namespace GPSD.Net
         {
             lock (clients)
             {
-                CleanupInactive();
-
                 if (config.GetBool(ConfigNames.GPSDEnabled))
                     clients.ForEach(c => c.SetNMEA(nmea));
             }
@@ -49,14 +47,8 @@ namespace GPSD.Net
         {
             lock (clients)
             {
-                CleanupInactive();
                 clients.ForEach(c => c.SetGPRMC(gprmc));
             }
-        }
-
-        private void CleanupInactive()
-        {
-            clients.RemoveAll(c => { if (!c.Active) { c.Dispose(); return true; } else return false; });
         }
 
         public void Start()
@@ -68,18 +60,37 @@ namespace GPSD.Net
             }
             catch (Exception ex)
             {
-
+                logger.Log(this, ex);
             }
         }
 
+        //This handler invoked by dedicated thread
         void ClientConnected(IncomingClient client)
         {
             var gclient = new GPSDClient(client, logger);
+
             lock (clients)
             {
                 clients.Add(gclient);
             }
-            gclient.Run();
+
+            try
+            {
+                gclient.Run();
+            }
+            catch (Exception ex)
+            {
+                logger.Log(this, ex);
+            }
+            finally
+            {
+                client.Dispose();
+
+                lock (clients)
+                {
+                    clients.Remove(gclient);
+                }
+            }
         }
 
         public void Stop()

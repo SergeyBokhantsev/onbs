@@ -8,7 +8,12 @@ using Interfaces;
 
 namespace Elm327
 {
-//    at?//>AT Z?//>AT Z
+//    at?
+
+//>AT Z?
+
+//>AT Z
+
 
 //ELM327 v1.5
 
@@ -42,32 +47,14 @@ namespace Elm327
 
 //>
 
-    public enum Elm327ResponseTypes : uint
+    public enum Elm327FunctionTypes : uint
     { 
-        RawString = 0xFFFFFF,
+        Error = 0xFFFFFF,
+        RawString = 0xFFFFFE,
         SupportedFunctions = 0x0100,
-        Speed = 0x010C,
+        EngineRPM = 0x010C,
+        Speed = 0x010D,
     };
-
-    public interface IElm327Response
-    {
-        Elm327ResponseTypes Type { get; }
-    }
-
-    public class Elm327Response<T> : IElm327Response
-    {
-        
-
-        public T Value { get; private set; }
-
-        public Elm327ResponseTypes Type { get; private set; }
-
-        public Elm327Response(Elm327ResponseTypes type, T value)
-        {
-            Type = type;
-            Value = value;
-        }
-    }
 
     public class Elm327Client
     {
@@ -75,23 +62,19 @@ namespace Elm327
 
         private readonly SerialPort port;
         private readonly ILogger logger;
-        private readonly IDispatcher eventsDispatcher;
         private readonly byte[] buffer = new byte[512];
         private readonly StringBuilder inString = new StringBuilder();
+        private readonly OBDProcessor processor = new OBDProcessor();
 
-        public Elm327Client(string portName, IDispatcher eventsDispatcher, ILogger logger)
+        public Elm327Client(string portName, ILogger logger)
         {
             if (string.IsNullOrEmpty(portName))
                 throw new ArgumentNullException("portName");
-
-            if (eventsDispatcher == null)
-                throw new ArgumentNullException("eventsDispatcher");
 
             if (logger == null)
                 throw new ArgumentNullException("logger");
 
             this.logger = logger;
-            this.eventsDispatcher = eventsDispatcher;
 
             try
             {
@@ -103,6 +86,11 @@ namespace Elm327
             {
                 logger.Log(this, ex);
             }
+        }
+
+        public void Request(Elm327FunctionTypes type)
+        {
+            port.Write(processor.CreateRequest(type));
         }
 
         private void DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -145,17 +133,19 @@ namespace Elm327
 
         private void ProcessStringResponse(string value)
         {
-            OnResponseReseived(new Elm327Response<string>(Elm327ResponseTypes.RawString, value));
+            OnResponseReseived(new Elm327Response<string>(Elm327FunctionTypes.RawString, value));
         }
 
         private void ProcessHexResponse(byte[] bytes)
         {
-            
+            OnResponseReseived(processor.GetResponse(bytes));
         }
 
         private void OnResponseReseived(IElm327Response response)
         {
-            eventsDispatcher.Invoke(this, null, new EventHandler((s, e) => ResponceReseived(response)));
+            var handler = ResponceReseived;
+            if (handler != null)
+                handler(response);
         }
 
         private bool IsHexResponse(StringBuilder inString)

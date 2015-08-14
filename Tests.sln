@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessRunner", "ProcessRun
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YandexServicesProvider", "YandexServicesProvider\YandexServicesProvider.csproj", "{A8956707-42DD-4BF5-B4B2-955598A60B97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KWP2000", "KWP2000\KWP2000.csproj", "{0086E929-3C78-4E3C-8485-26B8E37DB95A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elm327", "Elm327\Elm327.csproj", "{03E3079E-F438-4C00-8C22-3B13AFC3C644}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,10 +83,10 @@ Global
 		{A8956707-42DD-4BF5-B4B2-955598A60B97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8956707-42DD-4BF5-B4B2-955598A60B97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8956707-42DD-4BF5-B4B2-955598A60B97}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0086E929-3C78-4E3C-8485-26B8E37DB95A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0086E929-3C78-4E3C-8485-26B8E37DB95A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0086E929-3C78-4E3C-8485-26B8E37DB95A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0086E929-3C78-4E3C-8485-26B8E37DB95A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03E3079E-F438-4C00-8C22-3B13AFC3C644}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03E3079E-F438-4C00-8C22-3B13AFC3C644}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03E3079E-F438-4C00-8C22-3B13AFC3C644}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03E3079E-F438-4C00-8C22-3B13AFC3C644}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -46,7 +46,11 @@ namespace TcpServer
                 {
                     try
                     {
-                        ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessClient), listener.AcceptTcpClient());
+                        var tcpClient = listener.AcceptTcpClient();
+                        var clientThread = new Thread(() => ProcessClient(tcpClient));
+                        clientThread.Priority = ThreadPriority.Lowest;
+                        clientThread.IsBackground = true;
+                        clientThread.Start();
                     }
                     catch (Exception ex)
                     {
@@ -56,6 +60,7 @@ namespace TcpServer
                 }
             });
 
+            t.Priority = ThreadPriority.BelowNormal;
             t.IsBackground = true;
             t.Start();
         }
@@ -108,12 +113,6 @@ namespace TcpServer
                 logger.Log(this, string.Concat("Pending = ", pending), LogLevels.Debug);
             }
         }
-
-//		public void Dispose()
-//		{
-//			if (listener != null)
-//				listener.Stop();
-//		}
 
         private void OnClientConnected(TcpClient client)
         {
