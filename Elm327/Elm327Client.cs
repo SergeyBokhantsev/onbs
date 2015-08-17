@@ -47,14 +47,7 @@ namespace Elm327
 
 //>
 
-    public enum Elm327FunctionTypes : uint
-    { 
-        Error = 0xFFFFFF,
-        RawString = 0xFFFFFE,
-        SupportedFunctions = 0x0100,
-        EngineRPM = 0x010C,
-        Speed = 0x010D,
-    };
+    
 
     public class Elm327Client
     {
@@ -76,16 +69,9 @@ namespace Elm327
 
             this.logger = logger;
 
-            try
-            {
-                port = new SerialPort(portName, 38400);
-                port.DataReceived += DataReceived;
-                port.Open();
-            }
-            catch (Exception ex)
-            {
-                logger.Log(this, ex);
-            }
+            port = new SerialPort(portName, 38400);
+            port.DataReceived += DataReceived;
+            port.Open();
         }
 
         public void Request(Elm327FunctionTypes type)

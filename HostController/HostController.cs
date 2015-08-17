@@ -24,6 +24,7 @@ namespace HostController
         private GPSController.GPSController gpsController;
         private IAutomationController automationController;
         private TravelController.TravelController travelController;
+        private Elm327Controller.Elm327Controller elm327Controller; 
 
         public IConfig Config
         {
@@ -81,6 +82,8 @@ namespace HostController
                 return automationController as T;
             else if (typeof(T).Equals(typeof(ITravelController)))
                 return travelController as T;
+            else if (typeof(T).Equals(typeof(IElm327Controller)))
+                return elm327Controller as T;
             else
                 throw new NotImplementedException(typeof(T).ToString());
         }
@@ -157,6 +160,8 @@ namespace HostController
             netKeeper.StartChecking();
 
             inputController = new InputController.InputController(Logger);
+
+            elm327Controller = new Elm327Controller.Elm327Controller(this);
 
             var useFakeArduPort = Config.GetBool(ConfigNames.ArduinoPortFake);
             var arduPort = useFakeArduPort ? new MockArduPort() as IPort : new SerialArduPort(Logger, Config) as IPort;

@@ -22,6 +22,9 @@ namespace UIModels
         private readonly ManualResetGuard weatherGuard = new ManualResetGuard();
         private readonly IOperationGuard geocoderGuard = new TimedGuard(new TimeSpan(0, 0, 3));
 
+        private readonly IElm327Controller elm327;
+        private readonly IDispatcherTimer quickTimer;
+
         public DrivePage(IHostController hc)
             :base(hc, "DrivePage")
         {
@@ -31,6 +34,29 @@ namespace UIModels
             this.geocoder = new GeocodingProvider(hc.Logger);
 
             hc.GetController<IGPSController>().GPRMCReseived += GPRMCReseived;
+
+            hc.GetController<IElm327Controller>().ResponceReseived += Elm327ResponceReseived;
+
+            elm327 = hc.GetController<IElm327Controller>();
+
+            quickTimer = hc.Dispatcher.CreateTimer(300, OnQuickTimer);
+            quickTimer.Enabled = true;
+        }
+
+        private void OnQuickTimer(object sender, EventArgs e)
+        {
+            elm327.Request(Elm327FunctionTypes.EngineRPM);
+        }
+
+        void Elm327ResponceReseived(IElm327Response response)
+        {
+            if (Disposed)
+                return;
+
+            if (response.Type == Elm327FunctionTypes.EngineRPM)
+            {
+                SetProperty("speed", response.ToString());
+            }
         }
 
         protected override void OnSecondaryTimer(object sender, EventArgs e)
@@ -80,7 +106,10 @@ namespace UIModels
             weatherGuard.Dispose();
             geocoderGuard.Dispose();
 
+            quickTimer.Dispose();
+
             hc.GetController<IGPSController>().GPRMCReseived -= GPRMCReseived;
+            hc.GetController<IElm327Controller>().ResponceReseived -= Elm327ResponceReseived;
             base.OnDisposing(sender, e);
         }
 
@@ -89,7 +118,7 @@ namespace UIModels
             if (!Disposed)
             {
                 SetProperty("gps_status", gprmc.Active);
-                SetProperty("speed", gprmc.Active ? gprmc.Speed : 0);
+               // SetProperty("speed", gprmc.Active ? gprmc.Speed : 0);
                 SetProperty("location", gprmc.Location);
 
                 if (gprmc.Active && hc.Config.IsInternetConnected)

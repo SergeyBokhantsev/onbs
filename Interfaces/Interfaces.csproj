@@ -50,6 +50,7 @@
     <Compile Include="IController.cs" />
     <Compile Include="IDispatcher.cs" />
     <Compile Include="IDispatcherTimer.cs" />
+    <Compile Include="IElm327Controller.cs" />
     <Compile Include="IGPSController.cs" />
     <Compile Include="IHostController.cs" />
     <Compile Include="IInputController.cs" />

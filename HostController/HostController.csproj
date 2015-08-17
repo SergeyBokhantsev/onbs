@@ -58,6 +58,10 @@
       <Project>{0E653FDA-F0DA-44CB-A932-4B37487EA731}</Project>
       <Name>InputController</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Elm327Controller\Elm327Controller.csproj">
+      <Project>{ed21248d-2af6-4b71-90c8-2ce86a5603e2}</Project>
+      <Name>Elm327Controller</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GPSController\GPSController.csproj">
       <Project>{D653B708-AAE0-4B81-A9BB-06B1C3BD1EDB}</Project>
       <Name>GPSController</Name>
