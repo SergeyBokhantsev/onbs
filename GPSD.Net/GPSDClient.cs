@@ -59,10 +59,14 @@ namespace GPSD.Net
 
             nmea.Value = string.Empty;
             gprmc.Value = new GPRMC();
+
+			logger.LogIfDebug (this, "GPSDClient created");
         }
 
         public void Run()
         {
+			logger.LogIfDebug (this, "GPSDClient started");
+
             int pause = 200;
 
             while (Active)
@@ -92,6 +96,8 @@ namespace GPSD.Net
 
         private void RespondOnWatch()
         {
+			logger.LogIfDebug (this, "Begin respond on Watch");
+
             var dm = Json.SimpleJsonSerializer.Serialize(new DevicesMsg(), Encoding.Default);
             var wm = Json.SimpleJsonSerializer.Serialize(watch, enc);
 
@@ -99,10 +105,15 @@ namespace GPSD.Net
             WriteLn(wm);
 
             state = ClientStates.SendGPS;
+
+			logger.LogIfDebug (this, "End respond on Watch");
         }
 
         private void BytesReceived(byte[] buffer, int count)
         {
+			if (disposed)
+				return;
+
             logger.LogIfDebug(this, string.Concat("Received: ", count));
 
             queryBuffer += enc.GetString(buffer, 0, count);
@@ -119,6 +130,7 @@ namespace GPSD.Net
                 }
                 else
                 {
+					logger.LogIfDebug (this, "Watch message received");
                     state = ClientStates.RespondOnWatch;
                 }
 
@@ -137,8 +149,11 @@ namespace GPSD.Net
 
         private void SendHello()
         {
+			logger.LogIfDebug (this, "Begin hello");
             var hello = Json.SimpleJsonSerializer.Serialize(new VersionMsg(), enc);
 			WriteLn (hello);
+			state = ClientStates.WaitingWatch;
+			logger.LogIfDebug (this, "End hello");
         }
 
         private WatchMsg ParseWatchQuery(string query)
@@ -168,6 +183,8 @@ namespace GPSD.Net
 
         private void SendJson()
         {
+			logger.LogIfDebug (this, "Begin seng json");
+
             var g = this.gprmc.Value ?? new GPRMC();
 
                 //  var bytes = Json.SimpleJsonSerializer.Serialize(tpv, enc);
@@ -187,22 +204,34 @@ namespace GPSD.Net
                 var bytes = enc.GetBytes(fake);
 
                 WriteLn(bytes);
+
+			logger.LogIfDebug (this, "End send json");
         }
 
         private void SendNmea()
         {
+			logger.LogIfDebug (this, "Begin send nmea");
+
 			var nmea = this.nmea.Value;
             var data = enc.GetBytes(nmea);
             lock (tcpClient)
             {
                 tcpClient.Write(data, 0, data.Length);
             }
+
+			logger.LogIfDebug (this, "End send nmea");
         }
 
         public void Dispose()
         {
+			logger.LogIfDebug (this, "Disposing...");
             tcpClient.Dispose();
             disposed = true;
         }
     }
 }
+
+
+
+
+

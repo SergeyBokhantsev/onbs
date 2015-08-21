@@ -64,9 +64,14 @@ namespace TcpServer
             {
                 var count = stream.EndRead(ar);
 
-                var handler = BytesReceived;
-                if (!disposed && handler != null)
-                    handler(readBuffer, count);
+				if (!disposed && count > 0)
+				{
+                	var handler = BytesReceived;
+                	if (handler != null)
+                    	handler(readBuffer, count);
+				}
+				else
+					System.Threading.Thread.Sleep(100);
             }
 			catch 
 			{

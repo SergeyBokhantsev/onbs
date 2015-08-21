@@ -2,15 +2,14 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="GPSD.Net/GPSDClient.cs">
     <Files>
-      <File FileName="HostController/App.config" Line="33" Column="1" />
-      <File FileName="GPSD.Net/GPSDClient.cs" Line="69" Column="22" />
-      <File FileName="GPSD.Net/GPSD.cs" Line="82" Column="27" />
+      <File FileName="HostController/App.config" Line="33" Column="56" />
+      <File FileName="GPSD.Net/GPSDClient.cs" Line="112" Column="35" />
+      <File FileName="GPSD.Net/GPSD.cs" Line="110" Column="31" />
+      <File FileName="GtkApplication/Program.cs" Line="86" Column="19" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/home/linaro/onbs/GPSD.Net/GPSDClient.cs" line="125" column="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
     <Watch file="ArduinoController\ArduinoController.cs" line="42" offsetX="438" offsetY="738" expression="frames" liveUpdate="False" />
