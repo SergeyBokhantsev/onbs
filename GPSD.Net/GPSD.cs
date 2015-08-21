@@ -15,33 +15,35 @@ namespace GPSD.Net
     {
         private readonly TcpServer.Server server;
         private readonly IGPSController gps;
+        private readonly IDispatcher dispatcher;
         private readonly ILogger logger;
         private readonly IConfig config;
         private readonly List<GPSDClient> clients;
 
         //http://www.catb.org/gpsd/gpsd_json.html
         //http://wiki.navit-project.org/index.php/Configuration
-        public GPSD(IGPSController gps, IConfig config, ILogger logger)
+        public GPSD(IGPSController gps, IDispatcher dispatcher, IConfig config, ILogger logger)
         {
             this.gps = gps;
+            this.dispatcher = dispatcher;
             this.config = config;
             this.logger = logger;
             this.clients = new List<GPSDClient>();
 
-            server = new TcpServer.Server(2947, logger);
+            if (config.GetBool(ConfigNames.GPSDEnabled))
+            {
+                server = new TcpServer.Server(2947, logger);
 
-            gps.GPRMCReseived += GPRMCReseived;
-            gps.NMEAReceived += NMEAReceived;
+                gps.GPRMCReseived += GPRMCReseived;
+                gps.NMEAReceived += NMEAReceived;
+            }
         }
 
         void NMEAReceived(string nmea)
         {
             lock (clients)
             {
-                CleanupInactive();
-
-                if (config.GetBool(ConfigNames.GPSDEnabled))
-                    clients.ForEach(c => c.SetNMEA(nmea));
+                clients.ForEach(c => c.nmea.Value = nmea);
             }
         }
 
@@ -49,45 +51,61 @@ namespace GPSD.Net
         {
             lock (clients)
             {
-                CleanupInactive();
-                clients.ForEach(c => c.SetGPRMC(gprmc));
+                clients.ForEach(c => c.gprmc.Value = gprmc);
             }
-        }
-
-        private void CleanupInactive()
-        {
-            clients.RemoveAll(c => { if (!c.Active) { c.Dispose(); return true; } else return false; });
         }
 
         public void Start()
         {
             try
             {
-                server.ClientConnected += ClientConnected;
-                server.Start();
+                if (server != null)
+                {
+                    server.ClientConnected += ClientConnected;
+                    server.Start();
+                }
             }
             catch (Exception ex)
             {
-
+                logger.Log(this, ex);
             }
         }
 
         void ClientConnected(IncomingClient client)
         {
-            var gclient = new GPSDClient(client);
+            var gclient = new GPSDClient(client, dispatcher, logger);
+
             lock (clients)
             {
                 clients.Add(gclient);
             }
-            gclient.Run();
+
+            try
+            {
+                gclient.Run();
+            }
+            catch (Exception ex)
+            {
+                logger.Log(this, ex);
+            }
+            finally
+            {
+                lock (clients)
+                {
+                    clients.Remove(gclient);
+                }
+            }
         }
 
         public void Stop()
         {
             try
             {
-                server.ClientConnected -= ClientConnected;
-                server.Stop();
+                if (server != null)
+                {
+                    server.ClientConnected -= ClientConnected;
+                    server.Stop();
+                }
 
                 lock (clients)
                 {
@@ -97,6 +115,7 @@ namespace GPSD.Net
             }
             catch (Exception ex)
             {
+                logger.Log(this, ex);
             }
         }
     }

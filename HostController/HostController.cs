@@ -172,7 +172,7 @@ namespace HostController
             
             arduController.RegisterFrameAcceptor(gpsCtrl);
             gpsController = gpsCtrl;
-            gpsd = new GPSD.Net.GPSD(gpsController, Config, Logger);
+            gpsd = new GPSD.Net.GPSD(gpsController, Dispatcher, Config, Logger);
             gpsd.Start();
 
             automationController = new AutomationController.AutomationController(this);

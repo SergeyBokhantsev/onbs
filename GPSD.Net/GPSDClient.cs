@@ -12,22 +12,19 @@ using TcpServer;
 
 namespace GPSD.Net
 {
-    internal class WatchInfo
-    {
-        public WatchMsg Watch;
-        public bool Responded;
-    }
-
     internal class GPSDClient : IDisposable
     {
+        private enum ClientStates { SendHello, WaitingWatch, RespondOnWatch, SendGPS }
+
         private readonly IncomingClient tcpClient;
+        private readonly IDispatcher dispatcher;
+        private readonly ILogger logger;
 
-        private readonly LockingProperty<GPRMC> gprmc = new LockingProperty<GPRMC>();
-        private readonly LockingProperty<string> nmea = new LockingProperty<string>();
+        public readonly LockingProperty<GPRMC> gprmc = new LockingProperty<GPRMC>();
+        public readonly LockingProperty<string> nmea = new LockingProperty<string>();
 
-        private readonly AutoResetEvent updateEvent = new AutoResetEvent(false);
-
-        private WatchInfo watchInfo;
+        private WatchMsg watch;
+        private ClientStates state = ClientStates.SendHello;
 
         private string queryBuffer = string.Empty;
 
@@ -43,98 +40,92 @@ namespace GPSD.Net
             }
         }
 
-        public GPSDClient(IncomingClient tcpClient)
+        public GPSDClient(IncomingClient tcpClient, IDispatcher dispatcher, ILogger logger)
         {
             if (tcpClient == null)
                 throw new ArgumentNullException("tcpClient");
+            
+            if (dispatcher == null)
+                throw new ArgumentNullException("dispatcher");
+
+            if (logger == null)
+                throw new ArgumentNullException("logger");
 
             this.tcpClient = tcpClient;
+            this.dispatcher = dispatcher;
+            this.logger = logger;
+
+            tcpClient.BytesReceived += BytesReceived;
+
+            nmea.Value = string.Empty;
+            gprmc.Value = new GPRMC();
         }
 
         public void Run()
         {
-            tcpClient.BytesReceived += BytesReceived;
-
-            SendHello();
+            int pause = 200;
 
             while (Active)
             {
-                if (!updateEvent.WaitOne(2000))
-                    continue;
-
-                var w = watchInfo;
-
-                if (w == null)
-                    continue;
-
-                lock (w)
+                switch (state)
                 {
-                    if (!w.Responded)
+                    case ClientStates.SendHello:
+                        SendHello();
+                        break;
+
+                    case ClientStates.RespondOnWatch:
                         RespondOnWatch();
-                    else if (!w.Watch.enable)
-                        continue;
-                    else if (w.Watch.json)
-                        SendJson();
-                    else if (w.Watch.nmea)
-                        SendNmea();
+                        break;
+
+                    case ClientStates.SendGPS:
+                        pause = 1000;
+                        if (watch.json)
+                            SendJson();
+                        if (watch.nmea)
+                            SendNmea();
+                        break;
                 }
+
+                Thread.Sleep(pause);
             }
         }
 
         private void RespondOnWatch()
         {
             var dm = Json.SimpleJsonSerializer.Serialize(new DevicesMsg(), Encoding.Default);
-            var wm = Json.SimpleJsonSerializer.Serialize(watchInfo.Watch, enc);
+            var wm = Json.SimpleJsonSerializer.Serialize(watch, enc);
 
             WriteLn(dm);
             WriteLn(wm);
 
-            watchInfo.Responded = true;
+            state = ClientStates.SendGPS;
         }
 
         private void BytesReceived(byte[] buffer, int count)
         {
+            logger.LogIfDebug(this, string.Concat("Received: ", count));
+
             queryBuffer += enc.GetString(buffer, 0, count);
 
             if (queryBuffer.EndsWith("\n"))
             {
-                watchInfo = new WatchInfo() { Watch = ParseWatchQuery(queryBuffer) };
+                watch = ParseWatchQuery(queryBuffer);
+
+                if (watch == null)
+                {
+                    logger.Log(this, "Error parsing incoming message, going to initial state...", LogLevels.Error);
+                    logger.Log(this, queryBuffer, LogLevels.Error);
+                    state = ClientStates.SendHello;
+                }
+                else
+                {
+                    state = ClientStates.RespondOnWatch;
+                }
 
                 queryBuffer = string.Empty;
-                updateEvent.Set();
             }
         }
 
-        public void SetGPRMC(GPRMC gprmc)
-        {
-            this.gprmc.Value = gprmc;
-
-            var w = watchInfo;
-            if (w != null)
-            {
-                lock (w)
-                {
-                    if (w.Watch.enable && w.Watch.json)
-                        updateEvent.Set();
-                }
-            }
-        }
-
-        public void SetNMEA(string nmea)
-        {
-            this.nmea.Value = nmea;
-
-            var w = watchInfo;
-            if (w != null)
-            {
-                lock (w)
-                {
-                    if (w.Watch.enable && w.Watch.nmea)
-                        updateEvent.Set();
-                }
-            }
-        }
-	
 		private void WriteLn(byte[] data)
 		{
             lock (tcpClient)
