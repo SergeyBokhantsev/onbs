@@ -80,7 +80,7 @@ namespace GPSD.Net
             {
                 using (var stream = client.GetStream())
                 {
-                    gclient = new GPSDClient(stream, dispatcher, logger);
+                    gclient = new GPSDClient(client, stream, dispatcher, logger);
 
                     lock (clients)
                     {
@@ -98,6 +98,8 @@ namespace GPSD.Net
             {
                 if (gclient != null)
                 {
+					gclient.Dispose();
+
                     lock (clients)
                     {
                         clients.Remove(gclient);

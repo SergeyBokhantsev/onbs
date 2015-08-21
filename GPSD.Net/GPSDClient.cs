@@ -17,7 +17,7 @@ namespace GPSD.Net
     {
         private enum ClientStates { SendHello, WaitingWatch, RespondOnWatch, SendGPS }
 
-        //private readonly TcpClient tcpClient;
+        private readonly TcpClient tcpClient;
         private readonly NetworkStream stream;
         private readonly IDispatcher dispatcher;
         private readonly ILogger logger;
@@ -38,11 +38,11 @@ namespace GPSD.Net
         {
             get
             {
-                return !disposed && stream.CanRead && stream.CanWrite;
+                return !disposed && tcpClient.Connected && stream.CanRead && stream.CanWrite;
             }
         }
 
-        public GPSDClient(NetworkStream stream, IDispatcher dispatcher, ILogger logger)
+		public GPSDClient(TcpClient tcpClient, NetworkStream stream, IDispatcher dispatcher, ILogger logger)
         {
             if (stream == null)
                 throw new ArgumentNullException("stream");
@@ -53,7 +53,7 @@ namespace GPSD.Net
             if (logger == null)
                 throw new ArgumentNullException("logger");
 
-            //this.tcpClient = tcpClient;
+            this.tcpClient = tcpClient;
             this.stream = stream;
             this.dispatcher = dispatcher;
             this.logger = logger;
