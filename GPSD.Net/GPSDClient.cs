@@ -14,14 +14,6 @@ namespace GPSD.Net
 {
     internal class WatchInfo
     {
-        public bool Valid
-        {
-            get
-            {
-                return Watch != null;
-            }
-        }
-
         public WatchMsg Watch;
         public bool Responded;
     }
@@ -29,18 +21,15 @@ namespace GPSD.Net
     internal class GPSDClient : IDisposable
     {
         private readonly IncomingClient tcpClient;
-        private readonly ILogger logger;
 
         private readonly LockingProperty<GPRMC> gprmc = new LockingProperty<GPRMC>();
         private readonly LockingProperty<string> nmea = new LockingProperty<string>();
 
         private readonly AutoResetEvent updateEvent = new AutoResetEvent(false);
 
-        private readonly WatchInfo watchInfo = new WatchInfo();
+        private WatchInfo watchInfo;
 
-        private const int queryBufferSize = 1024;
-        private readonly byte[] queryBuffer = new byte[queryBufferSize];
-        private int queryBufferLen;
+        private string queryBuffer = string.Empty;
 
 		private Encoding enc = Encoding.ASCII;
 
@@ -54,45 +43,39 @@ namespace GPSD.Net
             }
         }
 
-        public GPSDClient(IncomingClient tcpClient, ILogger logger)
+        public GPSDClient(IncomingClient tcpClient)
         {
             if (tcpClient == null)
                 throw new ArgumentNullException("tcpClient");
 
-            if (logger == null)
-                throw new ArgumentNullException("logger");
-
             this.tcpClient = tcpClient;
-            this.logger = logger;
         }
 
         public void Run()
         {
-//            if (watchInfo != null)
-//                throw new InvalidOperationException("Allready runned");
-
-            updateEvent.Set();
-
             tcpClient.BytesReceived += BytesReceived;
 
-            logger.Log(this, "GPSDClient activated", LogLevels.Info);
+            SendHello();
 
             while (Active)
             {
                 if (!updateEvent.WaitOne(2000))
                     continue;
 
-                lock (watchInfo)
+                var w = watchInfo;
+
+                if (w == null)
+                    continue;
+
+                lock (w)
                 {
-                    if (!watchInfo.Valid)
-                        SendHello();
-                    else if (!watchInfo.Responded)
+                    if (!w.Responded)
                         RespondOnWatch();
-                    else if (!watchInfo.Watch.enable)
+                    else if (!w.Watch.enable)
                         continue;
-                    else if (watchInfo.Watch.json)
+                    else if (w.Watch.json)
                         SendJson();
-                    else if (watchInfo.Watch.nmea)
+                    else if (w.Watch.nmea)
                         SendNmea();
                 }
             }
@@ -100,51 +83,25 @@ namespace GPSD.Net
 
         private void RespondOnWatch()
         {
-            logger.LogIfDebug(this, "Begin responding on watch");
-
             var dm = Json.SimpleJsonSerializer.Serialize(new DevicesMsg(), Encoding.Default);
             var wm = Json.SimpleJsonSerializer.Serialize(watchInfo.Watch, enc);
 
-            RetryMonitor(() =>
-                {
-                    WriteLn(dm);
-                    WriteLn(wm);
-                }, 3);
+            WriteLn(dm);
+            WriteLn(wm);
 
             watchInfo.Responded = true;
-
-            logger.LogIfDebug(this, "End responding on watch");
         }
 
         private void BytesReceived(byte[] buffer, int count)
         {
-            logger.LogIfDebug(this, string.Format("Received {0} bytes", count));
+            queryBuffer += enc.GetString(buffer, 0, count);
 
-            if (count > 0)
+            if (queryBuffer.EndsWith("\n"))
             {
-                if (queryBufferLen + count <= queryBufferSize)
-                {
-                    for (int i = 0; i < count; ++i)
-                    {
-                        queryBuffer[queryBufferLen++] = buffer[i];
+                watchInfo = new WatchInfo() { Watch = ParseWatchQuery(queryBuffer) };
 
-                        if (buffer[i] == 10)
-                        {
-                            var query = enc.GetString(queryBuffer, 0, queryBufferLen).Trim();
-                            logger.LogIfDebug(this, string.Format("Query detected: {0}", query));
-                            watchInfo.Watch = ParseWatchQuery(query);
-                            logger.LogIfDebug(this, string.Format("Query parsed: {0}", watchInfo.Valid));
-                            queryBufferLen = 0;
-                            updateEvent.Set();
-                        }
-                    }
-                }
-                else
-                {
-                    logger.Log(this, "Query buffer overflow", LogLevels.Error);
-                    queryBufferLen = 0;
-                    updateEvent.Set();
-                }
+                queryBuffer = string.Empty;
+                updateEvent.Set();
             }
         }
 
@@ -152,10 +109,14 @@ namespace GPSD.Net
         {
             this.gprmc.Value = gprmc;
 
-            if (watchInfo.Valid && watchInfo.Watch.enable && watchInfo.Watch.json)
+            var w = watchInfo;
+            if (w != null)
             {
-                updateEvent.Set();
-                logger.LogIfDebug(this, "GPRMC accepted");
+                lock (w)
+                {
+                    if (w.Watch.enable && w.Watch.json)
+                        updateEvent.Set();
+                }
             }
         }
 
@@ -163,10 +124,14 @@ namespace GPSD.Net
         {
             this.nmea.Value = nmea;
 
-            if (watchInfo.Valid && watchInfo.Watch.enable && watchInfo.Watch.nmea)
+            var w = watchInfo;
+            if (w != null)
             {
-                updateEvent.Set();
-                logger.LogIfDebug(this, "NMEA accepted");
+                lock (w)
+                {
+                    if (w.Watch.enable && w.Watch.nmea)
+                        updateEvent.Set();
+                }
             }
         }
 	
@@ -181,10 +146,8 @@ namespace GPSD.Net
 
         private void SendHello()
         {
-            logger.LogIfDebug(this, "Begin sending hello");
             var hello = Json.SimpleJsonSerializer.Serialize(new VersionMsg(), enc);
-            RetryMonitor(() => WriteLn(hello), 3);
-            logger.LogIfDebug(this, "End sending hello");
+			WriteLn (hello);
         }
 
         private WatchMsg ParseWatchQuery(string query)
@@ -204,80 +167,44 @@ namespace GPSD.Net
                 var res = WatchMsg.Parse(json);
 				return res;
             }
-            catch (Exception ex)
+            catch
             {
-                logger.Log(this, "Exception parsing Watch Query", LogLevels.Error);
-                logger.Log(this, ex);
                 return null;
             }
         }
 
+		//double temp = 30.42;
+
         private void SendJson()
         {
-            logger.LogIfDebug(this, "Begin sending Json");
-
             var g = this.gprmc.Value ?? new GPRMC();
 
-            var fake = "{\"class\":\"TPV\",\"device\":\"/dev/pts/1\"," +
-                "\"time\":\"" + (g.Active ? g.Time.ToString("O") : "0") + "\",\"ept\":0.0,\"track\":" + g.TrackAngle.ToString() + "," +
-                "\"lat\":" + g.Location.Lat.ToString() + ",\"lon\":" + g.Location.Lon.ToString() + ",\"speed\":"
-                + g.Speed.ToString() + ",\"mode\":" + (g.Active ? "2" : "1") + "}";
+                //  var bytes = Json.SimpleJsonSerializer.Serialize(tpv, enc);
+
+                //temp += 0.0005;
+
+                //var fake = "{\"class\":\"TPV\",\"device\":\"/dev/pts/1\"," +
+                //    "\"time\":\"" + DateTime.Now.ToString("O") + "\",\"ept\":0.005,\"track\":" + gprmc.Value.TrackAngle.ToString() + "," +
+                //    "\"lat\":" + gprmc.Value.Location.Lat.ToString() + ",\"lon\":" + gprmc.Value.Location.Lon.ToString() + ",\"speed\":1.87,\"mode\":2}";
+                
+                var fake = "{\"class\":\"TPV\",\"device\":\"/dev/pts/1\"," +
+                    "\"time\":\"" + (g.Active ? g.Time.ToString("O") : "0") + "\",\"ept\":0.0,\"track\":" + g.TrackAngle.ToString() + "," +
+                    "\"lat\":" + g.Location.Lat.ToString() + ",\"lon\":" + g.Location.Lon.ToString() + ",\"speed\":"
+					+ g.Speed.ToString() +",\"mode\":"+ (g.Active ? "2" : "1") +"}";
 
 
-            var bytes = enc.GetBytes(fake);
+                var bytes = enc.GetBytes(fake);
 
-            RetryMonitor(() => WriteLn(bytes), 3);
-
-            logger.LogIfDebug(this, "End sending Json");
+                WriteLn(bytes);
         }
 
         private void SendNmea()
         {
-            logger.LogIfDebug(this, "Begin sending NMEA");
-
 			var nmea = this.nmea.Value;
             var data = enc.GetBytes(nmea);
             lock (tcpClient)
             {
-                RetryMonitor(() => tcpClient.Write(data, 0, data.Length), 3);
-            }
-
-            logger.LogIfDebug(this, "End sending NMEA");
-        }
-
-        private void RetryMonitor(Action action, int tryCount)
-        {
-            int tryNum = 0;
-
-            while (true)
-            {
-                try
-                {
-                    action();
-
-                    if (tryNum > 0)
-                        logger.Log(this, string.Format("ACTION SUCCEEDED at {0} try", tryNum), LogLevels.Info);
-
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    logger.Log(this, ex);
-
-                    if (tryNum++ < tryCount)
-                    {
-                        logger.Log(this, "REPEATING ACTION...", LogLevels.Warning);
-                    }
-                    else
-                    {
-                        logger.Log(this, "NO MORE REPEAT", LogLevels.Error);
-                        throw;
-                    }
-                }
-                finally
-                {
-                    tryNum++;
-                }
+                tcpClient.Write(data, 0, data.Length);
             }
         }
 
@@ -285,7 +212,6 @@ namespace GPSD.Net
         {
             tcpClient.Dispose();
             disposed = true;
-            logger.Log(this, "GPSD Client disposed", LogLevels.Info);
         }
     }
 }
