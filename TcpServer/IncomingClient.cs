@@ -41,7 +41,9 @@ namespace TcpServer
         public void Write(byte[] buffer, int offset, int count)
         {
             if (Active)
+            {
                 stream.Write(buffer, offset, count);
+            }
         }
 
         private void BeginReadAsync()

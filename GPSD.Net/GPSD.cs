@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.GPS;
 using TcpServer;
+using System.Net.Sockets;
 
 namespace GPSD.Net
 {
@@ -71,18 +72,23 @@ namespace GPSD.Net
             }
         }
 
-        void ClientConnected(IncomingClient client)
+        void ClientConnected(TcpClient client)
         {
-            var gclient = new GPSDClient(client, dispatcher, logger);
-
-            lock (clients)
-            {
-                clients.Add(gclient);
-            }
-
+            GPSDClient gclient = null;
+            
             try
             {
-                gclient.Run();
+                using (var stream = client.GetStream())
+                {
+                    gclient = new GPSDClient(stream, dispatcher, logger);
+
+                    lock (clients)
+                    {
+                        clients.Add(gclient);
+                    }
+
+                    gclient.Run();
+                }
             }
             catch (Exception ex)
             {
@@ -90,9 +96,12 @@ namespace GPSD.Net
             }
             finally
             {
-                lock (clients)
+                if (gclient != null)
                 {
-                    clients.Remove(gclient);
+                    lock (clients)
+                    {
+                        clients.Remove(gclient);
+                    }
                 }
             }
         }

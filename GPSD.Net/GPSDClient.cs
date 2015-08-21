@@ -9,6 +9,7 @@ using GPSD.Net.Messages;
 using Interfaces;
 using Interfaces.GPS;
 using TcpServer;
+using System.Net.Sockets;
 
 namespace GPSD.Net
 {
@@ -16,7 +17,8 @@ namespace GPSD.Net
     {
         private enum ClientStates { SendHello, WaitingWatch, RespondOnWatch, SendGPS }
 
-        private readonly IncomingClient tcpClient;
+        //private readonly TcpClient tcpClient;
+        private readonly NetworkStream stream;
         private readonly IDispatcher dispatcher;
         private readonly ILogger logger;
 
@@ -36,14 +38,14 @@ namespace GPSD.Net
         {
             get
             {
-                return !disposed && tcpClient.Active;
+                return !disposed && stream.CanRead && stream.CanWrite;
             }
         }
 
-        public GPSDClient(IncomingClient tcpClient, IDispatcher dispatcher, ILogger logger)
+        public GPSDClient(NetworkStream stream, IDispatcher dispatcher, ILogger logger)
         {
-            if (tcpClient == null)
-                throw new ArgumentNullException("tcpClient");
+            if (stream == null)
+                throw new ArgumentNullException("stream");
             
             if (dispatcher == null)
                 throw new ArgumentNullException("dispatcher");
@@ -51,11 +53,10 @@ namespace GPSD.Net
             if (logger == null)
                 throw new ArgumentNullException("logger");
 
-            this.tcpClient = tcpClient;
+            //this.tcpClient = tcpClient;
+            this.stream = stream;
             this.dispatcher = dispatcher;
             this.logger = logger;
-
-            tcpClient.BytesReceived += BytesReceived;
 
             nmea.Value = string.Empty;
             gprmc.Value = new GPRMC();
@@ -77,6 +78,10 @@ namespace GPSD.Net
                         SendHello();
                         break;
 
+                    case ClientStates.WaitingWatch:
+                        CheckIncoming();
+                        break;
+
                     case ClientStates.RespondOnWatch:
                         RespondOnWatch();
                         break;
@@ -91,6 +96,31 @@ namespace GPSD.Net
                 }
 
                 Thread.Sleep(pause);
+            }
+        }
+
+        byte[] buffer = new byte[2048];
+        private void CheckIncoming()
+        {
+            try
+            {
+                if (stream.DataAvailable)
+                {
+                    var readed = stream.Read(buffer, 0, buffer.Length);
+
+                    if (readed > 0)
+                    {
+                        BytesReceived(buffer, readed);
+                    }
+                    else
+                    {
+                        Dispose();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Log(this, ex);
             }
         }
 
@@ -138,14 +168,12 @@ namespace GPSD.Net
             }
         }
 
-		private void WriteLn(byte[] data)
-		{
-            lock (tcpClient)
-            {
-                tcpClient.Write(data, 0, data.Length);
-                tcpClient.Write(new byte[] { 10 }, 0, 1);
-            }
-		}
+        private void WriteLn(byte[] data)
+        {
+            stream.Write(data, 0, data.Length);
+            stream.Write(new byte[] { 10 }, 0, 1);
+            stream.Flush();
+        }
 
         private void SendHello()
         {
@@ -214,9 +242,10 @@ namespace GPSD.Net
 
 			var nmea = this.nmea.Value;
             var data = enc.GetBytes(nmea);
-            lock (tcpClient)
+
+            if (Active)
             {
-                tcpClient.Write(data, 0, data.Length);
+                stream.Write(data, 0, data.Length);
             }
 
 			logger.LogIfDebug (this, "End send nmea");
@@ -225,7 +254,6 @@ namespace GPSD.Net
         public void Dispose()
         {
 			logger.LogIfDebug (this, "Disposing...");
-            tcpClient.Dispose();
             disposed = true;
         }
     }

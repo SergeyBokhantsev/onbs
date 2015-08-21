@@ -12,7 +12,7 @@ namespace TcpServer
 {
     public class Server
     {
-        public event Action<IncomingClient> ClientConnected;
+        public event Action<TcpClient> ClientConnected;
 
         private readonly TcpListener listener;
         private readonly ILogger logger;
@@ -120,10 +120,7 @@ namespace TcpServer
             {
                 var handler = ClientConnected;
                 if (handler != null)
-                    using (var ic = new IncomingClient(client))
-                    {
-                        handler(ic);
-                    }
+                    handler(client);
             }
         }
     }
