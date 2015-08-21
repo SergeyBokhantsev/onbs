@@ -17,21 +17,21 @@ namespace Elm327Controller
         {
             add
             {
-                EnsureClient();
+                //EnsureClient();
 
-                if (elmClient != null)
-                {
-                    elmClient.ResponceReseived += value;
-                    hc.Logger.Log(this, "ResponceReseived handler registered.", LogLevels.Info);
-                }
+                //if (elmClient != null)
+                //{
+                //    elmClient.ResponceReseived += value;
+                //    hc.Logger.Log(this, "ResponceReseived handler registered.", LogLevels.Info);
+                //}
             }
             remove
             {
-                if (elmClient != null)
-                {
-                    elmClient.ResponceReseived -= value;
-                    hc.Logger.Log(this, "ResponceReseived handler unregistered.", LogLevels.Info);
-                }
+                //if (elmClient != null)
+                //{
+                //    elmClient.ResponceReseived -= value;
+                //    hc.Logger.Log(this, "ResponceReseived handler unregistered.", LogLevels.Info);
+                //}
             }
         }
 
@@ -62,10 +62,10 @@ namespace Elm327Controller
 
         public void Request(Elm327FunctionTypes type)
         {
-            if (elmClient != null)
-            {
-                elmClient.Request(type);
-            }
+            //if (elmClient != null)
+            //{
+            //    elmClient.Request(type);
+            //}
         }
     }
 }
