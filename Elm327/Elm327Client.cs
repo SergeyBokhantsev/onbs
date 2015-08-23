@@ -87,8 +87,7 @@ namespace Elm327
             catch (Exception ex)
             {
                 logger.Log(this, ex);
-
-                if (port != null)
+				                if (port != null)
                     port.Close();
 
                 if (timer != null)
@@ -116,7 +115,7 @@ namespace Elm327
 
                     for (int i = 0; i < readed; ++i)
                     {
-                        if (buffer[i] == 10 || buffer[i] == 13)
+						if (buffer[i] == 10 || buffer[i] == 13)
                         {
                             if (inString.Length > 0)
                             {
@@ -140,7 +139,7 @@ namespace Elm327
                         }
                     }
                 }
-                while (readed > 0);
+				while (false);
             }
         }
 

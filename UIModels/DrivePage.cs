@@ -45,7 +45,7 @@ namespace UIModels
 
         private void OnQuickTimer(object sender, EventArgs e)
         {
-            elm327.Request(Elm327FunctionTypes.EngineRPM);
+            elm327.Request(Elm327FunctionTypes.Speed);
         }
 
         void Elm327ResponceReseived(IElm327Response response)
@@ -53,7 +53,7 @@ namespace UIModels
             if (Disposed)
                 return;
 
-            if (response.Type == Elm327FunctionTypes.EngineRPM)
+            if (response.Type == Elm327FunctionTypes.Speed)
             {
                 SetProperty("speed", response.ToString());
             }

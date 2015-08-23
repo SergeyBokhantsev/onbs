@@ -61,7 +61,7 @@ namespace Elm327
             if (bytes.Length != 3)
                 return new Elm327Response<byte[]>(Elm327FunctionTypes.Error, bytes);
 
-            return new Elm327Response<int>(Elm327FunctionTypes.EngineRPM, (int)bytes[2]);
+            return new Elm327Response<int>(Elm327FunctionTypes.Speed, (int)bytes[2]);
         }
 
         private IElm327Response ParseEngineRPM(byte[] bytes)
