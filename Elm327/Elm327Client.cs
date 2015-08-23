@@ -55,11 +55,12 @@ namespace Elm327
 
         private readonly SerialPort port;
         private readonly ILogger logger;
+        private readonly IDispatcher dispatcher;
         private readonly byte[] buffer = new byte[512];
         private readonly StringBuilder inString = new StringBuilder();
         private readonly OBDProcessor processor = new OBDProcessor();
 
-        public Elm327Client(string portName, ILogger logger)
+        public Elm327Client(string portName, ILogger logger, IDispatcher dispatcher)
         {
             if (string.IsNullOrEmpty(portName))
                 throw new ArgumentNullException("portName");
@@ -67,54 +68,80 @@ namespace Elm327
             if (logger == null)
                 throw new ArgumentNullException("logger");
 
-            this.logger = logger;
+            if (dispatcher == null)
+                throw new ArgumentNullException("dispatcher");
 
-            port = new SerialPort(portName, 38400);
-            port.DataReceived += DataReceived;
-            port.Open();
+            this.logger = logger;
+            this.dispatcher = dispatcher;
+
+            IDispatcherTimer timer = null;
+
+            try
+            {
+                port = new SerialPort(portName, 38400);
+                port.Open();
+
+                timer = dispatcher.CreateTimer(200, CheckPort);
+                timer.Enabled = true;
+            }
+            catch (Exception ex)
+            {
+                logger.Log(this, ex);
+
+                if (port != null)
+                    port.Close();
+
+                if (timer != null)
+                    timer.Dispose();
+
+                port = null;
+            }
         }
 
         public void Request(Elm327FunctionTypes type)
         {
-            port.Write(processor.CreateRequest(type));
+            if (port != null)
+                port.Write(processor.CreateRequest(type));
         }
 
-        private void DataReceived(object sender, SerialDataReceivedEventArgs e)
+        private void CheckPort(object sender, EventArgs e)
         {
-            int readed = 0;
-            var sb = new StringBuilder();
-
-            do
+            if (port.BytesToRead > 0)
             {
-                readed = port.Read(buffer, 0, buffer.Length);
+                int readed = 0;
 
-                for (int i=0; i<readed; ++i)
+                do
                 {
-                    if (buffer[i] == 10 || buffer[i] == 13)
-                    {
-                        if (inString.Length > 0)
-                        {
-                            if (IsHexResponse(inString))
-                            {
-                                var bytes = HexToBytes(inString.ToString());
-                                ProcessHexResponse(bytes);
-                            }
-                            else
-                            {
-                                ProcessStringResponse(inString.ToString());
-                            }
+                    readed = port.Read(buffer, 0, buffer.Length);
 
-                            inString.Clear();
+                    for (int i = 0; i < readed; ++i)
+                    {
+                        if (buffer[i] == 10 || buffer[i] == 13)
+                        {
+                            if (inString.Length > 0)
+                            {
+                                if (IsHexResponse(inString))
+                                {
+                                    var bytes = HexToBytes(inString.ToString());
+                                    ProcessHexResponse(bytes);
+                                }
+                                else
+                                {
+                                    ProcessStringResponse(inString.ToString());
+                                }
+
+                                inString.Clear();
+                            }
+                        }
+                        else
+                        {
+                            if (buffer[i] != 32) // Skipping spaces
+                                inString.Append((char)buffer[i]);
                         }
                     }
-                    else
-                    {
-                        if (buffer[i] != 32) // Skipping spaces
-                            inString.Append((char)buffer[i]);
-                    }
                 }
+                while (readed > 0);
             }
-            while (readed > 0);
         }
 
         private void ProcessStringResponse(string value)
@@ -131,7 +158,9 @@ namespace Elm327
         {
             var handler = ResponceReseived;
             if (handler != null)
-                handler(response);
+            {
+                dispatcher.Invoke(this, null, (s, e) => handler(response));
+            }
         }
 
         private bool IsHexResponse(StringBuilder inString)
