@@ -81,7 +81,7 @@ namespace Elm327
                 port = new SerialPort(portName, 38400);
                 port.Open();
 
-                timer = dispatcher.CreateTimer(200, CheckPort);
+                timer = dispatcher.CreateTimer(50, CheckPort);
                 timer.Enabled = true;
             }
             catch (Exception ex)

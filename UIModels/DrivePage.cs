@@ -39,7 +39,7 @@ namespace UIModels
 
             elm327 = hc.GetController<IElm327Controller>();
 
-            quickTimer = hc.Dispatcher.CreateTimer(300, OnQuickTimer);
+            quickTimer = hc.Dispatcher.CreateTimer(200, OnQuickTimer);
             quickTimer.Enabled = true;
         }
 
