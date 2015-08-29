@@ -100,8 +100,12 @@ namespace Elm327
 
         public void Request(Elm327FunctionTypes type)
         {
-            if (port != null)
-                port.Write(processor.CreateRequest(type));
+			if (port != null) {
+				port.Write (processor.CreateRequest (type));
+				logger.LogIfDebug (this, string.Concat ("REQUEST: ", type));
+			} else {
+				logger.LogIfDebug (this, "Unable to request: port is not created");
+			}
         }
 
         private void CheckPort(object sender, EventArgs e)
@@ -111,6 +115,7 @@ namespace Elm327
                 int readed = port.Read(buffer, 0, buffer.Length);
 
                 logger.LogIfDebug(this, string.Concat("Received bytes: ", readed));
+				logger.LogIfDebug (this, Encoding.Default.GetString (buffer, 0, readed));
 
                 for (int i = 0; i < readed; ++i)
                 {
@@ -137,11 +142,11 @@ namespace Elm327
                             inString.Clear();
                         }
                     }
-                    //else
-                    //{
+                    else
+                    {
                     //    if (buffer[i] != 32) // Skipping spaces
-                    //        inString.Append((char)buffer[i]);
-                    //}
+                            inString.Append((char)buffer[i]);
+                    }
                 }
             }
         }

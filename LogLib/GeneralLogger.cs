@@ -44,7 +44,7 @@ namespace LogLib
 
                 if (caller == null || !AllowedClassNames.Any() || AllowedClassNames.Contains(className))
                 {
-                    Add(string.Concat(DateTime.Now, " | ", level, " | ", className, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message, Environment.NewLine));
+					Add(string.Concat(DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff"), " | ", level, " | ", className, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message, Environment.NewLine));
                 }
             }
         }

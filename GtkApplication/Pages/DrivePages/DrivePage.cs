@@ -41,8 +41,9 @@ namespace GtkApplication
 				                     label_inet_status,
 				                     label_time);
 			
-            binder.BindCustomAction<double>(speed =>
-				label_speed.Markup = CB.CreateMarkup(m_SPEED, CB.m_FG_WHITE, CB.m_BG_EMPTY, speed.ToString("0"))
+            binder.BindCustomAction<object>(speed =>
+				label_speed.Markup = 
+	CB.CreateMarkup(m_SPEED, CB.m_FG_WHITE, CB.m_BG_EMPTY, speed.ToString())
                 , "speed");
 			
             binder.BindCustomAction<double>(travel_span => 

@@ -5,31 +5,18 @@ namespace GtkApplication
 	public partial class CommonVertcalStackPage
 	{
 		private global::Gtk.VBox vbox3;
-		
 		private global::Gtk.EventBox eventbox_caption;
-		
 		private global::Gtk.Label label_caption;
-		
 		private global::Gtk.EventBox eventbox_f1_button;
-		
 		private global::Gtk.EventBox eventbox_f2_button;
-		
 		private global::Gtk.EventBox eventbox_f3_button;
-		
 		private global::Gtk.EventBox eventbox_f4_button;
-		
 		private global::Gtk.EventBox eventbox_f5_button;
-		
 		private global::Gtk.EventBox eventbox_f6_button;
-		
 		private global::Gtk.EventBox eventbox_f7_button;
-		
 		private global::Gtk.EventBox eventbox_f8_button;
-		
 		private global::Gtk.HBox hbox1;
-		
 		private global::Gtk.EventBox eventbox_exit_button;
-		
 		private global::Gtk.EventBox eventbox_next_button;
 
 		protected virtual void Build ()
