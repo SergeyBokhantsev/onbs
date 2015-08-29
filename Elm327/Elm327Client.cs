@@ -87,7 +87,8 @@ namespace Elm327
             catch (Exception ex)
             {
                 logger.Log(this, ex);
-				                if (port != null)
+				
+                if (port != null)
                     port.Close();
 
                 if (timer != null)
@@ -107,39 +108,41 @@ namespace Elm327
         {
             if (port.BytesToRead > 0)
             {
-                int readed = 0;
+                int readed = port.Read(buffer, 0, buffer.Length);
 
-                do
+                logger.LogIfDebug(this, string.Concat("Received bytes: ", readed));
+
+                for (int i = 0; i < readed; ++i)
                 {
-                    readed = port.Read(buffer, 0, buffer.Length);
-
-                    for (int i = 0; i < readed; ++i)
+                    if (buffer[i] == 10 || buffer[i] == 13)
                     {
-						if (buffer[i] == 10 || buffer[i] == 13)
+                        if (inString.Length > 0)
                         {
-                            if (inString.Length > 0)
-                            {
-                                if (IsHexResponse(inString))
-                                {
-                                    var bytes = HexToBytes(inString.ToString());
-                                    ProcessHexResponse(bytes);
-                                }
-                                else
-                                {
-                                    ProcessStringResponse(inString.ToString());
-                                }
+                            var str = inString.ToString();
 
-                                inString.Clear();
+                            logger.LogIfDebug(this, string.Concat("INCOMING LINE: ", str));
+
+                            if (IsHexResponse(str))
+                            {
+                                logger.LogIfDebug(this, "Detected as HEX");
+                                var bytes = HexToBytes(str);
+                                ProcessHexResponse(bytes);
                             }
-                        }
-                        else
-                        {
-                            if (buffer[i] != 32) // Skipping spaces
-                                inString.Append((char)buffer[i]);
+                            else
+                            {
+                                logger.LogIfDebug(this, "Detected as RAW");
+                                ProcessStringResponse(str);
+                            }
+
+                            inString.Clear();
                         }
                     }
+                    //else
+                    //{
+                    //    if (buffer[i] != 32) // Skipping spaces
+                    //        inString.Append((char)buffer[i]);
+                    //}
                 }
-				while (false);
             }
         }
 
@@ -162,13 +165,14 @@ namespace Elm327
             }
         }
 
-        private bool IsHexResponse(StringBuilder inString)
+        private bool IsHexResponse(string str)
         {
-            for(int i = 0; i < inString.Length; ++i)
+            for(int i = 0; i < str.Length; ++i)
             {
-                if (!(inString[i] >= 48 && inString[i] <= 57) 
-                    && !(inString[i] >= 65 && inString[i] <= 70) 
-                    && !(inString[i] >= 97 && inString[i] <= 102))
+                if (!(str[i] >= 48 && str[i] <= 57)
+                    && !(str[i] >= 65 && str[i] <= 70)
+                    && !(str[i] >= 97 && str[i] <= 102)
+                    && str[i] != 32)
                     return false;
             }
 
@@ -177,12 +181,18 @@ namespace Elm327
 
         private byte[] HexToBytes(string str)
         {
+            str = str.Replace(" ", string.Empty);
+
+            logger.LogIfDebug(this, string.Concat("Begin converting to HEX: ", str));
+
             var ret = new byte[str.Length / 2];
 
             for (int i=0; i<str.Length; i+=2)
             {
                 ret[i / 2] = Convert.ToByte(str.Substring(i, 2), 16);
             }
+
+            logger.LogIfDebug(this, string.Concat("Resulting bytes: ", string.Join(", ", ret)));
 
             return ret;
         }
