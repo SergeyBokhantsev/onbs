@@ -79,7 +79,7 @@ namespace HostController
         {
             while (!exit)
             {
-                if (mre.Wait(1000))
+                if (mre.Wait(100))
                 {
                     InvokeItem itemToInvoke = null;
 
