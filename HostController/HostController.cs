@@ -24,7 +24,7 @@ namespace HostController
         private GPSController.GPSController gpsController;
         private IAutomationController automationController;
         private TravelController.TravelController travelController;
-        private Elm327Controller.Elm327Controller elm327Controller; 
+        private Elm327Controller.Elm327Controller elm327Controller;
 
         public IConfig Config
         {
@@ -172,7 +172,7 @@ namespace HostController
             
             arduController.RegisterFrameAcceptor(gpsCtrl);
             gpsController = gpsCtrl;
-            gpsd = new GPSD.Net.GPSD(gpsController, Dispatcher, Config, Logger);
+            gpsd = new GPSD.Net.GPSD(gpsController, Config, Logger);
             gpsd.Start();
 
             automationController = new AutomationController.AutomationController(this);
@@ -218,6 +218,8 @@ namespace HostController
         public void Shutdown(HostControllerShutdownModes mode)
         {
             Logger.Log(this, string.Format("Begin shutdown in {0} mode", mode), LogLevels.Info);
+
+            elm327Controller.Dispose();
 
             travelController.Dispose();
 

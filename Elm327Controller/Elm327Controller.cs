@@ -8,64 +8,80 @@ using System.Threading.Tasks;
 
 namespace Elm327Controller
 {
-    public class Elm327Controller : IElm327Controller
+    public class Elm327Controller : Elm327.Client, IElm327Controller
     {
         private readonly IHostController hc;
-        private Elm327Client elmClient;
+        private bool active;
 
-        public event Action<IElm327Response> ResponceReseived
+        public string Error { get; private set; }
+
+        public enum PID : uint
         {
-            add
-            {
-                EnsureClient();
-
-                if (elmClient != null)
-                {
-                    elmClient.ResponceReseived += value;
-                    hc.Logger.Log(this, "ResponceReseived handler registered.", LogLevels.Info);
-                }
-            }
-            remove
-            {
-                if (elmClient != null)
-                {
-                    elmClient.ResponceReseived -= value;
-                    hc.Logger.Log(this, "ResponceReseived handler unregistered.", LogLevels.Info);
-                }
-            }
-        }
+            SupportedFunctions = 0x0100,
+            MonitorStatus = 0x0101,
+            FuelSystemStatus = 0x0103,
+            EngineRPM = 0x010C,
+            Speed = 0x010D,
+        };
 
         public Elm327Controller(IHostController hc)
+            :base(hc.Logger)
         {
-            if (hc == null)
-                throw new ArgumentNullException("hc");
-
             this.hc = hc;
         }
 
-        private void EnsureClient()
+        private bool EnsureClient()
         {
-            if (elmClient != null)
-                return;
+            if (active)
+            {
+                return true;
+            }
 
-            try
+            if (Error == null)
             {
-                var portName = hc.Config.GetString(ConfigNames.Elm327Port);
-                elmClient = new Elm327Client(portName, hc.Logger, hc.Dispatcher);
-                hc.Logger.Log(this, "Elm327 controller created.", LogLevels.Info);
+                try
+                {
+                    var portName = hc.Config.GetString(ConfigNames.Elm327Port);
+                    Run(portName);
+                    return active = true;
+                }
+                catch (Exception ex)
+                {
+                    hc.Logger.Log(this, ex);
+                    Error = ex.Message;
+                    return false;
+                }
             }
-            catch (Exception ex)
-            {
-                hc.Logger.Log(this, ex);
-            }
+
+            return false;
         }
 
-        public void Request(Elm327FunctionTypes type)
+        public int? GetSpeed()
         {
-            if (elmClient != null)
+            if (!EnsureClient())
+                return null;
+
+            var bytes = FirstHexString(Send((uint)PID.Speed));
+
+            if (bytes != null && bytes.Length == 3)
+                return (int)bytes[2];
+            else
+                return null;
+        }
+
+        public int? GetRPM()
+        {
+            if (!EnsureClient())
+                return null;
+
+            var bytes = FirstHexString(Send((uint)PID.EngineRPM));
+
+            if (bytes != null && bytes.Length == 4)
             {
-                elmClient.Request(type);
+                return (bytes[2] * 256 + bytes[3]) / 4;
             }
+            else
+                return null;
         }
     }
 }

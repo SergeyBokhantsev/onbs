@@ -16,17 +16,15 @@ namespace GPSD.Net
     {
         private readonly TcpServer.Server server;
         private readonly IGPSController gps;
-        private readonly IDispatcher dispatcher;
         private readonly ILogger logger;
         private readonly IConfig config;
         private readonly List<GPSDClient> clients;
 
         //http://www.catb.org/gpsd/gpsd_json.html
         //http://wiki.navit-project.org/index.php/Configuration
-        public GPSD(IGPSController gps, IDispatcher dispatcher, IConfig config, ILogger logger)
+        public GPSD(IGPSController gps, IConfig config, ILogger logger)
         {
             this.gps = gps;
-            this.dispatcher = dispatcher;
             this.config = config;
             this.logger = logger;
             this.clients = new List<GPSDClient>();
@@ -80,7 +78,7 @@ namespace GPSD.Net
             {
                 using (var stream = client.GetStream())
                 {
-                    gclient = new GPSDClient(client, stream, dispatcher, logger);
+                    gclient = new GPSDClient(client, stream, logger);
 
                     lock (clients)
                     {

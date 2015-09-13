@@ -19,7 +19,6 @@ namespace GPSD.Net
 
         private readonly TcpClient tcpClient;
         private readonly NetworkStream stream;
-        private readonly IDispatcher dispatcher;
         private readonly ILogger logger;
 
         public readonly LockingProperty<GPRMC> gprmc = new LockingProperty<GPRMC>();
@@ -42,20 +41,16 @@ namespace GPSD.Net
             }
         }
 
-		public GPSDClient(TcpClient tcpClient, NetworkStream stream, IDispatcher dispatcher, ILogger logger)
+		public GPSDClient(TcpClient tcpClient, NetworkStream stream, ILogger logger)
         {
             if (stream == null)
                 throw new ArgumentNullException("stream");
             
-            if (dispatcher == null)
-                throw new ArgumentNullException("dispatcher");
-
             if (logger == null)
                 throw new ArgumentNullException("logger");
 
             this.tcpClient = tcpClient;
             this.stream = stream;
-            this.dispatcher = dispatcher;
             this.logger = logger;
 
             nmea.Value = string.Empty;

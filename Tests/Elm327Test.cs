@@ -15,48 +15,67 @@ namespace Tests
         private const string ElmPortName = "COM19";
 
         [TestMethod]
-        public void Elm327Requests()
+        public void TestElmClient()
         {
             //INIT
-            List<IElm327Response> responses = new List<IElm327Response>();
-            Action<IElm327Response> responseHandler = resp => { if (resp.Type == Elm327FunctionTypes.EngineRPM) responses.Add(resp); };
+            var client = new Elm327.Lanos(ElmPortName, new Mocks.Logger());
 
-            var elm = new Elm327Client(ElmPortName, new Mocks.Logger());
-            elm.ResponceReseived += responseHandler;
+            var reset = client.Reset();
 
-            //ACT
-            elm.Request(Elm327FunctionTypes.EngineRPM);
+            while(true)
+            {
+                var speed = client.GetSpeed();
 
-            Thread.Sleep(2000);
+                System.Diagnostics.Debug.Print(DateTime.Now.Millisecond.ToString() + " - " + (speed.HasValue ? speed.Value.ToString() : "--"));
+                
 
-            //ASSERT
-            Assert.AreEqual(1, responses.Count);
+                Thread.Sleep(50);
+            }
         }
 
-        [TestMethod]
-        public void Elm327Modes01()
-        {
-            //INIT
-            List<IElm327Response> responses = new List<IElm327Response>();
-            Action<IElm327Response> responseHandler = resp => responses.Add(resp);
+        //[TestMethod]
+        //public void Elm327Requests()
+        //{
+        //    //INIT
+        //    List<IElm327Response> responses = new List<IElm327Response>();
+        //    Action<IElm327Response> responseHandler = resp => { if (resp.Type == Elm327FunctionTypes.EngineRPM) responses.Add(resp); };
 
-            var elm = new Elm327Client(ElmPortName, new Mocks.Logger());
-            elm.ResponceReseived += responseHandler;
+        //    var elm = new Elm327Client(ElmPortName, new Mocks.Logger());
+        //    elm.ResponceReseived += responseHandler;
 
-            //ACT
-            elm.Request(Elm327FunctionTypes.MonitorStatus);
-            Thread.Sleep(100);
-            elm.Request(Elm327FunctionTypes.FuelSystemStatus);
-            Thread.Sleep(100);
-            elm.Request(Elm327FunctionTypes.EngineRPM);
-            Thread.Sleep(100);
-            elm.Request(Elm327FunctionTypes.Speed);
-            Thread.Sleep(100);
+        //    //ACT
+        //    elm.Request(Elm327FunctionTypes.EngineRPM);
 
-            Thread.Sleep(2000);
+        //    Thread.Sleep(2000);
 
-            //ASSERT
-            Assert.IsTrue(responses.Count > 0);
-        }
+        //    //ASSERT
+        //    Assert.AreEqual(1, responses.Count);
+        //}
+
+        //[TestMethod]
+        //public void Elm327Modes01()
+        //{
+        //    //INIT
+        //    List<IElm327Response> responses = new List<IElm327Response>();
+        //    Action<IElm327Response> responseHandler = resp => responses.Add(resp);
+
+        //    var elm = new Elm327Client(ElmPortName, new Mocks.Logger());
+        //    elm.ResponceReseived += responseHandler;
+
+        //    //ACT
+        //    elm.Request(Elm327FunctionTypes.MonitorStatus);
+        //    Thread.Sleep(100);
+        //    elm.Request(Elm327FunctionTypes.FuelSystemStatus);
+        //    Thread.Sleep(100);
+        //    elm.Request(Elm327FunctionTypes.EngineRPM);
+        //    Thread.Sleep(100);
+        //    elm.Request(Elm327FunctionTypes.Speed);
+        //    Thread.Sleep(100);
+
+        //    Thread.Sleep(2000);
+
+        //    //ASSERT
+        //    Assert.IsTrue(responses.Count > 0);
+        //}
     }
 }

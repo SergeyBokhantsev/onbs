@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YandexServicesProvider", "Y
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elm327", "Elm327\Elm327.csproj", "{03E3079E-F438-4C00-8C22-3B13AFC3C644}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elm327Controller", "Elm327Controller\Elm327Controller.csproj", "{ED21248D-2AF6-4B71-90C8-2CE86A5603E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{03E3079E-F438-4C00-8C22-3B13AFC3C644}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03E3079E-F438-4C00-8C22-3B13AFC3C644}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03E3079E-F438-4C00-8C22-3B13AFC3C644}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED21248D-2AF6-4B71-90C8-2CE86A5603E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED21248D-2AF6-4B71-90C8-2CE86A5603E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED21248D-2AF6-4B71-90C8-2CE86A5603E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED21248D-2AF6-4B71-90C8-2CE86A5603E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -23,7 +23,7 @@ namespace UIModels
         private readonly IOperationGuard geocoderGuard = new TimedGuard(new TimeSpan(0, 0, 3));
 
         private readonly IElm327Controller elm327;
-        private readonly IDispatcherTimer quickTimer;
+        
 
         public DrivePage(IHostController hc)
             :base(hc, "DrivePage")
@@ -35,28 +35,26 @@ namespace UIModels
 
             hc.GetController<IGPSController>().GPRMCReseived += GPRMCReseived;
 
-            hc.GetController<IElm327Controller>().ResponceReseived += Elm327ResponceReseived;
-
             elm327 = hc.GetController<IElm327Controller>();
 
-            quickTimer = hc.Dispatcher.CreateTimer(200, OnQuickTimer);
-            quickTimer.Enabled = true;
+            var elmThread = new Thread(RequestElm);
+            elmThread.IsBackground = true;
+            elmThread.Start();
         }
 
-        private void OnQuickTimer(object sender, EventArgs e)
+        private void RequestElm()
         {
-            elm327.Request(Elm327FunctionTypes.EngineRPM);
-        }
-
-        void Elm327ResponceReseived(IElm327Response response)
-        {
-            if (Disposed)
-                return;
-
-            if (response.Type == Elm327FunctionTypes.EngineRPM)
+            while(!Disposed)
             {
-                SetProperty("speed", response.ToString());
+                var rpm = elm327.GetRPM();
+                hc.Dispatcher.Invoke(rpm, null, OnRPM);
             }
+        }
+
+        private void OnRPM(object value, EventArgs e)
+        {
+            if (!Disposed)
+                SetProperty("speed", value ?? 0);
         }
 
         protected override void OnSecondaryTimer(object sender, EventArgs e)
@@ -106,10 +104,7 @@ namespace UIModels
             weatherGuard.Dispose();
             geocoderGuard.Dispose();
 
-            quickTimer.Dispose();
-
             hc.GetController<IGPSController>().GPRMCReseived -= GPRMCReseived;
-            hc.GetController<IElm327Controller>().ResponceReseived -= Elm327ResponceReseived;
             base.OnDisposing(sender, e);
         }
 

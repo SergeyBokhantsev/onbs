@@ -6,25 +6,10 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
-    public interface IElm327Controller : IController
+    public interface IElm327Controller : IController, IDisposable
     {
-        event Action<IElm327Response> ResponceReseived;
-        void Request(Elm327FunctionTypes type);
+        string Error { get; }
+        int? GetSpeed();
+        int? GetRPM();
     }
-
-    public interface IElm327Response
-    {
-        Elm327FunctionTypes Type { get; }
-    }
-
-    public enum Elm327FunctionTypes : uint
-    { 
-        Error = 0xFFFFFF,
-        RawString = 0xFFFFFE,
-        SupportedFunctions = 0x0100,
-        MonitorStatus = 0x0101,
-        FuelSystemStatus = 0x0103,
-        EngineRPM = 0x010C,
-        Speed = 0x010D,
-    };
 }
