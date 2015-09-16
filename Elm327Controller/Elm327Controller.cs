@@ -20,6 +20,9 @@ namespace Elm327Controller
             SupportedFunctions = 0x0100,
             MonitorStatus = 0x0101,
             FuelSystemStatus = 0x0103,
+            EngineLoad = 0x0104,
+            CoolantTemp = 0x0105,
+            MAF = 0x0110,
             EngineRPM = 0x010C,
             Speed = 0x010D,
         };
@@ -82,6 +85,57 @@ namespace Elm327Controller
             }
             else
                 return null;
+        }
+
+        public int? GetEngineLoad()
+        {
+            if (!EnsureClient())
+                return null;
+
+            var bytes = FirstHexString(Send((uint)PID.EngineLoad));
+
+            if (bytes != null && bytes.Length == 3)
+            {
+                return (int)bytes[2] * 100 / 255;
+            }
+            else
+                return null;
+        }
+
+        public int? GetCoolantTemp()
+        {
+            if (!EnsureClient())
+                return null;
+
+            var bytes = FirstHexString(Send((uint)PID.CoolantTemp));
+
+            if (bytes != null && bytes.Length == 3)
+            {
+                return (int)bytes[2] - 40;
+            }
+            else
+                return null;
+        }
+
+        public double? GetMAF()
+        {
+            Nullable<double> d = new Nullable<double>();
+
+            return GetPIDValue<Nullable<double>>(PID.MAF, 4, bytes => { return d; });
+        }
+
+        private T GetPIDValue<T>(PID pid, int expectedBytesCount, Func<byte[], T> formula)
+            where T : struct
+        {
+            if (EnsureClient())
+            {
+                var bytes = FirstHexString(Send((uint)pid));
+
+                if (bytes != null && bytes.Length == expectedBytesCount)
+                    return formula(bytes);
+            }
+
+            return default(T);
         }
     }
 }
