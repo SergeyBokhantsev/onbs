@@ -69,6 +69,10 @@
       <Project>{85445923-f9ca-4054-b2ad-43b14791d82c}</Project>
       <Name>AutomationController</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Elm327Controller\Elm327Controller.csproj">
+      <Project>{ed21248d-2af6-4b71-90c8-2ce86a5603e2}</Project>
+      <Name>Elm327Controller</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Elm327\Elm327.csproj">
       <Project>{03e3079e-f438-4c00-8c22-3b13afc3c644}</Project>
       <Name>Elm327</Name>

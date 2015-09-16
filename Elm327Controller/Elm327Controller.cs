@@ -17,14 +17,14 @@ namespace Elm327Controller
 
         public enum PID : uint
         {
-            SupportedFunctions = 0x0100,
-            MonitorStatus = 0x0101,
-            FuelSystemStatus = 0x0103,
-            EngineLoad = 0x0104,
-            CoolantTemp = 0x0105,
-            MAF = 0x0110,
-            EngineRPM = 0x010C,
-            Speed = 0x010D,
+            SupportedFunctions = 0x00,
+            MonitorStatus = 0x01,
+            FuelSystemStatus = 0x03,
+            EngineLoad = 0x04,
+            CoolantTemp = 0x05,
+            MAF = 0x10,
+            EngineRPM = 0x0C,
+            Speed = 0x0D,
         };
 
         public Elm327Controller(IHostController hc)
@@ -61,81 +61,89 @@ namespace Elm327Controller
 
         public int? GetSpeed()
         {
-            if (!EnsureClient())
-                return null;
-
-            var bytes = FirstHexString(Send((uint)PID.Speed));
-
-            if (bytes != null && bytes.Length == 3)
-                return (int)bytes[2];
-            else
-                return null;
+            return GetPIDValue<int>(PID.Speed, 3, bytes => (int)bytes[2]);
         }
 
         public int? GetRPM()
         {
-            if (!EnsureClient())
-                return null;
-
-            var bytes = FirstHexString(Send((uint)PID.EngineRPM));
-
-            if (bytes != null && bytes.Length == 4)
-            {
-                return (bytes[2] * 256 + bytes[3]) / 4;
-            }
-            else
-                return null;
+            return GetPIDValue<int>(PID.EngineRPM, 4, bytes => (bytes[2] * 256 + bytes[3]) / 4);
         }
 
         public int? GetEngineLoad()
         {
-            if (!EnsureClient())
-                return null;
-
-            var bytes = FirstHexString(Send((uint)PID.EngineLoad));
-
-            if (bytes != null && bytes.Length == 3)
-            {
-                return (int)bytes[2] * 100 / 255;
-            }
-            else
-                return null;
+            return GetPIDValue<int>(PID.EngineLoad, 3, bytes => (int)bytes[2] * 100 / 255);
         }
 
         public int? GetCoolantTemp()
         {
-            if (!EnsureClient())
-                return null;
-
-            var bytes = FirstHexString(Send((uint)PID.CoolantTemp));
-
-            if (bytes != null && bytes.Length == 3)
-            {
-                return (int)bytes[2] - 40;
-            }
-            else
-                return null;
+            return GetPIDValue<int>(PID.CoolantTemp, 3, bytes => (int)bytes[2] - 40);
         }
 
         public double? GetMAF()
         {
-            Nullable<double> d = new Nullable<double>();
-
-            return GetPIDValue<Nullable<double>>(PID.MAF, 4, bytes => { return d; });
+            return GetPIDValue<double>(PID.MAF, 4, bytes => (((double)bytes[2] * 256d) + (double)bytes[3]) / 100d);
         }
 
-        private T GetPIDValue<T>(PID pid, int expectedBytesCount, Func<byte[], T> formula)
-            where T : struct
+        public IEnumerable<PID> GetSupportedPids()
         {
-            if (EnsureClient())
-            {
-                var bytes = FirstHexString(Send((uint)pid));
+            var result = new List<PID>();
 
-                if (bytes != null && bytes.Length == expectedBytesCount)
-                    return formula(bytes);
+            uint group = 0;
+
+            while (true)
+            {
+                var pidFourBytes = GetPIDValue(PID.SupportedFunctions + group);
+
+                if (pidFourBytes == null || pidFourBytes.Length != 6)
+                    break;
+
+                pidFourBytes = pidFourBytes.Skip(2).ToArray();
+
+                for (int b = 0; b < 4; ++b)
+                {
+                    byte mask = 128;
+
+                    for (int bit = 0; bit < 8; ++bit)
+                    {
+                        if ((mask & pidFourBytes[b]) == mask)
+                        {
+                            result.Add((PID)(group + (b * 8) + bit + 1));
+                        }
+
+                        mask = (byte)(mask >> 1);
+                    }
+                }
+
+                group += 0x20;
+
+                if (result.Last() != (PID)(group))
+                    break;
             }
 
-            return default(T);
+            return result;
+        }
+
+        private Nullable<T> GetPIDValue<T>(PID pid, int expectedBytesCount, Func<byte[], T> formula)
+            where T: struct
+        {
+            var bytes = GetPIDValue(pid);
+
+            if (bytes != null && bytes.Length == expectedBytesCount)
+                return formula(bytes);
+            else
+                return null;
+        }
+
+        private byte[] GetPIDValue(PID pid)
+        {
+            byte[] result = null;
+
+            if (EnsureClient())
+            {
+                result = FirstHexString(Send(0x0100 + (uint)pid));
+            }
+
+            return result;
         }
     }
 }
