@@ -5,8 +5,11 @@ namespace GtkApplication
 	public partial class ExternalApplicationPage
 	{
 		private global::Gtk.VBox vbox1;
+		
 		private global::Gtk.EventBox eventbox1;
+		
 		private global::Gtk.Label label_launch_info;
+		
 		private global::Gtk.EventBox box_close_button;
 
 		protected virtual void Build ()

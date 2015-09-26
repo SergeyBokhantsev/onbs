@@ -5,28 +5,51 @@ namespace GtkApplication
 	public partial class TrafficPage
 	{
 		private global::Gtk.VBox vbox1;
+		
 		private global::Gtk.HBox hbox1;
+		
 		private global::Gtk.Label label15;
+		
 		private global::Gtk.HBox hbox2;
+		
 		private global::Gtk.Label label_arduino_status;
+		
 		private global::Gtk.Label label_gps_status;
+		
 		private global::Gtk.Label label_inet_status;
+		
 		private global::Gtk.Label label_time;
+		
 		private global::Gtk.HSeparator hseparator2;
+		
 		private global::Gtk.Image image_traffic;
+		
 		private global::Gtk.HSeparator hseparator1;
+		
 		private global::Gtk.HBox hbox5;
+		
 		private global::Gtk.EventBox eventbox_drive;
+		
 		private global::Gtk.Label label5;
+		
 		private global::Gtk.EventBox eventbox_nav;
+		
 		private global::Gtk.Label label6;
+		
 		private global::Gtk.EventBox eventbox_cam;
+		
 		private global::Gtk.Label label7;
+		
 		private global::Gtk.EventBox eventbox_weather;
+		
 		private global::Gtk.Label label8;
+		
 		private global::Gtk.EventBox eventbox_traffic;
+		
 		private global::Gtk.Label label9;
+		
 		private global::Gtk.EventBox eventbox_options;
+		
 		private global::Gtk.Label label_options;
 
 		protected virtual void Build ()
@@ -59,7 +82,7 @@ namespace GtkApplication
 			// Container child hbox2.Gtk.Box+BoxChild
 			this.label_arduino_status = new global::Gtk.Label ();
 			this.label_arduino_status.Name = "label_arduino_status";
-			this.label_arduino_status.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground='#205768' size='12000'>ARD</span>");
+			this.label_arduino_status.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'12000\'>ARD</span>");
 			this.label_arduino_status.UseMarkup = true;
 			this.hbox2.Add (this.label_arduino_status);
 			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.hbox2 [this.label_arduino_status]));
@@ -69,7 +92,7 @@ namespace GtkApplication
 			// Container child hbox2.Gtk.Box+BoxChild
 			this.label_gps_status = new global::Gtk.Label ();
 			this.label_gps_status.Name = "label_gps_status";
-			this.label_gps_status.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground='#205768' size='12000'>  GPS  </span>");
+			this.label_gps_status.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'12000\'>  GPS  </span>");
 			this.label_gps_status.UseMarkup = true;
 			this.hbox2.Add (this.label_gps_status);
 			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox2 [this.label_gps_status]));
@@ -79,7 +102,7 @@ namespace GtkApplication
 			// Container child hbox2.Gtk.Box+BoxChild
 			this.label_inet_status = new global::Gtk.Label ();
 			this.label_inet_status.Name = "label_inet_status";
-			this.label_inet_status.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground='#205768' size='12000'>INET</span>");
+			this.label_inet_status.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'12000\'>INET</span>");
 			this.label_inet_status.UseMarkup = true;
 			this.hbox2.Add (this.label_inet_status);
 			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox2 [this.label_inet_status]));
@@ -95,7 +118,8 @@ namespace GtkApplication
 			this.label_time = new global::Gtk.Label ();
 			this.label_time.Name = "label_time";
 			this.label_time.Xalign = 1F;
-			this.label_time.LabelProp = "<span foreground='#d6d6d6' size='18000'>--:--</span><span size='10000'> : --</span>";
+			this.label_time.LabelProp = "<span foreground=\'#d6d6d6\' size=\'18000\'>--:--</span><span size=\'10000\'> : --</spa" +
+			"n>";
 			this.label_time.UseMarkup = true;
 			this.hbox1.Add (this.label_time);
 			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.label_time]));
@@ -140,7 +164,7 @@ namespace GtkApplication
 			// Container child eventbox_drive.Gtk.Container+ContainerChild
 			this.label5 = new global::Gtk.Label ();
 			this.label5.Name = "label5";
-			this.label5.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground='#606060' size='15000'>DRIVE</span>");
+			this.label5.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#606060\' size=\'15000\'>DRIVE</span>");
 			this.label5.UseMarkup = true;
 			this.eventbox_drive.Add (this.label5);
 			this.hbox5.Add (this.eventbox_drive);
@@ -152,7 +176,7 @@ namespace GtkApplication
 			// Container child eventbox_nav.Gtk.Container+ContainerChild
 			this.label6 = new global::Gtk.Label ();
 			this.label6.Name = "label6";
-			this.label6.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground='#606060' size='15000'>NAV</span>");
+			this.label6.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#606060\' size=\'15000\'>NAV</span>");
 			this.label6.UseMarkup = true;
 			this.eventbox_nav.Add (this.label6);
 			this.hbox5.Add (this.eventbox_nav);
@@ -164,7 +188,7 @@ namespace GtkApplication
 			// Container child eventbox_cam.Gtk.Container+ContainerChild
 			this.label7 = new global::Gtk.Label ();
 			this.label7.Name = "label7";
-			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground='#606060' size='15000'>CAM</span>");
+			this.label7.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#606060\' size=\'15000\'>CAM</span>");
 			this.label7.UseMarkup = true;
 			this.eventbox_cam.Add (this.label7);
 			this.hbox5.Add (this.eventbox_cam);
@@ -176,7 +200,7 @@ namespace GtkApplication
 			// Container child eventbox_weather.Gtk.Container+ContainerChild
 			this.label8 = new global::Gtk.Label ();
 			this.label8.Name = "label8";
-			this.label8.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground='#606060' size='15000'>WTHR</span>");
+			this.label8.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#606060\' size=\'15000\'>WTHR</span>");
 			this.label8.UseMarkup = true;
 			this.eventbox_weather.Add (this.label8);
 			this.hbox5.Add (this.eventbox_weather);
@@ -188,7 +212,7 @@ namespace GtkApplication
 			// Container child eventbox_traffic.Gtk.Container+ContainerChild
 			this.label9 = new global::Gtk.Label ();
 			this.label9.Name = "label9";
-			this.label9.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground='#d39c2f' size='15000'><b>TRAF</b></span>");
+			this.label9.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#d39c2f\' size=\'15000\'><b>TRAF</b></span>");
 			this.label9.UseMarkup = true;
 			this.eventbox_traffic.Add (this.label9);
 			this.hbox5.Add (this.eventbox_traffic);
@@ -202,7 +226,7 @@ namespace GtkApplication
 			// Container child eventbox_options.Gtk.Container+ContainerChild
 			this.label_options = new global::Gtk.Label ();
 			this.label_options.Name = "label_options";
-			this.label_options.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground='#606060' size='15000'>OPT</span>");
+			this.label_options.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#606060\' size=\'15000\'>OPT</span>");
 			this.label_options.UseMarkup = true;
 			this.eventbox_options.Add (this.label_options);
 			this.hbox5.Add (this.eventbox_options);

@@ -85,6 +85,8 @@
     <Compile Include="gtk-gui\GtkApplication.WeatherPage.cs" />
     <Compile Include="Pages\DrivePages\TrafficPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.TrafficPage.cs" />
+    <Compile Include="Pages\DrivePages\OBDEngineAndFuel.cs" />
+    <Compile Include="gtk-gui\GtkApplication.OBDEngineAndFuel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">

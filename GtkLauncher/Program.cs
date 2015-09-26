@@ -14,7 +14,7 @@ namespace GtkLauncher
 			{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-				app.ShowPage(GetDrivePage());
+				app.ShowPage(GetOBDEngineAndFuelPage());
 
 				app.Run();
 			}
@@ -223,6 +223,13 @@ namespace GtkLauncher
 			page.SetProperty("_timer", timer);
 
 			page.SetProperty("traffic_image_path", @"C:\Users\sergeyb\Desktop\static-maps.yandex.ru.png");
+
+			return page;
+		}
+
+		private static IPageModel GetOBDEngineAndFuelPage()
+		{
+			var page = new EmptyPageModel ("OBDEngineAndFuel");
 
 			return page;
 		}

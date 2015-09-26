@@ -5,42 +5,79 @@ namespace GtkApplication
 	public partial class MainPage
 	{
 		private global::Gtk.VBox base_vbox;
+		
 		private global::Gtk.HBox upper_buttons_hbox;
+		
 		private global::Gtk.EventBox box_F1;
+		
 		private global::Gtk.EventBox box_F2;
+		
 		private global::Gtk.EventBox box_F3;
+		
 		private global::Gtk.EventBox box_F4;
+		
 		private global::Gtk.EventBox box_Accept;
+		
 		private global::Gtk.HBox bottom_buttons_hbox;
+		
 		private global::Gtk.EventBox box_F5;
+		
 		private global::Gtk.EventBox box_F6;
+		
 		private global::Gtk.EventBox box_F7;
+		
 		private global::Gtk.EventBox box_F8;
+		
 		private global::Gtk.EventBox box_Cancel;
+		
 		private global::Gtk.HBox hbox2;
+		
 		private global::Gtk.EventBox eventbox_inet_status;
+		
 		private global::Gtk.Label label_inet_status;
+		
 		private global::Gtk.EventBox eventbox2;
+		
 		private global::Gtk.Label label2;
+		
 		private global::Gtk.EventBox eventbox3;
+		
 		private global::Gtk.Label label3;
+		
 		private global::Gtk.HBox hbox1;
+		
 		private global::Gtk.VBox vbox1;
+		
 		private global::Gtk.EventBox eventbox_arduino_metrics_caption;
+		
 		private global::Gtk.Label label_arduino_metrics_caption;
+		
 		private global::Gtk.EventBox eventbox_arduino_metrics;
+		
 		private global::Gtk.Label label_arduino_metrics;
+		
 		private global::Gtk.VBox vbox2;
+		
 		private global::Gtk.EventBox eventbox_gps_metrics_caption;
+		
 		private global::Gtk.Label label_gps_metrics_caption;
+		
 		private global::Gtk.EventBox eventbox_gps_metrics;
+		
 		private global::Gtk.Label label_gps_metrics;
+		
 		private global::Gtk.VBox vbox3;
+		
 		private global::Gtk.EventBox eventbox_travel_caption;
+		
 		private global::Gtk.Label label_travel_caption;
+		
 		private global::Gtk.EventBox eventbox_travel_metrics;
+		
 		private global::Gtk.Label label_travel_metrics;
+		
 		private global::Gtk.EventBox eventbox_time;
+		
 		private global::Gtk.Label label_time;
 
 		protected virtual void Build ()

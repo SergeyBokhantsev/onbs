@@ -5,12 +5,19 @@ namespace GtkApplication
 	public partial class CommonYesNoPage
 	{
 		private global::Gtk.VBox vbox3;
+		
 		private global::Gtk.EventBox eventbox_caption;
+		
 		private global::Gtk.Label label_caption;
+		
 		private global::Gtk.EventBox eventbox_message;
+		
 		private global::Gtk.Label label_message;
+		
 		private global::Gtk.HBox hbox1;
+		
 		private global::Gtk.EventBox eventbox_no_button;
+		
 		private global::Gtk.EventBox eventbox_yes_button;
 
 		protected virtual void Build ()
