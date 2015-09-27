@@ -9,17 +9,17 @@ namespace GtkApplication
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class OBDEngineAndFuel : Gtk.Bin
 	{
-		Pixbuf mapContents = new Pixbuf (@"C:\Users\Mau\Desktop\Car.png");
+		//Pixbuf mapContents = new Pixbuf (@"C:\Users\Mau\Desktop\Car.png");
 
-		int wWidth;
-		int wHeight;
+		//int wWidth;
+		//int wHeight;
 
 		public OBDEngineAndFuel(IPageModel model, Style style, ILogger logger)
 		{
 			this.Build();
 		
-			wWidth = mapContents.Width; wHeight = mapContents.Height;
-			d_chart.SetSizeRequest (wWidth, wHeight);
+			//wWidth = mapContents.Width; wHeight = mapContents.Height;
+			//d_chart.SetSizeRequest (wWidth, wHeight);
 
 			d_chart.ExposeEvent += ChartExposeEvent;
 

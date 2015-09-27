@@ -122,13 +122,13 @@ namespace GtkApplication
 				var page = constructor.Invoke(new object[] { model, style, logger }) as Gtk.Bin;
 
 				if (page == null)
-					throw new Exception();
+					throw new Exception("No page was constructed");
 			
 				return page ;
 			} catch (Exception ex)
 			{
-				//TODO: implement error page
-				throw;
+				var errorPageModel = new ErrorPageModel (ex);
+				return new ErrorPage (errorPageModel, style, logger);
 			}
 		}
 

@@ -87,6 +87,8 @@
     <Compile Include="gtk-gui\GtkApplication.TrafficPage.cs" />
     <Compile Include="Pages\DrivePages\OBDEngineAndFuel.cs" />
     <Compile Include="gtk-gui\GtkApplication.OBDEngineAndFuel.cs" />
+    <Compile Include="Pages\ErrorPage.cs" />
+    <Compile Include="gtk-gui\GtkApplication.ErrorPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
