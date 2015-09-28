@@ -8,7 +8,7 @@ namespace Interfaces.UI
 {
     public interface IUIHost
     {
-        void Run();
+		void Run(bool fullscreen);
         void ShowPage(IPageModel model);
         void Shutdown();
     }

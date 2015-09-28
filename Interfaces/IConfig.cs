@@ -26,6 +26,7 @@ namespace Interfaces
     {
         public static readonly string UIHostAssemblyName = "UIHostAssemblyName";
         public static readonly string UIHostClass = "UIHostClass";
+        public static readonly string UIFullscreen = "UIFullscreen";
 
 		public static readonly string XScreenForceOn = "XScreenForceOn";
 

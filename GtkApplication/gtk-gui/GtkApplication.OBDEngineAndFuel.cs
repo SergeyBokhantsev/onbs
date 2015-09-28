@@ -9,6 +9,30 @@ namespace GtkApplication
 		private global::Gtk.HBox hbox1;
 		
 		private global::Gtk.DrawingArea d_chart;
+		
+		private global::Gtk.VBox vbox2;
+		
+		private global::Gtk.EventBox eventbox_flow_max;
+		
+		private global::Gtk.Label label_flow_max;
+		
+		private global::Gtk.ProgressBar progressbar_flow;
+		
+		private global::Gtk.EventBox eventbox_flow;
+		
+		private global::Gtk.Label label_flow;
+		
+		private global::Gtk.VBox vbox3;
+		
+		private global::Gtk.EventBox eventbox_prm_max;
+		
+		private global::Gtk.Label label_prm_max;
+		
+		private global::Gtk.ProgressBar progressbar_prm;
+		
+		private global::Gtk.EventBox eventbox_prm;
+		
+		private global::Gtk.Label label_prm;
 
 		protected virtual void Build ()
 		{
@@ -22,17 +46,116 @@ namespace GtkApplication
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox ();
-			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.d_chart = new global::Gtk.DrawingArea ();
+			this.d_chart.HeightRequest = 300;
 			this.d_chart.Name = "d_chart";
 			this.hbox1.Add (this.d_chart);
 			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.d_chart]));
 			w1.Position = 0;
+			w1.Padding = ((uint)(10));
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.vbox2 = new global::Gtk.VBox ();
+			this.vbox2.Name = "vbox2";
+			this.vbox2.Spacing = 6;
+			// Container child vbox2.Gtk.Box+BoxChild
+			this.eventbox_flow_max = new global::Gtk.EventBox ();
+			this.eventbox_flow_max.Name = "eventbox_flow_max";
+			// Container child eventbox_flow_max.Gtk.Container+ContainerChild
+			this.label_flow_max = new global::Gtk.Label ();
+			this.label_flow_max.Name = "label_flow_max";
+			this.label_flow_max.LabelProp = global::Mono.Unix.Catalog.GetString ("label3");
+			this.label_flow_max.Justify = ((global::Gtk.Justification)(2));
+			this.eventbox_flow_max.Add (this.label_flow_max);
+			this.vbox2.Add (this.eventbox_flow_max);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.eventbox_flow_max]));
+			w3.Position = 0;
+			w3.Expand = false;
+			w3.Fill = false;
+			// Container child vbox2.Gtk.Box+BoxChild
+			this.progressbar_flow = new global::Gtk.ProgressBar ();
+			this.progressbar_flow.WidthRequest = 90;
+			this.progressbar_flow.Name = "progressbar_flow";
+			this.progressbar_flow.Orientation = ((global::Gtk.ProgressBarOrientation)(2));
+			this.progressbar_flow.Fraction = 0.44D;
+			this.vbox2.Add (this.progressbar_flow);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.progressbar_flow]));
+			w4.Position = 1;
+			// Container child vbox2.Gtk.Box+BoxChild
+			this.eventbox_flow = new global::Gtk.EventBox ();
+			this.eventbox_flow.Name = "eventbox_flow";
+			// Container child eventbox_flow.Gtk.Container+ContainerChild
+			this.label_flow = new global::Gtk.Label ();
+			this.label_flow.Name = "label_flow";
+			this.label_flow.LabelProp = global::Mono.Unix.Catalog.GetString ("label3");
+			this.label_flow.Justify = ((global::Gtk.Justification)(2));
+			this.eventbox_flow.Add (this.label_flow);
+			this.vbox2.Add (this.eventbox_flow);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.eventbox_flow]));
+			w6.PackType = ((global::Gtk.PackType)(1));
+			w6.Position = 2;
+			w6.Expand = false;
+			w6.Fill = false;
+			this.hbox1.Add (this.vbox2);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.vbox2]));
+			w7.Position = 1;
+			w7.Expand = false;
+			w7.Fill = false;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.vbox3 = new global::Gtk.VBox ();
+			this.vbox3.Name = "vbox3";
+			this.vbox3.Spacing = 6;
+			// Container child vbox3.Gtk.Box+BoxChild
+			this.eventbox_prm_max = new global::Gtk.EventBox ();
+			this.eventbox_prm_max.Name = "eventbox_prm_max";
+			// Container child eventbox_prm_max.Gtk.Container+ContainerChild
+			this.label_prm_max = new global::Gtk.Label ();
+			this.label_prm_max.Name = "label_prm_max";
+			this.label_prm_max.LabelProp = global::Mono.Unix.Catalog.GetString ("label3");
+			this.label_prm_max.Justify = ((global::Gtk.Justification)(2));
+			this.eventbox_prm_max.Add (this.label_prm_max);
+			this.vbox3.Add (this.eventbox_prm_max);
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.eventbox_prm_max]));
+			w9.Position = 0;
+			w9.Expand = false;
+			w9.Fill = false;
+			// Container child vbox3.Gtk.Box+BoxChild
+			this.progressbar_prm = new global::Gtk.ProgressBar ();
+			this.progressbar_prm.WidthRequest = 90;
+			this.progressbar_prm.Name = "progressbar_prm";
+			this.progressbar_prm.Orientation = ((global::Gtk.ProgressBarOrientation)(2));
+			this.progressbar_prm.Fraction = 0.44D;
+			this.vbox3.Add (this.progressbar_prm);
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.progressbar_prm]));
+			w10.Position = 1;
+			// Container child vbox3.Gtk.Box+BoxChild
+			this.eventbox_prm = new global::Gtk.EventBox ();
+			this.eventbox_prm.Name = "eventbox_prm";
+			// Container child eventbox_prm.Gtk.Container+ContainerChild
+			this.label_prm = new global::Gtk.Label ();
+			this.label_prm.Name = "label_prm";
+			this.label_prm.LabelProp = global::Mono.Unix.Catalog.GetString ("label3");
+			this.label_prm.Justify = ((global::Gtk.Justification)(2));
+			this.eventbox_prm.Add (this.label_prm);
+			this.vbox3.Add (this.eventbox_prm);
+			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.eventbox_prm]));
+			w12.PackType = ((global::Gtk.PackType)(1));
+			w12.Position = 2;
+			w12.Expand = false;
+			w12.Fill = false;
+			this.hbox1.Add (this.vbox3);
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.vbox3]));
+			w13.Position = 2;
+			w13.Expand = false;
+			w13.Fill = false;
+			w13.Padding = ((uint)(10));
 			this.vbox1.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox1]));
-			w2.Position = 0;
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox1]));
+			w14.Position = 0;
+			w14.Expand = false;
+			w14.Fill = false;
+			w14.Padding = ((uint)(10));
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();

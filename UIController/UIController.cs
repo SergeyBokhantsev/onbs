@@ -77,7 +77,7 @@ namespace UIController
             var appConstructor = appType.GetConstructor(new Type[] { typeof(ILogger) });
             uiHost = appConstructor.Invoke(new object[] { logger }) as IUIHost;
             hostWaiter.Set();
-            uiHost.Run();
+            uiHost.Run(hostController.Config.GetBool(ConfigNames.UIFullscreen));
             logger.Log(this, "UI Host has exited", LogLevels.Info);
 
             if (!shutdowning)

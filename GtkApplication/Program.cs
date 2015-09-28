@@ -24,7 +24,7 @@ namespace GtkApplication
 
 		private readonly Style style;
 
-        public App(ILogger logger)
+		public App(ILogger logger)
         {
             this.logger = logger;
 
@@ -71,7 +71,7 @@ namespace GtkApplication
 			return new Style (window, commonButton, acceptButton, cancelButton, textBox);
 		}
 
-		public void Run()
+		public void Run(bool fullscreen)
 		{
             try
             {
@@ -83,7 +83,10 @@ namespace GtkApplication
 				win.ModifyBg(StateType.Normal, style.Window.Bg);
                 
                 win.Show();
-                //win.Fullscreen();
+
+				if (fullscreen)
+					win.Fullscreen();
+				
                 Application.Run();
             }
             catch (Exception ex)

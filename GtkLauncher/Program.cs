@@ -16,7 +16,7 @@ namespace GtkLauncher
 
 				app.ShowPage(GetOBDEngineAndFuelPage());
 
-				app.Run();
+				app.Run(false);
 			}
 			catch (Exception ex)
 			{
@@ -230,6 +230,22 @@ namespace GtkLauncher
 		private static IPageModel GetOBDEngineAndFuelPage()
 		{
 			var page = new EmptyPageModel ("OBDEngineAndFuel");
+
+			page.SetProperty("flow", 19.248);
+			page.SetProperty("prm", 1240d);
+
+			Random r = new Random ();
+
+			var timer = new Timer (new TimerCallback (o =>
+			{
+				page.SetProperty("time", DateTime.Now);
+
+				page.SetProperty("prm", r.NextDouble() * 10000);
+				page.SetProperty("flow", r.NextDouble() * 20);
+			}), 
+				null, 500, 200);
+			
+			page.SetProperty("_timer", timer);
 
 			return page;
 		}
