@@ -231,21 +231,36 @@ namespace GtkLauncher
 		{
 			var page = new EmptyPageModel ("OBDEngineAndFuel");
 
-			page.SetProperty("flow", 19.248);
-			page.SetProperty("prm", 1240d);
+			//page.SetProperty ("flow", 19.248);
+			//page.SetProperty ("prm", 1240d);
 
 			Random r = new Random ();
+			var flow = 0d;
+			var prm = 0d;
 
-			var timer = new Timer (new TimerCallback (o =>
-			{
-				page.SetProperty("time", DateTime.Now);
+			var prmIncrement = 25;
+			var prmIncrementTimes = 0;
 
-				page.SetProperty("prm", r.NextDouble() * 10000);
-				page.SetProperty("flow", r.NextDouble() * 20);
+			var timer = new Timer (new TimerCallback (o => {
+				page.SetProperty ("time", DateTime.Now);
+
+
+				prm += prmIncrement;
+
+				if (++prmIncrementTimes == 10)
+				{
+					prmIncrement *= -1;
+					prmIncrementTimes = 0;
+				}
+					
+				page.SetProperty ("prm", prm);
+
+				flow += 2.55;
+				page.SetProperty ("flow", flow);
 			}), 
-				null, 500, 200);
+				            null, 500, 200);
 			
-			page.SetProperty("_timer", timer);
+			page.SetProperty ("_timer", timer);
 
 			return page;
 		}
