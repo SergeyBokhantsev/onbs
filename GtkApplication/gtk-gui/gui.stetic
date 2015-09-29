@@ -2463,6 +2463,42 @@
           </packing>
         </child>
         <child>
+          <widget class="Gtk.HBox" id="hbox3">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gtk.EventBox" id="eventbox_prm1">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Label" id="label_flow1">
+                    <property name="MemberName" />
+                    <property name="LabelProp" translatable="yes">label3</property>
+                    <property name="Justify">Center</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder />
+            </child>
+            <child>
+              <placeholder />
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <placeholder />
         </child>
       </widget>

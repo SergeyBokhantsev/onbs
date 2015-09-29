@@ -33,6 +33,12 @@ namespace GtkApplication
 		private global::Gtk.EventBox eventbox_prm;
 		
 		private global::Gtk.Label label_prm;
+		
+		private global::Gtk.HBox hbox3;
+		
+		private global::Gtk.EventBox eventbox_prm1;
+		
+		private global::Gtk.Label label_flow1;
 
 		protected virtual void Build ()
 		{
@@ -46,7 +52,6 @@ namespace GtkApplication
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox ();
-			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.d_chart = new global::Gtk.DrawingArea ();
@@ -157,6 +162,29 @@ namespace GtkApplication
 			w14.Expand = false;
 			w14.Fill = false;
 			w14.Padding = ((uint)(10));
+			// Container child vbox1.Gtk.Box+BoxChild
+			this.hbox3 = new global::Gtk.HBox ();
+			this.hbox3.Name = "hbox3";
+			this.hbox3.Spacing = 6;
+			// Container child hbox3.Gtk.Box+BoxChild
+			this.eventbox_prm1 = new global::Gtk.EventBox ();
+			this.eventbox_prm1.Name = "eventbox_prm1";
+			// Container child eventbox_prm1.Gtk.Container+ContainerChild
+			this.label_flow1 = new global::Gtk.Label ();
+			this.label_flow1.Name = "label_flow1";
+			this.label_flow1.LabelProp = global::Mono.Unix.Catalog.GetString ("label3");
+			this.label_flow1.Justify = ((global::Gtk.Justification)(2));
+			this.eventbox_prm1.Add (this.label_flow1);
+			this.hbox3.Add (this.eventbox_prm1);
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.eventbox_prm1]));
+			w16.Position = 0;
+			w16.Expand = false;
+			w16.Fill = false;
+			this.vbox1.Add (this.hbox3);
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox3]));
+			w17.Position = 1;
+			w17.Expand = false;
+			w17.Fill = false;
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();

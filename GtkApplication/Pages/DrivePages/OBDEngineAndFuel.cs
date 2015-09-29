@@ -18,13 +18,16 @@ namespace GtkApplication
 		private const string m_PRMValue = "<span foreground='#CCCC38' size='25000'>{0}</span>";
 		private const string m_PRMMax = "<span foreground='#cccccc' size='20000'>{0}</span>";
 
+		private Gdk.GC prmGC;
+		private Gdk.GC flowGC;
+
 		//Pixbuf mapContents = new Pixbuf (@"C:\Users\Mau\Desktop\Car.png");
 
 		//int wWidth;
 		//int wHeight;
 
-        private DoubleChartData prmData = new DoubleChartData(20, new TimeSpan(0, 0, 1));
-        private double maxFlow = 1;
+		private ChartData<double> prmData = new ChartData<double> (200);
+		private ChartData<double> flowData = new ChartData<double> (200);
 
 		public OBDEngineAndFuel(IPageModel model, Style style, ILogger logger)
 		{
@@ -47,10 +50,12 @@ namespace GtkApplication
 
 			binder.BindCustomAction<double>(v => 
 				{
-					maxFlow = Math.Max(v, maxFlow);
-					progressbar_flow.Fraction = v / (maxFlow * 1.2);
+				flowData.AddPoint(v);
+				var max = Math.Max(v, flowData.GetMaxValue());
+				progressbar_flow.Fraction = max > 0 ? (v / max) : 0;
+
 					label_flow.Markup = CommonBindings.CreateMarkup(m_FuelFlowValue, v.ToString("0.0"));
-				label_flow_max.Markup = CommonBindings.CreateMarkup(m_FuelFlowMax, maxFlow.ToString("0.0"));
+				label_flow_max.Markup = CommonBindings.CreateMarkup(m_FuelFlowMax, max.ToString("0.0"));
 				}, "flow");
 
 			binder.BindCustomAction<double>(v => 
@@ -65,19 +70,65 @@ namespace GtkApplication
 					d_chart.QueueDraw();
 			}, "prm");
 
+			d_chart.ModifyBg(StateType.Normal, new Color (0, 0, 0));
+
             binder.UpdateBindings();
+		}
+
+		private void DrawChart(ChartData<double> chart, Gdk.EventExpose e, Gdk.GC gc)
+		{
+			if (chart.PointsCount > 1)
+			{
+				double pxPerValueByY = (double)e.Area.Height / (double)chart.GetMaxValue();
+
+				var p = chart.GetPoints().GetEnumerator();
+				p.MoveNext();
+
+				int x = 0;
+                int y = (int)(p.Current * pxPerValueByY);
+
+				for (int i =0; i < chart.PointsCount -1; ++i)
+				{
+                    p.MoveNext();
+
+					int xx = (int)((double)e.Area.Width / ((double)chart.MaxPointsCount - 1d) * i);
+                    int yy = (int)(p.Current * pxPerValueByY);
+
+					e.Window.DrawLine(gc, x, e.Area.Height - y, xx, e.Area.Height - yy);
+
+                    x = xx;
+                    y = yy;
+				}
+			}
 		}
 
 		void ChartExposeEvent (object o, Gtk.ExposeEventArgs _args)
 		{
-			_args.Event.Window.DrawLine(Style.BlackGC, 0, 0, 100, 100);
+			if (prmGC == null)
+			{
+				prmGC = new Gdk.GC(_args.Event.Window);
+				prmGC.RgbFgColor = new Color (220, 190, 55);
+				prmGC.SetLineAttributes(6, LineStyle.Solid, CapStyle.Butt, JoinStyle.Bevel);
+			}
 
-            var s = new Gtk.Style();
+			DrawChart(prmData, _args.Event, prmGC);
+
+			if (flowGC == null)
+			{
+				flowGC = new Gdk.GC(_args.Event.Window);
+				flowGC.RgbFgColor = new Color (120, 80, 255);
+				flowGC.SetLineAttributes(2, LineStyle.Solid, CapStyle.Butt, JoinStyle.Bevel);
+			}
+
+			DrawChart(flowData, _args.Event, flowGC);
+
+			//_args.Event.Window.DrawLine(Style.BlackGC, 0, 0, 100, 100);
+
+            //var s = new Gtk.Style();
             
+			//Widget widget = (Widget) o;
 
-			Widget widget = (Widget) o;
-
-			Gdk.Rectangle area = _args.Event.Area;
+			//Gdk.Rectangle area = _args.Event.Area;
 //			widget.GdkWindow.DrawPixbuf(widget.Style.BlackGC,
 //				mapContents,
 //				area.X, area.Y,
@@ -96,6 +147,23 @@ namespace GtkApplication
         private readonly int maxPointsCount;
         private readonly Queue<T> points;
 
+
+		public int PointsCount
+		{
+			get
+			{
+				return points.Count;
+			}
+		}
+
+		public int MaxPointsCount
+		{
+			get
+			{
+				return maxPointsCount;
+			}
+		}
+			
         public ChartData(int pointsCount)
         {
             this.maxPointsCount = pointsCount;
@@ -137,8 +205,7 @@ namespace GtkApplication
     {
         private readonly TimeSpan interval;
 
-        private double tempValue;
-        private double valuesCount;
+        private double maxValue;
         private DateTime timeToAddValue;
 
         public DoubleChartData(int pointsCount, TimeSpan interval)
@@ -154,22 +221,21 @@ namespace GtkApplication
 			if (Double.IsNaN (max))
 				max = 0;
 
-			return valuesCount > 0 ? Math.Max (max, tempValue / valuesCount) : max;
+			return Math.Max(max, maxValue);
         }
 
         public override void AddPoint(double point)
         {
-			tempValue += point;
-			valuesCount++;
+			if (maxValue < point)
+				maxValue = point;
 
 			var now = DateTime.Now;
 
 			if (now > timeToAddValue)
             {
 				timeToAddValue = now + interval;
-				base.AddPoint(tempValue / valuesCount);
-                tempValue = 0;
-                valuesCount = 0;
+				base.AddPoint(maxValue);
+				maxValue = 0;
             } 
         }
     }
