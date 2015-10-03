@@ -46,6 +46,7 @@ namespace Elm327Controller
                 {
                     var portName = hc.Config.GetString(ConfigNames.Elm327Port);
                     Run(portName);
+                    Reset();
                     return active = true;
                 }
                 catch (Exception ex)
@@ -87,7 +88,7 @@ namespace Elm327Controller
         public double? GetFuelFlow()
         {
             var maf = GetMAF();
-            return maf.HasValue ? maf.Value * 14.7 : maf;
+            return maf.HasValue ? maf.Value / 14.7 : maf;
         }
 
         public IEnumerable<PID> GetSupportedPids()

@@ -89,7 +89,7 @@ namespace Elm327
             {
                 var str = Encoding.Default.GetString(inBuffer, 0, count);
                 logger.LogIfDebug(this, string.Concat("Received from ELM: ", str));
-                var ret = str.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                var ret = str.Split(new string[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
                 return ret;
             }
             else

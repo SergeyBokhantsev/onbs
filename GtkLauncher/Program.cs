@@ -241,6 +241,9 @@ namespace GtkLauncher
 			var prmIncrement = 25;
 			var prmIncrementTimes = 0;
 
+			page.SetProperty("par1caption", "coolant t:");
+			page.SetProperty("par2caption", "eng. load:");
+
 			var timer = new Timer (new TimerCallback (o => {
 				page.SetProperty ("time", DateTime.Now);
 
@@ -256,9 +259,12 @@ namespace GtkLauncher
 				page.SetProperty ("rpm", prm);
 
 				flow += 2.55;
-				page.SetProperty ("flow", r.NextDouble() * 3d);
+				page.SetProperty ("flow", r.NextDouble() / 1000d);
 
 				page.SetProperty("refresh", null);
+
+				page.SetProperty("par1", r.NextDouble().ToString("0.0 °C"));
+				page.SetProperty("par2", r.NextDouble().ToString("0.0") + "%");
 			}), 
 				            null, 500, 500);
 			

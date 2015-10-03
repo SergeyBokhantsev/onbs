@@ -12,5 +12,7 @@ namespace Interfaces
         int? GetSpeed();
         int? GetRPM();
         double? GetFuelFlow();
+        int? GetCoolantTemp();
+        int? GetEngineLoad();
     }
 }

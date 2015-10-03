@@ -17,6 +17,7 @@ namespace GtkApplication
 		private const string m_FuelFlowMax = "<span foreground='#cccccc' size='20000'>{0}</span>";
 		private const string m_PRMValue = "<span foreground='#CCCC38' size='25000'>{0}</span>";
 		private const string m_PRMMax = "<span foreground='#cccccc' size='20000'>{0}</span>";
+		private const string m_Par = "<span foreground='#cccccc' size='20000'>{0} </span><span foreground='#cccccc' size='40000'>{1}</span>";
 
 		private Gdk.GC prmGC;
 		private Gdk.GC flowGC;
@@ -29,6 +30,9 @@ namespace GtkApplication
 		private ChartData<double> prmData = new ChartData<double> (200);
 		private ChartData<double> flowData = new ChartData<double> (200);
 
+		private string par1caption;
+		private string par2caption;
+
 		public OBDEngineAndFuel(IPageModel model, Style style, ILogger logger)
 		{
 			this.Build();
@@ -40,6 +44,8 @@ namespace GtkApplication
 
 			style.Window.Apply(eventbox_flow);
 			style.Window.Apply(eventbox_prm);
+			style.Window.Apply(eventbox_par1);
+			style.Window.Apply(eventbox_par2);
 			style.Window.Apply(eventbox_flow_max);
 			style.Window.Apply(eventbox_prm_max);
 
@@ -51,7 +57,7 @@ namespace GtkApplication
 			binder.BindCustomAction<double>(v => 
 				{
 				flowData.AddPoint(v);
-				var max = Math.Max(v, flowData.GetMaxValue());
+				var max = Math.Max(v, flowData.MaxValue);
 				progressbar_flow.Fraction = max > 0 ? (v / max) : 0;
 
 					label_flow.Markup = CommonBindings.CreateMarkup(m_FuelFlowValue, v.ToString("0.0"));
@@ -61,12 +67,18 @@ namespace GtkApplication
 			binder.BindCustomAction<double>(v => 
 			{
 				prmData.AddPoint(v);
-				var maxPRM = Math.Max(v, prmData.GetMaxValue());
+				var maxPRM = Math.Max(v, prmData.MaxValue);
 				progressbar_prm.Fraction = maxPRM > 0 ? (v / maxPRM) : 0;
 
 				label_prm.Markup = CommonBindings.CreateMarkup(m_PRMValue, v.ToString("0"));
 				label_prm_max.Markup = CommonBindings.CreateMarkup(m_PRMMax, maxPRM.ToString("0"));
 			}, "rpm");
+
+			binder.BindCustomAction<string>(par1caption => this.par1caption = par1caption, "par1caption");
+			binder.BindCustomAction<string>(par1 => label_par1.Markup = CommonBindings.CreateMarkup(m_Par, par1caption, par1), "par1");
+
+			binder.BindCustomAction<string>(par2caption => this.par2caption = par2caption, "par2caption");
+			binder.BindCustomAction<string>(par2 => label_par2.Markup = CommonBindings.CreateMarkup(m_Par, par2caption, par2), "par2");
 
             binder.BindCustomAction<object>(o => d_chart.QueueDraw(), "refresh");
 
@@ -79,7 +91,7 @@ namespace GtkApplication
 		{
 			if (chart.PointsCount > 1)
 			{
-				double pxPerValueByY = (double)e.Area.Height / (double)chart.GetMaxValue();
+				double pxPerValueByY = (double)e.Area.Height / (double)chart.MaxValue;
 
 				var p = chart.GetPoints().GetEnumerator();
 				p.MoveNext();
@@ -91,7 +103,7 @@ namespace GtkApplication
 				{
                     p.MoveNext();
 
-					int xx = (int)((double)e.Area.Width / ((double)chart.MaxPointsCount - 1d) * i);
+					int xx = (int)((double)e.Area.Width / ((double)chart.MaxLen - 1d) * i);
                     int yy = (int)(p.Current * pxPerValueByY);
 
 					e.Window.DrawLine(gc, x, e.Area.Height - y, xx, e.Area.Height - yy);
@@ -144,7 +156,7 @@ namespace GtkApplication
 	internal class ChartData<T>
 		where T: IComparable<T>
 	{
-        private readonly int maxPointsCount;
+        private readonly int maxLen;
         private readonly Queue<T> points;
 
 
@@ -156,21 +168,27 @@ namespace GtkApplication
 			}
 		}
 
-		public int MaxPointsCount
+		public int MaxLen
 		{
 			get
 			{
-				return maxPointsCount;
+				return maxLen;
 			}
 		}
-			
+
+        public T MaxValue
+        {
+            get;
+            private set;
+        }
+
         public ChartData(int pointsCount)
         {
-            this.maxPointsCount = pointsCount;
+            this.maxLen = pointsCount;
             this.points = new Queue<T>(pointsCount);
         }
 
-		public virtual T GetMaxValue()
+		public virtual T FindCurrentMax()
         {
             if (points.Count == 0)
                 return default(T);
@@ -190,9 +208,12 @@ namespace GtkApplication
 
         public virtual void AddPoint(T point)
         {
-            if (points.Count == maxPointsCount)
+            if (points.Count == maxLen)
                 points.Dequeue();
             points.Enqueue(point);
+
+            if (MaxValue.CompareTo(point) < 0)
+                MaxValue = point;
         }
 
         public IEnumerable<T> GetPoints()
@@ -200,44 +221,5 @@ namespace GtkApplication
             return points;
         }
 	}
-
-    internal class DoubleChartData : ChartData<double>
-    {
-        private readonly TimeSpan interval;
-
-        private double maxValue;
-        private DateTime timeToAddValue;
-
-        public DoubleChartData(int pointsCount, TimeSpan interval)
-            :base(pointsCount)
-        {
-            this.interval = interval;
-        }
-
-        public override double GetMaxValue()
-        {
-            var max = base.GetMaxValue();
-
-			if (Double.IsNaN (max))
-				max = 0;
-
-			return Math.Max(max, maxValue);
-        }
-
-        public override void AddPoint(double point)
-        {
-			if (maxValue < point)
-				maxValue = point;
-
-			var now = DateTime.Now;
-
-			if (now > timeToAddValue)
-            {
-				timeToAddValue = now + interval;
-				base.AddPoint(maxValue);
-				maxValue = 0;
-            } 
-        }
-    }
 }
 

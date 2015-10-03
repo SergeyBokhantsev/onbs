@@ -36,9 +36,13 @@ namespace GtkApplication
 		
 		private global::Gtk.HBox hbox3;
 		
-		private global::Gtk.EventBox eventbox_prm1;
+		private global::Gtk.EventBox eventbox_par1;
 		
-		private global::Gtk.Label label_flow1;
+		private global::Gtk.Label label_par1;
+		
+		private global::Gtk.EventBox eventbox_par2;
+		
+		private global::Gtk.Label label_par2;
 
 		protected virtual void Build ()
 		{
@@ -168,24 +172,42 @@ namespace GtkApplication
 			this.hbox3.Name = "hbox3";
 			this.hbox3.Spacing = 6;
 			// Container child hbox3.Gtk.Box+BoxChild
-			this.eventbox_prm1 = new global::Gtk.EventBox ();
-			this.eventbox_prm1.Name = "eventbox_prm1";
-			// Container child eventbox_prm1.Gtk.Container+ContainerChild
-			this.label_flow1 = new global::Gtk.Label ();
-			this.label_flow1.Name = "label_flow1";
-			this.label_flow1.LabelProp = global::Mono.Unix.Catalog.GetString ("label3");
-			this.label_flow1.Justify = ((global::Gtk.Justification)(2));
-			this.eventbox_prm1.Add (this.label_flow1);
-			this.hbox3.Add (this.eventbox_prm1);
-			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.eventbox_prm1]));
+			this.eventbox_par1 = new global::Gtk.EventBox ();
+			this.eventbox_par1.Name = "eventbox_par1";
+			// Container child eventbox_par1.Gtk.Container+ContainerChild
+			this.label_par1 = new global::Gtk.Label ();
+			this.label_par1.Name = "label_par1";
+			this.label_par1.Xpad = 40;
+			this.label_par1.Ypad = 20;
+			this.label_par1.LabelProp = global::Mono.Unix.Catalog.GetString ("label3");
+			this.label_par1.Justify = ((global::Gtk.Justification)(2));
+			this.eventbox_par1.Add (this.label_par1);
+			this.hbox3.Add (this.eventbox_par1);
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.eventbox_par1]));
 			w16.Position = 0;
 			w16.Expand = false;
 			w16.Fill = false;
+			// Container child hbox3.Gtk.Box+BoxChild
+			this.eventbox_par2 = new global::Gtk.EventBox ();
+			this.eventbox_par2.Name = "eventbox_par2";
+			// Container child eventbox_par2.Gtk.Container+ContainerChild
+			this.label_par2 = new global::Gtk.Label ();
+			this.label_par2.Name = "label_par2";
+			this.label_par2.Xpad = 40;
+			this.label_par2.Ypad = 20;
+			this.label_par2.LabelProp = global::Mono.Unix.Catalog.GetString ("label3");
+			this.label_par2.Justify = ((global::Gtk.Justification)(2));
+			this.eventbox_par2.Add (this.label_par2);
+			this.hbox3.Add (this.eventbox_par2);
+			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.eventbox_par2]));
+			w18.Position = 1;
+			w18.Expand = false;
+			w18.Fill = false;
 			this.vbox1.Add (this.hbox3);
-			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox3]));
-			w17.Position = 1;
-			w17.Expand = false;
-			w17.Fill = false;
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox3]));
+			w19.Position = 1;
+			w19.Expand = false;
+			w19.Fill = false;
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
