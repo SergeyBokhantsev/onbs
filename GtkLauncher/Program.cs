@@ -253,10 +253,12 @@ namespace GtkLauncher
 					prmIncrementTimes = 0;
 				}
 					
-				page.SetProperty ("prm", prm);
+				page.SetProperty ("rpm", prm);
 
 				flow += 2.55;
 				page.SetProperty ("flow", r.NextDouble() * 3d);
+
+				page.SetProperty("refresh", null);
 			}), 
 				            null, 500, 500);
 			

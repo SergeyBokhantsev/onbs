@@ -11,5 +11,6 @@ namespace Interfaces
         string Error { get; }
         int? GetSpeed();
         int? GetRPM();
+        double? GetFuelFlow();
     }
 }

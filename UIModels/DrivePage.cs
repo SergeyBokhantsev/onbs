@@ -22,8 +22,6 @@ namespace UIModels
         private readonly ManualResetGuard weatherGuard = new ManualResetGuard();
         private readonly IOperationGuard geocoderGuard = new TimedGuard(new TimeSpan(0, 0, 3));
 
-        private readonly IElm327Controller elm327;
-        
 
         public DrivePage(IHostController hc)
             :base(hc, "DrivePage")
@@ -34,28 +32,8 @@ namespace UIModels
             this.geocoder = new GeocodingProvider(hc.Logger);
 
             hc.GetController<IGPSController>().GPRMCReseived += GPRMCReseived;
-
-            elm327 = hc.GetController<IElm327Controller>();
-
-            var elmThread = new Thread(RequestElm);
-            elmThread.IsBackground = true;
-            elmThread.Start();
         }
 
-        private void RequestElm()
-        {
-            while(!Disposed)
-            {
-                var rpm = elm327.GetRPM();
-                hc.Dispatcher.Invoke(rpm, null, OnRPM);
-            }
-        }
-
-        private void OnRPM(object value, EventArgs e)
-        {
-            if (!Disposed)
-                SetProperty("speed", value ?? 0);
-        }
 
         protected override void OnSecondaryTimer(object sender, EventArgs e)
         {
@@ -113,7 +91,7 @@ namespace UIModels
             if (!Disposed)
             {
                 SetProperty("gps_status", gprmc.Active);
-               // SetProperty("speed", gprmc.Active ? gprmc.Speed : 0);
+                SetProperty("speed", gprmc.Active ? gprmc.Speed : 0);
                 SetProperty("location", gprmc.Location);
 
                 if (gprmc.Active && hc.Config.IsInternetConnected)

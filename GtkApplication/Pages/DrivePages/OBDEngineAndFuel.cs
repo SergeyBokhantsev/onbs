@@ -26,8 +26,8 @@ namespace GtkApplication
 		//int wWidth;
 		//int wHeight;
 
-		private ChartData<double> prmData = new ChartData<double> (100);
-		private ChartData<double> flowData = new ChartData<double> (100);
+		private ChartData<double> prmData = new ChartData<double> (200);
+		private ChartData<double> flowData = new ChartData<double> (200);
 
 		public OBDEngineAndFuel(IPageModel model, Style style, ILogger logger)
 		{
@@ -66,9 +66,9 @@ namespace GtkApplication
 
 				label_prm.Markup = CommonBindings.CreateMarkup(m_PRMValue, v.ToString("0"));
 				label_prm_max.Markup = CommonBindings.CreateMarkup(m_PRMMax, maxPRM.ToString("0"));
+			}, "rpm");
 
-					d_chart.QueueDraw();
-			}, "prm");
+            binder.BindCustomAction<object>(o => d_chart.QueueDraw(), "refresh");
 
 			d_chart.ModifyBg(StateType.Normal, style.Window.Bg);
 

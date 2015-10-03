@@ -84,6 +84,12 @@ namespace Elm327Controller
             return GetPIDValue<double>(PID.MAF, 4, bytes => (((double)bytes[2] * 256d) + (double)bytes[3]) / 100d);
         }
 
+        public double? GetFuelFlow()
+        {
+            var maf = GetMAF();
+            return maf.HasValue ? maf.Value * 14.7 : maf;
+        }
+
         public IEnumerable<PID> GetSupportedPids()
         {
             var result = new List<PID>();
