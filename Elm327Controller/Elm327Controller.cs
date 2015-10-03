@@ -23,6 +23,7 @@ namespace Elm327Controller
             EngineLoad = 0x04,
             CoolantTemp = 0x05,
             MAF = 0x10,
+            ThrottlePosition = 0x11,
             EngineRPM = 0x0C,
             Speed = 0x0D,
         };
@@ -89,6 +90,11 @@ namespace Elm327Controller
         {
             var maf = GetMAF();
             return maf.HasValue ? maf.Value / 14.7 : maf;
+        }
+
+        public int? GetThrottlePosition()
+        {
+            return GetPIDValue<int>(PID.ThrottlePosition, 3, bytes => (int)bytes[2] * 100 / 255);
         }
 
         public IEnumerable<PID> GetSupportedPids()

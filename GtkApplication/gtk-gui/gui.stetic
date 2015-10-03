@@ -2335,10 +2335,10 @@
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
                 <child>
-                  <widget class="Gtk.EventBox" id="eventbox_flow_max">
+                  <widget class="Gtk.EventBox" id="eventbox_primary1_max">
                     <property name="MemberName" />
                     <child>
-                      <widget class="Gtk.Label" id="label_flow_max">
+                      <widget class="Gtk.Label" id="label_primary1_max">
                         <property name="MemberName" />
                         <property name="LabelProp" translatable="yes">label3</property>
                         <property name="Justify">Center</property>
@@ -2353,7 +2353,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.ProgressBar" id="progressbar_flow">
+                  <widget class="Gtk.ProgressBar" id="progressbar_primary1">
                     <property name="MemberName" />
                     <property name="WidthRequest">90</property>
                     <property name="Orientation">BottomToTop</property>
@@ -2365,10 +2365,10 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.EventBox" id="eventbox_flow">
+                  <widget class="Gtk.EventBox" id="eventbox_primary1">
                     <property name="MemberName" />
                     <child>
-                      <widget class="Gtk.Label" id="label_flow">
+                      <widget class="Gtk.Label" id="label_primary1">
                         <property name="MemberName" />
                         <property name="LabelProp" translatable="yes">label3</property>
                         <property name="Justify">Center</property>
@@ -2396,10 +2396,10 @@
                 <property name="MemberName" />
                 <property name="Spacing">6</property>
                 <child>
-                  <widget class="Gtk.EventBox" id="eventbox_prm_max">
+                  <widget class="Gtk.EventBox" id="eventbox_primary2_max">
                     <property name="MemberName" />
                     <child>
-                      <widget class="Gtk.Label" id="label_prm_max">
+                      <widget class="Gtk.Label" id="label_primary2_max">
                         <property name="MemberName" />
                         <property name="LabelProp" translatable="yes">label3</property>
                         <property name="Justify">Center</property>
@@ -2414,7 +2414,7 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.ProgressBar" id="progressbar_prm">
+                  <widget class="Gtk.ProgressBar" id="progressbar_primary2">
                     <property name="MemberName" />
                     <property name="WidthRequest">90</property>
                     <property name="Orientation">BottomToTop</property>
@@ -2426,10 +2426,10 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.EventBox" id="eventbox_prm">
+                  <widget class="Gtk.EventBox" id="eventbox_primary2">
                     <property name="MemberName" />
                     <child>
-                      <widget class="Gtk.Label" id="label_prm">
+                      <widget class="Gtk.Label" id="label_primary2">
                         <property name="MemberName" />
                         <property name="LabelProp" translatable="yes">label3</property>
                         <property name="Justify">Center</property>
@@ -2465,16 +2465,16 @@
         <child>
           <widget class="Gtk.HBox" id="hbox3">
             <property name="MemberName" />
+            <property name="Homogeneous">True</property>
             <property name="Spacing">6</property>
             <child>
-              <widget class="Gtk.EventBox" id="eventbox_par1">
+              <widget class="Gtk.EventBox" id="eventbox_secondary1">
                 <property name="MemberName" />
                 <child>
-                  <widget class="Gtk.Label" id="label_par1">
+                  <widget class="Gtk.Label" id="label_secondary1">
                     <property name="MemberName" />
                     <property name="Xpad">40</property>
                     <property name="Ypad">20</property>
-                    <property name="LabelProp" translatable="yes">label3</property>
                     <property name="Justify">Center</property>
                   </widget>
                 </child>
@@ -2487,14 +2487,13 @@
               </packing>
             </child>
             <child>
-              <widget class="Gtk.EventBox" id="eventbox_par2">
+              <widget class="Gtk.EventBox" id="eventbox_secondary2">
                 <property name="MemberName" />
                 <child>
-                  <widget class="Gtk.Label" id="label_par2">
+                  <widget class="Gtk.Label" id="label_secondary2">
                     <property name="MemberName" />
                     <property name="Xpad">40</property>
                     <property name="Ypad">20</property>
-                    <property name="LabelProp" translatable="yes">label3</property>
                     <property name="Justify">Center</property>
                   </widget>
                 </child>
@@ -2507,7 +2506,23 @@
               </packing>
             </child>
             <child>
-              <placeholder />
+              <widget class="Gtk.EventBox" id="eventbox_secondary3">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Label" id="label_secondary3">
+                    <property name="MemberName" />
+                    <property name="Xpad">40</property>
+                    <property name="Ypad">20</property>
+                    <property name="Justify">Center</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
             </child>
           </widget>
           <packing>

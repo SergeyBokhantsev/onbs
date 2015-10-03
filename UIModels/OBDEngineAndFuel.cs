@@ -16,6 +16,7 @@ namespace UIModels
         private double? fuelFlow;
         private int? coolantTemp;
         private int? engineLoad;
+        private int? throttlePosition;
 
         public OBDEngineAndFuel(IHostController hc)
             :base(hc, typeof(OBDEngineAndFuel).Name)
@@ -25,6 +26,14 @@ namespace UIModels
             var elmThread = new Thread(RequestElm);
             elmThread.IsBackground = true;
             elmThread.Start();
+
+            SetProperty("secondary1prefix", "t:");
+            SetProperty("secondary2prefix", "load:");
+            SetProperty("secondary3prefix", "thr:");
+
+            SetProperty("secondary1suffix", "°C");
+            SetProperty("secondary2suffix", "%");
+            SetProperty("secondary3suffix", "%");
         }
 
         private void RequestElm()
@@ -39,10 +48,11 @@ namespace UIModels
                 fuelFlow = elm327.GetFuelFlow();
                 hc.Dispatcher.Invoke(this, null, UpdatePrimaryValues);
 
-                if (counter == 10)
+                if (counter == 6)
                 {
                     coolantTemp = elm327.GetCoolantTemp();
                     engineLoad = elm327.GetEngineLoad();
+                    throttlePosition = elm327.GetThrottlePosition();
                     hc.Dispatcher.Invoke(this, null, UpdateSecondaryValues);
                     counter = 0;
                 }
@@ -57,8 +67,8 @@ namespace UIModels
         {
             if (!Disposed)
             {
-                SetProperty("rpm", rpm.HasValue ? (double)rpm.Value : 0d);
-                SetProperty("flow", fuelFlow.HasValue ? fuelFlow.Value : 0d);
+                SetProperty("primary2", rpm.HasValue ? (double)rpm.Value : 0d);
+                SetProperty("primary1", fuelFlow.HasValue ? fuelFlow.Value : 0d);
                 SetProperty("refresh", null);
             }
         }
@@ -67,8 +77,9 @@ namespace UIModels
         {
             if (!Disposed)
             {
-                SetProperty("par1", coolantTemp.HasValue ? string.Concat(coolantTemp.Value, "°C") : "--");
-                SetProperty("par2", coolantTemp.HasValue ? string.Concat(engineLoad.Value, "%") : "--");
+                SetProperty("secondary1", coolantTemp.HasValue ? (double)coolantTemp.Value : 0d);
+                SetProperty("secondary2", engineLoad.HasValue ? (double)engineLoad.Value : 0d);
+                SetProperty("secondary3", throttlePosition.HasValue ? (double)throttlePosition.Value : 0d);
                 SetProperty("refresh", null);
             }
         }

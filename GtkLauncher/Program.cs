@@ -241,8 +241,13 @@ namespace GtkLauncher
 			var prmIncrement = 25;
 			var prmIncrementTimes = 0;
 
-			page.SetProperty("par1caption", "coolant t:");
-			page.SetProperty("par2caption", "eng. load:");
+			page.SetProperty("secondary1prefix", "t:");
+			page.SetProperty("secondary2prefix", "load:");
+			page.SetProperty("secondary3prefix", "thr:");
+
+			page.SetProperty("secondary1suffix", "°C");
+			page.SetProperty("secondary2suffix", "%");
+			page.SetProperty("secondary3suffix", "%");
 
 			var timer = new Timer (new TimerCallback (o => {
 				page.SetProperty ("time", DateTime.Now);
@@ -256,15 +261,16 @@ namespace GtkLauncher
 					prmIncrementTimes = 0;
 				}
 					
-				page.SetProperty ("rpm", prm);
+				page.SetProperty ("primary2", prm);
 
 				flow += 2.55;
-				page.SetProperty ("flow", r.NextDouble() / 1000d);
+				page.SetProperty ("primary1", r.NextDouble() / 1000d);
 
 				page.SetProperty("refresh", null);
 
-				page.SetProperty("par1", r.NextDouble().ToString("0.0 °C"));
-				page.SetProperty("par2", r.NextDouble().ToString("0.0") + "%");
+				page.SetProperty("secondary1", r.NextDouble());
+				page.SetProperty("secondary2", r.NextDouble());
+				page.SetProperty("secondary3", r.NextDouble());
 			}), 
 				            null, 500, 500);
 			

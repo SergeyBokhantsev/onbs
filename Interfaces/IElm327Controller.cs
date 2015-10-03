@@ -14,5 +14,6 @@ namespace Interfaces
         double? GetFuelFlow();
         int? GetCoolantTemp();
         int? GetEngineLoad();
+        int? GetThrottlePosition();
     }
 }

@@ -13,25 +13,30 @@ namespace GtkApplication
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class OBDEngineAndFuel : Gtk.Bin
 	{
-		private const string m_FuelFlowValue = "<span foreground='#30AACC' size='25000'>{0}</span>";
-		private const string m_FuelFlowMax = "<span foreground='#cccccc' size='20000'>{0}</span>";
-		private const string m_PRMValue = "<span foreground='#CCCC38' size='25000'>{0}</span>";
-		private const string m_PRMMax = "<span foreground='#cccccc' size='20000'>{0}</span>";
-		private const string m_Par = "<span foreground='#cccccc' size='20000'>{0} </span><span foreground='#cccccc' size='40000'>{1}</span>";
+		private const string m_Primary1Value = "<span foreground='#30AACC' size='25000'>{0}</span>";
+		private const string m_Primary1Max = "<span foreground='#cccccc' size='20000'>{0}</span>";
+		private const string m_Primary2Value = "<span foreground='#CCCC38' size='25000'>{0}</span>";
+		private const string m_Primary2Max = "<span foreground='#cccccc' size='20000'>{0}</span>";
+		private const string m_Par = "<span foreground='#cccccc' size='20000'>{0} </span><span foreground='#cccccc' size='40000'>{1}</span><span foreground='#cccccc' size='20000'> {2}</span>";
 
-		private Gdk.GC prmGC;
-		private Gdk.GC flowGC;
+		private Gdk.GC primary1GC;
+		private Gdk.GC primary2GC;
 
 		//Pixbuf mapContents = new Pixbuf (@"C:\Users\Mau\Desktop\Car.png");
 
 		//int wWidth;
 		//int wHeight;
 
-		private ChartData<double> prmData = new ChartData<double> (200);
-		private ChartData<double> flowData = new ChartData<double> (200);
+		private ChartData<double> primary1Data = new ChartData<double> (200);
+		private ChartData<double> primary2Data = new ChartData<double> (200);
 
-		private string par1caption;
-		private string par2caption;
+		private string par1prefix;
+		private string par2prefix;
+		private string par3prefix;
+
+		private string par1suffix;
+		private string par2suffix;
+		private string par3suffix;
 
 		public OBDEngineAndFuel(IPageModel model, Style style, ILogger logger)
 		{
@@ -42,43 +47,50 @@ namespace GtkApplication
 
 			d_chart.ExposeEvent += ChartExposeEvent;
 
-			style.Window.Apply(eventbox_flow);
-			style.Window.Apply(eventbox_prm);
-			style.Window.Apply(eventbox_par1);
-			style.Window.Apply(eventbox_par2);
-			style.Window.Apply(eventbox_flow_max);
-			style.Window.Apply(eventbox_prm_max);
+			style.Window.Apply(eventbox_primary1);
+			style.Window.Apply(eventbox_primary2);
+			style.Window.Apply(eventbox_secondary1);
+			style.Window.Apply(eventbox_secondary2);
+			style.Window.Apply(eventbox_secondary3);
+			style.Window.Apply(eventbox_primary1_max);
+			style.Window.Apply(eventbox_primary2_max);
 
 			var binder = new ModelBinder (model, logger);
 
-			progressbar_prm.ModifyFg(StateType.Prelight, new Color(80,80,0));
-			progressbar_prm.ModifyBg(StateType.Prelight, new Color(80,80,0));
+			progressbar_primary2.ModifyFg(StateType.Prelight, new Color(80,80,0));
+			progressbar_primary2.ModifyBg(StateType.Prelight, new Color(80,80,0));
 
 			binder.BindCustomAction<double>(v => 
 				{
-				flowData.AddPoint(v);
-				var max = Math.Max(v, flowData.MaxValue);
-				progressbar_flow.Fraction = max > 0 ? (v / max) : 0;
+				primary1Data.AddPoint(v);
+				var max = Math.Max(v, primary1Data.MaxValue);
+				progressbar_primary1.Fraction = max > 0 ? (v / max) : 0;
 
-					label_flow.Markup = CommonBindings.CreateMarkup(m_FuelFlowValue, v.ToString("0.0"));
-				label_flow_max.Markup = CommonBindings.CreateMarkup(m_FuelFlowMax, max.ToString("0.0"));
-				}, "flow");
+					label_primary1.Markup = CommonBindings.CreateMarkup(m_Primary1Value, v.ToString("0.###"));
+				label_primary1_max.Markup = CommonBindings.CreateMarkup(m_Primary1Max, max.ToString("0.###"));
+				}, "primary1");
 
 			binder.BindCustomAction<double>(v => 
 			{
-				prmData.AddPoint(v);
-				var maxPRM = Math.Max(v, prmData.MaxValue);
-				progressbar_prm.Fraction = maxPRM > 0 ? (v / maxPRM) : 0;
+				primary2Data.AddPoint(v);
+				var max = Math.Max(v, primary2Data.MaxValue);
+				progressbar_primary2.Fraction = max > 0 ? (v / max) : 0;
 
-				label_prm.Markup = CommonBindings.CreateMarkup(m_PRMValue, v.ToString("0"));
-				label_prm_max.Markup = CommonBindings.CreateMarkup(m_PRMMax, maxPRM.ToString("0"));
-			}, "rpm");
+				label_primary2.Markup = CommonBindings.CreateMarkup(m_Primary2Value, v.ToString("0.###"));
+				label_primary2_max.Markup = CommonBindings.CreateMarkup(m_Primary2Max, max.ToString("0.###"));
+			}, "primary2");
 
-			binder.BindCustomAction<string>(par1caption => this.par1caption = par1caption, "par1caption");
-			binder.BindCustomAction<string>(par1 => label_par1.Markup = CommonBindings.CreateMarkup(m_Par, par1caption, par1), "par1");
+			binder.BindCustomAction<string>(prefix => par1prefix = prefix, "secondary1prefix");
+			binder.BindCustomAction<string>(suffix => par1suffix = suffix, "secondary1suffix");
+			binder.BindCustomAction<double>(par1 => label_secondary1.Markup = CommonBindings.CreateMarkup(m_Par, par1prefix, par1.ToString("0.###"), par1suffix), "secondary1");
 
-			binder.BindCustomAction<string>(par2caption => this.par2caption = par2caption, "par2caption");
-			binder.BindCustomAction<string>(par2 => label_par2.Markup = CommonBindings.CreateMarkup(m_Par, par2caption, par2), "par2");
+			binder.BindCustomAction<string>(prefix => par2prefix = prefix, "secondary2prefix");
+			binder.BindCustomAction<string>(suffix => par2suffix = suffix, "secondary2suffix");
+			binder.BindCustomAction<double>(par2 => label_secondary2.Markup = CommonBindings.CreateMarkup(m_Par, par2prefix, par2.ToString("0.###"), par2suffix), "secondary2");
+
+			binder.BindCustomAction<string>(prefix => par3prefix = prefix, "secondary3prefix");
+			binder.BindCustomAction<string>(suffix => par3suffix = suffix, "secondary3suffix");
+			binder.BindCustomAction<double>(par3 => label_secondary3.Markup = CommonBindings.CreateMarkup(m_Par, par3prefix, par3.ToString("0.###"), par3suffix), "secondary3");
 
             binder.BindCustomAction<object>(o => d_chart.QueueDraw(), "refresh");
 
@@ -116,23 +128,23 @@ namespace GtkApplication
 
 		void ChartExposeEvent (object o, Gtk.ExposeEventArgs _args)
 		{
-			if (prmGC == null)
+			if (primary1GC == null)
 			{
-				prmGC = new Gdk.GC(_args.Event.Window);
-				prmGC.RgbFgColor = new Color (220, 190, 55);
-				prmGC.SetLineAttributes(6, LineStyle.Solid, CapStyle.Butt, JoinStyle.Bevel);
+				primary1GC = new Gdk.GC(_args.Event.Window);
+				primary1GC.RgbFgColor = new Color (220, 190, 55);
+				primary1GC.SetLineAttributes(4, LineStyle.Solid, CapStyle.Butt, JoinStyle.Bevel);
 			}
 
-			DrawChart(prmData, _args.Event, prmGC);
+			DrawChart(primary1Data, _args.Event, primary1GC);
 
-			if (flowGC == null)
+			if (primary2GC == null)
 			{
-				flowGC = new Gdk.GC(_args.Event.Window);
-				flowGC.RgbFgColor = new Color (120, 80, 255);
-				flowGC.SetLineAttributes(2, LineStyle.Solid, CapStyle.Butt, JoinStyle.Bevel);
+				primary2GC = new Gdk.GC(_args.Event.Window);
+				primary2GC.RgbFgColor = new Color (120, 80, 255);
+				primary2GC.SetLineAttributes(4, LineStyle.Solid, CapStyle.Butt, JoinStyle.Bevel);
 			}
 
-			DrawChart(flowData, _args.Event, flowGC);
+			DrawChart(primary2Data, _args.Event, primary2GC);
 
 			//_args.Event.Window.DrawLine(Style.BlackGC, 0, 0, 100, 100);
 
