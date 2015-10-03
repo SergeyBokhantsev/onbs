@@ -26,8 +26,8 @@ namespace GtkApplication
 		//int wWidth;
 		//int wHeight;
 
-		private ChartData<double> prmData = new ChartData<double> (200);
-		private ChartData<double> flowData = new ChartData<double> (200);
+		private ChartData<double> prmData = new ChartData<double> (100);
+		private ChartData<double> flowData = new ChartData<double> (100);
 
 		public OBDEngineAndFuel(IPageModel model, Style style, ILogger logger)
 		{
@@ -70,7 +70,7 @@ namespace GtkApplication
 					d_chart.QueueDraw();
 			}, "prm");
 
-			d_chart.ModifyBg(StateType.Normal, new Color (0, 0, 0));
+			d_chart.ModifyBg(StateType.Normal, style.Window.Bg);
 
             binder.UpdateBindings();
 		}
