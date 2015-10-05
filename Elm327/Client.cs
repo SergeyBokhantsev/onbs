@@ -56,45 +56,56 @@ namespace Elm327
 
         private string[] Send(string command)
         {
-            logger.LogIfDebug(this, string.Concat("Sending to ELM: ", command));
-
-            port.Write(string.Concat(command, "\r\n"));
-
-            int count = 0;
-            int readTimeout = 15000;
-            int waitInterval = 30;
-            int waiting = 0;
-
-            Thread.Sleep(50);
-
-            while (waiting < readTimeout)
+            try
             {
-                if (port.BytesToRead > 0)
+                if (disposed)
+                    return new string[0];
+
+                logger.LogIfDebug(this, string.Concat("Sending to ELM: ", command));
+
+                port.Write(string.Concat(command, "\r\n"));
+
+                int count = 0;
+                int readTimeout = 15000;
+                int waitInterval = 30;
+                int waiting = 0;
+
+                Thread.Sleep(50);
+
+                while (waiting < readTimeout && !disposed)
                 {
-                    waiting = 0;
+                    if (port.BytesToRead > 0)
+                    {
+                        waiting = 0;
 
-                    count += port.Read(inBuffer, count, inBuffer.Length - count);
+                        count += port.Read(inBuffer, count, inBuffer.Length - count);
 
-                    if (inBuffer[count-1] == '>' || count == inBuffer.Length)
-                        break;
+                        if (inBuffer[count - 1] == '>' || count == inBuffer.Length)
+                            break;
+                    }
+                    else
+                    {
+                        Thread.Sleep(waitInterval);
+                        waiting += waitInterval;
+                    }
+                }
+
+                if (count > 0)
+                {
+                    var str = Encoding.Default.GetString(inBuffer, 0, count);
+                    logger.LogIfDebug(this, string.Concat("Received from ELM: ", str));
+                    var ret = str.Split(new string[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                    return ret;
                 }
                 else
                 {
-                    Thread.Sleep(waitInterval);
-                    waiting += waitInterval;
+                    logger.LogIfDebug(this, "Received from ELM: Nothing");
+                    return new string[0];
                 }
             }
-
-            if (count > 0)
+            catch(Exception ex)
             {
-                var str = Encoding.Default.GetString(inBuffer, 0, count);
-                logger.LogIfDebug(this, string.Concat("Received from ELM: ", str));
-                var ret = str.Split(new string[] { "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-                return ret;
-            }
-            else
-            {
-                logger.LogIfDebug(this, "Received from ELM: Nothing");
+                logger.Log(this, ex);
                 return new string[0];
             }
         }
