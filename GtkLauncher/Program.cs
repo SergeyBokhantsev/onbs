@@ -266,6 +266,8 @@ namespace GtkLauncher
 				flow += 2.55;
 				page.SetProperty ("primary1", r.NextDouble() / 1000d);
 
+				page.SetProperty ("primary3", r.NextDouble() + flow);
+
 				page.SetProperty("refresh", null);
 
 				page.SetProperty("secondary1", r.NextDouble());

@@ -13,7 +13,7 @@ namespace UIModels
         private readonly IElm327Controller elm327;
 
         private int? rpm;
-        private double? fuelFlow;
+        private int? speed;
         private int? coolantTemp;
         private int? engineLoad;
         private int? throttlePosition;
@@ -28,12 +28,12 @@ namespace UIModels
             elmThread.Start();
 
             SetProperty("secondary1prefix", "t:");
-            SetProperty("secondary2prefix", "load:");
-            SetProperty("secondary3prefix", "thr:");
+            //SetProperty("secondary2prefix", "load:");
+            SetProperty("secondary2prefix", "thr:");
 
             SetProperty("secondary1suffix", "°C");
+           // SetProperty("secondary2suffix", "%");
             SetProperty("secondary2suffix", "%");
-            SetProperty("secondary3suffix", "%");
         }
 
         private void RequestElm()
@@ -45,20 +45,17 @@ namespace UIModels
                 counter++;
 
                 rpm = elm327.GetRPM();
-                fuelFlow = elm327.GetFuelFlow();
+                speed = elm327.GetSpeed();
+                engineLoad = elm327.GetEngineLoad();
+
                 hc.Dispatcher.Invoke(this, null, UpdatePrimaryValues);
 
-                if (counter == 6)
+                if (counter == 10)
                 {
                     coolantTemp = elm327.GetCoolantTemp();
-                    engineLoad = elm327.GetEngineLoad();
                     throttlePosition = elm327.GetThrottlePosition();
                     hc.Dispatcher.Invoke(this, null, UpdateSecondaryValues);
                     counter = 0;
-                }
-                else
-                {
-                    Thread.Sleep(200);
                 }
             }
         }
@@ -68,7 +65,8 @@ namespace UIModels
             if (!Disposed)
             {
                 SetProperty("primary2", rpm.HasValue ? (double)rpm.Value : 0d);
-                SetProperty("primary1", fuelFlow.HasValue ? fuelFlow.Value : 0d);
+                SetProperty("primary1", engineLoad.HasValue ? (double)engineLoad.Value : 0d);
+                SetProperty("primary3", speed.HasValue ? (double)speed.Value : 0d);
                 SetProperty("refresh", null);
             }
         }
@@ -78,8 +76,8 @@ namespace UIModels
             if (!Disposed)
             {
                 SetProperty("secondary1", coolantTemp.HasValue ? (double)coolantTemp.Value : 0d);
-                SetProperty("secondary2", engineLoad.HasValue ? (double)engineLoad.Value : 0d);
-                SetProperty("secondary3", throttlePosition.HasValue ? (double)throttlePosition.Value : 0d);
+                //SetProperty("secondary2", engineLoad.HasValue ? (double)engineLoad.Value : 0d);
+                SetProperty("secondary2", throttlePosition.HasValue ? (double)throttlePosition.Value : 0d);
                 SetProperty("refresh", null);
             }
         }

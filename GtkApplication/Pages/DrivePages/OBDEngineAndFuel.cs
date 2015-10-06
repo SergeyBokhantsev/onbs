@@ -19,8 +19,10 @@ namespace GtkApplication
 		private const string m_Primary2Max = "<span foreground='#cccccc' size='20000'>{0}</span>";
 		private const string m_Par = "<span foreground='#cccccc' size='20000'>{0} </span><span foreground='#cccccc' size='40000'>{1}</span><span foreground='#cccccc' size='20000'> {2}</span>";
 
+		private Gdk.GC chartGC;
 		private Gdk.GC primary1GC;
 		private Gdk.GC primary2GC;
+		private Gdk.GC primary3GC;
 
 		//Pixbuf mapContents = new Pixbuf (@"C:\Users\Mau\Desktop\Car.png");
 
@@ -29,6 +31,7 @@ namespace GtkApplication
 
 		private ChartData<double> primary1Data = new ChartData<double> (200);
 		private ChartData<double> primary2Data = new ChartData<double> (200);
+		private ChartData<double> primary3Data = new ChartData<double> (200);
 
 		private string par1prefix;
 		private string par2prefix;
@@ -80,6 +83,11 @@ namespace GtkApplication
 				label_primary2_max.Markup = CommonBindings.CreateMarkup(m_Primary2Max, max.ToString("0.###"));
 			}, "primary2");
 
+			binder.BindCustomAction<double>(v => 
+			{
+				primary3Data.AddPoint(v);
+			}, "primary3");
+
 			binder.BindCustomAction<string>(prefix => par1prefix = prefix, "secondary1prefix");
 			binder.BindCustomAction<string>(suffix => par1suffix = suffix, "secondary1suffix");
 			binder.BindCustomAction<double>(par1 => label_secondary1.Markup = CommonBindings.CreateMarkup(m_Par, par1prefix, par1.ToString("0.###"), par1suffix), "secondary1");
@@ -126,8 +134,31 @@ namespace GtkApplication
 			}
 		}
 
+		private void DrawChartTable(Gdk.EventExpose e, Gdk.GC gc)
+		{
+			int vertBarsCount = 5;
+			int vertBarHeight = e.Area.Height / vertBarsCount;
+
+			for (int i = 0; i < vertBarsCount; ++i)
+			{
+				int y = vertBarHeight * i;
+				e.Window.DrawLine(gc, 0, y, e.Area.Width, y);
+			}
+
+			e.Window.DrawLine(gc, 0, e.Area.Height - 1, e.Area.Width, e.Area.Height - 1);
+		}
+
 		void ChartExposeEvent (object o, Gtk.ExposeEventArgs _args)
 		{
+			if (chartGC == null)
+			{
+				chartGC = new Gdk.GC(_args.Event.Window);
+				chartGC.RgbFgColor = new Color (120, 120, 155);
+				chartGC.SetLineAttributes(1, LineStyle.OnOffDash, CapStyle.Butt, JoinStyle.Bevel);
+			}
+
+
+
 			if (primary1GC == null)
 			{
 				primary1GC = new Gdk.GC(_args.Event.Window);
@@ -145,6 +176,17 @@ namespace GtkApplication
 			}
 
 			DrawChart(primary2Data, _args.Event, primary2GC);
+
+			if (primary3GC == null)
+			{
+				primary3GC = new Gdk.GC(_args.Event.Window);
+				primary3GC.RgbFgColor = new Color (255, 30, 30);
+				primary3GC.SetLineAttributes(4, LineStyle.Solid, CapStyle.Butt, JoinStyle.Bevel);
+			}
+
+			DrawChart(primary3Data, _args.Event, primary3GC);
+
+			DrawChartTable(_args.Event, chartGC);
 
 			//_args.Event.Window.DrawLine(Style.BlackGC, 0, 0, 100, 100);
 
