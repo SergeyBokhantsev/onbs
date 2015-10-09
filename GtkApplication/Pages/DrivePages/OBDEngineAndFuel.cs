@@ -24,29 +24,27 @@ namespace GtkApplication
 		private Gdk.GC primary2GC;
 		private Gdk.GC primary3GC;
 
-		//Pixbuf mapContents = new Pixbuf (@"C:\Users\Mau\Desktop\Car.png");
+        private IChart<double> primary1;
+        private IChart<double> primary2;
+        private IChart<double> primary3;
 
-		//int wWidth;
-		//int wHeight;
+        private IChart<double> secondary1;
+        private IChart<double> secondary2;
+        private IChart<double> secondary3;
 
-		private ChartData<double> primary1Data = new ChartData<double> (200);
-		private ChartData<double> primary2Data = new ChartData<double> (200);
-		private ChartData<double> primary3Data = new ChartData<double> (200);
-
-		private string par1prefix;
-		private string par2prefix;
-		private string par3prefix;
-
-		private string par1suffix;
-		private string par2suffix;
-		private string par3suffix;
+        private const int chartDrawPointsCount = 100;
 
 		public OBDEngineAndFuel(IPageModel model, Style style, ILogger logger)
 		{
 			this.Build();
-		
-			//wWidth = mapContents.Width; wHeight = mapContents.Height;
-			//d_chart.SetSizeRequest (wWidth, wHeight);
+
+            primary1 = model.GetProperty<IChart<double>>("primary1");
+            primary2 = model.GetProperty<IChart<double>>("primary2");
+            primary3 = model.GetProperty<IChart<double>>("primary3");
+
+            secondary1 = model.GetProperty<IChart<double>>("secondary1");
+            secondary2 = model.GetProperty<IChart<double>>("secondary2");
+            secondary3 = model.GetProperty<IChart<double>>("secondary3");
 
 			d_chart.ExposeEvent += ChartExposeEvent;
 
@@ -63,74 +61,58 @@ namespace GtkApplication
 			progressbar_primary2.ModifyFg(StateType.Prelight, new Color(80,80,0));
 			progressbar_primary2.ModifyBg(StateType.Prelight, new Color(80,80,0));
 
-			binder.BindCustomAction<double>(v => 
-				{
-				primary1Data.AddPoint(v);
-				var max = Math.Max(v, primary1Data.MaxValue);
-				progressbar_primary1.Fraction = max > 0 ? (v / max) : 0;
-
-					label_primary1.Markup = CommonBindings.CreateMarkup(m_Primary1Value, v.ToString("0.###"));
-				label_primary1_max.Markup = CommonBindings.CreateMarkup(m_Primary1Max, max.ToString("0.###"));
-				}, "primary1");
-
-			binder.BindCustomAction<double>(v => 
-			{
-				primary2Data.AddPoint(v);
-				var max = Math.Max(v, primary2Data.MaxValue);
-				progressbar_primary2.Fraction = max > 0 ? (v / max) : 0;
-
-				label_primary2.Markup = CommonBindings.CreateMarkup(m_Primary2Value, v.ToString("0.###"));
-				label_primary2_max.Markup = CommonBindings.CreateMarkup(m_Primary2Max, max.ToString("0.###"));
-			}, "primary2");
-
-			binder.BindCustomAction<double>(v => 
-			{
-				primary3Data.AddPoint(v);
-			}, "primary3");
-
-			binder.BindCustomAction<string>(prefix => par1prefix = prefix, "secondary1prefix");
-			binder.BindCustomAction<string>(suffix => par1suffix = suffix, "secondary1suffix");
-			binder.BindCustomAction<double>(par1 => label_secondary1.Markup = CommonBindings.CreateMarkup(m_Par, par1prefix, par1.ToString("0.###"), par1suffix), "secondary1");
-
-			binder.BindCustomAction<string>(prefix => par2prefix = prefix, "secondary2prefix");
-			binder.BindCustomAction<string>(suffix => par2suffix = suffix, "secondary2suffix");
-			binder.BindCustomAction<double>(par2 => label_secondary2.Markup = CommonBindings.CreateMarkup(m_Par, par2prefix, par2.ToString("0.###"), par2suffix), "secondary2");
-
-			binder.BindCustomAction<string>(prefix => par3prefix = prefix, "secondary3prefix");
-			binder.BindCustomAction<string>(suffix => par3suffix = suffix, "secondary3suffix");
-			binder.BindCustomAction<double>(par3 => label_secondary3.Markup = CommonBindings.CreateMarkup(m_Par, par3prefix, par3.ToString("0.###"), par3suffix), "secondary3");
-
-            binder.BindCustomAction<object>(o => d_chart.QueueDraw(), "refresh");
+            binder.BindCustomAction<object>(Refresh, "refresh");
 
 			d_chart.ModifyBg(StateType.Normal, style.Window.Bg);
 
             binder.UpdateBindings();
 		}
 
-		private void DrawChart(ChartData<double> chart, Gdk.EventExpose e, Gdk.GC gc)
+        private void Refresh(object arg)
+        {
+            progressbar_primary1.Fraction = primary1.Max > 0 ? (primary1.Last / primary1.Max) : 0;
+            progressbar_primary2.Fraction = primary2.Max > 0 ? (primary2.Last / primary2.Max) : 0;
+
+            label_primary1.Markup = CommonBindings.CreateMarkup(m_Primary1Value, primary1.Last.ToString("0.##"));
+            label_primary1_max.Markup = CommonBindings.CreateMarkup(m_Primary1Max, primary1.Max.ToString("0.##"));
+
+            label_primary2.Markup = CommonBindings.CreateMarkup(m_Primary2Value, primary2.Last.ToString("0.##"));
+            label_primary2_max.Markup = CommonBindings.CreateMarkup(m_Primary2Max, primary2.Max.ToString("0.##"));
+
+            d_chart.QueueDraw();
+
+            UpdateSecondary(label_secondary1, secondary1);
+            UpdateSecondary(label_secondary2, secondary2);
+            UpdateSecondary(label_secondary3, secondary3);
+        }
+
+        private void UpdateSecondary(Label label, IChart<double> chart)
+        {
+            label.Markup = CommonBindings.CreateMarkup(m_Par, chart.Title, chart.Last.ToString("0.##"), chart.UnitText);
+        }
+
+		private void DrawChart(IChart<double> chart, Gdk.EventExpose e, Gdk.GC gc)
 		{
-			if (chart.PointsCount > 1)
+			if (chart.Count > 1)
 			{
-				double pxPerValueByY = (double)e.Area.Height / (double)chart.MaxValue;
+				double pxPerValueByY = (double)e.Area.Height / chart.Scale;
 
-				var p = chart.GetPoints().GetEnumerator();
-				p.MoveNext();
+                int x = 0;
+                int y = 0;
+                int count = 0;
 
-				int x = 0;
-                int y = (int)(p.Current * pxPerValueByY);
+                Action<double> visitor = p =>
+                {
+                    int xx = (int)((double)e.Area.Width / ((double)chartDrawPointsCount - 1d) * count);
+                    int yy = (int)(p * pxPerValueByY);
 
-				for (int i =0; i < chart.PointsCount -1; ++i)
-				{
-                    p.MoveNext();
-
-					int xx = (int)((double)e.Area.Width / ((double)chart.MaxLen - 1d) * i);
-                    int yy = (int)(p.Current * pxPerValueByY);
-
-					e.Window.DrawLine(gc, x, e.Area.Height - y, xx, e.Area.Height - yy);
+                    if (count > 0)
+                        e.Window.DrawLine(gc, x, e.Area.Height - y, xx, e.Area.Height - yy);
 
                     x = xx;
                     y = yy;
-				}
+                    count++;
+                };
 			}
 		}
 
@@ -157,16 +139,12 @@ namespace GtkApplication
 				chartGC.SetLineAttributes(1, LineStyle.OnOffDash, CapStyle.Butt, JoinStyle.Bevel);
 			}
 
-
-
 			if (primary1GC == null)
 			{
 				primary1GC = new Gdk.GC(_args.Event.Window);
 				primary1GC.RgbFgColor = new Color (220, 190, 55);
 				primary1GC.SetLineAttributes(4, LineStyle.Solid, CapStyle.Butt, JoinStyle.Bevel);
 			}
-
-			DrawChart(primary1Data, _args.Event, primary1GC);
 
 			if (primary2GC == null)
 			{
@@ -175,8 +153,6 @@ namespace GtkApplication
 				primary2GC.SetLineAttributes(4, LineStyle.Solid, CapStyle.Butt, JoinStyle.Bevel);
 			}
 
-			DrawChart(primary2Data, _args.Event, primary2GC);
-
 			if (primary3GC == null)
 			{
 				primary3GC = new Gdk.GC(_args.Event.Window);
@@ -184,96 +160,15 @@ namespace GtkApplication
 				primary3GC.SetLineAttributes(4, LineStyle.Solid, CapStyle.Butt, JoinStyle.Bevel);
 			}
 
-			DrawChart(primary3Data, _args.Event, primary3GC);
+            DrawChart(primary1, _args.Event, primary1GC);
+            DrawChart(primary2, _args.Event, primary2GC);
+			DrawChart(primary3, _args.Event, primary3GC);
 
 			DrawChartTable(_args.Event, chartGC);
-
-			//_args.Event.Window.DrawLine(Style.BlackGC, 0, 0, 100, 100);
-
-            //var s = new Gtk.Style();
-            
-			//Widget widget = (Widget) o;
-
-			//Gdk.Rectangle area = _args.Event.Area;
-//			widget.GdkWindow.DrawPixbuf(widget.Style.BlackGC,
-//				mapContents,
-//				area.X, area.Y,
-//				area.X, area.Y,
-//				wWidth, wHeight,
-//				RgbDither.Normal,
-//				area.X, area.Y);
 
 			_args.RetVal = true;
 		}
 	}
 
-	internal class ChartData<T>
-		where T: IComparable<T>
-	{
-        private readonly int maxLen;
-        private readonly Queue<T> points;
-
-
-		public int PointsCount
-		{
-			get
-			{
-				return points.Count;
-			}
-		}
-
-		public int MaxLen
-		{
-			get
-			{
-				return maxLen;
-			}
-		}
-
-        public T MaxValue
-        {
-            get;
-            private set;
-        }
-
-        public ChartData(int pointsCount)
-        {
-            this.maxLen = pointsCount;
-            this.points = new Queue<T>(pointsCount);
-        }
-
-		public virtual T FindCurrentMax()
-        {
-            if (points.Count == 0)
-                return default(T);
-            else
-            {
-                var max = points.Peek();
-
-                foreach (var p in points)
-                {
-                    if (p.CompareTo(max) > 0)
-                        max = p;
-                }
-
-                return max;
-            }
-        }
-
-        public virtual void AddPoint(T point)
-        {
-            if (points.Count == maxLen)
-                points.Dequeue();
-            points.Enqueue(point);
-
-            if (MaxValue.CompareTo(point) < 0)
-                MaxValue = point;
-        }
-
-        public IEnumerable<T> GetPoints()
-        {
-            return points;
-        }
-	}
 }
 

@@ -12,11 +12,11 @@ namespace UIModels
     {
         private readonly IElm327Controller elm327;
 
-        private int? rpm;
-        private int? speed;
-        private int? coolantTemp;
-        private int? engineLoad;
-        private int? throttlePosition;
+        ChartOfDouble rpm = new ChartOfDouble { Title = "RPM", Scale = 5000 };
+        ChartOfDouble load = new ChartOfDouble { Title = "Load", UnitText = "%", Scale = 100 };
+        ChartOfDouble speed = new ChartOfDouble { Title = "Speed", UnitText = "km/h", Scale = 100 };
+        ChartOfDouble coolant = new ChartOfDouble { Title = "C-temp", UnitText = "°", Scale = 100 };
+        ChartOfDouble throttle = new ChartOfDouble { Title = "Thr.", UnitText = "%", Scale = 100 };
 
         public OBDEngineAndFuel(IHostController hc)
             :base(hc, typeof(OBDEngineAndFuel).Name)
@@ -27,57 +27,39 @@ namespace UIModels
             elmThread.IsBackground = true;
             elmThread.Start();
 
-            SetProperty("secondary1prefix", "t:");
-            //SetProperty("secondary2prefix", "load:");
-            SetProperty("secondary2prefix", "thr:");
-
-            SetProperty("secondary1suffix", "°C");
-           // SetProperty("secondary2suffix", "%");
-            SetProperty("secondary2suffix", "%");
+            SetProperty("primary1", rpm);
+            SetProperty("primary2", load);
+            SetProperty("primary3", speed);
+            SetProperty("secondary1", coolant);
+            SetProperty("secondary2", throttle);
         }
 
         private void RequestElm()
         {
-            int counter = 0;
+            int secondaryDivider = 9;
+            int secondaryCounter = secondaryDivider;
 
             while (!Disposed)
             {
-                counter++;
+                rpm.Add(elm327.GetRPM());
+                speed.Add(elm327.GetSpeed());
+                load.Add(elm327.GetEngineLoad());
 
-                rpm = elm327.GetRPM();
-                speed = elm327.GetSpeed();
-                engineLoad = elm327.GetEngineLoad();
-
-                hc.Dispatcher.Invoke(this, null, UpdatePrimaryValues);
-
-                if (counter == 10)
+                if (secondaryCounter == secondaryDivider)
                 {
-                    coolantTemp = elm327.GetCoolantTemp();
-                    throttlePosition = elm327.GetThrottlePosition();
-                    hc.Dispatcher.Invoke(this, null, UpdateSecondaryValues);
-                    counter = 0;
+                    coolant.Add(elm327.GetCoolantTemp());
+                    throttle.Add(elm327.GetThrottlePosition());
+
+                    secondaryCounter = 0;
                 }
-            }
-        }
+                else
+                {
+                    coolant.DuplicateLast();
+                    throttle.DuplicateLast();
 
-        private void UpdatePrimaryValues(object sender, EventArgs e)
-        {
-            if (!Disposed)
-            {
-                SetProperty("primary2", rpm.HasValue ? (double)rpm.Value : 0d);
-                SetProperty("primary1", engineLoad.HasValue ? (double)engineLoad.Value : 0d);
-                SetProperty("primary3", speed.HasValue ? (double)speed.Value : 0d);
-                SetProperty("refresh", null);
-            }
-        }
+                    secondaryCounter++;
+                }
 
-        private void UpdateSecondaryValues(object sender, EventArgs e)
-        {
-            if (!Disposed)
-            {
-                SetProperty("secondary1", coolantTemp.HasValue ? (double)coolantTemp.Value : 0d);
-                //SetProperty("secondary2", engineLoad.HasValue ? (double)engineLoad.Value : 0d);
-                SetProperty("secondary2", throttlePosition.HasValue ? (double)throttlePosition.Value : 0d);
                 SetProperty("refresh", null);
             }
         }
