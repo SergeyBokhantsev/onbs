@@ -13,10 +13,8 @@ namespace GtkApplication
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class OBDEngineAndFuel : Gtk.Bin
 	{
-		private const string m_Primary1Value = "<span foreground='#30AACC' size='25000'>{0}</span>";
-		private const string m_Primary1Max = "<span foreground='#cccccc' size='20000'>{0}</span>";
-		private const string m_Primary2Value = "<span foreground='#CCCC38' size='25000'>{0}</span>";
-		private const string m_Primary2Max = "<span foreground='#cccccc' size='20000'>{0}</span>";
+		private const string m_PrimaryValue = "<span {0} size='25000'>{1}</span>";
+		private const string m_PrimaryMax = "<span {0} size='20000'>{1}</span>";
 		private const string m_Par = "<span foreground='#cccccc' size='20000'>{0} </span><span foreground='#cccccc' size='40000'>{1}</span><span foreground='#cccccc' size='20000'> {2}</span>";
 
 		private Gdk.GC chartGC;
@@ -70,14 +68,8 @@ namespace GtkApplication
 
         private void Refresh(object arg)
         {
-            progressbar_primary1.Fraction = primary1.Max > 0 ? (primary1.Last / primary1.Max) : 0;
-            progressbar_primary2.Fraction = primary2.Max > 0 ? (primary2.Last / primary2.Max) : 0;
-
-            label_primary1.Markup = CommonBindings.CreateMarkup(m_Primary1Value, primary1.Last.ToString("0.##"));
-            label_primary1_max.Markup = CommonBindings.CreateMarkup(m_Primary1Max, primary1.Max.ToString("0.##"));
-
-            label_primary2.Markup = CommonBindings.CreateMarkup(m_Primary2Value, primary2.Last.ToString("0.##"));
-            label_primary2_max.Markup = CommonBindings.CreateMarkup(m_Primary2Max, primary2.Max.ToString("0.##"));
+			UpdatePrimaryBar(progressbar_primary1, label_primary1, label_primary1_max, primary1, CommonBindings.m_FG_RED);
+			UpdatePrimaryBar(progressbar_primary2, label_primary2, label_primary2_max, primary2, CommonBindings.m_FG_BLUE);
 
             d_chart.QueueDraw();
 
@@ -86,14 +78,27 @@ namespace GtkApplication
             UpdateSecondary(label_secondary3, secondary3);
         }
 
+		private void UpdatePrimaryBar(ProgressBar bar, Label label, Label label_max, IChart<double> chart, string color)
+		{
+			if (chart != null)
+			{
+				bar.Fraction = chart.Max > 0 ? (chart.Last / chart.Max) : 0;
+				label.Markup = CommonBindings.CreateMarkup(m_PrimaryValue, color, chart.Last.ToString("0"));
+				label_max.Markup = CommonBindings.CreateMarkup(m_PrimaryMax, color, chart.Max.ToString("0"));
+			}
+		}
+
         private void UpdateSecondary(Label label, IChart<double> chart)
         {
-            label.Markup = CommonBindings.CreateMarkup(m_Par, chart.Title, chart.Last.ToString("0.##"), chart.UnitText);
+			if (chart != null)
+			{
+            	label.Markup = CommonBindings.CreateMarkup(m_Par, chart.Title, chart.Last.ToString("0.##"), chart.UnitText);
+			}
         }
 
 		private void DrawChart(IChart<double> chart, Gdk.EventExpose e, Gdk.GC gc)
 		{
-			if (chart.Count > 1)
+			if (chart != null && chart.Count > 1)
 			{
 				double pxPerValueByY = (double)e.Area.Height / chart.Scale;
 
@@ -113,6 +118,8 @@ namespace GtkApplication
                     y = yy;
                     count++;
                 };
+
+				chart.Visit(visitor, chartDrawPointsCount);
 			}
 		}
 
@@ -142,21 +149,21 @@ namespace GtkApplication
 			if (primary1GC == null)
 			{
 				primary1GC = new Gdk.GC(_args.Event.Window);
-				primary1GC.RgbFgColor = new Color (220, 190, 55);
+				primary1GC.RgbFgColor = new Color (255, 50, 50);
 				primary1GC.SetLineAttributes(4, LineStyle.Solid, CapStyle.Butt, JoinStyle.Bevel);
 			}
 
 			if (primary2GC == null)
 			{
 				primary2GC = new Gdk.GC(_args.Event.Window);
-				primary2GC.RgbFgColor = new Color (120, 80, 255);
+				primary2GC.RgbFgColor = new Color (50, 50, 255);
 				primary2GC.SetLineAttributes(4, LineStyle.Solid, CapStyle.Butt, JoinStyle.Bevel);
 			}
 
 			if (primary3GC == null)
 			{
 				primary3GC = new Gdk.GC(_args.Event.Window);
-				primary3GC.RgbFgColor = new Color (255, 30, 30);
+				primary3GC.RgbFgColor = new Color (255, 255, 30);
 				primary3GC.SetLineAttributes(4, LineStyle.Solid, CapStyle.Butt, JoinStyle.Bevel);
 			}
 

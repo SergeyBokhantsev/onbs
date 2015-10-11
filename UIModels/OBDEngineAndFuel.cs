@@ -23,15 +23,15 @@ namespace UIModels
         {
             elm327 = hc.GetController<IElm327Controller>();
 
-            var elmThread = new Thread(RequestElm);
-            elmThread.IsBackground = true;
-            elmThread.Start();
-
             SetProperty("primary1", rpm);
             SetProperty("primary2", load);
             SetProperty("primary3", speed);
             SetProperty("secondary1", coolant);
             SetProperty("secondary2", throttle);
+
+            var elmThread = new Thread(RequestElm);
+            elmThread.IsBackground = true;
+            elmThread.Start();
         }
 
         private void RequestElm()

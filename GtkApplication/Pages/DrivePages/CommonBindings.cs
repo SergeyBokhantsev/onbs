@@ -16,6 +16,11 @@ namespace GtkApplication
 		public const string m_FG_GRAY = "foreground='#d6d6d6'";
 		public const string m_FG_GRAY_DARK = "foreground='#aaaaaa'";
 
+
+		public const string m_FG_YELLOW = "foreground='#FFFF00'";
+		public const string m_FG_RED = "foreground='#FF0000'";
+		public const string m_FG_BLUE = "foreground='#0000FF'";
+
 		private const string m_ARD = "<span {0} {1} size='12000'>  ARD  </span>";
 		private const string m_GPS = "<span {0} {1} size='12000'>  GPS  </span>";
 		private const string m_INET = "<span {0} {1} size='12000'>  INET  </span>";

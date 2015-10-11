@@ -236,24 +236,32 @@ namespace GtkLauncher
 
 			Random r = new Random ();
 			var flow = 0d;
-			var prm = 0d;
+			var oboroty = 0d;
 
 			var prmIncrement = 25;
 			var prmIncrementTimes = 0;
 
-			page.SetProperty("secondary1prefix", "t:");
-			page.SetProperty("secondary2prefix", "load:");
-			page.SetProperty("secondary3prefix", "thr:");
+			ChartOfDouble rpm = new ChartOfDouble { Title = "RPM", Scale = 5000 };
+			ChartOfDouble load = new ChartOfDouble { Title = "Load", UnitText = "%", Scale = 100 };
+			ChartOfDouble speed = new ChartOfDouble { Title = "Speed", UnitText = "km/h", Scale = 100 };
+			ChartOfDouble coolant = new ChartOfDouble { Title = "C-temp", UnitText = "°", Scale = 100 };
+			ChartOfDouble throttle = new ChartOfDouble { Title = "Thr.", UnitText = "%", Scale = 100 };
+			ChartOfDouble s3 = new ChartOfDouble { Title = "s3.", UnitText = "%", Scale = 100 };
 
-			page.SetProperty("secondary1suffix", "°C");
-			page.SetProperty("secondary2suffix", "%");
-			page.SetProperty("secondary3suffix", "%");
+			page.SetProperty("primary1", rpm);
+			page.SetProperty("primary2", load);
+			page.SetProperty("primary3", speed);
+			page.SetProperty("secondary1", coolant);
+			page.SetProperty("secondary2", throttle);
+			page.SetProperty("secondary3", s3);
+
+			s3.Add(30d);
 
 			var timer = new Timer (new TimerCallback (o => {
 				page.SetProperty ("time", DateTime.Now);
 
 
-				prm += prmIncrement;
+				oboroty += prmIncrement;
 
 				if (++prmIncrementTimes == 10)
 				{
@@ -261,20 +269,18 @@ namespace GtkLauncher
 					prmIncrementTimes = 0;
 				}
 					
-				page.SetProperty ("primary2", prm);
-
 				flow += 2.55;
-				page.SetProperty ("primary1", r.NextDouble() / 1000d);
 
-				page.SetProperty ("primary3", r.NextDouble() + flow);
+				rpm.Add(oboroty);
+				load.Add(flow);
+				speed.Add(r.NextDouble() * 50);
+				coolant.Add(r.NextDouble() * 100);
+				throttle.Add(r.NextDouble());
+				s3.DuplicateLast();
 
 				page.SetProperty("refresh", null);
-
-				page.SetProperty("secondary1", r.NextDouble());
-				page.SetProperty("secondary2", r.NextDouble());
-				page.SetProperty("secondary3", r.NextDouble());
 			}), 
-				            null, 500, 500);
+				            null, 500, 100);
 			
 			page.SetProperty ("_timer", timer);
 

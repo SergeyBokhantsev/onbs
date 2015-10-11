@@ -36,7 +36,7 @@ namespace Elm327
         protected bool Reset()
         {
             if (disposed)
-                throw new InvalidOperationException("disposed!");
+                return false;
 
             port.DiscardInBuffer();
             port.DiscardOutBuffer();
