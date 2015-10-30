@@ -10,6 +10,7 @@ namespace Elm327Controller
 {
     public class Elm327Controller : Elm327.Client, IElm327Controller
     {
+        private readonly object locker = new object();
         private readonly IHostController hc;
         private bool active;
 
@@ -63,9 +64,12 @@ namespace Elm327Controller
         {
             byte[] result = null;
 
-            if (EnsureClient())
+            lock (locker)
             {
-                result = FirstHexString(Send(0x0100 + pid));
+                if (EnsureClient())
+                {
+                    result = FirstHexString(Send(0x0100 + pid));
+                }
             }
 
             return result;

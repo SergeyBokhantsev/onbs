@@ -91,7 +91,7 @@ namespace UIModels
             if (!Disposed)
             {
                 SetProperty("gps_status", gprmc.Active);
-                SetProperty("speed", gprmc.Active ? gprmc.Speed : 0);
+                SetProperty("speed", gprmc.Active ? gprmc.Speed.ToString("0") : "-");
                 SetProperty("location", gprmc.Location);
 
                 if (gprmc.Active && hc.Config.IsInternetConnected)

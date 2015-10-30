@@ -16,7 +16,6 @@ namespace Elm327
 
         private bool disposed;
 
-        private byte[] fastBuffer = new byte[256];
         private byte[] inBuffer = new byte[4096];
 
         public Client(ILogger logger)
