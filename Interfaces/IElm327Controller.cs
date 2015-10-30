@@ -9,11 +9,7 @@ namespace Interfaces
     public interface IElm327Controller : IController, IDisposable
     {
         string Error { get; }
-        int? GetSpeed();
-        int? GetRPM();
-        double? GetFuelFlow();
-        int? GetCoolantTemp();
-        int? GetEngineLoad();
-        int? GetThrottlePosition();
+        byte[] GetPIDValue(uint pid);
+        Nullable<T> GetPIDValue<T>(uint pid, int expectedBytesCount, Func<byte[], T> formula) where T : struct;
     }
 }

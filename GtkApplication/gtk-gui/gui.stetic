@@ -2474,16 +2474,14 @@
                   <widget class="Gtk.Label" id="label_secondary1">
                     <property name="MemberName" />
                     <property name="Xpad">40</property>
-                    <property name="Ypad">20</property>
+                    <property name="Ypad">10</property>
                     <property name="Justify">Center</property>
                   </widget>
                 </child>
               </widget>
               <packing>
                 <property name="Position">0</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
+                <property name="AutoSize">False</property>
               </packing>
             </child>
             <child>
@@ -2493,16 +2491,14 @@
                   <widget class="Gtk.Label" id="label_secondary2">
                     <property name="MemberName" />
                     <property name="Xpad">40</property>
-                    <property name="Ypad">20</property>
+                    <property name="Ypad">10</property>
                     <property name="Justify">Center</property>
                   </widget>
                 </child>
               </widget>
               <packing>
                 <property name="Position">1</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
+                <property name="AutoSize">False</property>
               </packing>
             </child>
             <child>
@@ -2512,16 +2508,14 @@
                   <widget class="Gtk.Label" id="label_secondary3">
                     <property name="MemberName" />
                     <property name="Xpad">40</property>
-                    <property name="Ypad">20</property>
+                    <property name="Ypad">10</property>
                     <property name="Justify">Center</property>
                   </widget>
                 </child>
               </widget>
               <packing>
                 <property name="Position">2</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
+                <property name="AutoSize">False</property>
               </packing>
             </child>
           </widget>
@@ -2533,7 +2527,69 @@
           </packing>
         </child>
         <child>
-          <placeholder />
+          <widget class="Gtk.HBox" id="hbox4">
+            <property name="MemberName" />
+            <property name="Homogeneous">True</property>
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gtk.EventBox" id="eventbox_secondary4">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Label" id="label_secondary4">
+                    <property name="MemberName" />
+                    <property name="Xpad">40</property>
+                    <property name="Ypad">10</property>
+                    <property name="UseMarkup">True</property>
+                    <property name="Justify">Center</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.EventBox" id="eventbox_secondary5">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Label" id="label_secondary5">
+                    <property name="MemberName" />
+                    <property name="Xpad">40</property>
+                    <property name="Ypad">10</property>
+                    <property name="Justify">Center</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.EventBox" id="eventbox_secondary6">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Label" id="label_secondary6">
+                    <property name="MemberName" />
+                    <property name="Xpad">40</property>
+                    <property name="Ypad">10</property>
+                    <property name="Justify">Center</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
         </child>
       </widget>
     </child>

@@ -4,15 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8DDD45EF-F719-48BD-93C0-27EB6C44DF3F}</ProjectGuid>
+    <ProjectGuid>{EAE855E8-89E1-4F2F-8947-39187B7C9F51}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UIModels</RootNamespace>
-    <AssemblyName>UIModels</AssemblyName>
+    <RootNamespace>OBDProcessor</RootNamespace>
+    <AssemblyName>OBD</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProductVersion>12.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,43 +39,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommonPageBase.cs" />
-    <Compile Include="CommonTemplates\YesNoDialog.cs" />
-    <Compile Include="ConfigPages\CommonConfigPage.cs" />
-    <Compile Include="ConfigPages\ConfigGPSPage.cs" />
-    <Compile Include="ConfigPages\NavitCommonConfigPage.cs" />
-    <Compile Include="ConfigPages\NavitOSDConfigPage.cs" />
-    <Compile Include="ConfigPages\ShutdownPage.cs" />
-    <Compile Include="DrivePage.cs" />
-    <Compile Include="ExternalApplicationPage.cs" />
-    <Compile Include="MainPage.cs" />
-    <Compile Include="ModelBase.cs" />
-    <Compile Include="NavigationAppPage.cs" />
-    <Compile Include="OBDEngineAndFuel.cs" />
+    <Compile Include="OBDProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TrafficPage.cs" />
-    <Compile Include="WeatherPage.cs" />
-    <Compile Include="WebCamPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
-      <Project>{3F066CD9-3523-4248-B37C-3378B44C426A}</Project>
+      <Project>{3f066cd9-3523-4248-b37c-3378b44c426a}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NavitConfigGenerator\NavitConfigGenerator.csproj">
-      <Project>{34252C77-00D2-4E38-B432-274B6D6A0032}</Project>
-      <Name>NavitConfigGenerator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OBDProcessor\OBD.csproj">
-      <Project>{eae855e8-89e1-4f2f-8947-39187b7c9f51}</Project>
-      <Name>OBD</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\YandexServicesProvider\YandexServicesProvider.csproj">
-      <Project>{a8956707-42dd-4bf5-b4b2-955598a60b97}</Project>
-      <Name>YandexServicesProvider</Name>
-    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

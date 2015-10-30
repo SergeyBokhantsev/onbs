@@ -15,20 +15,15 @@ namespace GtkApplication
 	{
 		private const string m_PrimaryValue = "<span {0} size='25000'>{1}</span>";
 		private const string m_PrimaryMax = "<span {0} size='20000'>{1}</span>";
-		private const string m_Par = "<span foreground='#cccccc' size='20000'>{0} </span><span foreground='#cccccc' size='40000'>{1}</span><span foreground='#cccccc' size='20000'> {2}</span>";
+		private const string m_Par = "<span foreground='#cccccc' size='10000'>{0} </span><span foreground='#cccccc' size='20000'>{1}</span><span foreground='#cccccc' size='10000'> {2}</span>";
 
 		private Gdk.GC chartGC;
 		private Gdk.GC primary1GC;
 		private Gdk.GC primary2GC;
 		private Gdk.GC primary3GC;
 
-        private IChart<double> primary1;
-        private IChart<double> primary2;
-        private IChart<double> primary3;
-
-        private IChart<double> secondary1;
-        private IChart<double> secondary2;
-        private IChart<double> secondary3;
+		private IChart<double>[] primary = new IChart<double>[3];
+		private IChart<double>[] secondary = new IChart<double>[6];
 
         private const int chartDrawPointsCount = 100;
 
@@ -36,21 +31,27 @@ namespace GtkApplication
 		{
 			this.Build();
 
-            primary1 = model.GetProperty<IChart<double>>("primary1");
-            primary2 = model.GetProperty<IChart<double>>("primary2");
-            primary3 = model.GetProperty<IChart<double>>("primary3");
+            primary[0] = model.GetProperty<IChart<double>>("primary1");
+            primary[1] = model.GetProperty<IChart<double>>("primary2");
+            primary[2] = model.GetProperty<IChart<double>>("primary3");
 
-            secondary1 = model.GetProperty<IChart<double>>("secondary1");
-            secondary2 = model.GetProperty<IChart<double>>("secondary2");
-            secondary3 = model.GetProperty<IChart<double>>("secondary3");
+            secondary[0] = model.GetProperty<IChart<double>>("secondary1");
+            secondary[1] = model.GetProperty<IChart<double>>("secondary2");
+            secondary[2] = model.GetProperty<IChart<double>>("secondary3");
+			secondary[3] = model.GetProperty<IChart<double>>("secondary4");
+			secondary[4] = model.GetProperty<IChart<double>>("secondary5");
+			secondary[5] = model.GetProperty<IChart<double>>("secondary6");
 
 			d_chart.ExposeEvent += ChartExposeEvent;
 
 			style.Window.Apply(eventbox_primary1);
 			style.Window.Apply(eventbox_primary2);
-			style.Window.Apply(eventbox_secondary1);
-			style.Window.Apply(eventbox_secondary2);
-			style.Window.Apply(eventbox_secondary3);
+			style.CommonButton.Apply(eventbox_secondary1);
+			style.AcceptButton.Apply(eventbox_secondary2);
+			style.CommonButton.Apply(eventbox_secondary3);
+			style.AcceptButton.Apply(eventbox_secondary4);
+			style.CommonButton.Apply(eventbox_secondary5);
+			style.AcceptButton.Apply(eventbox_secondary6);
 			style.Window.Apply(eventbox_primary1_max);
 			style.Window.Apply(eventbox_primary2_max);
 
@@ -68,14 +69,17 @@ namespace GtkApplication
 
         private void Refresh(object arg)
         {
-			UpdatePrimaryBar(progressbar_primary1, label_primary1, label_primary1_max, primary1, CommonBindings.m_FG_RED);
-			UpdatePrimaryBar(progressbar_primary2, label_primary2, label_primary2_max, primary2, CommonBindings.m_FG_BLUE);
+			UpdatePrimaryBar(progressbar_primary1, label_primary1, label_primary1_max, primary[0], CommonBindings.m_FG_RED);
+			UpdatePrimaryBar(progressbar_primary2, label_primary2, label_primary2_max, primary[1], CommonBindings.m_FG_BLUE);
 
             d_chart.QueueDraw();
 
-            UpdateSecondary(label_secondary1, secondary1);
-            UpdateSecondary(label_secondary2, secondary2);
-            UpdateSecondary(label_secondary3, secondary3);
+            UpdateSecondary(label_secondary1, secondary[0]);
+            UpdateSecondary(label_secondary2, secondary[1]);
+            UpdateSecondary(label_secondary3, secondary[2]);
+			UpdateSecondary(label_secondary4, secondary[3]);
+			UpdateSecondary(label_secondary5, secondary[4]);
+			UpdateSecondary(label_secondary6, secondary[5]);
         }
 
 		private void UpdatePrimaryBar(ProgressBar bar, Label label, Label label_max, IChart<double> chart, string color)
@@ -93,6 +97,7 @@ namespace GtkApplication
 			if (chart != null)
 			{
             	label.Markup = CommonBindings.CreateMarkup(m_Par, chart.Title, chart.Last.ToString("0.##"), chart.UnitText);
+				label.UseMarkup = true;
 			}
         }
 
@@ -167,9 +172,9 @@ namespace GtkApplication
 				primary3GC.SetLineAttributes(4, LineStyle.Solid, CapStyle.Butt, JoinStyle.Bevel);
 			}
 
-            DrawChart(primary1, _args.Event, primary1GC);
-            DrawChart(primary2, _args.Event, primary2GC);
-			DrawChart(primary3, _args.Event, primary3GC);
+            DrawChart(primary[0], _args.Event, primary1GC);
+            DrawChart(primary[1], _args.Event, primary2GC);
+			DrawChart(primary[2], _args.Event, primary3GC);
 
 			DrawChartTable(_args.Event, chartGC);
 

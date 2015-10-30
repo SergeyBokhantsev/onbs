@@ -248,12 +248,19 @@ namespace GtkLauncher
 			ChartOfDouble throttle = new ChartOfDouble { Title = "Thr.", UnitText = "%", Scale = 100 };
 			ChartOfDouble s3 = new ChartOfDouble { Title = "s3.", UnitText = "%", Scale = 100 };
 
+			ChartOfDouble s4 = new ChartOfDouble { Title = "s4.", UnitText = "%", Scale = 100 };
+			ChartOfDouble s5 = new ChartOfDouble { Title = "s5.", UnitText = "%", Scale = 100 };
+			ChartOfDouble s6 = new ChartOfDouble { Title = "s6.", UnitText = "%", Scale = 100 };
+
 			page.SetProperty("primary1", rpm);
 			page.SetProperty("primary2", load);
 			page.SetProperty("primary3", speed);
 			page.SetProperty("secondary1", coolant);
 			page.SetProperty("secondary2", throttle);
 			page.SetProperty("secondary3", s3);
+			page.SetProperty("secondary4", s4);
+			page.SetProperty("secondary5", s5);
+			page.SetProperty("secondary6", s6);
 
 			s3.Add(30d);
 
@@ -277,6 +284,10 @@ namespace GtkLauncher
 				coolant.Add(r.NextDouble() * 100);
 				throttle.Add(r.NextDouble());
 				s3.DuplicateLast();
+
+				s4.Add(r.NextDouble());
+				s5.Add(r.NextDouble());
+				s6.Add(r.NextDouble());
 
 				page.SetProperty("refresh", null);
 			}), 

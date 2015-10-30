@@ -47,6 +47,20 @@ namespace GtkApplication
 		private global::Gtk.EventBox eventbox_secondary3;
 		
 		private global::Gtk.Label label_secondary3;
+		
+		private global::Gtk.HBox hbox4;
+		
+		private global::Gtk.EventBox eventbox_secondary4;
+		
+		private global::Gtk.Label label_secondary4;
+		
+		private global::Gtk.EventBox eventbox_secondary5;
+		
+		private global::Gtk.Label label_secondary5;
+		
+		private global::Gtk.EventBox eventbox_secondary6;
+		
+		private global::Gtk.Label label_secondary6;
 
 		protected virtual void Build ()
 		{
@@ -183,14 +197,12 @@ namespace GtkApplication
 			this.label_secondary1 = new global::Gtk.Label ();
 			this.label_secondary1.Name = "label_secondary1";
 			this.label_secondary1.Xpad = 40;
-			this.label_secondary1.Ypad = 20;
+			this.label_secondary1.Ypad = 10;
 			this.label_secondary1.Justify = ((global::Gtk.Justification)(2));
 			this.eventbox_secondary1.Add (this.label_secondary1);
 			this.hbox3.Add (this.eventbox_secondary1);
 			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.eventbox_secondary1]));
 			w16.Position = 0;
-			w16.Expand = false;
-			w16.Fill = false;
 			// Container child hbox3.Gtk.Box+BoxChild
 			this.eventbox_secondary2 = new global::Gtk.EventBox ();
 			this.eventbox_secondary2.Name = "eventbox_secondary2";
@@ -198,14 +210,12 @@ namespace GtkApplication
 			this.label_secondary2 = new global::Gtk.Label ();
 			this.label_secondary2.Name = "label_secondary2";
 			this.label_secondary2.Xpad = 40;
-			this.label_secondary2.Ypad = 20;
+			this.label_secondary2.Ypad = 10;
 			this.label_secondary2.Justify = ((global::Gtk.Justification)(2));
 			this.eventbox_secondary2.Add (this.label_secondary2);
 			this.hbox3.Add (this.eventbox_secondary2);
 			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.eventbox_secondary2]));
 			w18.Position = 1;
-			w18.Expand = false;
-			w18.Fill = false;
 			// Container child hbox3.Gtk.Box+BoxChild
 			this.eventbox_secondary3 = new global::Gtk.EventBox ();
 			this.eventbox_secondary3.Name = "eventbox_secondary3";
@@ -213,19 +223,67 @@ namespace GtkApplication
 			this.label_secondary3 = new global::Gtk.Label ();
 			this.label_secondary3.Name = "label_secondary3";
 			this.label_secondary3.Xpad = 40;
-			this.label_secondary3.Ypad = 20;
+			this.label_secondary3.Ypad = 10;
 			this.label_secondary3.Justify = ((global::Gtk.Justification)(2));
 			this.eventbox_secondary3.Add (this.label_secondary3);
 			this.hbox3.Add (this.eventbox_secondary3);
 			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.hbox3 [this.eventbox_secondary3]));
 			w20.Position = 2;
-			w20.Expand = false;
-			w20.Fill = false;
 			this.vbox1.Add (this.hbox3);
 			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox3]));
 			w21.Position = 1;
 			w21.Expand = false;
 			w21.Fill = false;
+			// Container child vbox1.Gtk.Box+BoxChild
+			this.hbox4 = new global::Gtk.HBox ();
+			this.hbox4.Name = "hbox4";
+			this.hbox4.Homogeneous = true;
+			this.hbox4.Spacing = 6;
+			// Container child hbox4.Gtk.Box+BoxChild
+			this.eventbox_secondary4 = new global::Gtk.EventBox ();
+			this.eventbox_secondary4.Name = "eventbox_secondary4";
+			// Container child eventbox_secondary4.Gtk.Container+ContainerChild
+			this.label_secondary4 = new global::Gtk.Label ();
+			this.label_secondary4.Name = "label_secondary4";
+			this.label_secondary4.Xpad = 40;
+			this.label_secondary4.Ypad = 10;
+			this.label_secondary4.UseMarkup = true;
+			this.label_secondary4.Justify = ((global::Gtk.Justification)(2));
+			this.eventbox_secondary4.Add (this.label_secondary4);
+			this.hbox4.Add (this.eventbox_secondary4);
+			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.eventbox_secondary4]));
+			w23.Position = 0;
+			// Container child hbox4.Gtk.Box+BoxChild
+			this.eventbox_secondary5 = new global::Gtk.EventBox ();
+			this.eventbox_secondary5.Name = "eventbox_secondary5";
+			// Container child eventbox_secondary5.Gtk.Container+ContainerChild
+			this.label_secondary5 = new global::Gtk.Label ();
+			this.label_secondary5.Name = "label_secondary5";
+			this.label_secondary5.Xpad = 40;
+			this.label_secondary5.Ypad = 10;
+			this.label_secondary5.Justify = ((global::Gtk.Justification)(2));
+			this.eventbox_secondary5.Add (this.label_secondary5);
+			this.hbox4.Add (this.eventbox_secondary5);
+			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.eventbox_secondary5]));
+			w25.Position = 1;
+			// Container child hbox4.Gtk.Box+BoxChild
+			this.eventbox_secondary6 = new global::Gtk.EventBox ();
+			this.eventbox_secondary6.Name = "eventbox_secondary6";
+			// Container child eventbox_secondary6.Gtk.Container+ContainerChild
+			this.label_secondary6 = new global::Gtk.Label ();
+			this.label_secondary6.Name = "label_secondary6";
+			this.label_secondary6.Xpad = 40;
+			this.label_secondary6.Ypad = 10;
+			this.label_secondary6.Justify = ((global::Gtk.Justification)(2));
+			this.eventbox_secondary6.Add (this.label_secondary6);
+			this.hbox4.Add (this.eventbox_secondary6);
+			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.eventbox_secondary6]));
+			w27.Position = 2;
+			this.vbox1.Add (this.hbox4);
+			global::Gtk.Box.BoxChild w28 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox4]));
+			w28.Position = 2;
+			w28.Expand = false;
+			w28.Fill = false;
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
