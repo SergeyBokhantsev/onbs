@@ -127,8 +127,8 @@ namespace Elm327
 
         protected string[] Send(uint pid, bool autoReset = true)
         {
-            if (disposed)
-                throw new InvalidOperationException("disposed!");
+			if (disposed)
+				return null;
 
             var response = Send(pid.ToString("X4"));
 
