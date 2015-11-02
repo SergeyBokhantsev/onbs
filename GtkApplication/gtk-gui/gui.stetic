@@ -2333,16 +2333,63 @@
             <child>
               <widget class="Gtk.VBox" id="vbox2">
                 <property name="MemberName" />
+                <property name="WidthRequest">200</property>
+                <property name="Homogeneous">True</property>
                 <property name="Spacing">6</property>
                 <child>
-                  <widget class="Gtk.EventBox" id="eventbox_primary1_max">
+                  <widget class="Gtk.VBox" id="vbox3">
                     <property name="MemberName" />
+                    <property name="Spacing">-4</property>
                     <child>
-                      <widget class="Gtk.Label" id="label_primary1_max">
+                      <widget class="Gtk.EventBox" id="eventbox_primary_title1">
                         <property name="MemberName" />
-                        <property name="LabelProp" translatable="yes">label3</property>
-                        <property name="Justify">Center</property>
+                        <child>
+                          <widget class="Gtk.Label" id="label_primary_title1">
+                            <property name="MemberName" />
+                            <property name="LabelProp" translatable="yes">label1</property>
+                          </widget>
+                        </child>
                       </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.EventBox" id="eventbox_primary_value1">
+                        <property name="MemberName" />
+                        <child>
+                          <widget class="Gtk.Label" id="label_primary_value1">
+                            <property name="MemberName" />
+                            <property name="LabelProp" translatable="yes">label2</property>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.EventBox" id="eventbox_primary_max1">
+                        <property name="MemberName" />
+                        <child>
+                          <widget class="Gtk.Label" id="label_primary_max1">
+                            <property name="MemberName" />
+                            <property name="LabelProp" translatable="yes">label3</property>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="Position">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
                     </child>
                   </widget>
                   <packing>
@@ -2353,32 +2400,127 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.ProgressBar" id="progressbar_primary1">
+                  <widget class="Gtk.VBox" id="vbox4">
                     <property name="MemberName" />
-                    <property name="WidthRequest">90</property>
-                    <property name="Orientation">BottomToTop</property>
-                    <property name="Fraction">0.44</property>
-                  </widget>
-                  <packing>
-                    <property name="Position">1</property>
-                    <property name="AutoSize">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gtk.EventBox" id="eventbox_primary1">
-                    <property name="MemberName" />
+                    <property name="Spacing">-4</property>
                     <child>
-                      <widget class="Gtk.Label" id="label_primary1">
+                      <widget class="Gtk.EventBox" id="eventbox_primary_title2">
                         <property name="MemberName" />
-                        <property name="LabelProp" translatable="yes">label3</property>
-                        <property name="Justify">Center</property>
+                        <child>
+                          <widget class="Gtk.Label" id="label_primary_title2">
+                            <property name="MemberName" />
+                            <property name="LabelProp" translatable="yes">label1</property>
+                          </widget>
+                        </child>
                       </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.EventBox" id="eventbox_primary_value2">
+                        <property name="MemberName" />
+                        <child>
+                          <widget class="Gtk.Label" id="label_primary_value2">
+                            <property name="MemberName" />
+                            <property name="LabelProp" translatable="yes">label2</property>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.EventBox" id="eventbox_primary_max2">
+                        <property name="MemberName" />
+                        <child>
+                          <widget class="Gtk.Label" id="label_primary_max2">
+                            <property name="MemberName" />
+                            <property name="LabelProp" translatable="yes">label3</property>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="Position">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
                     </child>
                   </widget>
                   <packing>
-                    <property name="PackType">End</property>
+                    <property name="Position">1</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.VBox" id="vbox5">
+                    <property name="MemberName" />
+                    <property name="Spacing">-4</property>
+                    <child>
+                      <widget class="Gtk.EventBox" id="eventbox_primary_title3">
+                        <property name="MemberName" />
+                        <child>
+                          <widget class="Gtk.Label" id="label_primary_title3">
+                            <property name="MemberName" />
+                            <property name="LabelProp" translatable="yes">label1</property>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.EventBox" id="eventbox_primary_value3">
+                        <property name="MemberName" />
+                        <child>
+                          <widget class="Gtk.Label" id="label_primary_value3">
+                            <property name="MemberName" />
+                            <property name="LabelProp" translatable="yes">label2</property>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.EventBox" id="eventbox_primary_max3">
+                        <property name="MemberName" />
+                        <child>
+                          <widget class="Gtk.Label" id="label_primary_max3">
+                            <property name="MemberName" />
+                            <property name="LabelProp" translatable="yes">label3</property>
+                          </widget>
+                        </child>
+                      </widget>
+                      <packing>
+                        <property name="Position">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="Expand">False</property>
+                        <property name="Fill">False</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
                     <property name="Position">2</property>
-                    <property name="AutoSize">False</property>
+                    <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>
                   </packing>
@@ -2389,68 +2531,6 @@
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.VBox" id="vbox3">
-                <property name="MemberName" />
-                <property name="Spacing">6</property>
-                <child>
-                  <widget class="Gtk.EventBox" id="eventbox_primary2_max">
-                    <property name="MemberName" />
-                    <child>
-                      <widget class="Gtk.Label" id="label_primary2_max">
-                        <property name="MemberName" />
-                        <property name="LabelProp" translatable="yes">label3</property>
-                        <property name="Justify">Center</property>
-                      </widget>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="Position">0</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gtk.ProgressBar" id="progressbar_primary2">
-                    <property name="MemberName" />
-                    <property name="WidthRequest">90</property>
-                    <property name="Orientation">BottomToTop</property>
-                    <property name="Fraction">0.44</property>
-                  </widget>
-                  <packing>
-                    <property name="Position">1</property>
-                    <property name="AutoSize">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gtk.EventBox" id="eventbox_primary2">
-                    <property name="MemberName" />
-                    <child>
-                      <widget class="Gtk.Label" id="label_primary2">
-                        <property name="MemberName" />
-                        <property name="LabelProp" translatable="yes">label3</property>
-                        <property name="Justify">Center</property>
-                      </widget>
-                    </child>
-                  </widget>
-                  <packing>
-                    <property name="PackType">End</property>
-                    <property name="Position">2</property>
-                    <property name="AutoSize">False</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
-                </child>
-              </widget>
-              <packing>
-                <property name="Position">2</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-                <property name="Padding">10</property>
               </packing>
             </child>
           </widget>

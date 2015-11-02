@@ -13,8 +13,10 @@ namespace GtkApplication
 	[System.ComponentModel.ToolboxItem(true)]
 	public partial class OBDEngineAndFuel : Gtk.Bin
 	{
-		private const string m_PrimaryValue = "<span {0} size='25000'>{1}</span>";
-		private const string m_PrimaryMax = "<span {0} size='20000'>{1}</span>";
+		private const string m_PrimaryTitle = "<span {0} size='15000'>{1}</span>";
+		private const string m_PrimaryValue = "<span {0} size='25000'><b>{1}</b></span>";
+		private const string m_PrimaryMax = "<span {0} size='10000'>{1}</span>";
+
 		private const string m_Par = "<span foreground='#cccccc' size='10000'>{0} </span><span foreground='#cccccc' size='20000'>{1}</span><span foreground='#cccccc' size='10000'> {2}</span>";
 
 		private Gdk.GC chartGC;
@@ -44,33 +46,45 @@ namespace GtkApplication
 
 			d_chart.ExposeEvent += ChartExposeEvent;
 
-			style.Window.Apply(eventbox_primary1);
-			style.Window.Apply(eventbox_primary2);
+			style.Window.Apply(eventbox_primary_title1);
+			style.Window.Apply(eventbox_primary_value1);
+			style.Window.Apply(eventbox_primary_max1);
+
+			style.Window.Apply(eventbox_primary_title2);
+			style.Window.Apply(eventbox_primary_value2);
+			style.Window.Apply(eventbox_primary_max2);
+
+			style.Window.Apply(eventbox_primary_title3);
+			style.Window.Apply(eventbox_primary_value3);
+			style.Window.Apply(eventbox_primary_max3);
+
 			style.CommonButton.Apply(eventbox_secondary1);
 			style.AcceptButton.Apply(eventbox_secondary2);
 			style.CommonButton.Apply(eventbox_secondary3);
 			style.AcceptButton.Apply(eventbox_secondary4);
 			style.CommonButton.Apply(eventbox_secondary5);
 			style.AcceptButton.Apply(eventbox_secondary6);
-			style.Window.Apply(eventbox_primary1_max);
-			style.Window.Apply(eventbox_primary2_max);
 
 			var binder = new ModelBinder (model, logger);
-
-			progressbar_primary2.ModifyFg(StateType.Prelight, new Color(80,80,0));
-			progressbar_primary2.ModifyBg(StateType.Prelight, new Color(80,80,0));
 
             binder.BindCustomAction<object>(Refresh, "refresh");
 
 			d_chart.ModifyBg(StateType.Normal, style.Window.Bg);
+
+			binder.BindLabelMarkup(label_primary_title1, "primary1", chart => CommonBindings.CreateMarkup(m_PrimaryTitle, CommonBindings.m_FG_RED, ((IChart<double>)chart).Title));
+
+			binder.BindLabelMarkup(label_primary_title2, "primary2", chart => CommonBindings.CreateMarkup(m_PrimaryTitle, CommonBindings.m_FG_BLUE, ((IChart<double>)chart).Title));
+
+			binder.BindLabelMarkup(label_primary_title3, "primary3", chart => CommonBindings.CreateMarkup(m_PrimaryTitle, CommonBindings.m_FG_YELLOW, ((IChart<double>)chart).Title));
 
             binder.UpdateBindings();
 		}
 
         private void Refresh(object arg)
         {
-			UpdatePrimaryBar(progressbar_primary1, label_primary1, label_primary1_max, primary[0], CommonBindings.m_FG_RED);
-			UpdatePrimaryBar(progressbar_primary2, label_primary2, label_primary2_max, primary[1], CommonBindings.m_FG_BLUE);
+			UpdatePrimaryBar(label_primary_value1, label_primary_max1, primary[0], CommonBindings.m_FG_RED);
+			UpdatePrimaryBar(label_primary_value2, label_primary_max2, primary[1], CommonBindings.m_FG_BLUE);
+			UpdatePrimaryBar(label_primary_value3, label_primary_max3, primary[2], CommonBindings.m_FG_YELLOW);
 
             d_chart.QueueDraw();
 
@@ -82,12 +96,11 @@ namespace GtkApplication
 			UpdateSecondary(label_secondary6, secondary[5]);
         }
 
-		private void UpdatePrimaryBar(ProgressBar bar, Label label, Label label_max, IChart<double> chart, string color)
+		private void UpdatePrimaryBar(Label label_value, Label label_max, IChart<double> chart, string color)
 		{
 			if (chart != null)
 			{
-				bar.Fraction = chart.Max > 0 ? (chart.Last / chart.Max) : 0;
-				label.Markup = CommonBindings.CreateMarkup(m_PrimaryValue, color, chart.Last.ToString("0"));
+				label_value.Markup = CommonBindings.CreateMarkup(m_PrimaryValue, color, chart.Last.ToString("0"));
 				label_max.Markup = CommonBindings.CreateMarkup(m_PrimaryMax, color, chart.Max.ToString("0"));
 			}
 		}

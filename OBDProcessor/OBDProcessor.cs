@@ -74,6 +74,9 @@ namespace OBD
             return elm.GetPIDValue<int>((uint)PID.IntakeAirTemp, 3, bytes => (int)bytes[2] - 40);
         }
 
+        /// <summary>
+        /// Liters per hour consumption
+        /// </summary>
         public double GetFuelFlowPerHour(double map, double rpm, double iat)
         {
             const double volumetricEfficiency = 95 / 100;
