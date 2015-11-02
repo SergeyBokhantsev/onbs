@@ -89,6 +89,8 @@
     <Compile Include="gtk-gui\GtkApplication.OBDEngineAndFuel.cs" />
     <Compile Include="Pages\ErrorPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.ErrorPage.cs" />
+    <Compile Include="Pages\DrivePages\OBD_DTCPage.cs" />
+    <Compile Include="gtk-gui\GtkApplication.OBD_DTCPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">

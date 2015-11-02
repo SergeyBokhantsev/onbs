@@ -192,7 +192,6 @@ namespace GtkApplication
 			w14.Position = 0;
 			// Container child hbox2.Gtk.Box+BoxChild
 			this.eventbox2 = new global::Gtk.EventBox ();
-			this.eventbox2.Name = "eventbox2";
 			// Container child eventbox2.Gtk.Container+ContainerChild
 			this.label2 = new global::Gtk.Label ();
 			this.label2.Name = "label2";

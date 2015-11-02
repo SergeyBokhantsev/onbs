@@ -68,7 +68,22 @@ namespace Elm327Controller
             {
                 if (EnsureClient())
                 {
-                    result = FirstHexString(Send(0x0100 + pid));
+                    result = FirstHexString(Send(0x0100 + pid, "X4"));
+                }
+            }
+
+            return result;
+        }
+
+        public byte[] GetTroubleCodes()
+        {
+            byte[] result = null;
+
+            lock (locker)
+            {
+                if (EnsureClient())
+                {
+                    result = FirstHexString(Send(0x03, "X2"));
                 }
             }
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Interfaces.UI;
 
 namespace UIModels
 {
@@ -27,7 +28,39 @@ namespace UIModels
         }
     }
 
-    public abstract class OBDChartPage : CommonPageBase
+    public abstract class OBDPage : CommonPageBase
+    {
+        public OBDPage(IHostController hc, string name)
+            :base(hc, name)
+        { }
+
+        protected override void DoAction(Interfaces.UI.PageModelActionEventArgs args)
+        {
+            if (Disposed)
+                return;
+
+            switch (args.ActionName)
+            {
+                case ModelNames.ButtonF1:
+                    hc.GetController<IUIController>().ShowPage(new OBDEngine1(hc));
+                    break;
+
+                case ModelNames.ButtonF2:
+                    hc.GetController<IUIController>().ShowPage(new OBDEngine2(hc));
+                    break;
+
+                case ModelNames.ButtonF3:
+                    hc.GetController<IUIController>().ShowPage(new OBDEngine2(hc));
+                    break;
+
+                default:
+                    base.DoAction(args);
+                    break;
+            }
+        }
+    }
+
+    public abstract class OBDChartPage : OBDPage
     {
         private readonly OBDProcessor obd;
         private readonly OBDChart[] primary;
@@ -147,10 +180,10 @@ namespace UIModels
         }
     }
 
-    public class OBDEngineAndFuel : OBDChartPage
+    public class OBDEngine1 : OBDChartPage
     {
-        public OBDEngineAndFuel(IHostController hc)
-            :base(hc, typeof(OBDEngineAndFuel).Name, 30)
+        public OBDEngine1(IHostController hc)
+            :base(hc, "OBDEngineAndFuel", 30)
         {
         }
 
@@ -171,6 +204,45 @@ namespace UIModels
                 CreateCoolantTempChart(obd),
                 CreateIntakeAirTempChart(obd)
             };
+        }
+    }
+
+    public class OBDEngine2 : OBDChartPage
+    {
+        public OBDEngine2(IHostController hc)
+            : base(hc, "OBDEngineAndFuel", 30)
+        {
+        }
+
+        protected override OBDChart[] GetPrimaryCharts(OBDProcessor obd)
+        {
+            return new OBDChart[] 
+            {
+                CreateThrottleChart(obd),
+                CreateLoadChart(obd),
+                CreateMAPChart(obd)
+            };
+        }
+
+        protected override OBDChart[] GetSecondaryCharts(OBDProcessor obd)
+        {
+            return new OBDChart[] 
+            {
+                CreateCoolantTempChart(obd),
+                CreateIntakeAirTempChart(obd)
+            };
+        }
+    }
+
+    public class OBD_DTCPage : OBDPage
+    {
+        public OBD_DTCPage(IHostController hc)
+            :base(hc, typeof(OBD_DTCPage).Name)
+        {
+            var elm327 = hc.GetController<IElm327Controller>();
+            var obd = new OBDProcessor(elm327);
+
+            ThreadPool.QueueUserWorkItem((o) => SetProperty("codes", string.Join("\r\n", obd.GetTroubleCodes())));
         }
     }
 }

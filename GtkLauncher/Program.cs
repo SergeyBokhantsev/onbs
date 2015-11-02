@@ -14,7 +14,7 @@ namespace GtkLauncher
 			{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-				app.ShowPage(GetOBDEngineAndFuelPage());
+				app.ShowPage(GetOBD_DTCPage());
 
 				app.Run(false);
 			}
@@ -223,6 +223,36 @@ namespace GtkLauncher
 			page.SetProperty("_timer", timer);
 
 			page.SetProperty("traffic_image_path", @"C:\Users\sergeyb\Desktop\static-maps.yandex.ru.png");
+
+			return page;
+		}
+
+		private static IPageModel GetOBD_DTCPage()
+		{
+			var page = new EmptyPageModel ("OBD_DTCPage");
+
+			int i = 0;
+
+			page.SetProperty("codes", string.Join("\r\n", new string[] { "U00001", "U00002", "U00003" }));
+
+			var timer = new Timer (new TimerCallback (o => 
+			{
+
+				if (i == 0)
+				{
+					page.SetProperty("codes", string.Join("\r\n", new string[] { "U00001", "U00002", "U00003" }));
+						i++;
+				}
+					else
+					{
+						page.SetProperty("codes", null);
+						i = 0;
+					}
+
+			}), 
+				null, 1000, 1000);
+
+			page.SetProperty ("_timer", timer);
 
 			return page;
 		}

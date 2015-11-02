@@ -23,6 +23,19 @@ namespace OBD
         Speed = 0x0D,
     };
 
+    public struct MonitorStatus
+    {
+        public bool MIL { get; private set; }
+        public int DTC_Count { get; private set; }
+
+        public MonitorStatus(bool mil, int dtc_count)
+            :this()
+        {
+            MIL = mil;
+            DTC_Count = dtc_count;
+        }
+    }
+
     public class OBDProcessor
     {
         private readonly IElm327Controller elm;
@@ -33,6 +46,56 @@ namespace OBD
                 throw new ArgumentNullException("elm");
 
             this.elm = elm;
+        }
+
+        public MonitorStatus? GetMonitorStatus()
+        {
+            return elm.GetPIDValue<MonitorStatus>((uint)PID.MonitorStatus, 6, bytes =>
+            {
+                var mil = (bytes[2] & 128) > 0;
+                var dtc_count = bytes[2] & 127;
+                return new MonitorStatus(mil, dtc_count);
+            });
+        }
+
+        public IEnumerable<string> GetTroubleCodes()
+        {
+            var dtcBytes = elm.GetTroubleCodes();
+
+            if (dtcBytes != null && dtcBytes.Length > 2)
+            {
+                int i = 1;
+                while (dtcBytes.Length > i + 1)
+                {
+                    var A = dtcBytes[i];
+                    var B = dtcBytes[i + 1];
+
+                    string C1 = null;
+
+                    switch (A & 192)
+                    {
+                        case 0: C1 = "P";
+                            break;
+                        case 1: C1 = "C";
+                            break;
+                        case 2: C1 = "B";
+                            break;
+                        case 3: C1 = "U";
+                            break;
+                    }
+
+                    var C2 = A & 48;
+                    var C3 = A & 15;
+                    var C4 = B & 240;
+                    var C5 = B & 15;
+
+                    yield return string.Concat(C1, C2, C3, C4, C5); 
+
+                    i += 2;
+                }
+            }
+            else
+                yield break;
         }
 
         public int? GetSpeed()

@@ -34,6 +34,47 @@ namespace UIModels
             hc.GetController<IGPSController>().GPRMCReseived += GPRMCReseived;
         }
 
+        protected override void DoAction(PageModelActionEventArgs args)
+        {
+            if (Disposed)
+                return;
+
+            switch (args.ActionName)
+            {
+                case ModelNames.ButtonCancel:
+                    hc.GetController<IUIController>().ShowPage(new MainPage(hc));
+                    break;
+
+                case ModelNames.ButtonF1:
+                    var dp = new DrivePage(hc);
+                    hc.GetController<IUIController>().ShowPage(dp);
+                    break;
+
+                case ModelNames.ButtonF2:
+                    ExternalApplicationPage page = new NavigationAppPage(hc);
+                    hc.GetController<IUIController>().ShowPage(page);
+                    page.Run();
+                    break;
+
+                case ModelNames.ButtonF3:
+                    page = new WebCamPage(hc, "cam");
+                    hc.GetController<IUIController>().ShowPage(page);
+                    page.Run();
+                    break;
+
+                case ModelNames.ButtonF4:
+                    var wp = new WeatherPage(hc);
+                    hc.GetController<IUIController>().ShowPage(wp);
+                    break;
+
+                case ModelNames.ButtonF5:
+                    var tp = new TrafficPage(hc);
+                    hc.GetController<IUIController>().ShowPage(tp);
+                    break;
+            }
+
+            base.DoAction(args);
+        }
 
         protected override void OnSecondaryTimer(object sender, EventArgs e)
         {

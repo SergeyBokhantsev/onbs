@@ -125,12 +125,12 @@ namespace Elm327
             return null;
         }
 
-        protected string[] Send(uint pid, bool autoReset = true)
+        protected string[] Send(uint pid, string formatter, bool autoReset = true)
         {
 			if (disposed)
 				return null;
 
-            var response = Send(pid.ToString("X4"));
+            var response = Send(pid.ToString(formatter));
 
             if (response.Contains("STOPPED")
                 || response.Contains("UNABLE TO CONNECT")
@@ -139,7 +139,7 @@ namespace Elm327
             {
                 if (autoReset && Reset())
                 {
-                    return Send(pid, false);
+                    return Send(pid, formatter, false);
                 }
                 else
                     return null;
