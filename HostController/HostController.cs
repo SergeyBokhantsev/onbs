@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using LogLib;
 using System.Net;
+using System.Threading;
 
 namespace HostController
 {
@@ -25,6 +26,7 @@ namespace HostController
         private IAutomationController automationController;
         private TravelController.TravelController travelController;
         private Elm327Controller.Elm327Controller elm327Controller;
+        private HostSynchronizationContext syncContext;
 
         public IConfig Config
         {
@@ -39,10 +41,12 @@ namespace HostController
             get;
             private set;
         }
-        public IDispatcher Dispatcher
+        public SynchronizationContext SyncContext
         {
-            get;
-            private set;
+            get
+            {
+                return syncContext;
+            }
         }
 
         public IProcessRunnerFactory ProcessRunnerFactory
@@ -64,7 +68,10 @@ namespace HostController
 
             CreateLogger();
 
-            RunDispatcher();
+            var syncContext = new HostSynchronizationContext(Logger);
+
+            syncContext.Post(o => Initialize(), null);
+            syncContext.Pump();
         }
 
         public T GetController<T>() 
@@ -142,14 +149,7 @@ namespace HostController
             }
         }
 
-        private void RunDispatcher()
-        {
-            Dispatcher = new Dispatcher(Logger);
-            Dispatcher.Invoke(this, null, Initialize);
-            Dispatcher.Run();
-        }
-
-        private void Initialize(object sender, EventArgs args)
+        private void Initialize()
         {
             ServicePointManager.ServerCertificateValidationCallback = (s1, s2, s3, s4) => true;
 
@@ -233,7 +233,7 @@ namespace HostController
 
             uiController.Shutdown();
 
-            ((Dispatcher)Dispatcher).Exit();
+            syncContext.Stop();
 
             if (mode != HostControllerShutdownModes.UnhandledException)
             {

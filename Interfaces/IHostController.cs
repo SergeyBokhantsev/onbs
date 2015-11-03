@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Interfaces
@@ -11,7 +12,7 @@ namespace Interfaces
     public interface IHostController
     {
         ILogger Logger { get; }
-        IDispatcher Dispatcher { get ; }
+        SynchronizationContext SyncContext { get ; }
         IConfig Config { get; }
         IProcessRunnerFactory ProcessRunnerFactory { get; }
         T GetController<T>() where T : class, IController;

@@ -38,6 +38,7 @@
     <Compile Include="ConsoleLoggerWrapper.cs" />
     <Compile Include="Dispatcher.cs" />
     <Compile Include="EntryPoint.cs" />
+    <Compile Include="HostSynchronizationContext.cs" />
     <Compile Include="InternetConnectionKeeper.cs" />
     <Compile Include="MockArduPort.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

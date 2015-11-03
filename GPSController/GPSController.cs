@@ -19,7 +19,7 @@ namespace GPSController
 
         public event MetricsUpdatedEventHandler MetricsUpdated;
 
-        private readonly IDispatcher dispatcher;
+        private readonly SynchronizationContext syncContext;
         private readonly ILogger logger;
         private readonly IConfig config;
         private readonly STPCodec codec;
@@ -45,19 +45,19 @@ namespace GPSController
             get { return STPFrame.Types.GPS; }
         }
 
-        public GPSController(IConfig config, IDispatcher dispatcher, ILogger logger)
+        public GPSController(IConfig config, SynchronizationContext syncContext, ILogger logger)
         {
             if (config == null)
                 throw new ArgumentNullException("config");
 
-            if (dispatcher == null)
-                throw new ArgumentNullException("dispatcher");
+            if (syncContext == null)
+                throw new ArgumentNullException("syncContext");
 
             if (logger == null)
                 throw new ArgumentNullException("logger");
 
             this.config = config;
-            this.dispatcher = dispatcher;
+            this.syncContext = syncContext;
             this.logger = logger;
 
             codec = new STPCodec(
@@ -145,7 +145,7 @@ namespace GPSController
         {
             var handler = MetricsUpdated;
 
-            if (handler != null)
+            if (handler != null && !shutdown)
             {
                 var metrics = new Metrics("GPS Controller", 5);
 
@@ -155,8 +155,16 @@ namespace GPSController
                 metrics.Add(3, "Loc", lastGprmc.Location);
                 metrics.Add(4, "_is_error", is_error);
 
-                dispatcher.Invoke(this, null, new EventHandler((s, e) => handler(this, metrics)));
+                syncContext.Post(PostMetrics, metrics);
             }
+        }
+
+        private void PostMetrics(object state)
+        {
+            var handler = MetricsUpdated;
+
+            if (handler != null && !shutdown)
+                handler(this, state as Metrics);
         }
 
         private void ReadLocation()
