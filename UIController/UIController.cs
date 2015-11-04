@@ -62,7 +62,7 @@ namespace UIController
         {
             var uit = new Thread(() => UIThread(uiHostAssemblyPath, uiHostClassName, hostController.Logger));
             uit.IsBackground = true;
-            uit.Name = "UI";
+            uit.Name = "UI";            
             uit.Start();
 
             if (!hostWaiter.WaitOne(10000) || uiHost == null)

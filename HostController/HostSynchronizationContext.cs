@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -88,6 +89,12 @@ namespace HostController
         private bool disposed;
         private object locker = new object();
 
+        private double loadSum;
+        private int loadNum;
+        private const int loadApproxNum = 10;
+
+        public double Load { get; private set; }
+
         public HostSynchronizationContext(ILogger logger)
         {
             if (logger == null)
@@ -104,9 +111,14 @@ namespace HostController
             ownerThread = Thread.CurrentThread;
             SynchronizationContext.SetSynchronizationContext(this);
 
+            var fullCycleWatch = new Stopwatch();
+            var iddleWatch = new Stopwatch();
+
+            WorkItem workItem;
+
             while (!disposed)
             {
-                WorkItem workItem;
+                fullCycleWatch.Restart();
 
                 while (pumpItems.TryDequeue(out workItem))
                 {
@@ -117,7 +129,24 @@ namespace HostController
                 }
 
                 pumpResetEvent.Reset();
+                iddleWatch.Restart();
                 pumpResetEvent.WaitOne();
+
+                fullCycleWatch.Stop();
+                iddleWatch.Stop();
+
+                var currentLoad = (double)(fullCycleWatch.ElapsedTicks - iddleWatch.ElapsedTicks) / (double)fullCycleWatch.ElapsedTicks;
+                loadSum += currentLoad;
+                loadNum++;
+
+                if (loadNum == loadApproxNum)
+                {
+                    Load = loadSum / loadNum;
+                    loadSum = 0;
+                    loadNum = 0;
+                }
+
+                logger.LogIfDebug(this, string.Format("Current load: {0}", currentLoad));
             }
 
             pumpResetEvent.Dispose();

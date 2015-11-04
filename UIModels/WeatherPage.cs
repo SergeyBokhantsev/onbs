@@ -28,17 +28,25 @@ namespace UIModels
 
         protected override void OnSecondaryTimer()
         {
-            if (!Disposed && !weatherProviderBusy && hc.Config.IsInternetConnected)
-            {
-                weatherProviderBusy = true;
-                weather.GetForecastAsync(hc.Config.GetString(ConfigNames.WeatherCityId), OnWeatherForecast);
-            }
-
+            UpdateWeatherForecast();
             base.OnSecondaryTimer();
         }
 
-        private void OnWeatherForecast(forecast f)
+        private async void UpdateWeatherForecast()
         {
+            forecast f = null;
+
+            if (!Disposed && !weatherProviderBusy && hc.Config.IsInternetConnected)
+            {
+                f = await Task.Run(() =>
+                {
+                    weatherProviderBusy = true;
+                    return weather.GetForecast(hc.Config.GetString(ConfigNames.WeatherCityId));
+                });
+
+                weatherProviderBusy = false;
+            }
+
             if (f != null && !Disposed)
             {
                 var fact = f.fact.First();
@@ -82,8 +90,6 @@ namespace UIModels
                     SetProperty(string.Format("day{0}_night_temp", i), string.Format("{0}-{1}", nPart.temperature_from, nPart.temperature_to));
                 }
             }
-
-            weatherProviderBusy = false;
         }
 
         private string GetDayOfWeek(DayOfWeek day)

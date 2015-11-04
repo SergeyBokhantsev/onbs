@@ -11,12 +11,13 @@ public partial class MainWindow: Gtk.Window
 
         logger.Log(this, "MainWindow created", Interfaces.LogLevels.Debug);
 
-		//this.Fullscreen();
+        this.HideOnDelete();
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
 	{
-		Application.Quit ();
+        this.Hide();
+        Application.Quit();
 		a.RetVal = true;
 	}
 }

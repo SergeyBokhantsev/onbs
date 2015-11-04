@@ -52,6 +52,14 @@ namespace UIModels
 
             SetProperty("label_inet_status", hostController.Config.IsInternetConnected ? "Internet OK" : "NO INTERNET CONNECTION");
             SetProperty("inet_status", hostController.Config.IsInternetConnected ? "1" : "0");
+
+            dynamic hostScheduler = System.Threading.SynchronizationContext.Current;
+
+            if (hostScheduler != null)
+            {
+                var load = hostScheduler.Load;
+                SetProperty(ModelNames.ButtonF2Label, load.ToString());
+            }
         }
 
         private void SubscribeMetricsProviders()
