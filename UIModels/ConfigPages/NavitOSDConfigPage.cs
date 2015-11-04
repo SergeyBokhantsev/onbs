@@ -17,7 +17,7 @@ namespace UIModels.ConfigPages
         private readonly IConfig cfg;
 
         public NavitOSDConfigPage(IHostController hc)
-            : base("CommonVertcalStackPage", hc.Dispatcher, hc.Logger)
+            : base("CommonVertcalStackPage", hc.SyncContext, hc.Logger)
         {
             this.hc = hc;
             this.cfg = hc.Config;

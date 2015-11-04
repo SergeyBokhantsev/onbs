@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Interfaces.Input;
+using System.Threading;
 
 namespace UIModels
 {
@@ -14,8 +15,8 @@ namespace UIModels
         private readonly IProcessRunner runner;
         private readonly IUIController ui;
 
-		public ExternalApplicationPage(string modelName, IProcessRunner runner, IDispatcher dispatcher, ILogger logger, IUIController ui)
-            : base(modelName, dispatcher, logger)
+		public ExternalApplicationPage(string modelName, IProcessRunner runner, SynchronizationContext syncContext, ILogger logger, IUIController ui)
+            : base(modelName, syncContext, logger)
         {
             this.runner = runner;
             this.ui = ui;
@@ -38,7 +39,7 @@ namespace UIModels
 
         void RunnerExited(bool unexpected)
         {
-            dispatcher.Invoke(this, null, new EventHandler((s, e) => ui.ShowDefaultPage()));
+            syncContext.Post(o => ui.ShowDefaultPage(), null);
         }
 
         public virtual bool Run()

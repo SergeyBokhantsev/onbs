@@ -26,7 +26,9 @@ namespace HostController
         private IAutomationController automationController;
         private TravelController.TravelController travelController;
         private Elm327Controller.Elm327Controller elm327Controller;
+
         private HostSynchronizationContext syncContext;
+        private HostTimersController timersController;
 
         public IConfig Config
         {
@@ -68,7 +70,9 @@ namespace HostController
 
             CreateLogger();
 
-            var syncContext = new HostSynchronizationContext(Logger);
+            syncContext = new HostSynchronizationContext(Logger);
+
+            timersController = new HostTimersController(syncContext);
 
             syncContext.Post(o => Initialize(), null);
             syncContext.Pump();
@@ -165,10 +169,10 @@ namespace HostController
 
             var useFakeArduPort = Config.GetBool(ConfigNames.ArduinoPortFake);
             var arduPort = useFakeArduPort ? new MockArduPort() as IPort : new SerialArduPort(Logger, Config) as IPort;
-            arduController = new ArduinoController.ArduinoController(arduPort, Dispatcher, Logger);
+            arduController = new ArduinoController.ArduinoController(arduPort, this);
             arduController.RegisterFrameAcceptor(inputController);
 
-            var gpsCtrl = new GPSController.GPSController(Config, Dispatcher, Logger);
+            var gpsCtrl = new GPSController.GPSController(Config, SyncContext, Logger);
             
             arduController.RegisterFrameAcceptor(gpsCtrl);
             gpsController = gpsCtrl;
@@ -183,13 +187,14 @@ namespace HostController
             uiController.ShowDefaultPage();
 
             gpsCtrl.GPRMCReseived += CheckSystemTimeFromGPS;
+
+            StartTimers();
         }
 
         void InetKeeperRestartNeeded()
         {
             Logger.Log(this, "Begin restart because of Internet keeper request...", LogLevels.Warning);
-            Dispatcher.Invoke(this, null, (s, e) =>
-                Shutdown(HostControllerShutdownModes.Restart));
+            SyncContext.Post(o => Shutdown(HostControllerShutdownModes.Restart), null);
         }
 
         private void CheckSystemTimeFromGPS(Interfaces.GPS.GPRMC gprmc)
@@ -232,6 +237,8 @@ namespace HostController
             gpsController.Shutdown();
 
             uiController.Shutdown();
+
+            StopTimers();
 
             syncContext.Stop();
 
@@ -283,6 +290,24 @@ namespace HostController
         public IProcessRunner Create(string exePath, string args, bool waitForUI)
         {
             return new ProcessRunner.ProcessRunnerImpl(exePath, args, waitForUI, Logger);
+        }
+
+        public IHostTimer CreateTimer(int span, Action action, bool isEnabled)
+        {
+            return timersController.CreateTimer(span, action, isEnabled);
+        }
+
+        private void StartTimers()
+        {
+            if (timersController == null)
+                throw new InvalidOperationException("timersController is not created");
+
+            timersController.Start();
+        }
+
+        private void StopTimers()
+        {
+            timersController.Dispose();
         }
     }
 }

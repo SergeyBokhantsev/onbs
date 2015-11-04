@@ -13,13 +13,13 @@ namespace UIModels
     public abstract class CommonPageBase : ModelBase
     {
         protected readonly IHostController hc;
-        protected readonly IDispatcherTimer primaryTimer;
-        protected readonly IDispatcherTimer secondaryTimer;
+        protected readonly IHostTimer primaryTimer;
+        protected readonly IHostTimer secondaryTimer;
 
         protected bool Disposed { get; private set; }
 
         protected CommonPageBase(IHostController hc, string modelName)
-            :base(modelName, hc.Dispatcher, hc.Logger)
+            :base(modelName, hc.SyncContext, hc.Logger)
         {
             if (hc == null)
                 throw new ArgumentNullException("IHostController");
@@ -29,14 +29,11 @@ namespace UIModels
 
             onlyPressButtonEvents = true;
 
-            primaryTimer = hc.Dispatcher.CreateTimer(1000, OnPrimaryTick);
-            primaryTimer.Enabled = true;
-
-            secondaryTimer = hc.Dispatcher.CreateTimer(60000, OnSecondaryTimer);
-            secondaryTimer.Enabled = true;
+            primaryTimer = hc.CreateTimer(1000, OnPrimaryTick, true);
+            secondaryTimer = hc.CreateTimer(60000, OnSecondaryTimer, true);
         }
 
-        protected virtual void OnPrimaryTick(object sender, EventArgs e)
+        protected virtual void OnPrimaryTick()
         {
             if (Disposed)
                 return;
@@ -48,7 +45,7 @@ namespace UIModels
                 SetProperty("time", DateTime.Now.AddHours(hc.Config.GetInt(ConfigNames.SystemTimeLocalZone)));
         }
 
-        protected virtual void OnSecondaryTimer(object sender, EventArgs e)
+        protected virtual void OnSecondaryTimer()
         {
         }
 

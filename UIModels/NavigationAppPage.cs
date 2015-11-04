@@ -16,7 +16,7 @@ namespace UIModels
         public NavigationAppPage(IHostController hostController)
             :base(typeof(ExternalApplicationPage).Name, 
             CreateProcessRunner(hostController),
-            hostController.Dispatcher,
+            hostController.SyncContext,
             hostController.Logger,
             hostController.GetController<IUIController>())
         {

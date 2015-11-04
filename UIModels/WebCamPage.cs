@@ -82,7 +82,7 @@ namespace UIModels
         public WebCamPage(IHostController hostController, string webcamAppKey)
             :base(typeof(ExternalApplicationPage).Name, 
             hostController.ProcessRunnerFactory.Create(webcamAppKey),
-            hostController.Dispatcher,
+            hostController.SyncContext,
             hostController.Logger,
             hostController.GetController<IUIController>())
         {

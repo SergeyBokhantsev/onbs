@@ -26,13 +26,13 @@ namespace Elm327
             this.logger = logger;
         }
 
-        protected void Run(string portName)
+        public void Run(string portName)
         {
             port = new SerialPort(portName, 38400);
             port.Open();
         }
 
-        protected bool Reset()
+        public bool Reset()
         {
             if (disposed)
                 return false;
@@ -109,23 +109,7 @@ namespace Elm327
             }
         }
 
-        protected byte[] FirstHexString(string[] response)
-        {
-            if (response != null)
-            {
-                foreach (var line in response)
-                {
-                    if (IsHexString(line))
-                    {
-                        return HexToBytes(line);
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        protected string[] Send(uint pid, string formatter, bool autoReset = true)
+        public string[] Send(uint pid, string formatter, bool autoReset = true)
         {
 			if (disposed)
 				return null;
@@ -146,38 +130,6 @@ namespace Elm327
             }
 
             return response;
-        }
-
-        private bool IsHexString(string str)
-        {
-            for (int i = 0; i < str.Length; ++i)
-            {
-                if (!(str[i] >= 48 && str[i] <= 57)
-                    && !(str[i] >= 65 && str[i] <= 70)
-                    && !(str[i] >= 97 && str[i] <= 102)
-                    && str[i] != 32)
-                    return false;
-            }
-
-            return true;
-        }
-
-        private byte[] HexToBytes(string str)
-        {
-            str = str.Replace(" ", string.Empty);
-
-            logger.LogIfDebug(this, string.Concat("Begin converting to HEX: ", str));
-
-            var ret = new byte[str.Length / 2];
-
-            for (int i = 0; i < str.Length; i += 2)
-            {
-                ret[i / 2] = Convert.ToByte(str.Substring(i, 2), 16);
-            }
-
-            logger.LogIfDebug(this, string.Concat("Resulting bytes: ", string.Join(", ", ret)));
-
-            return ret;
         }
 
         public void Dispose()

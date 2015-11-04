@@ -14,7 +14,7 @@ namespace UIModels.ConfigPages
         private readonly IHostController hostController;
 
         public ShutdownPage(IHostController hostController)
-            : base("CommonVertcalStackPage", hostController.Dispatcher, hostController.Logger)
+            : base("CommonVertcalStackPage", hostController.SyncContext, hostController.Logger)
         {
             this.hostController = hostController;
 

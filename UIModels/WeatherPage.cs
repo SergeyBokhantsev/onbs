@@ -26,7 +26,7 @@ namespace UIModels
             this.weather = new WeatherProvider(hc.Logger);
         }
 
-        protected override void OnSecondaryTimer(object sender, EventArgs e)
+        protected override void OnSecondaryTimer()
         {
             if (!Disposed && !weatherProviderBusy && hc.Config.IsInternetConnected)
             {
@@ -34,7 +34,7 @@ namespace UIModels
                 weather.GetForecastAsync(hc.Config.GetString(ConfigNames.WeatherCityId), OnWeatherForecast);
             }
 
-            base.OnSecondaryTimer(sender, e);
+            base.OnSecondaryTimer();
         }
 
         private void OnWeatherForecast(forecast f)

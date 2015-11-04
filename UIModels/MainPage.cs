@@ -15,14 +15,14 @@ namespace UIModels
 		private const string cameraAppKey = "cam";
 
         private readonly IHostController hostController;
-        private readonly IDispatcherTimer timer;
+        private readonly IHostTimer timer;
 
         private readonly int localTimeZone;
 
         private List<IMetricsProvider> metricsProviders;
 
         public MainPage(IHostController hostController)
-            :base(typeof(MainPage).Name, hostController.Dispatcher, hostController.Logger)
+            :base(typeof(MainPage).Name, hostController.SyncContext, hostController.Logger)
         {
             this.hostController = hostController;
 
@@ -42,11 +42,10 @@ namespace UIModels
 			SetProperty("time_valid", "1");
 			SetProperty("time", null);
 
-            timer = hostController.Dispatcher.CreateTimer(1000, TimerTick);
-            timer.Enabled = true;
+            timer = hostController.CreateTimer(1000, TimerTick, true);
         }
 
-        private void TimerTick(object sender, EventArgs e)
+        private void TimerTick()
         {
             SetProperty("time", DateTime.Now.ToUniversalTime().AddHours(localTimeZone));
             SetProperty("time_valid", hostController.Config.IsSystemTimeValid ? "1" : "0");

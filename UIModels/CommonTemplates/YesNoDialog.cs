@@ -14,7 +14,7 @@ namespace UIModels.CommonTemplates
         private readonly Action noAction;
 
         public YesNoDialog(IHostController hostController, Action yesAction, Action noAction, string caption, string message, string yesCaption = "Yes", string noCaption = "No")
-            : base("CommonYesNoPage", hostController.Dispatcher, hostController.Logger)
+            : base("CommonYesNoPage", hostController.SyncContext, hostController.Logger)
         {
             this.yesAction = yesAction;
             this.noAction = noAction;

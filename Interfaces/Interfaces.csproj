@@ -30,6 +30,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Windows|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Windows\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -49,8 +58,7 @@
     <Compile Include="IChart.cs" />
     <Compile Include="IConfig.cs" />
     <Compile Include="IController.cs" />
-    <Compile Include="IDispatcher.cs" />
-    <Compile Include="IDispatcherTimer.cs" />
+    <Compile Include="IHostTimer.cs" />
     <Compile Include="IElm327Controller.cs" />
     <Compile Include="IGPSController.cs" />
     <Compile Include="IHostController.cs" />

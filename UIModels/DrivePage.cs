@@ -76,7 +76,7 @@ namespace UIModels
             base.DoAction(args);
         }
 
-        protected override void OnSecondaryTimer(object sender, EventArgs e)
+        protected override void OnSecondaryTimer()
         {
             if (!Disposed && hc.Config.IsInternetConnected)
             {
@@ -84,7 +84,7 @@ namespace UIModels
                     weather.GetForecastAsync(hc.Config.GetString(ConfigNames.WeatherCityId), OnWeatherForecast));
             }
 
-            base.OnSecondaryTimer(sender, e);
+            base.OnSecondaryTimer();
         }
 
         private void OnWeatherForecast(forecast f)
@@ -106,7 +106,7 @@ namespace UIModels
             weatherGuard.Reset();
         }
 
-        protected override void OnPrimaryTick(object sender, EventArgs e)
+        protected override void OnPrimaryTick()
         {
             if (!Disposed)
             {
@@ -115,7 +115,7 @@ namespace UIModels
                 SetProperty("distance", tc.TravelDistance);
             }
 
-            base.OnPrimaryTick(sender, e);
+            base.OnPrimaryTick();
         }
 
         protected override void OnDisposing(object sender, EventArgs e)

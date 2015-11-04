@@ -21,7 +21,7 @@ namespace UIModels.ConfigPages
         private readonly IConfig config;
 
         public CommonConfigPage(IHostController hostController)
-            : base("CommonVertcalStackPage", hostController.Dispatcher, hostController.Logger)
+            : base("CommonVertcalStackPage", hostController.SyncContext, hostController.Logger)
         {
             this.hostController = hostController;
             this.config = hostController.Config;

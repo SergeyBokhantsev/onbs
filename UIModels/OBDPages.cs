@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Interfaces.UI;
+using System.Diagnostics;
 
 namespace UIModels
 {
@@ -62,6 +63,7 @@ namespace UIModels
 
     public abstract class OBDChartPage : OBDPage
     {
+        private readonly IElm327Controller elm;
         private readonly OBDProcessor obd;
         private readonly OBDChart[] primary;
         private readonly OBDChart[] secondary;
@@ -100,8 +102,8 @@ namespace UIModels
         public OBDChartPage(IHostController hc, string name, int secondaryDivider)
             :base(hc, name)
         {
-            var elm327 = hc.GetController<IElm327Controller>();
-            obd = new OBDProcessor(elm327);
+            elm = hc.GetController<IElm327Controller>();
+            obd = new OBDProcessor(elm);
 
             this.primary = GetPrimaryCharts(obd);
             this.secondary = GetSecondaryCharts(obd);
@@ -139,9 +141,12 @@ namespace UIModels
         private void RequestElm()
         {
             int secondaryCounter = secondaryDivider;
+            var sw = new Stopwatch();
 
             while (!Disposed)
             {
+                sw.Start();
+
                 if (primary != null && primary.Any())
                 {
                     for (int i = 0; i < primary.Length; ++i)
@@ -174,6 +179,21 @@ namespace UIModels
 
                     secondaryCounter++;
                 }
+
+                sw.Stop();
+
+                if (!string.IsNullOrEmpty(elm.Error))
+                {
+                    hc.Logger.Log(this, string.Format("Resetting Elm327 module. Error was: {0}", elm.Error), LogLevels.Warning);
+                    elm.Reset();
+                    Thread.Sleep(3000);
+                }
+                else if (sw.ElapsedMilliseconds < 100)
+                {
+                    Thread.Sleep(100 - (int)sw.ElapsedMilliseconds);
+                }
+
+                sw.Reset();
 
                 SetProperty("refresh", null);
             }

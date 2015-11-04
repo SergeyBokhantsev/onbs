@@ -20,7 +20,7 @@ namespace TravelController
         private readonly AsyncClient client;
         private readonly List<TravelPoint> bufferedPoints = new List<TravelPoint>();
         private readonly GPSLogFilter logFilter;
-        private readonly IDispatcherTimer timer;
+        private readonly IHostTimer timer;
 
         private const int minimalExportRateMs = 5000;
         private readonly int exportRateMs;
@@ -80,8 +80,7 @@ namespace TravelController
             if ((client = CreateClient(hc.Config, hc.Logger)) != null)
             {
                 hc.GetController<IGPSController>().GPRMCReseived += GPRMCReseived;
-                this.timer = hc.Dispatcher.CreateTimer(preparingRateMs, Operate);
-                hc.Dispatcher.Invoke(this, null, (s, e) => timer.Enabled = true);
+                this.timer = hc.CreateTimer(preparingRateMs, Operate, true);
             }
         }
 
@@ -199,7 +198,7 @@ namespace TravelController
             requestCustomPoint = 4;
         }
 
-        private void Operate(object sender, EventArgs e)
+        private void Operate()
         {
             if (disposed)
             {

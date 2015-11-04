@@ -23,8 +23,8 @@ namespace ArduinoController
         private const string metricIsError = "_is_error";
 
         private readonly IPort port;
-        private readonly IDispatcher dispatcher;
-        private readonly IDispatcherTimer arduinoWatchdogTimer;
+        private readonly SynchronizationContext syncContext;
+        private readonly IHostTimer arduinoWatchdogTimer;
         private readonly ILogger logger;
         private readonly ISTPCodec codec;
 		private readonly ISTPCodec arduinoCommandCodec;
@@ -41,11 +41,11 @@ namespace ArduinoController
 			}
         }
 
-        public ArduinoController(IPort port, IDispatcher dispatcher, ILogger logger)
+        public ArduinoController(IPort port, IHostController hc)
         {
             this.port = port;
-            this.dispatcher = dispatcher;
-            this.logger = logger;
+            this.syncContext = hc.SyncContext;
+            this.logger = hc.Logger;
 
             var frameBeginMarker = Encoding.UTF8.GetBytes(":<:");
             var frameEndMarker = Encoding.UTF8.GetBytes(":>:");
@@ -55,13 +55,12 @@ namespace ArduinoController
 			var arduFrameEndMarker = Encoding.UTF8.GetBytes("}");
 			arduinoCommandCodec = new STPCodec(arduFrameBeginMarker, arduFrameEndMarker);
 
-            arduinoWatchdogTimer = dispatcher.CreateTimer(5000, (s, e) => 
+            arduinoWatchdogTimer = hc.CreateTimer(5000, () => 
             {
                 Send(new byte[] { (byte)'d' });
 				Interlocked.Increment(ref ardPingPendings);
                 logger.LogIfDebug(this, "Ping command sended to Arduino");
-            });
-            arduinoWatchdogTimer.Enabled = true;
+            }, true);
 
             logger.Log(this, string.Format("{0} created.", this.GetType().Name), LogLevels.Info);
 
@@ -129,7 +128,7 @@ namespace ArduinoController
 
                     foreach (var acceptor in acceptors)
                     {
-                        dispatcher.Invoke(this, null, (s, a) => acceptor.AcceptFrames(frames.Where(f => f.Type == acceptor.FrameType)));
+                        syncContext.Post(o => acceptor.AcceptFrames(frames.Where(f => f.Type == acceptor.FrameType)), null);
                         logger.LogIfDebug(this, string.Format("Frames were dispatched for {0} acceptor", acceptor.FrameType));
                     }
                 }
@@ -157,7 +156,7 @@ namespace ArduinoController
 				metrics.Add(3, metricPendingPing, ardPingPendings);
                 metrics.Add(4, metricIsError, !IsCommunicationOk);
 
-                dispatcher.Invoke(this, null, new EventHandler((s,e) => handler(this, metrics)));
+                syncContext.Post(o => handler(this, metrics), null);
             }
         }
 

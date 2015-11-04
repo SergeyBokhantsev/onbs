@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.Input;
 using Interfaces.UI;
+using System.Threading;
 
 namespace UIModels
 {
@@ -17,7 +18,7 @@ namespace UIModels
 
         private readonly Dictionary<string, object> properties = new Dictionary<string, object>();
 
-        protected readonly IDispatcher dispatcher;
+        protected readonly SynchronizationContext syncContext;
 
         protected readonly ILogger logger;
 
@@ -29,10 +30,10 @@ namespace UIModels
             private set;
         }
 
-        protected ModelBase(string name, IDispatcher dispatcher, ILogger logger)
+        protected ModelBase(string name, SynchronizationContext syncContext, ILogger logger)
         {
             Name = name;
-            this.dispatcher = dispatcher;
+            this.syncContext = syncContext;
             this.logger = logger;
         }
 
@@ -70,10 +71,7 @@ namespace UIModels
             {
                 logger.LogIfDebug(this, string.Format("Performing PageModel action '{0}'", actionArgs.ActionName));
 
-                if (dispatcher.Check())
-                    DoAction(actionArgs);
-                else
-                    dispatcher.Invoke(this, null, new EventHandler((s, a) => DoAction(actionArgs)));
+                syncContext.Post(o => DoAction(o as PageModelActionEventArgs), actionArgs);
             }
             else
             {

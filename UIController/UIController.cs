@@ -34,14 +34,13 @@ namespace UIController
             this.hostController = hostController;
             this.startPageConstructor = startPageConstructor;
 
-            hostController.Dispatcher.CreateTimer(3 * 60 * 1000, (s, e) =>
+            hostController.CreateTimer(3 * 60 * 1000, () =>
                 {
                     hostController.ProcessRunnerFactory.Create(ConfigNames.XScreenForceOn).Run();
                     hostController.GetController<IAutomationController>().MouseMove(mouseLocation++, mouseLocation++);
                     if (mouseLocation > 3)
                         mouseLocation = 0;
-                }
-                ).Enabled = true;
+                }, true);
 
             StartUIThread();
             

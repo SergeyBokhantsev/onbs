@@ -8,35 +8,58 @@ using System.Threading.Tasks;
 
 namespace Elm327Controller
 {
-    public class Elm327Controller : Elm327.Client, IElm327Controller
+    public class Elm327Controller : IElm327Controller, IDisposable
     {
         private readonly object locker = new object();
         private readonly IHostController hc;
-        private bool active;
-
+        private Elm327.Client elm;
+        private bool disposed;
+        
         public string Error { get; private set; }        
 
         public Elm327Controller(IHostController hc)
-            :base(hc.Logger)
         {
             this.hc = hc;
         }
 
-        private bool EnsureClient()
+        public void Reset()
         {
-            if (active)
+            lock (locker)
             {
-                return true;
-            }
+                if (elm != null)
+                    elm.Dispose();
 
-            if (Error == null)
+                Error = null;
+                elm = null;
+            }
+        }
+
+        private bool EnsureElm()
+        {
+            if (Error != null)
+            {
+                return false;
+            }
+            else if (disposed)
+            {
+                Error = "Controller is disposed!";
+                return false;
+            }
+            else if (elm == null)
             {
                 try
                 {
                     var portName = hc.Config.GetString(ConfigNames.Elm327Port);
-                    Run(portName);
-                    Reset();
-                    return active = true;
+                    elm = new Client(hc.Logger);
+                    elm.Run(portName);
+
+                    if (elm.Reset())
+                        return true;
+                    else
+                    {
+                        Error = "Unable to reset Elm327 module";
+                        return false;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -45,8 +68,8 @@ namespace Elm327Controller
                     return false;
                 }
             }
-
-            return false;
+            else
+                return true;
         }
 
         public Nullable<T> GetPIDValue<T>(uint pid, int expectedBytesCount, Func<byte[], T> formula)
@@ -66,9 +89,9 @@ namespace Elm327Controller
 
             lock (locker)
             {
-                if (EnsureClient())
+                if (EnsureElm())
                 {
-                    result = FirstHexString(Send(0x0100 + pid, "X4"));
+                    result = FirstHexString(elm.Send(0x0100 + pid, "X4"));
                 }
             }
 
@@ -81,13 +104,73 @@ namespace Elm327Controller
 
             lock (locker)
             {
-                if (EnsureClient())
+                if (EnsureElm())
                 {
-                    result = FirstHexString(Send(0x03, "X2"));
+                    result = FirstHexString(elm.Send(0x03, "X2"));
                 }
             }
 
             return result;
+        }
+
+        private byte[] FirstHexString(string[] response)
+        {
+            if (response != null)
+            {
+                foreach (var line in response)
+                {
+                    if (IsHexString(line))
+                    {
+                        return HexToBytes(line);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private bool IsHexString(string str)
+        {
+            for (int i = 0; i < str.Length; ++i)
+            {
+                if (!(str[i] >= 48 && str[i] <= 57)
+                    && !(str[i] >= 65 && str[i] <= 70)
+                    && !(str[i] >= 97 && str[i] <= 102)
+                    && str[i] != 32)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private byte[] HexToBytes(string str)
+        {
+            str = str.Replace(" ", string.Empty);
+
+            hc.Logger.LogIfDebug(this, string.Concat("Begin converting to HEX: ", str));
+
+            var ret = new byte[str.Length / 2];
+
+            for (int i = 0; i < str.Length; i += 2)
+            {
+                ret[i / 2] = Convert.ToByte(str.Substring(i, 2), 16);
+            }
+
+            hc.Logger.LogIfDebug(this, string.Concat("Resulting bytes: ", string.Join(", ", ret)));
+
+            return ret;
+        }
+
+        public void Dispose()
+        {
+            lock (locker)
+            {
+                if (!disposed)
+                {
+                    disposed = true;
+                    Reset();
+                }
+            }
         }
     }
 }

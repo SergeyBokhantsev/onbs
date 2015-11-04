@@ -28,20 +28,23 @@ namespace HostController
 
         public void Log(object caller, string message, LogLevels level)
         {
-            WriteToConsole(string.Concat(DateTime.Now, " | ", level, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message));
+            WriteToConsole(string.Concat(DateTime.Now, " | ", level, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message), level);
             logger.Log(caller, message, level);
         }
 
         public void Log(object caller, Exception ex)
         {
-            WriteToConsole(string.Concat(ex.Message, Environment.NewLine, ex.StackTrace));
+            WriteToConsole(string.Concat(ex.Message, Environment.NewLine, ex.StackTrace), LogLevels.Error);
             logger.Log(caller, ex);
         }
 
         [Conditional("DEBUG")]
-        private void WriteToConsole(string message)
+        private void WriteToConsole(string message, LogLevels level)
         {
             Console.WriteLine(message);
+
+            //if (level < LogLevels.Info)
+              //  Thread.Sleep(5000);
         }
 
         public void Flush()
