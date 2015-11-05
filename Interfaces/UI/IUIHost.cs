@@ -10,6 +10,7 @@ namespace Interfaces.UI
     {
 		void Run(bool fullscreen);
         void ShowPage(IPageModel model);
+        void ShowDialog(IPageModel model);
         void Shutdown();
     }
 }

@@ -101,6 +101,8 @@ namespace GtkApplication
             logger.Log(this, args.ExceptionObject as Exception);
         }
 
+
+
         private void ShowPage(object sender, EventArgs args)
         {
             var showPageArgs = args as ShowPageEventArgs;
@@ -138,6 +140,18 @@ namespace GtkApplication
         public void ShowPage(IPageModel model)
         {
             Application.Invoke(null, new ShowPageEventArgs(model), ShowPage);
+        }
+
+        public void ShowDialog(IPageModel model)
+        {
+            Application.Invoke((s, e) =>
+            {
+                Dialog dlg = new Dialog("foo", win, DialogFlags.DestroyWithParent);
+                dlg.AddButton("Close", ResponseType.Close);
+                dlg.Response += (ss, ee) => dlg.Destroy();
+                dlg.Run();
+                dlg.Destroy();
+            });
         }
 
         public void Shutdown()

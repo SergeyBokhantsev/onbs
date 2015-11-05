@@ -11,5 +11,6 @@ namespace Interfaces
     {
         void ShowPage(IPageModel model);
         void ShowDefaultPage();
+        void ShowDialog(IPageModel model);
     }
 }

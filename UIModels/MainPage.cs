@@ -114,6 +114,9 @@ namespace UIModels
                     {
                         if (args.State == ButtonStates.Press)
                         {
+                            hostController.GetController<IUIController>().ShowDialog(null);
+                            return;
+
                             var page = new WebCamPage(hostController, cameraAppKey);
                             hostController.GetController<IUIController>().ShowPage(page);
                             page.Run();

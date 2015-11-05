@@ -117,5 +117,10 @@ namespace UIController
             if (shutdowning || uiHost == null)
                 throw new Exception("UI host was destroyed");
         }
+
+        public void ShowDialog(IPageModel model)
+        {
+            uiHost.ShowDialog(model);
+        }
     }
 }
