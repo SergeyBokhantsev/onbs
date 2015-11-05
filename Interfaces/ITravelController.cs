@@ -19,7 +19,6 @@ namespace Interfaces
         /// Path lenght in meters from the very first received gps point
         /// </summary>
         double TravelDistance { get; }
-        void RequestNewTravel(string name);
         void MarkCurrentPositionWithCustomPoint();
     }
 }

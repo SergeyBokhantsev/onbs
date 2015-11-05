@@ -49,6 +49,12 @@ namespace TravelsClient
     {
         public Travel Travel { get; private set; }
 
+        public TravelResult(string error)
+        {
+            Success = false;
+            Error = error;
+        }
+
         public TravelResult(ClientResponse response, string genericErrorMessage, params HttpStatusCode[] desiredStatuses)
         {
             if (response != null && desiredStatuses != null && desiredStatuses.Contains(response.Status))
@@ -169,6 +175,11 @@ namespace TravelsClient
             }
         }
 
+        public async Task<TravelResult> FindActiveTravelAsync()
+        {
+            return await Task.Run<TravelResult>((Func<TravelResult>)FindActiveTravel);
+        }
+
         public TravelResult GetTravel(int id)
         {
             var url = CreateUri("Travels/get", KeyParam, CreateArg(ARG_ID, id.ToString()));
@@ -188,6 +199,11 @@ namespace TravelsClient
             {
                 return new TravelResult(response, OPEN_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.Created);
             }
+        }
+
+        public async Task<TravelResult> OpenTravelAsync(string name)
+        {
+            return await Task.Run<TravelResult>(() => OpenTravel(name));
         }
 
         public ActionResult CloseTravel(Travel travel)
@@ -300,6 +316,11 @@ namespace TravelsClient
             {
                 return new ActionResult(null, ex.Message);
             }
+        }
+
+        public async Task<ActionResult> AddTravelPointAsync(IEnumerable<TravelPoint> tps, Travel travel)
+        {
+            return await Task.Run<ActionResult>(() => AddTravelPoint(tps, travel));
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Interfaces
     {
         void ShowPage(IPageModel model);
         void ShowDefaultPage();
-        void ShowDialog(IPageModel model);
+        void ShowDialog(IDialogModel model);
+        Task<DialogResults> ShowDialogAsync(IDialogModel model);
     }
 }

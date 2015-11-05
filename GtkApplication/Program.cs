@@ -139,19 +139,37 @@ namespace GtkApplication
 
         public void ShowPage(IPageModel model)
         {
-            Application.Invoke(null, new ShowPageEventArgs(model), ShowPage);
+            Application.Invoke(this, new ShowPageEventArgs(model), ShowPage);
         }
 
-        public void ShowDialog(IPageModel model)
+        public void ShowDialog(IDialogModel model)
         {
-            Application.Invoke((s, e) =>
+            Application.Invoke((s, e) => ShowDialog(this, new ShowPageEventArgs(model)));
+        }
+
+        private void ShowDialog(object sender, EventArgs args)
+        {
+            var model = (args as ShowPageEventArgs).Model as IDialogModel;
+
+            var dlg = new Gtk.Dialog(model.GetProperty<string>(model.CaptionPropertyName), win, DialogFlags.DestroyWithParent);
+
+            if (model.Buttons != null)
             {
-                Dialog dlg = new Dialog("foo", win, DialogFlags.DestroyWithParent);
-                dlg.AddButton("Close", ResponseType.Close);
-                dlg.Response += (ss, ee) => dlg.Destroy();
-                dlg.Run();
-                dlg.Destroy();
-            });
+                foreach (var btn in model.Buttons)
+                {
+                    dlg.AddButton(btn.Value, (ResponseType)btn.Key);
+                }
+            }
+
+            model.ButtonClick += dr => dlg.Respond((ResponseType)dr);
+
+            dlg.Response += (s, e) => { model.OnClosed((DialogResults)e.ResponseId); dlg.Destroy(); };
+            dlg.Modal = true;
+            dlg.Shown += (s, e) => model.OnShown();
+            dlg.Close += (s, e) => model.OnClosed(DialogResults.None);
+                        
+            dlg.Run();
+            dlg.Destroy();
         }
 
         public void Shutdown()

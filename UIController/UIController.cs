@@ -20,8 +20,11 @@ namespace UIController
         private AutoResetEvent hostWaiter = new AutoResetEvent(false);
         private IUIHost uiHost;
         private IPageModel current;
+        private readonly Stack<IDialogModel> dialogs = new Stack<IDialogModel>();
+        private IDialogModel currentDialog;
         private readonly IHostController hostController;
         private readonly Func<IPageModel> startPageConstructor;
+        private int mainThreadId;
 
         private int mouseLocation;
 
@@ -33,6 +36,7 @@ namespace UIController
             this.uiHostClassName = uiHostClassName;
             this.hostController = hostController;
             this.startPageConstructor = startPageConstructor;
+            this.mainThreadId = Thread.CurrentThread.ManagedThreadId;
 
             hostController.CreateTimer(3 * 60 * 1000, () =>
                 {
@@ -49,6 +53,15 @@ namespace UIController
 
         private void ButtonPressed(Buttons button, ButtonStates state)
         {
+            lock (dialogs)
+            {
+                if (currentDialog != null)
+                {
+                    currentDialog.Action(new PageModelActionEventArgs(button.ToString(), state));
+                    return;
+                }
+            }
+
             var page = current;
 
             if (page != null)
@@ -94,6 +107,7 @@ namespace UIController
 
         public void ShowPage(IPageModel model)
         {
+            AssertThread();
             AssertHost();
 
             if (current != null)
@@ -118,9 +132,59 @@ namespace UIController
                 throw new Exception("UI host was destroyed");
         }
 
-        public void ShowDialog(IPageModel model)
+        private void AssertThread()
         {
-            uiHost.ShowDialog(model);
+            if (mainThreadId != Thread.CurrentThread.ManagedThreadId)
+                throw new InvalidOperationException("UI operation should be performed from the original thread.");
+        }
+
+        public void ShowDialog(IDialogModel model)
+        {
+            lock (dialogs)
+            {
+                dialogs.Push(model);
+                hostController.SyncContext.Post(o => ProcessDialogsQueue(), null);
+                ProcessDialogsQueue();
+            }
+        }
+
+        public async Task<DialogResults> ShowDialogAsync(IDialogModel model)
+        {
+            return await Task.Run<DialogResults>(() =>
+            {
+                var result = DialogResults.None;
+                var signal = new ManualResetEvent(false);
+                
+                model.Closed += dr => { result = dr; signal.Set(); };
+
+                ShowDialog(model);
+
+                signal.WaitOne();
+
+                return result;
+            });
+        }
+
+        private void ProcessDialogsQueue()
+        {
+            lock (dialogs)
+            {
+                if (currentDialog == null && dialogs.Any() && (current == null || !current.NoDialogsAllowed))
+                {
+                    currentDialog = dialogs.Pop();
+
+                    currentDialog.Closed += r =>
+                    {
+                        lock (dialogs)
+                        {
+                            currentDialog = null;
+                            hostController.SyncContext.Post(o => ProcessDialogsQueue(), null);
+                        }
+                    };
+
+                    uiHost.ShowDialog(currentDialog);
+                }
+            }
         }
     }
 }

@@ -87,6 +87,11 @@ namespace GtkApplication
 				handler(this, new EventArgs());
 		}
 		#endregion
-	}
+
+        public bool NoDialogsAllowed
+        {
+            get { return false; }
+        }
+    }
 }
 

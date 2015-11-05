@@ -114,8 +114,22 @@ namespace UIModels
                     {
                         if (args.State == ButtonStates.Press)
                         {
-                            hostController.GetController<IUIController>().ShowDialog(null);
-                            return;
+                            //var dialog = new DialogModel("foo", hostController.SyncContext, logger);
+
+                            //dialog.CaptionPropertyName = "caption";
+                            //dialog.SetProperty(dialog.CaptionPropertyName, "My Foo question");
+                            //dialog.Buttons = new Dictionary<DialogResults, string> { { DialogResults.Ok, "OKAY" }, { DialogResults.Cancel, "Cancel" } };
+
+                            //hostController.GetController<IUIController>().ShowDialog(dialog);
+
+                            //dialog.Closed += r => 
+                            //{
+                            //    var t = r;
+                            //    if (t == DialogResults.Cancel)
+                            //        throw new Exception();
+                            //};
+
+                            //return;
 
                             var page = new WebCamPage(hostController, cameraAppKey);
                             hostController.GetController<IUIController>().ShowPage(page);
@@ -124,37 +138,14 @@ namespace UIModels
                     }
                     break;
 
-            case ModelNames.ButtonF5:
-                {
-                    if (args.State == ButtonStates.Press)
+                case ModelNames.ButtonF5:
                     {
-                        hostController.GetController<ITravelController>().MarkCurrentPositionWithCustomPoint();
+                        if (args.State == ButtonStates.Press)
+                        {
+                            hostController.GetController<ITravelController>().MarkCurrentPositionWithCustomPoint();
+                        }
                     }
-                }
-                break;
-
-            case ModelNames.ButtonF6:
-                {
-                    if (args.State == ButtonStates.Press)
-                    {
-                        var dialog = new UIModels.CommonTemplates.YesNoDialog(hostController,
-                            () =>
-                            { // YES
-                                var travelController = hostController.GetController<ITravelController>();
-                                travelController.RequestNewTravel(string.Concat("Manual at", DateTime.Now.AddHours(hostController.Config.GetInt(ConfigNames.SystemTimeLocalZone)).ToString("HH:mm")));
-                                hostController.GetController<IUIController>().ShowDefaultPage();
-                            },
-                            () =>
-                            { // NO
-                                hostController.GetController<IUIController>().ShowDefaultPage();
-                            },
-                            "Confirm opening new travel",
-                            "Do you really want to request new travel?");
-
-                        hostController.GetController<IUIController>().ShowPage(dialog);
-                    }
-                }
-                break;
+                    break;
 
                 case ModelNames.ButtonF8:
                     {

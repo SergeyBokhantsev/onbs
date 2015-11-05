@@ -30,8 +30,17 @@ namespace UIModels
             private set;
         }
 
+        public bool NoDialogsAllowed
+        {
+            get;
+            protected set;
+        }
+
         protected ModelBase(string name, SynchronizationContext syncContext, ILogger logger)
         {
+            if (syncContext == null)
+                throw new ArgumentNullException("syncContext");
+
             Name = name;
             this.syncContext = syncContext;
             this.logger = logger;
@@ -111,15 +120,59 @@ namespace UIModels
             if (handler != null)
                 handler(name);
         }
+    }
 
-    //    public void Button(Buttons button, ButtonStates state)
-    //    {
-    //        Action<ButtonStates> action = buttonHandlersMap[button];
+    public class DialogModel : ModelBase, IDialogModel
+    {
+        public event Action Shown;
+        public event Action<DialogResults> Closed;
+        public event Action<DialogResults> ButtonClick;
 
-    //        if (dispatcher.Check())
-    //            action(state);
-    //        else
-    //            dispatcher.Invoke(null, null, new EventHandler((s, a) => action(state)));
-    //    }
+        public DialogModel(string name, SynchronizationContext syncContext, ILogger logger)
+            :base(name, syncContext, logger)
+        {
+        }
+
+        public void OnClosed(DialogResults result)
+        {
+            var handler = Closed;
+            if (handler != null)
+                syncContext.Post(o => handler((DialogResults)o), result);
+        }
+
+        public void OnShown()
+        {
+            var handler = Shown;
+            if (handler != null)
+                syncContext.Post(o => handler(), null);
+        }
+
+        public string CaptionPropertyName
+        {
+            get;
+            set;
+        }
+
+        public string MessagePropertyName
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public Dictionary<DialogResults, string> Buttons
+        {
+            get;
+            set;
+        }
+
+        protected override void DoAction(PageModelActionEventArgs actionArgs)
+        {
+        }
+
+        protected void OnButtonClick(DialogResults result)
+        {
+            var handler = ButtonClick;
+            if (handler != null)
+                handler(result);
+        }
     }
 }

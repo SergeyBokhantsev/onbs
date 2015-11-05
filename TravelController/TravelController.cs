@@ -7,6 +7,7 @@ using Interfaces;
 using Interfaces.GPS;
 using TravelsClient;
 using System.Threading;
+using UIModels.Dialogs;
 
 namespace TravelController
 {
@@ -17,7 +18,7 @@ namespace TravelController
         private enum States { NotStarted, FindingOpenedTravel, ToOpenNewTravel, CreatingNewTravel, ExportingPoints, Ready }
 
         private readonly IHostController hc;
-        private readonly AsyncClient client;
+        private readonly Client client;
         private readonly List<TravelPoint> bufferedPoints = new List<TravelPoint>();
         private readonly GPSLogFilter logFilter;
         private readonly IHostTimer timer;
@@ -39,7 +40,6 @@ namespace TravelController
         private GPRMC previousGprmc;
 
         private bool disposed;
-        private string requestNewTrawel;
         private volatile int requestCustomPoint;
 
         public int BufferedPoints
@@ -84,112 +84,86 @@ namespace TravelController
             }
         }
 
-        private void FindOpenedTravel()
+        private async void FindOpenedTravel()
         {
-            if (client.TryFindActiveTravelAsync(result =>
-                {
-                    if (result.Success)
-                    {
-                        if (result.Travel != null)
-                        {
-                            var minutesGapToOpenNewTravel = hc.Config.GetInt(ConfigNames.TravelServiceMinutesGapToOpenNewTravel);
+            state.Value = States.FindingOpenedTravel;
 
-                            if (result.Travel.Closed)
-                            {
-                                this.travel = null;
-                                state.Value = States.ToOpenNewTravel;
-                                hc.Logger.Log(this, string.Format("Found travel is closed. Id={0}", result.Travel.ID), LogLevels.Warning);
-                            }
-                            else if (result.Travel.EndTime.AddMinutes(minutesGapToOpenNewTravel) <= DateTime.Now.ToUniversalTime())
-                            {
-                                this.travel = null;
-                                state.Value = States.ToOpenNewTravel;
-                                hc.Logger.Log(this, string.Format("Found travel Id={0} was closed more than {1} minutes ago. New travel will be created.", result.Travel.ID, minutesGapToOpenNewTravel), LogLevels.Info);
-                            }
-                            else
-                            {
-                                this.travel = result.Travel;
-                                state.Value = States.Ready;
-                                hc.Logger.Log(this, string.Format("Opened travel found, Id={0}", result.Travel.ID), LogLevels.Info);
-                            }
+            var result = await client.FindActiveTravelAsync();
+
+            if (result.Success)
+            {
+                if (result.Travel != null)
+                {
+                    var minutesGapToOpenNewTravel = hc.Config.GetInt(ConfigNames.TravelServiceMinutesGapToOpenNewTravel);
+
+                    if (result.Travel.Closed)
+                    {
+                        this.travel = null;
+                        state.Value = States.ToOpenNewTravel;
+                        hc.Logger.Log(this, string.Format("Found travel is closed. Id={0}", result.Travel.ID), LogLevels.Warning);
+                    }
+                    else
+                    {
+                        var dRes = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Continue existing travel?", "", "Yes", "Create new", hc.SyncContext, hc.Logger));
+
+                        if (dRes == Interfaces.UI.DialogResults.Yes)
+                        {
+                            this.travel = result.Travel;
+                            state.Value = States.Ready;
+                            hc.Logger.Log(this, string.Format("Continuing travel Id={0}", result.Travel.ID), LogLevels.Info);
                         }
                         else
                         {
                             this.travel = null;
                             state.Value = States.ToOpenNewTravel;
-                            hc.Logger.Log(this, "Opened travel not found", LogLevels.Info);
+                            hc.Logger.Log(this, string.Format("Found travel Id={0} but user had declined it. New travel will be created.", result.Travel.ID), LogLevels.Info);
                         }
-
-                        metricsError = false;
                     }
-                    else
-                    {
-                        hc.Logger.Log(this, "Error while finding opened travel:", LogLevels.Warning);
-                        hc.Logger.Log(this, result.Error, LogLevels.Warning);
-                        state.Value = States.NotStarted;
-                        metricsError = true;
-                    }
-                }))
-            {
-                hc.Logger.LogIfDebug(this, "FindOpenedTravel operation started.");
-                state.Value = States.FindingOpenedTravel;
-                metricsError = false;
-            }
-            else
-            {
-                hc.Logger.Log(this, "Unable to start FindOpenedTravel operation", LogLevels.Warning);
-                metricsError = true;
-            }
-        }
-
-        private bool OpenNewTravel(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                name = CreateNewTravelName();
-
-            if (client.TryOpenNewTravel(name, result => 
-            {
-                if (result.Success)
-                {
-                    this.travel = result.Travel;
-                    state.Value = States.Ready;
-                    hc.Logger.Log(this, string.Format("New travel was opened succesfully, Id={0}", result.Travel.ID), LogLevels.Info);
-                    metricsError = false;
-                    requestNewTrawel = null;
                 }
                 else
                 {
                     this.travel = null;
-                    state.Value = States.NotStarted;
-                    hc.Logger.Log(this, "Error while opening new travel:", LogLevels.Warning);
-                    hc.Logger.Log(this, result.Error, LogLevels.Warning);
-                    metricsError = true;
+                    state.Value = States.ToOpenNewTravel;
+                    hc.Logger.Log(this, "Opened travel not found", LogLevels.Info);
                 }
-            }))
-            {
-                state.Value = States.CreatingNewTravel;
-                hc.Logger.LogIfDebug(this, "OpenNewTravel operation started");
+
                 metricsError = false;
-                return true;
             }
             else
             {
-                hc.Logger.Log(this, "Unable to start OpenNewTravel operation", LogLevels.Warning);
+                hc.Logger.Log(this, "Error while finding opened travel:", LogLevels.Warning);
+                hc.Logger.Log(this, result.Error, LogLevels.Warning);
+                state.Value = States.NotStarted;
                 metricsError = true;
-                return false;
+            }
+        }
+
+        private async void OpenNewTravel()
+        {
+            state.Value = States.CreatingNewTravel;
+
+            var result = await client.OpenTravelAsync(CreateNewTravelName());
+
+            if (result.Success)
+            {
+                this.travel = result.Travel;
+                state.Value = States.Ready;
+                hc.Logger.Log(this, string.Format("New travel was opened succesfully, Id={0}", result.Travel.ID), LogLevels.Info);
+                metricsError = false;
+            }
+            else
+            {
+                this.travel = null;
+                state.Value = States.NotStarted;
+                hc.Logger.Log(this, "Error while opening new travel:", LogLevels.Warning);
+                hc.Logger.Log(this, result.Error, LogLevels.Warning);
+                metricsError = true;
             }
         }
 
         private string CreateNewTravelName()
         {
             return string.Concat("Auto at", DateTime.Now.AddHours(hc.Config.GetInt(ConfigNames.SystemTimeLocalZone)).ToString("HH:mm"));
-        }
-
-        public void RequestNewTravel(string name)
-        {
-            requestNewTrawel = name;
-            state.Value = States.NotStarted;
-            timer.Span = preparingRateMs;
         }
 
         public void MarkCurrentPositionWithCustomPoint()
@@ -218,37 +192,28 @@ namespace TravelController
                 {
                     case States.NotStarted:
 
-                        if (!string.IsNullOrWhiteSpace(requestNewTrawel))
+                        int count = 0;
+
+                        lock (bufferedPoints)
+                        {
+                            count = bufferedPoints.Count;
+                        }
+
+                        var minPointsToStart = hc.Config.GetInt(ConfigNames.TravelServiceMinPointsCountToStart);
+
+                        if (bufferedPoints.Count >= minPointsToStart)
                         {
                             timer.Span = preparingRateMs;
-                            state.Value = States.ToOpenNewTravel;
+                            FindOpenedTravel();
                         }
                         else
                         {
-                            int count = 0;
-
-                            lock (bufferedPoints)
-                            {
-                                count = bufferedPoints.Count;
-                            }
-
-                            var minPointsToStart = hc.Config.GetInt(ConfigNames.TravelServiceMinPointsCountToStart);
-
-                            if (bufferedPoints.Count >= minPointsToStart)
-                            {
-                                timer.Span = preparingRateMs;
-                                FindOpenedTravel();
-                            }
-                            else
-                            {
-                                hc.Logger.Log(this, string.Concat("Skipping export because points < ", minPointsToStart), LogLevels.Info);
-                            }
+                            hc.Logger.Log(this, string.Concat("Skipping export because points < ", minPointsToStart), LogLevels.Info);
                         }
-                        
                         break;
 
                     case States.ToOpenNewTravel:
-                        OpenNewTravel(null);
+                        OpenNewTravel();
                         break;
 
                     case States.Ready:
@@ -281,10 +246,12 @@ namespace TravelController
                 handler(this, metrics);
         }
 
-        private void ExportPoints()
+        private async Task ExportPoints()
         {
             if (state.Value != States.Ready)
                 return;
+
+            state.Value = States.ExportingPoints;
 
             var pointsToExport = new List<TravelPoint>();
 
@@ -299,39 +266,29 @@ namespace TravelController
             {
                 hc.Logger.LogIfDebug(this, string.Format("{0} point(s) are ready to export", pointsToExport.Count));
 
-                if (client.TryAddTravelPoints(pointsToExport, travel, result =>
-                    {
-                        if (result.Success)
-                        {
-                            metricsSendedPoints += pointsToExport.Count;
-                            hc.Logger.LogIfDebug(this, "Point(s) were exported succesfully");
-                            metricsError = false;
-                        }
-                        else
-                        {
-                            lock (bufferedPoints)
-                            {
-                                bufferedPoints.AddRange(pointsToExport);
-                                metricsBufferedPoints = bufferedPoints.Count;
-                            }
-                            hc.Logger.Log(this, "Attempt to add Travel points was failed.", LogLevels.Warning);
-                            metricsError = false;
-                        }
+                var result = await client.AddTravelPointAsync(pointsToExport, travel);
 
-                        state.Value = States.Ready;
-                        UpdateMetrics();
-                    }))
+                if (result.Success)
                 {
-                    state.Value = States.ExportingPoints;
-                    hc.Logger.LogIfDebug(this, "ExportPoints operation started");
+                    metricsSendedPoints += pointsToExport.Count;
+                    hc.Logger.LogIfDebug(this, "Point(s) were exported succesfully");
                     metricsError = false;
                 }
                 else
                 {
-                    hc.Logger.Log(this, "Unable to start ExportPoints operation", LogLevels.Warning);
-                    metricsError = true;
+                    lock (bufferedPoints)
+                    {
+                        bufferedPoints.AddRange(pointsToExport);
+                        metricsBufferedPoints = bufferedPoints.Count;
+                    }
+                    hc.Logger.Log(this, "Attempt to add Travel points was failed.", LogLevels.Warning);
+                    metricsError = false;
                 }
+
+                UpdateMetrics();
             }
+
+            state.Value = States.Ready;            
         }
 
         private void GPRMCReseived(GPRMC gprmc)
@@ -384,7 +341,7 @@ namespace TravelController
             previousGprmc = gprmc;
         }
 
-        private AsyncClient CreateClient(IConfig config, ILogger logger)
+        private Client CreateClient(IConfig config, ILogger logger)
         {
             try
             {
@@ -397,7 +354,7 @@ namespace TravelController
 
                 logger.LogIfDebug(this, string.Format("Travel client created successfully for URL {0}, vehicle Id={1}", serverUrl, vehicleId));
 
-                return new AsyncClient(new Uri(serverUrl), key, vehicleId, logger);
+                return new Client(new Uri(serverUrl), key, vehicleId, logger);
             }
             catch (Exception ex)
             {
@@ -416,14 +373,12 @@ namespace TravelController
             {
                 hc.Logger.Log(this, "Trying to send buffered points...", LogLevels.Info);
 
-                ExportPoints();
+                bool result = Task.Run(async () => { await ExportPoints(); }).Wait(30000);
 
-                while (state.Value == States.ExportingPoints)
-                {
-                    Thread.Sleep(1000);
-                }
-
-                hc.Logger.Log(this, "Buffered points were successfully sended...", LogLevels.Info);
+                if (result)
+                    hc.Logger.Log(this, "Buffered points were successfully sended.", LogLevels.Info);
+                else
+                    hc.Logger.Log(this, "Buffered points were not sended in 30 seconds.", LogLevels.Warning);
             }
         }
     }

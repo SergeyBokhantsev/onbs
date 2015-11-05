@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Interfaces.Input;
 
@@ -27,6 +28,7 @@ namespace Interfaces.UI
         event PageModelPropertyChangedHandler PropertyChanged;
         event EventHandler Disposing;
         string Name { get; }
+        bool NoDialogsAllowed { get; }
         T GetProperty<T>(string name);
         void SetProperty(string name, object value);
         void RefreshAllProps();
