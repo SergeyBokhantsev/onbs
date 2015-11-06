@@ -11,10 +11,12 @@ namespace UIModels.Dialogs
 {
     public class YesNoDialog : DialogModel
     {
-        public YesNoDialog(string caption, string message, string yesCaption, string noCaption, SynchronizationContext syncContext, ILogger logger)
-            : base("YesNoDialog", syncContext, logger)
+        public YesNoDialog(string caption, string message, string yesCaption, string noCaption, IHostController hc, int timeout, DialogResults defaultResult)
+            : base("YesNoDialog", hc)
         {
-            CaptionPropertyName = "caption";
+            this.timeout = timeout;
+            this.defaultResult = defaultResult;
+
             SetProperty(CaptionPropertyName, caption);
 
             Buttons = new Dictionary<Interfaces.UI.DialogResults, string> { { DialogResults.Yes, yesCaption }, { DialogResults.No, noCaption } };

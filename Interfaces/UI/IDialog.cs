@@ -33,6 +33,7 @@ namespace Interfaces.UI
 
         string CaptionPropertyName { get; }
         string MessagePropertyName { get; }
+        string RemainingTimePropertyName { get; }
         Dictionary<DialogResults, string> Buttons { get; }
 
         void OnShown();

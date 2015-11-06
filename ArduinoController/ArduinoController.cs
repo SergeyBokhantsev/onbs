@@ -24,7 +24,6 @@ namespace ArduinoController
 
         private readonly IPort port;
         private readonly SynchronizationContext syncContext;
-        private readonly IHostTimer arduinoWatchdogTimer;
         private readonly ILogger logger;
         private readonly ISTPCodec codec;
 		private readonly ISTPCodec arduinoCommandCodec;
@@ -55,12 +54,12 @@ namespace ArduinoController
 			var arduFrameEndMarker = Encoding.UTF8.GetBytes("}");
 			arduinoCommandCodec = new STPCodec(arduFrameBeginMarker, arduFrameEndMarker);
 
-            arduinoWatchdogTimer = hc.CreateTimer(5000, () => 
+            hc.CreateTimer(5000, t => 
             {
                 Send(new byte[] { (byte)'d' });
 				Interlocked.Increment(ref ardPingPendings);
                 logger.LogIfDebug(this, "Ping command sended to Arduino");
-            }, true);
+            }, true, true);
 
             logger.Log(this, string.Format("{0} created.", this.GetType().Name), LogLevels.Info);
 

@@ -292,9 +292,9 @@ namespace HostController
             return new ProcessRunner.ProcessRunnerImpl(exePath, args, waitForUI, Logger);
         }
 
-        public IHostTimer CreateTimer(int span, Action action, bool isEnabled)
+        public IHostTimer CreateTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly)
         {
-            return timersController.CreateTimer(span, action, isEnabled);
+            return timersController.CreateTimer(span, action, isEnabled, firstEventImmidiatelly);
         }
 
         private void StartTimers()

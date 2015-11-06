@@ -151,7 +151,11 @@ namespace GtkApplication
         {
             var model = (args as ShowPageEventArgs).Model as IDialogModel;
 
-            var dlg = new Gtk.Dialog(model.GetProperty<string>(model.CaptionPropertyName), win, DialogFlags.DestroyWithParent);
+            Func<string> getWindowCaption = () => string.Format("({0}) {1}", model.GetProperty<object>(model.RemainingTimePropertyName) ?? "*", model.GetProperty<object>(model.CaptionPropertyName));
+
+            var title = getWindowCaption();
+
+            var dlg = new Gtk.Dialog(getWindowCaption(), win, DialogFlags.DestroyWithParent);
 
             if (model.Buttons != null)
             {
@@ -161,7 +165,13 @@ namespace GtkApplication
                 }
             }
 
-            model.ButtonClick += dr => dlg.Respond((ResponseType)dr);
+            model.PropertyChanged += name => 
+            {
+                if (name == model.RemainingTimePropertyName)
+                    Application.Invoke((s, e) => dlg.Title = getWindowCaption());
+            };
+
+            model.ButtonClick += dr => Application.Invoke((s, e) => dlg.Respond((ResponseType)dr));
 
             dlg.Response += (s, e) => { model.OnClosed((DialogResults)e.ResponseId); dlg.Destroy(); };
             dlg.Modal = true;

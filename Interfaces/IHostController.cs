@@ -17,6 +17,6 @@ namespace Interfaces
         IProcessRunnerFactory ProcessRunnerFactory { get; }
         T GetController<T>() where T : class, IController;
         void Shutdown(HostControllerShutdownModes mode);
-        IHostTimer CreateTimer(int span, Action action, bool isEnabled);
+        IHostTimer CreateTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly);
     }
 }

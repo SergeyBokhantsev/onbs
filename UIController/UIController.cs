@@ -38,13 +38,13 @@ namespace UIController
             this.startPageConstructor = startPageConstructor;
             this.mainThreadId = Thread.CurrentThread.ManagedThreadId;
 
-            hostController.CreateTimer(3 * 60 * 1000, () =>
+            hostController.CreateTimer(3 * 60 * 1000, t =>
                 {
                     hostController.ProcessRunnerFactory.Create(ConfigNames.XScreenForceOn).Run();
                     hostController.GetController<IAutomationController>().MouseMove(mouseLocation++, mouseLocation++);
                     if (mouseLocation > 3)
                         mouseLocation = 0;
-                }, true);
+                }, true, false);
 
             StartUIThread();
             

@@ -11,7 +11,7 @@ namespace HostController
     public class HostTimer : IHostTimer
     {
         private readonly EventWaitHandle shedulerSignal;
-        private readonly Action action;
+        private readonly Action<IHostTimer> action;
 
         private int span;
         private bool enabled;
@@ -53,7 +53,7 @@ namespace HostController
             }
         }
 
-        public HostTimer(EventWaitHandle shedulerSignal, int span, Action action, bool isEnabled)
+        public HostTimer(EventWaitHandle shedulerSignal, int span, Action<IHostTimer> action, bool isEnabled)
         {
             if (shedulerSignal == null)
                 throw new ArgumentNullException("schedulerSignal");
@@ -70,7 +70,7 @@ namespace HostController
         public void Execute()
         {
             if (!Disposed && action != null)
-                action();
+                action(this);
         }
 
         public void Dispose()
@@ -112,13 +112,13 @@ namespace HostController
             schedulerThread.Start();
         }
 
-        public HostTimer CreateTimer(int span, Action action, bool isEnabled)
+        public HostTimer CreateTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly)
         {
             var timer = new HostTimer(schedulerSignal, span, action, isEnabled);
 
             lock(timers)
             {
-                timers.Add(new TimerInfo { Timer = timer });
+                timers.Add(new TimerInfo { Timer = timer, LastExecutionTime = firstEventImmidiatelly ? DateTime.MinValue : DateTime.Now });
             }
 
             schedulerSignal.Set();

@@ -26,10 +26,10 @@ namespace UIModels
             this.provider = new StaticMapProvider(hc.Logger);
         }
 
-        protected override void OnSecondaryTimer()
+        protected override void OnSecondaryTimer(IHostTimer timer)
         {
             downloadOperationScope.ExecuteIfFree(BeginDownload, OnDownloadException);
-            base.OnSecondaryTimer();
+            base.OnSecondaryTimer(timer);
         }
 
         private void RefreshTraffic(object sender, EventArgs e)

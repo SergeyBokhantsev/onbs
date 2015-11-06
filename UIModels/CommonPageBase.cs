@@ -29,11 +29,11 @@ namespace UIModels
 
             onlyPressButtonEvents = true;
 
-            primaryTimer = hc.CreateTimer(1000, OnPrimaryTick, true);
-            secondaryTimer = hc.CreateTimer(60000, OnSecondaryTimer, true);
+            primaryTimer = hc.CreateTimer(1000, OnPrimaryTick, true, true);
+            secondaryTimer = hc.CreateTimer(60000, OnSecondaryTimer, true, true);
         }
 
-        protected virtual void OnPrimaryTick()
+        protected virtual void OnPrimaryTick(IHostTimer timer)
         {
             if (Disposed)
                 return;
@@ -45,7 +45,7 @@ namespace UIModels
                 SetProperty("time", DateTime.Now.AddHours(hc.Config.GetInt(ConfigNames.SystemTimeLocalZone)));
         }
 
-        protected virtual void OnSecondaryTimer()
+        protected virtual void OnSecondaryTimer(IHostTimer timer)
         {
         }
 

@@ -42,10 +42,10 @@ namespace UIModels
 			SetProperty("time_valid", "1");
 			SetProperty("time", null);
 
-            timer = hostController.CreateTimer(1000, TimerTick, true);
+            timer = hostController.CreateTimer(1000, TimerTick, true, true);
         }
 
-        private void TimerTick()
+        private void TimerTick(IHostTimer timer)
         {
             SetProperty("time", DateTime.Now.ToUniversalTime().AddHours(localTimeZone));
             SetProperty("time_valid", hostController.Config.IsSystemTimeValid ? "1" : "0");
@@ -96,7 +96,7 @@ namespace UIModels
             }
         }
 
-        protected override void DoAction(PageModelActionEventArgs args)
+        protected override async void DoAction(PageModelActionEventArgs args)
         {
             switch (args.ActionName)
             {
@@ -114,22 +114,12 @@ namespace UIModels
                     {
                         if (args.State == ButtonStates.Press)
                         {
-                            //var dialog = new DialogModel("foo", hostController.SyncContext, logger);
+                            var dialog = new UIModels.Dialogs.YesNoDialog("sdsd", "DSsdds", "Y", "N", hostController, 5000, DialogResults.Reject);
 
-                            //dialog.CaptionPropertyName = "caption";
-                            //dialog.SetProperty(dialog.CaptionPropertyName, "My Foo question");
-                            //dialog.Buttons = new Dictionary<DialogResults, string> { { DialogResults.Ok, "OKAY" }, { DialogResults.Cancel, "Cancel" } };
+                            var res = await hostController.GetController<IUIController>().ShowDialogAsync(dialog);
 
-                            //hostController.GetController<IUIController>().ShowDialog(dialog);
-
-                            //dialog.Closed += r => 
-                            //{
-                            //    var t = r;
-                            //    if (t == DialogResults.Cancel)
-                            //        throw new Exception();
-                            //};
-
-                            //return;
+                            if (res == DialogResults.Reject)
+                                return;
 
                             var page = new WebCamPage(hostController, cameraAppKey);
                             hostController.GetController<IUIController>().ShowPage(page);

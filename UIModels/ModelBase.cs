@@ -128,9 +128,31 @@ namespace UIModels
         public event Action<DialogResults> Closed;
         public event Action<DialogResults> ButtonClick;
 
-        public DialogModel(string name, SynchronizationContext syncContext, ILogger logger)
-            :base(name, syncContext, logger)
+        private int shownTime;
+        protected int timeout;
+        protected DialogResults defaultResult = DialogResults.None;
+
+        public DialogModel(string name, IHostController hc)
+            :base(name, hc.SyncContext, hc.Logger)
         {
+            Shown += () => { if (timeout > 0) hc.CreateTimer(1000, TimerTick, true, false); };
+
+            CaptionPropertyName = "caption";
+            MessagePropertyName = "message";
+            RemainingTimePropertyName = "remaining";
+        }
+
+        private void TimerTick(IHostTimer timer)
+        {
+            shownTime += timer.Span;
+
+            SetProperty(RemainingTimePropertyName, ((timeout - shownTime) / 1000).ToString());
+
+            if (shownTime >= timeout)
+            {
+                timer.Dispose();
+                OnButtonClick(defaultResult);
+            }
         }
 
         public void OnClosed(DialogResults result)
@@ -155,7 +177,14 @@ namespace UIModels
 
         public string MessagePropertyName
         {
-            get { throw new NotImplementedException(); }
+            get;
+            set;
+        }
+
+        public string RemainingTimePropertyName
+        {
+            get;
+            set;
         }
 
         public Dictionary<DialogResults, string> Buttons

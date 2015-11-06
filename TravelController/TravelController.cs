@@ -80,7 +80,7 @@ namespace TravelController
             if ((client = CreateClient(hc.Config, hc.Logger)) != null)
             {
                 hc.GetController<IGPSController>().GPRMCReseived += GPRMCReseived;
-                this.timer = hc.CreateTimer(preparingRateMs, Operate, true);
+                this.timer = hc.CreateTimer(preparingRateMs, Operate, true, true);
             }
         }
 
@@ -104,7 +104,7 @@ namespace TravelController
                     }
                     else
                     {
-                        var dRes = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Continue existing travel?", "", "Yes", "Create new", hc.SyncContext, hc.Logger));
+                        var dRes = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Continue existing travel?", "", "Yes", "Create new", hc, 30000, Interfaces.UI.DialogResults.Yes));
 
                         if (dRes == Interfaces.UI.DialogResults.Yes)
                         {
@@ -172,7 +172,7 @@ namespace TravelController
             requestCustomPoint = 4;
         }
 
-        private void Operate()
+        private void Operate(IHostTimer timer)
         {
             if (disposed)
             {
