@@ -217,39 +217,42 @@ namespace GtkApplication.Pages
         {
             lock (bindings)
             {
-                bindings.Clear();
                 disposed = true;
+                bindings.Clear();
             }
         }
 
         private void PropertyChanged(string propertyName)
         {
-            lock (bindings)
-            {
-                UpdateBindings(bindings.Where(b => b.PropertyName == propertyName));
-            }
+            UpdateBindings(bindings.Where(b => b.PropertyName == propertyName));
         }
 
         private void UpdateBindings(IEnumerable<Binding> binds)
         {
-            if (!disposed && binds.Any())
+            if (!disposed)
             {
-				var value = Model.GetProperty<object>(binds.First().PropertyName);
-
                 Application.Invoke(new EventHandler((s, a) =>
                 {
-                    foreach(var b in binds)
-						{
-							try
-							{
-                       			 b.Update(value);
-							}
-							catch (Exception ex)
-							{
-                                logger.Log(this, string.Concat("Exception updating binding: ", b != null ? b.PropertyName : "NULL BINDING"), LogLevels.Error);
-								logger.Log(this, ex);
-							}
-						}
+                    lock (bindings) // because binds is a subset of bindings and we shall avoid concurrent changes
+                    {
+                        if (binds.Any())
+                        {
+                            var value = Model.GetProperty<object>(binds.First().PropertyName);
+
+                            foreach (var b in binds)
+                            {
+                                try
+                                {
+                                    b.Update(value);
+                                }
+                                catch (Exception ex)
+                                {
+                                    logger.Log(this, string.Concat("Exception updating binding: ", b != null ? b.PropertyName : "NULL BINDING"), LogLevels.Error);
+                                    logger.Log(this, ex);
+                                }
+                            }
+                        }
+                    }
                 }));
             }
 		}
@@ -272,18 +275,17 @@ namespace GtkApplication.Pages
             }));
         }
 
+        private void AddBinding(Binding binding)
+        {
+            lock (bindings)
+            {
+                bindings.Add(binding);
+            }
+        }
+
 		public void UpdateBindings()
 		{
-            if (!disposed)
-            {
-                lock (bindings)
-                {
-                    foreach (var b in bindings)
-                    {
-                        UpdateBinding(b);
-                    }
-                }
-            }
+            UpdateBindings(bindings);
 		}
 
         [Conditional("DEBUG")]
@@ -298,7 +300,7 @@ namespace GtkApplication.Pages
             AssertDisposed();
             propName = propName ?? label.Name;
             var binding = new LabelTextBinding(label, propName, formatter);
-            bindings.Add(binding);
+            AddBinding(binding);
             UpdateBinding(binding);
         }
 
@@ -307,7 +309,7 @@ namespace GtkApplication.Pages
             AssertDisposed();
 			propName = propName ?? label.Name;
 			var binding = new LabelMarkupBinding(label, propName, formatter);
-			bindings.Add(binding);
+            AddBinding(binding);
 			UpdateBinding(binding);
 		}
 
@@ -315,7 +317,7 @@ namespace GtkApplication.Pages
         {
             AssertDisposed();
             var binding = new EventBoxBgColorBinding(box, propName, colorMap);
-            bindings.Add(binding);
+            AddBinding(binding);
             UpdateBinding(binding);
         }
 
@@ -342,7 +344,7 @@ namespace GtkApplication.Pages
         {
             AssertDisposed();
             var binding = new ButtonLabelBinding(button, propName, prefix);
-            bindings.Add(binding);
+            AddBinding(binding);
             UpdateBinding(binding);
         }
 
@@ -350,20 +352,20 @@ namespace GtkApplication.Pages
 		{
             AssertDisposed();
 			var binding = new FlatButtonLabelBinding(button, propName, prefix);
-			bindings.Add(binding);
+            AddBinding(binding);
 			UpdateBinding(binding);
 		}
 
         public void BindMetrics(Action<IMetrics> updater, string propName)
         {
             AssertDisposed();
-            bindings.Add(new MetricsBinding(updater, propName));
+            AddBinding(new MetricsBinding(updater, propName));
         }
 
 		public void BindCustomAction<T>(Action<T> action, string propName)
 		{
             AssertDisposed();
-			bindings.Add(new CustomActionBinding<T>(action, propName));
+            AddBinding(new CustomActionBinding<T>(action, propName));
 		}
     }
 }

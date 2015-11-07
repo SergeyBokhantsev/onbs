@@ -19,6 +19,9 @@ namespace UIModels.Dialogs
 
             SetProperty(CaptionPropertyName, caption);
 
+            MessagePropertyName = "msg";
+            SetProperty(MessagePropertyName, message);
+
             Buttons = new Dictionary<Interfaces.UI.DialogResults, string> { { DialogResults.Yes, yesCaption }, { DialogResults.No, noCaption } };
         }
 

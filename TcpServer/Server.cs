@@ -12,6 +12,9 @@ namespace TcpServer
 {
     public class Server
     {
+        /// <summary>
+        /// When consumer code receives this event it shall not release this method because TcpClient will be closed then.
+        /// </summary>
         public event Action<TcpClient> ClientConnected;
 
         private readonly TcpListener listener;

@@ -21,6 +21,8 @@ namespace UIModels
             this.runner = runner;
             this.ui = ui;
 
+            NoDialogsAllowed = true;
+
             if (runner != null)
             {
                 runner.Exited += RunnerExited;

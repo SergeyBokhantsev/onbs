@@ -104,7 +104,7 @@
 
     <!-- Travel Service -->
     <add key="TravelServiceUrl" value="http://onbs2.azurewebsites.net/" />
-    <add key="TravelServiceVehicle" value="AH2392II" />
+    <add key="TravelServiceVehicle" value="TEST" />
     <add key="TravelServiceKey" value="5e28b062-8f39-4e38-a834-9a1eb74e0577" />
     <add key="TravelServiceExportRateSeconds" value="30" />
     <add key="TravelServiceMinutesGapToOpenNewTravel" value="120" />

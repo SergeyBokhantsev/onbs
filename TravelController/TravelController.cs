@@ -104,7 +104,7 @@ namespace TravelController
                     }
                     else
                     {
-                        var dRes = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Continue existing travel?", "", "Yes", "Create new", hc, 30000, Interfaces.UI.DialogResults.Yes));
+                        var dRes = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Travel exist", "Continue existing travel or start new?", "(Y)Continue", "(N)Create new", hc, 30000, Interfaces.UI.DialogResults.Yes));
 
                         if (dRes == Interfaces.UI.DialogResults.Yes)
                         {

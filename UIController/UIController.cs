@@ -14,6 +14,8 @@ namespace UIController
 {
     public class UIController : IUIController
     {
+        public event Action<bool> DialogPending;
+
         private readonly string uiHostAssemblyPath;
         private readonly string uiHostClassName;
 
@@ -116,6 +118,8 @@ namespace UIController
             current = model;
 
             uiHost.ShowPage(current);
+
+            ProcessDialogsQueue();
         }
 
         public void Shutdown()
@@ -169,22 +173,38 @@ namespace UIController
         {
             lock (dialogs)
             {
-                if (currentDialog == null && dialogs.Any() && (current == null || !current.NoDialogsAllowed))
+                if (currentDialog == null && dialogs.Any())
                 {
-                    currentDialog = dialogs.Pop();
+                    OnDialogPending(true);
 
-                    currentDialog.Closed += r =>
+                    if ((current == null || !current.NoDialogsAllowed))
                     {
-                        lock (dialogs)
-                        {
-                            currentDialog = null;
-                            hostController.SyncContext.Post(o => ProcessDialogsQueue(), null);
-                        }
-                    };
+                        currentDialog = dialogs.Pop();
 
-                    uiHost.ShowDialog(currentDialog);
+                        currentDialog.Closed += r =>
+                        {
+                            lock (dialogs)
+                            {
+                                currentDialog = null;
+                                OnDialogPending(false);
+                                hostController.SyncContext.Post(o => ProcessDialogsQueue(), null);
+                            }
+                        };
+
+                        uiHost.ShowDialog(currentDialog);
+                    }
                 }
             }
+        }
+
+        private void OnDialogPending(bool pending)
+        {
+            hostController.SyncContext.Post(o => 
+            {
+                var handler = DialogPending;
+                if (handler != null)
+                    handler((bool)o);
+            }, pending);
         }
     }
 }

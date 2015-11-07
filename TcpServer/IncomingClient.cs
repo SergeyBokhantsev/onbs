@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TcpServer
@@ -11,7 +12,9 @@ namespace TcpServer
 
     public class IncomingClient : IDisposable
     {
-        public event BytesReceivedEventHandler BytesReceived;
+        private static int clientNumber;
+
+        private BytesReceivedEventHandler bytesReceived;
 
         private readonly NetworkStream stream;
         private readonly TcpClient client;
@@ -28,13 +31,32 @@ namespace TcpServer
             }
         }
 
+        public int Number
+        {
+            get;
+            private set;
+        }
+
         public IncomingClient(TcpClient client)
         {
             if (client == null)
                 throw new ArgumentNullException("tcp client");
-
+            
+            Number = Interlocked.Increment(ref clientNumber);
+            
             this.stream = client.GetStream();
             this.client = client;
+        }
+
+        public void Start(BytesReceivedEventHandler bytesReceived)
+        {
+            if (this.bytesReceived != null)
+                throw new InvalidOperationException("already started");
+
+            if (bytesReceived == null)
+                throw new ArgumentNullException("bytesReceived");
+
+            this.bytesReceived = bytesReceived;
             BeginReadAsync();
         }
 
@@ -64,16 +86,17 @@ namespace TcpServer
         {
             try
             {
-                var count = stream.EndRead(ar);
+                if (Active)
+                {
+                    var count = stream.EndRead(ar);
 
-				if (!disposed && count > 0)
-				{
-                	var handler = BytesReceived;
-                	if (handler != null)
-                    	handler(readBuffer, count);
-				}
-				else
-					System.Threading.Thread.Sleep(100);
+                    if (!disposed && count > 0)
+                    {
+                        bytesReceived(readBuffer, count);
+                    }
+                    else
+                        System.Threading.Thread.Sleep(100);
+                }
             }
 			catch 
 			{

@@ -153,9 +153,7 @@ namespace GtkApplication
 
             Func<string> getWindowCaption = () => string.Format("({0}) {1}", model.GetProperty<object>(model.RemainingTimePropertyName) ?? "*", model.GetProperty<object>(model.CaptionPropertyName));
 
-            var title = getWindowCaption();
-
-            var dlg = new Gtk.Dialog(getWindowCaption(), win, DialogFlags.DestroyWithParent);
+            var dlg = new Gtk.MessageDialog(win, DialogFlags.DestroyWithParent, MessageType.Warning, ButtonsType.None, model.GetProperty<object>(model.MessagePropertyName).ToString());
 
             if (model.Buttons != null)
             {
@@ -177,7 +175,14 @@ namespace GtkApplication
             dlg.Modal = true;
             dlg.Shown += (s, e) => model.OnShown();
             dlg.Close += (s, e) => model.OnClosed(DialogResults.None);
-                        
+
+            var box = new HBox();
+            box.Add(new Label() { Text = model.GetProperty<object>(model.MessagePropertyName).ToString() });
+
+            dlg.CreatePangoContext();
+            dlg.CreatePangoLayout("sdfsdf");
+            
+
             dlg.Run();
             dlg.Destroy();
         }

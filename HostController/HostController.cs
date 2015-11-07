@@ -168,7 +168,7 @@ namespace HostController
             elm327Controller = new Elm327Controller.Elm327Controller(this);
 
             var useFakeArduPort = Config.GetBool(ConfigNames.ArduinoPortFake);
-            var arduPort = useFakeArduPort ? new MockArduPort() as IPort : new SerialArduPort(Logger, Config) as IPort;
+            var arduPort = useFakeArduPort ? new ArduinoEmulatorPort() as IPort : new SerialArduPort(Logger, Config) as IPort;
             arduController = new ArduinoController.ArduinoController(arduPort, this);
             arduController.RegisterFrameAcceptor(inputController);
 
@@ -184,6 +184,7 @@ namespace HostController
             travelController = new TravelController.TravelController(this);
 
             uiController = new UIController.UIController(Config.GetString(ConfigNames.UIHostAssemblyName), Config.GetString(ConfigNames.UIHostClass), this, () => new UIModels.MainPage(this));
+            uiController.DialogPending += uiController_DialogPending;
             uiController.ShowDefaultPage();
 
             gpsCtrl.GPRMCReseived += CheckSystemTimeFromGPS;
@@ -191,10 +192,26 @@ namespace HostController
             StartTimers();
         }
 
+        void uiController_DialogPending(bool obj)
+        {
+           
+        }
+
         void InetKeeperRestartNeeded()
         {
-            Logger.Log(this, "Begin restart because of Internet keeper request...", LogLevels.Warning);
-            SyncContext.Post(o => Shutdown(HostControllerShutdownModes.Restart), null);
+            netKeeper.RestartNeeded -= InetKeeperRestartNeeded;
+
+            var dialog = new UIModels.Dialogs.YesNoDialog("Restart", "Failed to get internet connection. Restart now?", "Yes", "No", this, 30000, Interfaces.UI.DialogResults.Yes);
+            dialog.Closed += dr => 
+            {
+                if (dr == Interfaces.UI.DialogResults.Yes)
+                {
+                    Logger.Log(this, "Begin restart because of Internet keeper request...", LogLevels.Warning);
+                    SyncContext.Post(o => Shutdown(HostControllerShutdownModes.Restart), null);
+                }
+            };
+
+            uiController.ShowDialog(dialog);
         }
 
         private void CheckSystemTimeFromGPS(Interfaces.GPS.GPRMC gprmc)

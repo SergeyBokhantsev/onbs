@@ -27,7 +27,9 @@ namespace ArduinoController
         private readonly ILogger logger;
         private readonly ISTPCodec codec;
 		private readonly ISTPCodec arduinoCommandCodec;
+
         private readonly List<IFramesAcceptor> acceptors = new List<IFramesAcceptor>();
+        private readonly List<IFrameProvider> providers = new List<IFrameProvider>();
 
         private long decodedFramesCount;
 		private int ardPingPendings;
@@ -56,9 +58,10 @@ namespace ArduinoController
 
             hc.CreateTimer(5000, t => 
             {
-                Send(new byte[] { (byte)'d' });
+                Send(new byte[] { (byte)ArduinoComands.ArduinoPingRequest });
 				Interlocked.Increment(ref ardPingPendings);
                 logger.LogIfDebug(this, "Ping command sended to Arduino");
+                UpdateMetrics(0);
             }, true, true);
 
             logger.Log(this, string.Format("{0} created.", this.GetType().Name), LogLevels.Info);
@@ -68,15 +71,18 @@ namespace ArduinoController
 
         private void Send(byte[] data)
         {
-            try
+            lock (port)
             {
-                var serializedFrame = codec.Encode(new STPFrame(data, STPFrame.Types.ArduCommand));
-                port.Write(serializedFrame, 0, serializedFrame.Length);
-            }
-            catch (Exception ex)
-            {
-                logger.Log(this, "Exception sending data to Arduino", LogLevels.Error);
-                logger.Log(this, ex);
+                try
+                {
+                    var serializedFrame = codec.Encode(new STPFrame(data, STPFrame.Types.ArduCommand));
+                    port.Write(serializedFrame, 0, serializedFrame.Length);
+                }
+                catch (Exception ex)
+                {
+                    logger.Log(this, "Exception sending data to Arduino", LogLevels.Error);
+                    logger.Log(this, ex);
+                }
             }
         }
 
@@ -89,7 +95,7 @@ namespace ArduinoController
                 {
                     if (frame.Type == STPFrame.Types.ArduCommand)
                     {
-                        if ((char)frame.Data[0] == 'D')
+                        if ((char)frame.Data[0] == ArduinoComands.ArduinoPingResponce)
                         {
 							Interlocked.Exchange(ref ardPingPendings, 0);
                             logger.LogIfDebug(this, "Arduino ping received");
@@ -179,6 +185,16 @@ namespace ArduinoController
                 else
                     throw new Exception("Acceptor is not exist");
             }
+        }
+
+        public void RegisterFrameProvider(IFrameProvider provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UnregisterFrameProvider(IFrameProvider provider)
+        {
+            throw new NotImplementedException();
         }
     }
 }

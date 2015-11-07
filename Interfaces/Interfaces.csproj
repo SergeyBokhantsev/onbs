@@ -72,6 +72,7 @@
     <Compile Include="ITravelController.cs" />
     <Compile Include="IUIController.cs" />
     <Compile Include="LockingProperty.cs" />
+    <Compile Include="SerialTransportProtocol\IFrameProvider.cs" />
     <Compile Include="SerialTransportProtocol\IFramesAcceptor.cs" />
     <Compile Include="SerialTransportProtocol\ISTPCodec.cs" />
     <Compile Include="SerialTransportProtocol\STPFrame.cs" />
