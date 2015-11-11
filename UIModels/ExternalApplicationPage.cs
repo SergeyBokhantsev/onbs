@@ -7,25 +7,30 @@ using System.Text;
 using System.Threading.Tasks;
 using Interfaces.Input;
 using System.Threading;
+using UIController;
 
 namespace UIModels
 {
-    public class ExternalApplicationPage : ModelBase
+    public abstract class ExternalApplicationPage : ModelBase
     {
-        private readonly IProcessRunner runner;
         private readonly IUIController ui;
 
-		public ExternalApplicationPage(string modelName, IProcessRunner runner, SynchronizationContext syncContext, ILogger logger, IUIController ui)
-            : base(modelName, syncContext, logger)
+        protected abstract IProcessRunner Runner
         {
-            this.runner = runner;
+            get;
+            set;
+        }
+
+		protected ExternalApplicationPage(string viewName, IHostController hc, ApplicationMap map, object arg)
+            : base(viewName, hc, map, arg)
+        {
             this.ui = ui;
 
             NoDialogsAllowed = true;
 
-            if (runner != null)
+            if (Runner != null)
             {
-                runner.Exited += RunnerExited;
+                Runner.Exited += RunnerExited;
 
                 SetProperty("label_launch_info", string.Format("Launching {0}...", runner.Name));
                 SetProperty("is_error", "0");
@@ -51,7 +56,7 @@ namespace UIModels
 
             try
             {
-                runner.Run();
+                Runner.Run();
                 SetProperty("label_launch_info", string.Format("{0} now launched", runner.Name));
 
                 return true;
@@ -64,20 +69,29 @@ namespace UIModels
             }
         }
 
-        protected override void DoAction(PageModelActionEventArgs args)
+        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
         {
-            switch (args.ActionName)
+            switch (name)
             {
-                case "Cancel":
-                    if (args.State == ButtonStates.Press)
-                    {
-                        if (runner != null)
-                            runner.Exit();
-                        else
-                            RunnerExited(false);
-                    }
+                case "Exit":
+                    ExitRunner();
+                    break;
+
+                default:
+                    base.DoAction(name, actionArgs);
                     break;
             }
+        }
+
+        private void ExitRunner()
+        {
+            if (Runner != null)
+            {
+                Runner.Exit();
+                Runner = null;
+            }
+            else
+                RunnerExited(false);
         }
     }
 }

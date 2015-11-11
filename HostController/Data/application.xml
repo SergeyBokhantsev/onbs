@@ -2,44 +2,67 @@
 <app>
   <default model="DrivePage"/>
   <pages>
-    <page model="DrivePage">
+    <page model="DrivePage" default_view="DrivePage">
       <Cancel model="MainPage" caption="Main page" behavior="Release"/>
+      <F1 model="NavigationAppPage" caption="NAV"/>
+      <F2 model="WebCamPage" caption="CAM"/>
+      <F3 model="WeatherPage" caption="WTHR"/>
+      <F4 model="WeatherPage" caption="TRAF"/>
+    </page>
+    <page model="NavigationAppPage" default_view="ExternalApplicationPage">
+      <F1 action="-"/>
+      <F2 action="Up" behavior="PressOrHold"/>
+      <F3 action="+"/>
+      <F4 action="a"/>
+      <F5 action="Left" behavior="PressOrHold"/>
+      <F6 action="Down" behavior="PressOrHold"/>
+      <F7 action="Right" behavior="PressOrHold"/>
+      <F8 action="d"/>
+    </page>
+    <page model="WebCamPage" default_view="ExternalApplicationPage">
+      
+    </page>
+    <page model="WeatherPage" default_view="WeatherPage">
+      
+    </page>
+    <page model="TrafficPage" default_view="TrafficPage">
+      
     </page>
     <page name="MainPage">
       <Cancel model="DrivePage"/>
-		</page>
-    <page model="CommonConfigPage">
+    </page>
+    <page model="CommonConfigPage" default_view="CommonVertcalStackPage">
       <Cancel action="SaveAndReturn" caption="Return to Main Menu"/>
       <Accept model="ConfigGPSPage" view="CommonVertcalStackPage" caption="Go to GPS Config"/>
       <F1 action="ToggleArduinoMode"/>
       <F2 action="ChangeLogLevel"/>
-      </page>
-	  <page model="ConfigGPSPage">
-			<Accept model="NavitCommonConfigPage" caption="Go to Navit Config"/>
-			<Cancel model="CommonConfigPage" view="CommonVertcalStackPage" caption="Back"/>
-			<F1 action="ToggleGPSDaemon" />
-			<F2 model="NavitCommonConfigPage" view="CommonVertcalStackPage" caption="Navit common config"/>
-			<F3 model="NavitOSDConfigPage" view="CommonVertcalStackPage" caption="Navit OSD config"/>
-		</page>
-		<page model="NavitCommonConfigPage">
-			<Cancel model="ConfigGPSPage" view="CommonVertcalStackPage" caption="Back"/>
-			<F1 action="ActivateGPS"/>
-			<F2 action="Autozoom"/>
-			<F3 action="Menubar"/>
-			<F4 action="Toolbar"/>
-			<F5 action="Statusbar"/>
-			<F6 action="KeepNorth"/>
-			<F7 action="LockRoad"/>
-			<F8 action="Zoom"/>
-		</page>
-		<page model="NavitOSDConfigPage">
-			<Cancel model="ConfigGPSPage" view="CommonVertcalStackPage" caption="Back"/>
-			<F1 action=""/>
-			<F2 action=""/>
-			<F3 action=""/>
-			<F4 action=""/>
-			<F5 action=""/>
-			<F6 action=""/>
-		</page>
+    </page>
+    <page model="ConfigGPSPage" default_view="CommonVertcalStackPage">
+      <Accept model="NavitCommonConfigPage" caption="Go to Navit Config"/>
+      <Cancel model="CommonConfigPage" caption="Back"/>
+      <F1 action="ToggleGPSDaemon" />
+      <F2 model="NavitCommonConfigPage" caption="Navit common config"/>
+      <F3 model="NavitOSDConfigPage" caption="Navit OSD config"/>
+    </page>
+    <page model="NavitCommonConfigPage" default_view="CommonVertcalStackPage">
+      <Cancel model="ConfigGPSPage" caption="Back"/>
+      <F1 action="ActivateGPS"/>
+      <F2 action="Autozoom"/>
+      <F3 action="Menubar"/>
+      <F4 action="Toolbar"/>
+      <F5 action="Statusbar"/>
+      <F6 action="KeepNorth"/>
+      <F7 action="LockRoad"/>
+      <F8 action="Zoom"/>
+    </page>
+    <page model="NavitOSDConfigPage" default_view="CommonVertcalStackPage">
+      <Cancel model="ConfigGPSPage" caption="Back"/>
+      <F1 action=""/>
+      <F2 action=""/>
+      <F3 action=""/>
+      <F4 action=""/>
+      <F5 action=""/>
+      <F6 action=""/>
+    </page>
   </pages>
 </app>

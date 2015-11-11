@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using YandexServicesProvider;
+using UIController;
 
 namespace UIModels
 {
@@ -22,9 +23,8 @@ namespace UIModels
         private readonly ManualResetGuard weatherGuard = new ManualResetGuard();
         private readonly IOperationGuard geocoderGuard = new TimedGuard(new TimeSpan(0, 0, 3));
 
-
-        public DrivePage(IHostController hc)
-            :base(hc, "DrivePage")
+        public DrivePage(string viewName, IHostController hc, ApplicationMap map, object arg)
+            : base(viewName, hc, map, arg)
         {
             this.tc = hc.GetController<ITravelController>();
 
@@ -32,48 +32,6 @@ namespace UIModels
             this.geocoder = new GeocodingProvider(hc.Logger);
 
             hc.GetController<IGPSController>().GPRMCReseived += GPRMCReseived;
-        }
-
-        protected override void DoAction(PageModelActionEventArgs args)
-        {
-            if (Disposed)
-                return;
-
-            switch (args.ActionName)
-            {
-                case ModelNames.ButtonCancel:
-                    hc.GetController<IUIController>().ShowPage(new MainPage(hc));
-                    break;
-
-                case ModelNames.ButtonF1:
-                    var dp = new DrivePage(hc);
-                    hc.GetController<IUIController>().ShowPage(dp);
-                    break;
-
-                case ModelNames.ButtonF2:
-                    ExternalApplicationPage page = new NavigationAppPage(hc);
-                    hc.GetController<IUIController>().ShowPage(page);
-                    page.Run();
-                    break;
-
-                case ModelNames.ButtonF3:
-                    page = new WebCamPage(hc, "cam");
-                    hc.GetController<IUIController>().ShowPage(page);
-                    page.Run();
-                    break;
-
-                case ModelNames.ButtonF4:
-                    var wp = new WeatherPage(hc);
-                    hc.GetController<IUIController>().ShowPage(wp);
-                    break;
-
-                case ModelNames.ButtonF5:
-                    var tp = new TrafficPage(hc);
-                    hc.GetController<IUIController>().ShowPage(tp);
-                    break;
-            }
-
-            base.DoAction(args);
         }
 
         protected override void OnSecondaryTimer(IHostTimer timer)

@@ -96,7 +96,6 @@ namespace UIModels
                 if (modelTypeName == null)
                 {
                     modelTypeName = map.DefaultPageModelTypeName;
-                    viewName = map.DefaultPageViewName;
                 }
 
                 var type = Assembly.GetExecutingAssembly().GetType(modelTypeName);
@@ -105,6 +104,11 @@ namespace UIModels
                     var constructor = type.GetConstructor(new Type[] { typeof(string), typeof(IHostController), typeof(ApplicationMap), typeof(object) });
                     if (constructor != null)
                     {
+                        if (viewName == null)
+                        {
+                            viewName = map.GetPage(modelTypeName).DefaultViewName;
+                        }
+
                         var model = constructor.Invoke(new[] { viewName, hc, map, arg }) as IPageModel;
                         map.SetCaptions(model);
                         return model;
@@ -142,17 +146,24 @@ namespace UIModels
 
                     if (pageAction != null)
                     {
-                        var model = CreateModel(hc, map, pageAction.ModelTypeName, pageAction.ViewName, GetArgumentForPage(pageAction));
-                        if (model != null)
+                        if (actionArgs.State == ButtonStates.Press)
                         {
-                            hc.GetController<IUIController>().ShowPage(model);
+                            var model = CreateModel(hc, map, pageAction.ModelTypeName, pageAction.ViewName, GetArgumentForPage(pageAction));
+                            if (model != null)
+                            {
+                                hc.GetController<IUIController>().ShowPage(model);
+                            }
                         }
                     }
                     else
                     {
                         var customAction = o as MappedCustomAction;
 
-                        if (customAction != null)
+                        if (customAction != null && 
+                            (customAction.ActionBehavior == MappedActionBehaviors.All
+                            || (int)customAction.ActionBehavior == (int)actionArgs.State
+                            || (customAction.ActionBehavior == MappedActionBehaviors.PressOrHold && actionArgs.State == ButtonStates.Press)
+                            || (customAction.ActionBehavior == MappedActionBehaviors.PressOrHold && actionArgs.State == ButtonStates.Hold)))
                         {
                             DoAction(customAction.CustomActionName, actionArgs);
                         }

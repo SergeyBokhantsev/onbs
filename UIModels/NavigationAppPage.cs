@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Interfaces.Input;
+using UIController;
 
 namespace UIModels
 {
@@ -13,14 +14,17 @@ namespace UIModels
     {
         private readonly IAutomationController automation;
 
-        public NavigationAppPage(IHostController hostController)
-            :base(typeof(ExternalApplicationPage).Name, 
-            CreateProcessRunner(hostController),
-            hostController.SyncContext,
-            hostController.Logger,
-            hostController.GetController<IUIController>())
+        protected override IProcessRunner Runner
+        {
+            get;
+            set;
+        }
+
+        public NavigationAppPage(string viewName, IHostController hc, ApplicationMap map, object arg)
+            : base(viewName, hc, map, arg)
         {
             automation = hostController.GetController<IAutomationController>();
+            Runner = CreateProcessRunner(hc);
         }
 
         private static IProcessRunner CreateProcessRunner(IHostController hc)
@@ -66,53 +70,45 @@ namespace UIModels
             }
         }
 
-        protected override void DoAction(PageModelActionEventArgs args)
-		{
-			switch (args.ActionName) {
-			case "F1":
-				if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
-					automation.Key (AutomationKeys.Control, AutomationKeys.minus);
-				break;
+        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
+        {
+            switch(name)
+            { 
+                case "+":
+                    automation.Key(AutomationKeys.Control, AutomationKeys.plus);
+                    break;
 
-			case "F2":
-				if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
-					automation.Key (AutomationKeys.Up);
-				break;
+                case "-":
+                    automation.Key(AutomationKeys.Control, AutomationKeys.minus);
+                    break;
 
-			case "F3":
-				if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
-					automation.Key (AutomationKeys.Control, AutomationKeys.plus);
-				break;
+                case "Up":
+                    automation.Key(AutomationKeys.Up);
+                    break;
 
-			case "F5":
-				if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
-					automation.Key (AutomationKeys.Left);
-				break;
+                case "Down":
+                    automation.Key(AutomationKeys.Down);
+                    break;
 
-			case "F6":
-				if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
-					automation.Key (AutomationKeys.Down);
-				break;
+                case "Left":
+                    automation.Key(AutomationKeys.Left);
+                    break;
 
-			case "F7":
-				if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
-					automation.Key (AutomationKeys.Right);
-				break;
+                case "Right":
+                    automation.Key(AutomationKeys.Right);
+                    break;
 
-			case "F4":
-				if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
-					automation.Key (AutomationKeys.a);
-				break;
+                case "a":
+                    automation.Key(AutomationKeys.a);
+                    break;
 
-			case "F8":
-				if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
-					automation.Key (AutomationKeys.d);
-				break;
+                case "d":
+                    automation.Key(AutomationKeys.d);
+                    break;
 
-			default:
-				base.DoAction (args);
-				break;
-			}
-		}
+                default:
+                    base.DoAction(name, actionArgs);
+            }
+        }
     }
 }
