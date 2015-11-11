@@ -79,9 +79,7 @@
     <Compile Include="gtk-gui\GtkApplication.ExternalApplicationPage.cs" />
     <Compile Include="Controls\FlatButton.cs" />
     <Compile Include="Controls\LookAndFeel.cs" />
-    <Compile Include="Pages\CommonVertcalStackPage.cs">
-      <DependentUpon>CommonYesNoPage.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Pages\CommonVertcalStackPage.cs" />
     <Compile Include="Pages\CommonYesNoPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.CommonYesNoPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.CommonVertcalStackPage.cs" />

@@ -28,7 +28,7 @@ namespace UIModels
         {
             this.tc = hc.GetController<ITravelController>();
 
-            this.weather = new WeatherProvider(hc.Logger);
+            this.weather = new WeatherProvider(hc.Logger, hc.Config.DataFolder);
             this.geocoder = new GeocodingProvider(hc.Logger);
 
             hc.GetController<IGPSController>().GPRMCReseived += GPRMCReseived;

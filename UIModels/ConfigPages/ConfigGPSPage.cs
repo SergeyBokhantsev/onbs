@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UIController;
 
 namespace UIModels.ConfigPages
 {
@@ -16,68 +17,35 @@ namespace UIModels.ConfigPages
             public const string GPSDEnabled = "GPSDEnabled";
         }
 
-        private readonly IHostController hostController;
-        private readonly IConfig config;
+        private const string ToggleGPSDaemon = "ToggleGPSDaemon";
 
-        public ConfigGPSPage(IHostController hostController)
-            : base("CommonVertcalStackPage", hostController.SyncContext, hostController.Logger)
+        public ConfigGPSPage(string viewName, IHostController hc, ApplicationMap map, object arg)
+            :base(viewName, hc, map, arg)
         {
-            this.hostController = hostController;
-            this.config = hostController.Config;
+            SetProperty(ModelNames.PageTitle, "GPS Configuration");
 
-            SetProperty("label_caption", "GPS Configuration");
-            SetProperty(ModelNames.ButtonCancelLabel, "Return to Main Menu");
-            SetProperty(ModelNames.ButtonAcceptLabel, "Go to Navit Config");
-
-            SetGPSdaemonProperty();
-
-            SetProperty(ModelNames.ButtonF2Label, "Navit config");
+            UpdateGPSdaemonProperty();
         }
 
-        protected override void DoAction(PageModelActionEventArgs args)
+        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
         {
-           switch (args.ActionName)
-           {
-               case ModelNames.ButtonCancel:
-                   if (args.State == ButtonStates.Press)
-                   {
-                       hostController.Config.Save();
-                       hostController.GetController<IUIController>().ShowDefaultPage();
-                   }
-                   break;
+            switch (name)
+            { 
+                case ToggleGPSDaemon:
+                    hc.Config.InvertBoolSetting(CfgNames.GPSDEnabled);
+                    UpdateGPSdaemonProperty();
+                    break;
 
-               case ModelNames.ButtonAccept:
-                   if (args.State == ButtonStates.Press)
-                   {
-                       var page = new NavitCommonConfigPage(hostController);
-                       hostController.GetController<IUIController>().ShowPage(page);
-                   }
-                   break;
-
-               case ModelNames.ButtonF1:
-                   if (args.State == ButtonStates.Press)
-                   {
-                       var enabled = config.GetBool(CfgNames.GPSDEnabled);
-                       config.Set(CfgNames.GPSDEnabled, !enabled);
-                       SetGPSdaemonProperty();
-                   }
-                   break;
-
-               case ModelNames.ButtonF2:
-                   if (args.State == ButtonStates.Press)
-                   {
-                       var enabled = config.GetBool(CfgNames.GPSDEnabled);
-                       config.Set(CfgNames.GPSDEnabled, !enabled);
-                       SetGPSdaemonProperty();
-                   }
-                   break;
-           }
+                default:
+                    base.DoAction(name, actionArgs);
+                    break;
+            }
         }
 
-        private void SetGPSdaemonProperty()
+        private void UpdateGPSdaemonProperty()
         {
-            var enabled = config.GetBool(CfgNames.GPSDEnabled);
-            SetProperty(ModelNames.ButtonF1Label, string.Concat("GPS Daemon ", enabled ? "enabled" : "disabled"));
+            var enabled = hc.Config.GetBool(CfgNames.GPSDEnabled);
+            map.UpdateLabelForAction(this, ToggleGPSDaemon, string.Concat("GPS Daemon ", enabled ? "enabled" : "disabled"));
         }
     }
 }

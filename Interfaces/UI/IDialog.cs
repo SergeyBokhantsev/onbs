@@ -22,21 +22,24 @@ namespace Interfaces.UI
         None = -1,
     }
 
-    public interface IDialogModel : IPageModel
+    public interface IDialogModel
     {
         // Event to UI
         event Action<DialogResults> ButtonClick;
+        event Action<int> RemainingTimeChanged;
 
         // Events to logic
         event Action Shown;
         event Action<DialogResults> Closed;
 
-        string CaptionPropertyName { get; }
-        string MessagePropertyName { get; }
-        string RemainingTimePropertyName { get; }
+        string Caption { get; }
+        string Message { get; }
+        int RemainingTime { get; }
         Dictionary<DialogResults, string> Buttons { get; }
 
         void OnShown();
         void OnClosed(DialogResults result);
+
+        void HardwareButtonClick(Input.Buttons button);
     }
 }

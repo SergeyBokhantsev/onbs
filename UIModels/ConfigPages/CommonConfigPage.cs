@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UIController;
 
 namespace UIModels.ConfigPages
 {
@@ -17,75 +18,56 @@ namespace UIModels.ConfigPages
             public const string LogLevel = "LogLevel";
         }
 
-        private readonly IHostController hostController;
-        private readonly IConfig config;
+        private const string SaveAndReturn = "SaveAndReturn";
+        private const string ToggleArduinoMode = "ToggleArduinoMode";
+        private const string ChangeLogLevel = "ChangeLogLevel";
 
-        public CommonConfigPage(IHostController hostController)
-            : base("CommonVertcalStackPage", hostController.SyncContext, hostController.Logger)
+        public CommonConfigPage(string viewName, IHostController hc, ApplicationMap map, object arg)
+            :base(viewName, hc, map, arg)
         {
-            this.hostController = hostController;
-            this.config = hostController.Config;
-
-            SetProperty("label_caption", "Common Configuration");
-            SetProperty(ModelNames.ButtonCancelLabel, "Return to Main Menu");
-            SetProperty(ModelNames.ButtonAcceptLabel, "Go to GPS Config");
-
-            SetUseArduinoPortFakeProperty();
-            SetLogLevelProperty();
+            SetProperty(ModelNames.PageTitle, "Common Configuration");
+            UpdateUseArduinoPortFakeProperty();
+            UpdateLogLevelProperty();
         }
 
-        protected override void DoAction(PageModelActionEventArgs args)
+        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
         {
-            switch (args.ActionName)
+            switch (name)
             {
-                case ModelNames.ButtonCancel:
-                    if (args.State == ButtonStates.Press)
-                    {
-                        hostController.Config.Save();
-                        hostController.GetController<IUIController>().ShowDefaultPage();
-                    }
+                case SaveAndReturn:
+                    hc.Config.Save();
+                    hc.GetController<IUIController>().ShowDefaultPage();
                     break;
 
-                case ModelNames.ButtonAccept:
-                    if (args.State == ButtonStates.Press)
-                    {
-                        var page = new ConfigGPSPage(hostController);
-                        hostController.GetController<IUIController>().ShowPage(page);
-                    }
+                case ToggleArduinoMode:
+                    hc.Config.InvertBoolSetting(CfgNames.ArduinoPortFake);
+                    UpdateUseArduinoPortFakeProperty();
                     break;
 
-                case ModelNames.ButtonF1:
-                    if (args.State == ButtonStates.Press)
-                    {
-                        var useFake = config.GetBool(CfgNames.ArduinoPortFake);
-                        config.Set(CfgNames.ArduinoPortFake, !useFake);
-                        SetUseArduinoPortFakeProperty();
-                    }
+                case ChangeLogLevel:
+                    var levelStr = hc.Config.GetString(CfgNames.LogLevel);
+                    var level = (LogLevels)Enum.Parse(typeof(LogLevels), levelStr);
+                    level = ((int)level == 0) ? LogLevels.Debug : level - 1;
+                    hc.Config.Set<string>(CfgNames.LogLevel, level.ToString());
+                    UpdateLogLevelProperty();
                     break;
 
-                case ModelNames.ButtonF2:
-                    if (args.State == ButtonStates.Press)
-                    {
-                        var levelStr = config.GetString(CfgNames.LogLevel);
-                        var level = (LogLevels)Enum.Parse(typeof(LogLevels), levelStr);
-                        level = ((int)level == 0) ? LogLevels.Debug : level - 1;
-                        config.Set<string>(CfgNames.LogLevel, level.ToString());
-                        SetLogLevelProperty();
-                    }
+                default:
+                    base.DoAction(name, actionArgs);
                     break;
             }
         }
 
-        private void SetUseArduinoPortFakeProperty()
+        private void UpdateUseArduinoPortFakeProperty()
         {
-            var useFake = config.GetBool(CfgNames.ArduinoPortFake);
-            SetProperty(ModelNames.ButtonF1Label, string.Concat("Use fake arduino: ", useFake ? "Yes" : "No"));
+            var useFake = hc.Config.GetBool(CfgNames.ArduinoPortFake);
+            map.UpdateLabelForAction(this, ToggleArduinoMode, string.Concat("Use fake arduino: ", useFake ? "Yes" : "No"));
         }
 
-        private void SetLogLevelProperty()
+        private void UpdateLogLevelProperty()
         {
-            var levelStr = config.GetString(CfgNames.LogLevel);
-            SetProperty(ModelNames.ButtonF2Label, string.Concat("Log Level: ", levelStr));
+            var levelStr = hc.Config.GetString(CfgNames.LogLevel);
+            map.UpdateLabelForAction(this, ChangeLogLevel, string.Concat("Log Level: ", levelStr));
         }
     }
 }

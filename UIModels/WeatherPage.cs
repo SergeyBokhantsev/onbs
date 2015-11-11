@@ -23,7 +23,7 @@ namespace UIModels
         public WeatherPage(IHostController hc)
             :base(hc, "WeatherPage")
         {
-            this.weather = new WeatherProvider(hc.Logger);
+            this.weather = new WeatherProvider(hc.Logger, hc.Config.DataFolder);
         }
 
         protected override void OnSecondaryTimer(IHostTimer timer)

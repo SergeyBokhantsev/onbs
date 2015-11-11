@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.UI;
+using UIController;
 
 namespace UIModels.ConfigPages
 {
@@ -13,58 +14,39 @@ namespace UIModels.ConfigPages
         private const string YES = "Yes";
         private const string NO = "No";
 
-        private readonly IHostController hc;
-        private readonly IConfig cfg;
-
-        public NavitOSDConfigPage(IHostController hc)
-            : base("CommonVertcalStackPage", hc.SyncContext, hc.Logger)
+        public NavitOSDConfigPage(string viewName, IHostController hc, ApplicationMap map, object arg)
+            : base(viewName, hc, map)
         {
-            this.hc = hc;
-            this.cfg = hc.Config;
-
-            SetProperty("label_caption", "Navit OSD configuration");
-            SetProperty(ModelNames.ButtonCancelLabel, "Return to Main Menu");
-            SetProperty(ModelNames.ButtonAcceptLabel, "Go to common config");
-
+            SetProperty(ModelNames.PageTitle, "Navit OSD configuration");            
             UpdateButtonLabels();
         }
 
-        protected override void DoAction(PageModelActionEventArgs e)
+        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
         {
-            switch (e.ActionName)
+            switch (name)
             {
-                case ModelNames.ButtonF1:
-                    cfg.InvertBoolSetting(ConfigNames.NavitOSDCompass);
+                case "Compass":
+                    hc.Config.InvertBoolSetting(ConfigNames.NavitOSDCompass);
                     break;
 
-                case ModelNames.ButtonF2:
-                    cfg.InvertBoolSetting(ConfigNames.NavitOSDETA);
+                case "ETA":
+                    hc.Config.InvertBoolSetting(ConfigNames.NavitOSDETA);
                     break;
 
-                case ModelNames.ButtonF3:
-                    cfg.InvertBoolSetting(ConfigNames.NavitOSDNavigation);
+                case "Navigation":
+                    hc.Config.InvertBoolSetting(ConfigNames.NavitOSDNavigation);
                     break;
 
-                case ModelNames.ButtonF4:
-                    cfg.InvertBoolSetting(ConfigNames.NavitOSDNavigationDistanceToNext);
+                case "DistanceToNext":
+                    hc.Config.InvertBoolSetting(ConfigNames.NavitOSDNavigationDistanceToNext);
                     break;
 
-                case ModelNames.ButtonF5:
-                    cfg.InvertBoolSetting(ConfigNames.NavitOSDNavigationDistanceToTarget);
+                case "DistanceToTarget":
+                    hc.Config.InvertBoolSetting(ConfigNames.NavitOSDNavigationDistanceToTarget);
                     break;
 
-                case ModelNames.ButtonF6:
-                    cfg.InvertBoolSetting(ConfigNames.NavitOSDNavigationNextTurn);
-                    break;
-
-                case ModelNames.ButtonAccept:
-                    var nextPage = new CommonConfigPage(hc);
-                    hc.GetController<IUIController>().ShowPage(nextPage);
-                    break;
-
-                case ModelNames.ButtonCancel:
-                    cfg.Save();
-                    hc.GetController<IUIController>().ShowDefaultPage();
+                case "NextTurn":
+                    hc.Config.InvertBoolSetting(ConfigNames.NavitOSDNavigationNextTurn);
                     break;
             }
 
@@ -73,12 +55,12 @@ namespace UIModels.ConfigPages
 
         private void UpdateButtonLabels()
         {
-            SetProperty(ModelNames.ButtonF1Label, string.Concat("Compass: ", cfg.GetBool(ConfigNames.NavitOSDCompass) ? YES : NO));
-            SetProperty(ModelNames.ButtonF2Label, string.Concat("ETA: ", cfg.GetBool(ConfigNames.NavitOSDETA) ? YES : NO));
-            SetProperty(ModelNames.ButtonF3Label, string.Concat("Navigation: ", cfg.GetBool(ConfigNames.NavitOSDNavigation) ? YES : NO));
-            SetProperty(ModelNames.ButtonF4Label, string.Concat("Distance to Next: ", cfg.GetBool(ConfigNames.NavitOSDNavigationDistanceToNext) ? YES : NO));
-            SetProperty(ModelNames.ButtonF5Label, string.Concat("Distance to Target: ", cfg.GetBool(ConfigNames.NavitOSDNavigationDistanceToTarget) ? YES : NO));
-            SetProperty(ModelNames.ButtonF6Label, string.Concat("Next Turn: ", cfg.GetBool(ConfigNames.NavitOSDNavigationNextTurn) ? YES : NO));
+            map.UpdateLabelForAction(this, "Compass", string.Concat("Compass: ", hc.Config.GetBool(ConfigNames.NavitOSDCompass) ? YES : NO));
+            map.UpdateLabelForAction(this, "ETA", string.Concat("ETA: ", hc.Config.GetBool(ConfigNames.NavitOSDETA) ? YES : NO));
+            map.UpdateLabelForAction(this, "Navigation", string.Concat("Navigation: ", hc.Config.GetBool(ConfigNames.NavitOSDNavigation) ? YES : NO));
+            map.UpdateLabelForAction(this, "DistanceToNext", string.Concat("Distance to Next: ", hc.Config.GetBool(ConfigNames.NavitOSDNavigationDistanceToNext) ? YES : NO));
+            map.UpdateLabelForAction(this, "DistanceToTarget", string.Concat("Distance to Target: ", hc.Config.GetBool(ConfigNames.NavitOSDNavigationDistanceToTarget) ? YES : NO));
+            map.UpdateLabelForAction(this, "NextTurn", string.Concat("Next Turn: ", hc.Config.GetBool(ConfigNames.NavitOSDNavigationNextTurn) ? YES : NO));
         }
     }
 }

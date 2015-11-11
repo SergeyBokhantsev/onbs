@@ -122,7 +122,7 @@ namespace GtkApplication
 		{
 			try
 			{
-				var pageType = Type.GetType(string.Concat("GtkApplication.", model.Name));
+				var pageType = Type.GetType(string.Concat("GtkApplication.", model.ViewName));
 				var constructor = pageType.GetConstructor(new Type[] { typeof(IPageModel), typeof(Style), typeof(ILogger) });
 				var page = constructor.Invoke(new object[] { model, style, logger }) as Gtk.Bin;
 

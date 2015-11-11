@@ -183,7 +183,13 @@ namespace HostController
 
             travelController = new TravelController.TravelController(this);
 
-            uiController = new UIController.UIController(Config.GetString(ConfigNames.UIHostAssemblyName), Config.GetString(ConfigNames.UIHostClass), this, () => new UIModels.MainPage(this));
+            uiController = new UIController.UIController(
+                Config.GetString(ConfigNames.UIHostAssemblyName), 
+                Config.GetString(ConfigNames.UIHostClass), 
+                Path.Combine(config.DataFolder, "application.xml"),
+                this,
+                (map) => UIModels.ModelBase.CreateModel(this, map));
+
             uiController.DialogPending += uiController_DialogPending;
             uiController.ShowDefaultPage();
 

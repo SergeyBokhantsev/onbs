@@ -18,10 +18,10 @@ namespace YandexServicesProvider
         private readonly ILogger logger;
         private readonly HttpClient.Client client = new HttpClient.Client();
 
-        public WeatherProvider(ILogger logger)
+        public WeatherProvider(ILogger logger, string dataFolder)
         {
             this.logger = logger;
-            this.iconPath = Path.Combine(Path.GetDirectoryName(Assembly.GetCallingAssembly().Location), "Data", "weather");
+            this.iconPath = Path.Combine(dataFolder, "weather");
         }
 
         public forecast GetForecast(string cityId)

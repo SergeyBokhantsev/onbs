@@ -25,7 +25,7 @@ namespace GtkApplication
 
 			style.Window.Apply(label_caption, eventbox_caption);
 
-			binder.BindLabelText(label_caption);
+            binder.BindLabelText(label_caption, ModelNames.PageTitle);
 
 			binder.InitializeButton(style, eventbox_exit_button, style.CancelButton, ModelNames.ButtonCancel, TextAligment.CenterMiddle);
 			binder.InitializeButton(style, eventbox_next_button, style.AcceptButton, ModelNames.ButtonAccept, TextAligment.CenterMiddle);

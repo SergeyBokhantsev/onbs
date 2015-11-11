@@ -25,15 +25,19 @@ namespace UIController
         private readonly Stack<IDialogModel> dialogs = new Stack<IDialogModel>();
         private IDialogModel currentDialog;
         private readonly IHostController hostController;
-        private readonly Func<IPageModel> startPageConstructor;
+        private readonly Func<ApplicationMap, IPageModel> startPageConstructor;
         private int mainThreadId;
+
+        private ApplicationMap map;
 
         private int mouseLocation;
 
         private bool shutdowning;
 
-        public UIController(string uiHostAssemblyPath, string uiHostClassName, IHostController hostController, Func<IPageModel> startPageConstructor)
+        public UIController(string uiHostAssemblyPath, string uiHostClassName, string applicationMapFilePath, IHostController hostController, Func<ApplicationMap, IPageModel> startPageConstructor)
         {
+            this.map = new ApplicationMap(applicationMapFilePath);
+
             this.uiHostAssemblyPath = uiHostAssemblyPath;
             this.uiHostClassName = uiHostClassName;
             this.hostController = hostController;
@@ -59,7 +63,7 @@ namespace UIController
             {
                 if (currentDialog != null)
                 {
-                    currentDialog.Action(new PageModelActionEventArgs(button.ToString(), state));
+                    currentDialog.HardwareButtonClick(button);
                     return;
                 }
             }
@@ -104,7 +108,7 @@ namespace UIController
 
         public void ShowDefaultPage()
         {
-            ShowPage(startPageConstructor());
+            ShowPage(startPageConstructor(map));
         }
 
         public void ShowPage(IPageModel model)

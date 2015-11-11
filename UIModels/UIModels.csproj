@@ -81,6 +81,10 @@
       <Project>{eae855e8-89e1-4f2f-8947-39187b7c9f51}</Project>
       <Name>OBD</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UIController\UIController.csproj">
+      <Project>{1e7b884f-479a-4562-bb89-445786fec998}</Project>
+      <Name>UIController</Name>
+    </ProjectReference>
     <ProjectReference Include="..\YandexServicesProvider\YandexServicesProvider.csproj">
       <Project>{a8956707-42dd-4bf5-b4b2-955598a60b97}</Project>
       <Name>YandexServicesProvider</Name>

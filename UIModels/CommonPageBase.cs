@@ -7,27 +7,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UIController;
 
 namespace UIModels
 {
     public abstract class CommonPageBase : ModelBase
     {
-        protected readonly IHostController hc;
         protected readonly IHostTimer primaryTimer;
         protected readonly IHostTimer secondaryTimer;
 
-        protected bool Disposed { get; private set; }
-
-        protected CommonPageBase(IHostController hc, string modelName)
-            :base(modelName, hc.SyncContext, hc.Logger)
+        protected CommonPageBase(string modelName, string viewName, IHostController hc, ApplicationMap map, object arg)
+            :base(modelName, viewName, hc, map, arg)
         {
-            if (hc == null)
-                throw new ArgumentNullException("IHostController");
-
-            this.hc = hc;
             this.Disposing += OnDisposing;
-
-            onlyPressButtonEvents = true;
 
             primaryTimer = hc.CreateTimer(1000, OnPrimaryTick, true, true);
             secondaryTimer = hc.CreateTimer(60000, OnSecondaryTimer, true, true);
@@ -49,24 +41,10 @@ namespace UIModels
         {
         }
 
-        protected override void DoAction(Interfaces.UI.PageModelActionEventArgs args)
-        {
-            if (Disposed)
-                return;
-
-            switch (args.ActionName)
-            {
-                case ModelNames.ButtonCancel:
-                    hc.GetController<IUIController>().ShowDefaultPage();
-                    break;
-            }
-        }
-
         protected virtual void OnDisposing(object sender, EventArgs e)
         {
             primaryTimer.Dispose();
             secondaryTimer.Dispose();
-            Disposed = true;
         }
     }
 }

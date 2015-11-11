@@ -7,6 +7,8 @@ using Interfaces;
 using Interfaces.Input;
 using Interfaces.UI;
 using System.Threading;
+using UIController;
+using System.Reflection;
 
 namespace UIModels
 {
@@ -18,13 +20,16 @@ namespace UIModels
 
         private readonly Dictionary<string, object> properties = new Dictionary<string, object>();
 
-        protected readonly SynchronizationContext syncContext;
+        protected readonly IHostController hc;
+        protected readonly ApplicationMap map;
 
-        protected readonly ILogger logger;
+        protected bool Disposed 
+        { 
+            get; 
+            private set; 
+        }
 
-        protected bool onlyPressButtonEvents = true;
-
-        public string Name
+        public string ViewName
         {
             get;
             private set;
@@ -36,19 +41,32 @@ namespace UIModels
             protected set;
         }
 
-        protected ModelBase(string name, SynchronizationContext syncContext, ILogger logger)
+        protected ModelBase(string viewName, IHostController hc, ApplicationMap map)
         {
-            if (syncContext == null)
-                throw new ArgumentNullException("syncContext");
+            if (hc == null)
+                throw new ArgumentNullException("IHostController");
+            
+            if (map == null)
+                throw new ArgumentNullException("ApplicationMap");
 
-            Name = name;
-            this.syncContext = syncContext;
-            this.logger = logger;
+            ViewName = viewName;
+
+            this.hc = hc;
+        }
+
+        protected virtual object GetArgumentForPage(MappedPageAction mappedPageAction)
+        {
+            return null;
+        }
+
+        protected virtual void DoAction(string name, PageModelActionEventArgs actionArgs)
+        {
+            hc.Logger.Log(this, string.Format("No '{0}' action exists to execute for button {1}, state {2}.", name, actionArgs.ActionName, actionArgs.State), LogLevels.Warning);
         }
 
         public T GetProperty<T>(string name)
         {
-            //logger.LogIfDebug(this, string.Format("Getting PageModel property '{0}'", name));
+            hc.Logger.LogIfDebug(this, string.Format("Getting PageModel property '{0}'", name));
 
             lock (properties)
             {
@@ -61,7 +79,7 @@ namespace UIModels
 
         public void SetProperty(string name, object value)
         {
-            //logger.LogIfDebug(this, string.Format("Setting PageModel property '{0}' with value of type '{1}'", name, value != null ? value.GetType().ToString() : "NULL"));
+            hc.Logger.LogIfDebug(this, string.Format("Setting PageModel property '{0}' with value of type '{1}'", name, value != null ? value.GetType().ToString() : "NULL"));
 
             lock (properties)
             {
@@ -71,39 +89,94 @@ namespace UIModels
             OnPropertyChanged(name);
         }
 
-        public void Action(PageModelActionEventArgs actionArgs)
+        public static IPageModel CreateModel(IHostController hc, ApplicationMap map, string modelTypeName = null, string viewName = null, object arg = null)
         {
-            if (actionArgs == null)
-                throw new ArgumentNullException("actionArgs");
-
-            if ((onlyPressButtonEvents && actionArgs.State == ButtonStates.Press) || !onlyPressButtonEvents)
+            try
             {
-                logger.LogIfDebug(this, string.Format("Performing PageModel action '{0}'", actionArgs.ActionName));
+                if (modelTypeName == null)
+                {
+                    modelTypeName = map.DefaultPageModelTypeName;
+                    viewName = map.DefaultPageViewName;
+                }
 
-                syncContext.Post(o => DoAction(o as PageModelActionEventArgs), actionArgs);
+                var type = Assembly.GetExecutingAssembly().GetType(modelTypeName);
+                if (type != null)
+                {
+                    var constructor = type.GetConstructor(new Type[] { typeof(string), typeof(IHostController), typeof(ApplicationMap), typeof(object) });
+                    if (constructor != null)
+                    {
+                        var model = constructor.Invoke(new[] { viewName, hc, map, arg }) as IPageModel;
+                        map.SetCaptions(model);
+                        return model;
+                    }
+                    else
+                    {
+                        hc.Logger.Log(typeof(ModelBase), string.Format("Apropriate constructor is not found for model '{0}'", modelTypeName), LogLevels.Warning);
+                        return null;
+                    }
+                }
+                else
+                {
+                    hc.Logger.Log(typeof(ModelBase), string.Format("Page model is not found '{0}'", modelTypeName), LogLevels.Warning);
+                    return null;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                logger.LogIfDebug(this, string.Format("Skipping PageModel action '{0}'", actionArgs.ActionName));
+                hc.Logger.Log(typeof(ModelBase), string.Format("Exception constructing page model '{0}'. Exception was: {1}", modelTypeName, ex.Message), LogLevels.Error);
+                return null;
             }
         }
 
-        /// <summary>
-        /// Ececute action logic in Main thread
-        /// </summary>
-        /// <param name="actionArgs"></param>
-        protected abstract void DoAction(PageModelActionEventArgs actionArgs);
+        public void Action(PageModelActionEventArgs actionArgs)
+        {
+            hc.Logger.LogIfDebug(this, string.Format("Performing PageModel action '{0}'", actionArgs.ActionName));
+
+            var mappedAction = map.GetMappedActionFor(this, actionArgs);
+
+            if (mappedAction != null)
+            {
+                hc.SyncContext.Post((o) =>
+                {
+                    var pageAction = o as MappedPageAction;
+
+                    if (pageAction != null)
+                    {
+                        var model = CreateModel(hc, map, pageAction.ModelTypeName, pageAction.ViewName, GetArgumentForPage(pageAction));
+                        if (model != null)
+                        {
+                            hc.GetController<IUIController>().ShowPage(model);
+                        }
+                    }
+                    else
+                    {
+                        var customAction = o as MappedCustomAction;
+
+                        if (customAction != null)
+                        {
+                            DoAction(customAction.CustomActionName, actionArgs);
+                        }
+                    }
+
+                }, mappedAction);
+            }
+        }
 
         public void Dispose()
         {
-            logger.LogIfDebug(this, string.Format("Performing PageModel disposing: '{0}'", this.Name));
+            if (!Disposed)
+            {
+                Disposed = true;
 
-            var handler = Disposing;
-            if (handler != null)
-                handler(null, null);
+                hc.Logger.LogIfDebug(this, string.Format("Performing PageModel disposing: '{0}'", this.Name));
 
-            PropertyChanged = null;
-            Disposing = null;
+                var handler = Disposing;
+                if (handler != null)
+                    handler(null, null);
+
+                PropertyChanged = null;
+                Disposing = null;
+            }
         }
 
         public void RefreshAllProps()
@@ -122,31 +195,31 @@ namespace UIModels
         }
     }
 
-    public class DialogModel : ModelBase, IDialogModel
+    public abstract class DialogModelBase : IDialogModel
     {
         public event Action Shown;
         public event Action<DialogResults> Closed;
         public event Action<DialogResults> ButtonClick;
 
+        protected readonly IHostController hc;
+
         private int shownTime;
         protected int timeout;
         protected DialogResults defaultResult = DialogResults.None;
 
-        public DialogModel(string name, IHostController hc)
-            :base(name, hc.SyncContext, hc.Logger)
+        public DialogModelBase(IHostController hc)
         {
-            Shown += () => { if (timeout > 0) hc.CreateTimer(1000, TimerTick, true, false); };
+            this.hc = hc;
 
-            CaptionPropertyName = "caption";
-            MessagePropertyName = "message";
-            RemainingTimePropertyName = "remaining";
+            Shown += () => { if (timeout > 0) hc.CreateTimer(1000, TimerTick, true, false); };
         }
 
         private void TimerTick(IHostTimer timer)
         {
             shownTime += timer.Span;
 
-            SetProperty(RemainingTimePropertyName, ((timeout - shownTime) / 1000).ToString());
+            RemainingTime = timeout - shownTime;
+            OnRemainingTimeChanged();
 
             if (shownTime >= timeout)
             {
@@ -159,32 +232,14 @@ namespace UIModels
         {
             var handler = Closed;
             if (handler != null)
-                syncContext.Post(o => handler((DialogResults)o), result);
+                hc.SyncContext.Post(o => handler((DialogResults)o), result);
         }
 
         public void OnShown()
         {
             var handler = Shown;
             if (handler != null)
-                syncContext.Post(o => handler(), null);
-        }
-
-        public string CaptionPropertyName
-        {
-            get;
-            set;
-        }
-
-        public string MessagePropertyName
-        {
-            get;
-            set;
-        }
-
-        public string RemainingTimePropertyName
-        {
-            get;
-            set;
+                hc.SyncContext.Post(o => handler(), null);
         }
 
         public Dictionary<DialogResults, string> Buttons
@@ -193,15 +248,45 @@ namespace UIModels
             set;
         }
 
-        protected override void DoAction(PageModelActionEventArgs actionArgs)
-        {
-        }
-
         protected void OnButtonClick(DialogResults result)
         {
             var handler = ButtonClick;
             if (handler != null)
                 handler(result);
+        }
+
+
+        public string Caption
+        {
+            get;
+            protected set;
+        }
+
+        public string Message
+        {
+            get;
+            protected set;
+        }
+
+        public int RemainingTime
+        {
+            get;
+            private set;
+        }
+
+        private void OnRemainingTimeChanged()
+        {
+            var handler = RemainingTimeChanged;
+            if (handler != null)
+            {
+                handler(RemainingTime);
+            }
+        }
+
+        public event Action<int> RemainingTimeChanged;
+
+        public virtual void HardwareButtonClick(Buttons button)
+        {
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Interfaces
     {
         bool IsSystemTimeValid { get; }
         bool IsInternetConnected { get; }
+        string DataFolder { get; }
     }
 
     public interface IConfig : ISessionConfig

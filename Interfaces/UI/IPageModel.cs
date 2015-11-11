@@ -27,7 +27,7 @@ namespace Interfaces.UI
     {
         event PageModelPropertyChangedHandler PropertyChanged;
         event EventHandler Disposing;
-        string Name { get; }
+        string ViewName { get; }
         bool NoDialogsAllowed { get; }
         T GetProperty<T>(string name);
         void SetProperty(string name, object value);
@@ -58,6 +58,8 @@ namespace Interfaces.UI
 		public const string ButtonF6Label = "F6_label";
 		public const string ButtonF7Label = "F7_label";
 		public const string ButtonF8Label = "F8_label";
+
+        public const string PageTitle = "page_title";
 
 		public static string ResolveButtonLabelName(string buttonName)
 		{

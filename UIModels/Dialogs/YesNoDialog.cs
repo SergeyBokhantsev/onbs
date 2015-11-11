@@ -6,39 +6,37 @@ using System.Threading;
 using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.UI;
+using Interfaces.Input;
 
 namespace UIModels.Dialogs
 {
-    public class YesNoDialog : DialogModel
+    public class YesNoDialog : DialogModelBase
     {
         public YesNoDialog(string caption, string message, string yesCaption, string noCaption, IHostController hc, int timeout, DialogResults defaultResult)
-            : base("YesNoDialog", hc)
+            : base(hc)
         {
             this.timeout = timeout;
             this.defaultResult = defaultResult;
 
-            SetProperty(CaptionPropertyName, caption);
-
-            MessagePropertyName = "msg";
-            SetProperty(MessagePropertyName, message);
-
+            Caption = caption;
+            Message = message;
             Buttons = new Dictionary<Interfaces.UI.DialogResults, string> { { DialogResults.Yes, yesCaption }, { DialogResults.No, noCaption } };
         }
 
-        protected override void DoAction(PageModelActionEventArgs actionArgs)
+        public override void HardwareButtonClick(Buttons button)
         {
-            switch (actionArgs.ActionName)
+            switch (button)
             {
-                case ModelNames.ButtonAccept:
+                case Interfaces.Input.Buttons.Accept:
                     OnButtonClick(DialogResults.Yes);
                     break;
 
-                case ModelNames.ButtonCancel:
+                case Interfaces.Input.Buttons.Cancel:
                     OnButtonClick(DialogResults.No);
                     break;
 
                 default:
-                    base.DoAction(actionArgs);
+                    base.HardwareButtonClick(button);
                     break;
             }
         }

@@ -6,56 +6,36 @@ using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.Input;
 using Interfaces.UI;
+using UIController;
 
 namespace UIModels.ConfigPages
 {
     public class ShutdownPage : ModelBase
     {
-        private readonly IHostController hostController;
-
-        public ShutdownPage(IHostController hostController)
-            : base("CommonVertcalStackPage", hostController.SyncContext, hostController.Logger)
+        public ShutdownPage(string viewName, IHostController hc, ApplicationMap map, object arg)
+            : base(viewName, hc, map, arg)
         {
-            this.hostController = hostController;
-
-            SetProperty("label_caption", "System power management");
-            SetProperty(ModelNames.ButtonCancelLabel, "Return to Main Menu");
-
-            SetProperty(ModelNames.ButtonF1Label, "Quit Application");
-            SetProperty(ModelNames.ButtonF2Label, "Restart");
-            SetProperty(ModelNames.ButtonF3Label, "Shutdown");
+            SetProperty(ModelNames.PageTitle, "System power management");
         }
 
-        protected override void DoAction(PageModelActionEventArgs args)
+        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
         {
-            switch (args.ActionName)
+            switch (name)
             {
-                case ModelNames.ButtonF1:
-                    if (args.State == ButtonStates.Press)
-                    {
-                        hostController.Shutdown(HostControllerShutdownModes.Exit);
-                    }
+                case "Quit":
+                    hc.Shutdown(HostControllerShutdownModes.Exit);
                     break;
 
-                case ModelNames.ButtonF2:
-                    if (args.State == ButtonStates.Press)
-                    {
-                        hostController.Shutdown(HostControllerShutdownModes.Restart);
-                    }
+                case "Restart":
+                    hc.Shutdown(HostControllerShutdownModes.Restart);
                     break;
 
-                case ModelNames.ButtonF3:
-                    if (args.State == ButtonStates.Press)
-                    {
-                        hostController.Shutdown(HostControllerShutdownModes.Shutdown);
-                    }
+                case "Shutdown":
+                    hc.Shutdown(HostControllerShutdownModes.Shutdown);
                     break;
 
-                case ModelNames.ButtonCancel:
-                    if (args.State == ButtonStates.Press)
-                    {
-                        hostController.GetController<IUIController>().ShowDefaultPage();
-                    }
+                default:
+                    base.DoAction(name, actionArgs);
                     break;
             }
         }

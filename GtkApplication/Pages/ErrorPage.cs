@@ -63,13 +63,6 @@ namespace GtkApplication
 		public void Action(PageModelActionEventArgs actionArgs)
 		{			
 		}
-		public string Name
-		{
-			get
-			{
-				return "ErrorPage";
-			}
-		}
 		#endregion
 
 		private void OnPropertyChanged(string propName)
@@ -91,6 +84,14 @@ namespace GtkApplication
         public bool NoDialogsAllowed
         {
             get { return false; }
+        }
+
+        public string ViewName
+        {
+            get
+            {
+                return "ErrorPage";
+            }
         }
     }
 }

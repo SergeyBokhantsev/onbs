@@ -5,12 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Interfaces;
+using System.IO;
+using System.Reflection;
 
 namespace HostController
 {
     public class Configuration : IConfig
     {        
         private readonly System.Configuration.Configuration cfg;
+        private string dataFolder;
 
         #region SESSION CONFIG
         public bool IsSystemTimeValid
@@ -23,6 +26,19 @@ namespace HostController
         {
             get;
             set;
+        }
+
+        public string DataFolder
+        {
+            get
+            {
+                if (dataFolder == null)
+                {
+                    dataFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data");
+                }
+
+                return dataFolder;
+            }
         }
 
         #endregion

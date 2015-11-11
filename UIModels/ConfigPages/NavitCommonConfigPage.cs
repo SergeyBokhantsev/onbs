@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.UI;
+using UIController;
 
 namespace UIModels.ConfigPages
 {
@@ -13,67 +14,52 @@ namespace UIModels.ConfigPages
         private const string YES = "Yes";
         private const string NO = "No";
 
-        private readonly IHostController hc;
-        private readonly IConfig cfg;
-
-        public NavitCommonConfigPage(IHostController hc)
-            :base("CommonVertcalStackPage", hc.SyncContext, hc.Logger)
+        public NavitCommonConfigPage(string viewName, IHostController hc, ApplicationMap map, object arg)
+            : base(viewName, hc, map, arg)
         {
-            this.hc = hc;
-            this.cfg = hc.Config;
-
-            SetProperty("label_caption", "Navit common options");
-            SetProperty(ModelNames.ButtonCancelLabel, "Return to Main Menu");
-            SetProperty(ModelNames.ButtonAcceptLabel, "Go to Navit OSD Config");
-
+            SetProperty(ModelNames.PageTitle, "Navit common options");            
             UpdateButtonLabels();
         }
 
-        protected override void DoAction(Interfaces.UI.PageModelActionEventArgs e)
+        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
         {
-            switch (e.ActionName)
+            switch (name)
             {
-                case ModelNames.ButtonF1:
-                    cfg.InvertBoolSetting(ConfigNames.NavitGPSActive);
+                case "ActivateGPS":
+                    hc.Config.InvertBoolSetting(ConfigNames.NavitGPSActive);
                     break;
 
-                case ModelNames.ButtonF2:
-                    cfg.InvertBoolSetting(ConfigNames.NavitAutozoom);
+                case "Autozoom":
+                    hc.Config.InvertBoolSetting(ConfigNames.NavitAutozoom);
                     break;
 
-                case ModelNames.ButtonF3:
-                    cfg.InvertBoolSetting(ConfigNames.NavitMenubar);
+                case "Menubar":
+                    hc.Config.InvertBoolSetting(ConfigNames.NavitMenubar);
                     break;
 
-                case ModelNames.ButtonF4:
-                    cfg.InvertBoolSetting(ConfigNames.NavitToolbar);
+                case "Toolbar":
+                    hc.Config.InvertBoolSetting(ConfigNames.NavitToolbar);
                     break;
 
-                case ModelNames.ButtonF5:
-                    cfg.InvertBoolSetting(ConfigNames.NavitStatusbar);
+                case "Statusbar":
+                    hc.Config.InvertBoolSetting(ConfigNames.NavitStatusbar);
                     break;
 
-                case ModelNames.ButtonF6:
-                    cfg.InvertBoolSetting(ConfigNames.NavitKeepNorth);
+                case "KeepNorth":
+                    hc.Config.InvertBoolSetting(ConfigNames.NavitKeepNorth);
                     break;
 
-                case ModelNames.ButtonF7:
-                    cfg.InvertBoolSetting(ConfigNames.NavitLockOnRoad);
+                case "LockRoad":
+                    hc.Config.InvertBoolSetting(ConfigNames.NavitLockOnRoad);
                     break;
 
-                case ModelNames.ButtonF8:
-                    var zoom = cfg.GetInt(ConfigNames.NavitZoom) + 15;
-                    cfg.Set<int>(ConfigNames.NavitZoom, zoom > 256 ? 0 : zoom);
+                case "Zoom":
+                    var zoom = hc.Config.GetInt(ConfigNames.NavitZoom) + 15;
+                    hc.Config.Set<int>(ConfigNames.NavitZoom, zoom > 256 ? 0 : zoom);
                     break;
 
-                case ModelNames.ButtonAccept:
-                    var nextPage = new NavitOSDConfigPage(hc);
-                    hc.GetController<IUIController>().ShowPage(nextPage);
-                    break;
-
-                case ModelNames.ButtonCancel:
-                    cfg.Save();
-                    hc.GetController<IUIController>().ShowDefaultPage();
+                default:
+                    base.DoAction(name, actionArgs);
                     break;
             }
 
@@ -82,14 +68,14 @@ namespace UIModels.ConfigPages
 
         private void UpdateButtonLabels()
         {
-            SetProperty(ModelNames.ButtonF1Label, string.Concat("Activate GPS: ", cfg.GetBool(ConfigNames.NavitGPSActive) ? YES : NO));
-            SetProperty(ModelNames.ButtonF2Label, string.Concat("Autozoom: ", cfg.GetBool(ConfigNames.NavitAutozoom) ? YES : NO));
-            SetProperty(ModelNames.ButtonF3Label, string.Concat("Show Menubar: ", cfg.GetBool(ConfigNames.NavitMenubar) ? YES : NO));
-            SetProperty(ModelNames.ButtonF4Label, string.Concat("Show Toolbar: ", cfg.GetBool(ConfigNames.NavitToolbar) ? YES : NO));
-            SetProperty(ModelNames.ButtonF5Label, string.Concat("Show Statusbar: ", cfg.GetBool(ConfigNames.NavitStatusbar) ? YES : NO));
-            SetProperty(ModelNames.ButtonF6Label, string.Concat("Keep North orient: ", cfg.GetBool(ConfigNames.NavitKeepNorth) ? YES : NO));
-            SetProperty(ModelNames.ButtonF7Label, string.Concat("Lock on Road: ", cfg.GetBool(ConfigNames.NavitLockOnRoad) ? YES : NO));
-            SetProperty(ModelNames.ButtonF8Label, string.Concat("Zoom: ", cfg.GetInt(ConfigNames.NavitZoom).ToString()));
+            map.UpdateLabelForAction(this, "ActivateGPS", string.Concat("Activate GPS: ", hc.Config.GetBool(ConfigNames.NavitGPSActive) ? YES : NO));
+            map.UpdateLabelForAction(this, "Autozoom", string.Concat("Autozoom: ", hc.Config.GetBool(ConfigNames.NavitAutozoom) ? YES : NO));
+            map.UpdateLabelForAction(this, "Menubar", string.Concat("Show Menubar: ", hc.Config.GetBool(ConfigNames.NavitMenubar) ? YES : NO));
+            map.UpdateLabelForAction(this, "Toolbar", string.Concat("Show Toolbar: ", hc.Config.GetBool(ConfigNames.NavitToolbar) ? YES : NO));
+            map.UpdateLabelForAction(this, "Statusbar", string.Concat("Show Statusbar: ", hc.Config.GetBool(ConfigNames.NavitStatusbar) ? YES : NO));
+            map.UpdateLabelForAction(this, "KeepNorth", string.Concat("Keep North orient: ", hc.Config.GetBool(ConfigNames.NavitKeepNorth) ? YES : NO));
+            map.UpdateLabelForAction(this, "LockRoad", string.Concat("Lock on Road: ", hc.Config.GetBool(ConfigNames.NavitLockOnRoad) ? YES : NO));
+            map.UpdateLabelForAction(this, "Zoom", string.Concat("Zoom: ", hc.Config.GetInt(ConfigNames.NavitZoom).ToString()));
         }
     }
 }
