@@ -7,28 +7,24 @@ using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.Input;
 using System.Timers;
+using UIController;
 
 namespace UIModels
 {
     public class MainPage : ModelBase
     {
-		private const string cameraAppKey = "cam";
-
-        private readonly IHostController hostController;
         private readonly IHostTimer timer;
 
         private readonly int localTimeZone;
 
         private List<IMetricsProvider> metricsProviders;
 
-        public MainPage(IHostController hostController)
-            :base(typeof(MainPage).Name, hostController.SyncContext, hostController.Logger)
+        public MainPage(string viewName, IHostController hc, ApplicationMap map, object arg)
+            : base(viewName, hc, map)
         {
-            this.hostController = hostController;
-
             this.Disposing += MainPageDisposing;
 
-            this.localTimeZone = hostController.Config.GetInt(ConfigNames.SystemTimeLocalZone);
+            this.localTimeZone = hc.Config.GetInt(ConfigNames.SystemTimeLocalZone);
 
             SubscribeMetricsProviders();
 
@@ -42,16 +38,16 @@ namespace UIModels
 			SetProperty("time_valid", "1");
 			SetProperty("time", null);
 
-            timer = hostController.CreateTimer(1000, TimerTick, true, true);
+            timer = hc.CreateTimer(1000, TimerTick, true, true);
         }
 
         private void TimerTick(IHostTimer timer)
         {
             SetProperty("time", DateTime.Now.ToUniversalTime().AddHours(localTimeZone));
-            SetProperty("time_valid", hostController.Config.IsSystemTimeValid ? "1" : "0");
+            SetProperty("time_valid", hc.Config.IsSystemTimeValid ? "1" : "0");
 
-            SetProperty("label_inet_status", hostController.Config.IsInternetConnected ? "Internet OK" : "NO INTERNET CONNECTION");
-            SetProperty("inet_status", hostController.Config.IsInternetConnected ? "1" : "0");
+            SetProperty("label_inet_status", hc.Config.IsInternetConnected ? "Internet OK" : "NO INTERNET CONNECTION");
+            SetProperty("inet_status", hc.Config.IsInternetConnected ? "1" : "0");
 
             dynamic hostScheduler = System.Threading.SynchronizationContext.Current;
 
@@ -69,9 +65,9 @@ namespace UIModels
 
             metricsProviders = new List<IMetricsProvider>();
 
-            metricsProviders.Add(hostController.GetController<IArduinoController>());
-            metricsProviders.Add(hostController.GetController<IGPSController>());
-            metricsProviders.Add(hostController.GetController<ITravelController>());
+            metricsProviders.Add(hc.GetController<IArduinoController>());
+            metricsProviders.Add(hc.GetController<IGPSController>());
+            metricsProviders.Add(hc.GetController<ITravelController>());
 
             metricsProviders.ForEach(mp => mp.MetricsUpdated += OnMetricsUpdated);
         }
@@ -93,67 +89,6 @@ namespace UIModels
             {
                 metricsProviders.ForEach(mp => mp.MetricsUpdated -= OnMetricsUpdated);
                 metricsProviders = null;
-            }
-        }
-
-        protected override async void DoAction(PageModelActionEventArgs args)
-        {
-            switch (args.ActionName)
-            {
-                case ModelNames.ButtonCancel:
-                    {
-                        if (args.State == ButtonStates.Press)
-                        {
-                            var page = new DrivePage(hostController);
-                            hostController.GetController<IUIController>().ShowPage(page);
-                        }
-                    }
-                    break;
-
-                case ModelNames.ButtonF2:
-                    {
-                        if (args.State == ButtonStates.Press)
-                        {
-                            var dialog = new UIModels.Dialogs.YesNoDialog("sdsd", "DSsdds", "Y", "N", hostController, 5000, DialogResults.Reject);
-
-                            var res = await hostController.GetController<IUIController>().ShowDialogAsync(dialog);
-
-                            if (res == DialogResults.Reject)
-                                return;
-
-                            var page = new WebCamPage(hostController, cameraAppKey);
-                            hostController.GetController<IUIController>().ShowPage(page);
-                            page.Run();
-                        }
-                    }
-                    break;
-
-                case ModelNames.ButtonF5:
-                    {
-                        if (args.State == ButtonStates.Press)
-                        {
-                            hostController.GetController<ITravelController>().MarkCurrentPositionWithCustomPoint();
-                        }
-                    }
-                    break;
-
-                case ModelNames.ButtonF8:
-                    {
-                        if (args.State == ButtonStates.Press)
-                        {
-                            hostController.GetController<IUIController>().ShowPage(new ConfigPages.CommonConfigPage(hostController));
-                        }
-                    }
-                    break;
-
-                case ModelNames.ButtonF1:
-                    {
-                        if (args.State == ButtonStates.Press)
-                        {
-                            hostController.GetController<IUIController>().ShowPage(new ConfigPages.ShutdownPage(hostController));
-                        }
-                    }
-                    break;
             }
         }
     }

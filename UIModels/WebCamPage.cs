@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using UIController;
 
 namespace UIModels
 {
@@ -20,7 +21,6 @@ namespace UIModels
         private const string WebcamControlContrast = "WebcamControlContrast";
 		private const string WebcamControlBright = "WebcamControlBright";
 
-        private readonly IHostController hc;
         private readonly object locker = new object();
 
         private bool configDirty;
@@ -79,14 +79,9 @@ namespace UIModels
 			}
 		}
 
-        public WebCamPage(IHostController hostController, string webcamAppKey)
-            :base(typeof(ExternalApplicationPage).Name, 
-            hostController.ProcessRunnerFactory.Create(webcamAppKey),
-            hostController.SyncContext,
-            hostController.Logger,
-            hostController.GetController<IUIController>())
+        public WebCamPage(string viewName, IHostController hc, ApplicationMap map, object arg)
+            : base(viewName, hc, map, hc.ProcessRunnerFactory.Create("cam"))
         {
-            this.hc = hostController;
             this.Disposing += WebCamPageDisposing;
         }
 
@@ -136,78 +131,60 @@ namespace UIModels
 			Thread.Sleep(300);
 		}
 
-        protected override void DoAction(PageModelActionEventArgs args)
+        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
         {
-            switch (args.ActionName)
+            switch(name)
             {
-                case ModelNames.ButtonF1:
-                    if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
+                case "Color+":
+                    lock (locker)
                     {
-                        lock (locker)
-                        {
-                            Color = Color + 10;
-                            UpdateColor();
-                        }
+                        Color = Color + 10;
+                        UpdateColor();
                     }
                     break;
 
-                case ModelNames.ButtonF5:
-                    if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
+                case "Color-":
+                    lock (locker)
                     {
-                        lock (locker)
-                        {
-                            Color = Color - 10;
-                            UpdateColor();
-                        }
+                        Color = Color - 10;
+                        UpdateColor();
                     }
                     break;
 
-                case ModelNames.ButtonF2:
-                    if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
+                case "Contrast+":
+                    lock (locker)
                     {
-                        lock (locker)
-                        {
-                            Contrast = Contrast + 10;
-                            UpdateContrast();
-                        }
+                        Contrast = Contrast + 10;
+                        UpdateContrast();
                     }
                     break;
 
-                case ModelNames.ButtonF6:
-                    if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
+                case "Contrast-":
+                    lock (locker)
                     {
-                        lock (locker)
-                        {
-                            Contrast = Contrast - 10;
-                            UpdateContrast();
-                        }
+                        Contrast = Contrast - 10;
+                        UpdateContrast();
                     }
                     break;
 
-			case ModelNames.ButtonF3:
-				if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
-				{
-					lock (locker)
-					{
-						Bright = Bright + 10;
-						UpdateBright();
-					}
-				}
-				break;
+                case "Bright+":
+                    lock (locker)
+                    {
+                        Bright = Bright + 10;
+                        UpdateBright();
+                    }
+                    break;
 
-				case ModelNames.ButtonF7:
-				if (args.State == ButtonStates.Press || args.State == ButtonStates.Hold)
-				{
-					lock (locker)
-					{
-						Bright = Bright - 10;
-						UpdateBright();
-					}
-				}
-				break;
+                case "Bright-":
+                    lock (locker)
+                    {
+                        Bright = Bright - 10;
+                        UpdateBright();
+                    }
+                    break;
 
                 default:
-                    base.DoAction(args);
+                    base.DoAction(name, actionArgs);
                     break;
             }
         }

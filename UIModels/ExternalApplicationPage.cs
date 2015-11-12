@@ -13,26 +13,24 @@ namespace UIModels
 {
     public abstract class ExternalApplicationPage : ModelBase
     {
-        private readonly IUIController ui;
-
-        protected abstract IProcessRunner Runner
+        protected IProcessRunner Runner
         {
             get;
             set;
         }
 
-		protected ExternalApplicationPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map, arg)
+		protected ExternalApplicationPage(string viewName, IHostController hc, ApplicationMap map, IProcessRunner runner)
+            : base(viewName, hc, map)
         {
-            this.ui = ui;
-
             NoDialogsAllowed = true;
+
+            Runner = runner;
 
             if (Runner != null)
             {
                 Runner.Exited += RunnerExited;
 
-                SetProperty("label_launch_info", string.Format("Launching {0}...", runner.Name));
+                SetProperty("label_launch_info", string.Format("Launching {0}...", Runner.Name));
                 SetProperty("is_error", "0");
             }
             else

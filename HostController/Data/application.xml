@@ -10,6 +10,7 @@
       <F4 model="WeatherPage" caption="TRAF"/>
     </page>
     <page model="NavigationAppPage" default_view="ExternalApplicationPage">
+      <Cancel model="DrivePage"/>
       <F1 action="-"/>
       <F2 action="Up" behavior="PressOrHold"/>
       <F3 action="+"/>
@@ -20,7 +21,13 @@
       <F8 action="d"/>
     </page>
     <page model="WebCamPage" default_view="ExternalApplicationPage">
-      
+      <Cancel model="DrivePage"/>
+      <F1 action="Color+" behavior="PressOrHold"/>
+      <F5 action="Color-" behavior="PressOrHold"/>
+      <F2 action="Contrast+" behavior="PressOrHold"/>
+      <F6 action="Contrast-" behavior="PressOrHold"/>
+      <F3 action="Bright+" behavior="PressOrHold"/>
+      <F7 action="Bright-" behavior="PressOrHold"/>
     </page>
     <page model="WeatherPage" default_view="WeatherPage">
       

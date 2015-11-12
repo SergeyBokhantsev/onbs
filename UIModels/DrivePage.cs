@@ -24,7 +24,7 @@ namespace UIModels
         private readonly IOperationGuard geocoderGuard = new TimedGuard(new TimeSpan(0, 0, 3));
 
         public DrivePage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map, arg)
+            : base(viewName, hc, map)
         {
             this.tc = hc.GetController<ITravelController>();
 

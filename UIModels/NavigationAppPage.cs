@@ -14,17 +14,10 @@ namespace UIModels
     {
         private readonly IAutomationController automation;
 
-        protected override IProcessRunner Runner
-        {
-            get;
-            set;
-        }
-
         public NavigationAppPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map, arg)
+            : base(viewName, hc, map, CreateProcessRunner(hc))
         {
-            automation = hostController.GetController<IAutomationController>();
-            Runner = CreateProcessRunner(hc);
+            automation = hc.GetController<IAutomationController>();
         }
 
         private static IProcessRunner CreateProcessRunner(IHostController hc)
