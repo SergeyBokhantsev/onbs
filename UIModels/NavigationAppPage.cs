@@ -101,6 +101,7 @@ namespace UIModels
 
                 default:
                     base.DoAction(name, actionArgs);
+                    break;
             }
         }
     }

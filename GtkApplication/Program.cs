@@ -19,6 +19,16 @@ namespace GtkApplication
             }
         }
 
+        private class ShowDialogEventArgs : EventArgs
+        {
+            public IDialogModel Model { get; private set; }
+
+            public ShowDialogEventArgs(IDialogModel model)
+            {
+                Model = model;
+            }
+        }
+
         private ILogger logger;
         private MainWindow win;
 
@@ -144,16 +154,16 @@ namespace GtkApplication
 
         public void ShowDialog(IDialogModel model)
         {
-            Application.Invoke((s, e) => ShowDialog(this, new ShowPageEventArgs(model)));
+            Application.Invoke((s, e) => ShowDialog(this, new ShowDialogEventArgs(model)));
         }
 
         private void ShowDialog(object sender, EventArgs args)
         {
-            var model = (args as ShowPageEventArgs).Model as IDialogModel;
+            var model = (args as ShowDialogEventArgs).Model as IDialogModel;
 
-            Func<string> getWindowCaption = () => string.Format("({0}) {1}", model.GetProperty<object>(model.RemainingTimePropertyName) ?? "*", model.GetProperty<object>(model.CaptionPropertyName));
+            Func<string> getWindowCaption = () => string.Format("({0}) {1}", model.RemainingTime, model.Caption);
 
-            var dlg = new Gtk.MessageDialog(win, DialogFlags.DestroyWithParent, MessageType.Warning, ButtonsType.None, model.GetProperty<object>(model.MessagePropertyName).ToString());
+            var dlg = new Gtk.MessageDialog(win, DialogFlags.DestroyWithParent, MessageType.Warning, ButtonsType.None, model.Message);
 
             if (model.Buttons != null)
             {
@@ -163,25 +173,13 @@ namespace GtkApplication
                 }
             }
 
-            model.PropertyChanged += name => 
-            {
-                if (name == model.RemainingTimePropertyName)
-                    Application.Invoke((s, e) => dlg.Title = getWindowCaption());
-            };
-
+            model.RemainingTimeChanged += remaining => Application.Invoke((s, e) => dlg.Title = getWindowCaption());
             model.ButtonClick += dr => Application.Invoke((s, e) => dlg.Respond((ResponseType)dr));
 
             dlg.Response += (s, e) => { model.OnClosed((DialogResults)e.ResponseId); dlg.Destroy(); };
             dlg.Modal = true;
             dlg.Shown += (s, e) => model.OnShown();
             dlg.Close += (s, e) => model.OnClosed(DialogResults.None);
-
-            var box = new HBox();
-            box.Add(new Label() { Text = model.GetProperty<object>(model.MessagePropertyName).ToString() });
-
-            dlg.CreatePangoContext();
-            dlg.CreatePangoLayout("sdfsdf");
-            
 
             dlg.Run();
             dlg.Destroy();

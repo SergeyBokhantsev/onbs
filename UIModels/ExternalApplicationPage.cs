@@ -44,25 +44,25 @@ namespace UIModels
 
         void RunnerExited(bool unexpected)
         {
-            syncContext.Post(o => ui.ShowDefaultPage(), null);
+            hc.SyncContext.Post(o => hc.GetController<IUIController>().ShowDefaultPage(), null);
         }
 
         public virtual bool Run()
         {
-            if (runner == null)
+            if (Runner == null)
                 return false;
 
             try
             {
                 Runner.Run();
-                SetProperty("label_launch_info", string.Format("{0} now launched", runner.Name));
+                SetProperty("label_launch_info", string.Format("{0} now launched", Runner.Name));
 
                 return true;
             }
             catch (Exception ex)
             {
                 SetProperty("is_error", "1");
-                SetProperty("label_launch_info", string.Format("Error launching {0}...{1}{2}", runner.Name, Environment.NewLine, ex.Message));
+                SetProperty("label_launch_info", string.Format("Error launching {0}...{1}{2}", Runner.Name, Environment.NewLine, ex.Message));
                 return false;
             }
         }

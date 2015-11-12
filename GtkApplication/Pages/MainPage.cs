@@ -99,6 +99,8 @@ namespace GtkApplication
 					{ "0", new Gdk.Color(255,0,0) },
 					{ "1", style.Window.Bg }
 				});
+
+            binder.UpdateBindings();
 		}
 
 		private void InitializeButton(EventBox box, LookAndFeel lf, string buttonName, TextAligment align)

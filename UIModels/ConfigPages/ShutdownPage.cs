@@ -13,7 +13,7 @@ namespace UIModels.ConfigPages
     public class ShutdownPage : ModelBase
     {
         public ShutdownPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map, arg)
+            : base(viewName, hc, map)
         {
             SetProperty(ModelNames.PageTitle, "System power management");
         }

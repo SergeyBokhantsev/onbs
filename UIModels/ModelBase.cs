@@ -50,7 +50,7 @@ namespace UIModels
                 throw new ArgumentNullException("ApplicationMap");
 
             ViewName = viewName;
-
+            this.map = map;
             this.hc = hc;
         }
 
@@ -98,7 +98,7 @@ namespace UIModels
                     modelTypeName = map.DefaultPageModelTypeName;
                 }
 
-                var type = Assembly.GetExecutingAssembly().GetType(modelTypeName);
+                var type = Assembly.GetExecutingAssembly().GetType(string.Concat("UIModels.", modelTypeName));
                 if (type != null)
                 {
                     var constructor = type.GetConstructor(new Type[] { typeof(string), typeof(IHostController), typeof(ApplicationMap), typeof(object) });
@@ -179,7 +179,7 @@ namespace UIModels
             {
                 Disposed = true;
 
-                hc.Logger.LogIfDebug(this, string.Format("Performing PageModel disposing: '{0}'", this.Name));
+                hc.Logger.LogIfDebug(this, string.Format("Performing PageModel disposing: '{0}'", this.GetType().Name));
 
                 var handler = Disposing;
                 if (handler != null)

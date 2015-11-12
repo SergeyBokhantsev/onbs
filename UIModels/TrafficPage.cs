@@ -11,6 +11,7 @@ using YandexServicesProvider;
 using System.Reflection;
 using System.IO;
 using System.Threading;
+using UIController;
 
 namespace UIModels
 {
@@ -20,8 +21,8 @@ namespace UIModels
 
         private ManualResetGuard downloadOperationScope = new ManualResetGuard();
 
-        public TrafficPage(IHostController hc)
-            :base(hc, "TrafficPage")
+        public TrafficPage(string viewName, IHostController hc, ApplicationMap map, object arg)
+            : base(viewName, hc, map)
         {
             this.provider = new StaticMapProvider(hc.Logger);
         }

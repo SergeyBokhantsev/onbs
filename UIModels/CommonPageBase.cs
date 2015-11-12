@@ -16,8 +16,8 @@ namespace UIModels
         protected readonly IHostTimer primaryTimer;
         protected readonly IHostTimer secondaryTimer;
 
-        protected CommonPageBase(string modelName, string viewName, IHostController hc, ApplicationMap map, object arg)
-            :base(modelName, viewName, hc, map)
+        protected CommonPageBase(string viewName, IHostController hc, ApplicationMap map)
+            :base(viewName, hc, map)
         {
             this.Disposing += OnDisposing;
 

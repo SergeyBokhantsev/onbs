@@ -15,7 +15,7 @@ namespace UIModels.ConfigPages
         private const string NO = "No";
 
         public NavitCommonConfigPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map, arg)
+            : base(viewName, hc, map)
         {
             SetProperty(ModelNames.PageTitle, "Navit common options");            
             UpdateButtonLabels();

@@ -20,7 +20,7 @@ namespace UIModels.ConfigPages
         private const string ToggleGPSDaemon = "ToggleGPSDaemon";
 
         public ConfigGPSPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            :base(viewName, hc, map, arg)
+            :base(viewName, hc, map)
         {
             SetProperty(ModelNames.PageTitle, "GPS Configuration");
 

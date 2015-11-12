@@ -235,21 +235,25 @@ namespace GtkApplication.Pages
                 {
                     lock (bindings) // because binds is a subset of bindings and we shall avoid concurrent changes
                     {
-                        if (binds.Any())
-                        {
-                            var value = Model.GetProperty<object>(binds.First().PropertyName);
+                        object value = null;
+                        string propName = null;
 
-                            foreach (var b in binds)
+                        foreach (var b in binds)
+                        {
+                            try
                             {
-                                try
+                                if (b.PropertyName != propName)
                                 {
-                                    b.Update(value);
+                                    value = Model.GetProperty<object>(b.PropertyName);
+                                    propName = b.PropertyName;
                                 }
-                                catch (Exception ex)
-                                {
-                                    logger.Log(this, string.Concat("Exception updating binding: ", b != null ? b.PropertyName : "NULL BINDING"), LogLevels.Error);
-                                    logger.Log(this, ex);
-                                }
+
+                                b.Update(value);
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.Log(this, string.Concat("Exception updating binding: ", b != null ? b.PropertyName : "NULL BINDING"), LogLevels.Error);
+                                logger.Log(this, ex);
                             }
                         }
                     }

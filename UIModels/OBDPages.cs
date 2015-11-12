@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Interfaces.UI;
 using System.Diagnostics;
+using UIController;
 
 namespace UIModels
 {
@@ -29,39 +30,7 @@ namespace UIModels
         }
     }
 
-    public abstract class OBDPage : CommonPageBase
-    {
-        public OBDPage(IHostController hc, string name)
-            :base(hc, name)
-        { }
-
-        protected override void DoAction(Interfaces.UI.PageModelActionEventArgs args)
-        {
-            if (Disposed)
-                return;
-
-            switch (args.ActionName)
-            {
-                case ModelNames.ButtonF1:
-                    hc.GetController<IUIController>().ShowPage(new OBDEngine1(hc));
-                    break;
-
-                case ModelNames.ButtonF2:
-                    hc.GetController<IUIController>().ShowPage(new OBDEngine2(hc));
-                    break;
-
-                case ModelNames.ButtonF3:
-                    hc.GetController<IUIController>().ShowPage(new OBDEngine2(hc));
-                    break;
-
-                default:
-                    base.DoAction(args);
-                    break;
-            }
-        }
-    }
-
-    public abstract class OBDChartPage : OBDPage
+    public abstract class OBDChartPage : CommonPageBase
     {
         private readonly IElm327Controller elm;
         private readonly OBDProcessor obd;
@@ -99,8 +68,8 @@ namespace UIModels
 
         private int secondaryDivider;
 
-        public OBDChartPage(IHostController hc, string name, int secondaryDivider)
-            :base(hc, name)
+        public OBDChartPage(string viewName, IHostController hc, ApplicationMap map, int secondaryDivider)
+            : base(viewName, hc, map)
         {
             elm = hc.GetController<IElm327Controller>();
             obd = new OBDProcessor(elm);
@@ -202,8 +171,8 @@ namespace UIModels
 
     public class OBDEngine1 : OBDChartPage
     {
-        public OBDEngine1(IHostController hc)
-            :base(hc, "OBDEngineAndFuel", 30)
+        public OBDEngine1(string viewName, IHostController hc, ApplicationMap map, object arg)
+            : base(viewName, hc, map, 30)
         {
         }
 
@@ -229,8 +198,8 @@ namespace UIModels
 
     public class OBDEngine2 : OBDChartPage
     {
-        public OBDEngine2(IHostController hc)
-            : base(hc, "OBDEngineAndFuel", 30)
+        public OBDEngine2(string viewName, IHostController hc, ApplicationMap map, object arg)
+            : base(viewName, hc, map, 30)
         {
         }
 
@@ -254,10 +223,10 @@ namespace UIModels
         }
     }
 
-    public class OBD_DTCPage : OBDPage
+    public class OBD_DTCPage : CommonPageBase
     {
-        public OBD_DTCPage(IHostController hc)
-            :base(hc, typeof(OBD_DTCPage).Name)
+        public OBD_DTCPage(string viewName, IHostController hc, ApplicationMap map, object arg)
+            : base(viewName, hc, map)
         {
             var elm327 = hc.GetController<IElm327Controller>();
             var obd = new OBDProcessor(elm327);

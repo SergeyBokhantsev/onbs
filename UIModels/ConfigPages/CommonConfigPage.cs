@@ -23,7 +23,7 @@ namespace UIModels.ConfigPages
         private const string ChangeLogLevel = "ChangeLogLevel";
 
         public CommonConfigPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            :base(viewName, hc, map, arg)
+            :base(viewName, hc, map)
         {
             SetProperty(ModelNames.PageTitle, "Common Configuration");
             UpdateUseArduinoPortFakeProperty();

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using YandexServicesProvider;
 using System.Reflection;
 using System.IO;
+using UIController;
 
 namespace UIModels
 {
@@ -20,8 +21,8 @@ namespace UIModels
         private readonly WeatherProvider weather;
         private bool weatherProviderBusy;
 
-        public WeatherPage(IHostController hc)
-            :base(hc, "WeatherPage")
+        public WeatherPage(string viewName, IHostController hc, ApplicationMap map, object arg)
+            : base(viewName, hc, map)
         {
             this.weather = new WeatherProvider(hc.Logger, hc.Config.DataFolder);
         }

@@ -28,13 +28,6 @@ namespace UIModels
 
             SubscribeMetricsProviders();
 
-            SetProperty(ModelNames.ButtonF1Label, "Power");
-            SetProperty(ModelNames.ButtonF2Label, "Camera");
-            SetProperty(ModelNames.ButtonF5Label, "Save this GPS point");
-            SetProperty(ModelNames.ButtonF6Label, "Start new Travel");
-			SetProperty(ModelNames.ButtonF8Label, "Configuration");
-            SetProperty(ModelNames.ButtonCancelLabel, "Drive");
-
 			SetProperty("time_valid", "1");
 			SetProperty("time", null);
 

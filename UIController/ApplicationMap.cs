@@ -91,6 +91,8 @@ namespace UIController
             const string PAGES = "pages";
             const string PAGE = "page";
 
+            Pages = new List<MappedPage>();
+
             XDocument doc = null;
             using (var stream = File.OpenRead(applicationMapFilePath))
             {
@@ -98,7 +100,7 @@ namespace UIController
             }
 
             var defaultElement = doc.Root.Element(DEFAULT);
-            DefaultPageModelTypeName = defaultElement.Attribute(MODEL).Value;
+            DefaultPageModelTypeName = defaultElement.Attribute(MODEL) != null ? defaultElement.Attribute(MODEL).Value : null;
             if (string.IsNullOrWhiteSpace(DefaultPageModelTypeName))
                 throw new Exception("Application default model is not provided");
             
