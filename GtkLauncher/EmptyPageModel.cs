@@ -8,9 +8,18 @@ namespace GtkLauncher
 	{
 		private Dictionary<string, object> props = new Dictionary<string, object> ();
 
-		public EmptyPageModel(string modelName)
+		public string ViewName {
+			get;
+			set;
+		}
+
+		public bool NoDialogsAllowed {
+			get { return false; }
+		}
+
+		public EmptyPageModel(string viewName)
 		{
-			Name = modelName;
+			ViewName = viewName;
 		}
 
 		#region IPageModel implementation
@@ -49,12 +58,6 @@ namespace GtkLauncher
 		{
 			if (OnAction != null)
 				OnAction(actionArgs);
-		}
-
-		public string Name
-		{
-			get;
-			private set;
 		}
 
 		#endregion

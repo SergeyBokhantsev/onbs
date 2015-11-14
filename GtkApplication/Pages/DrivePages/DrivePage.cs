@@ -22,6 +22,8 @@ namespace GtkApplication
 		private const string m_HEADING = "<span {0} {1} size='20000'>{2}</span>";
 		private const string m_AIR_TEMP = "<span {0} {1} size='14000'>{2}</span>";
 
+
+
 		private readonly CommonBindings commonBindings;
 
 		public DrivePage (IPageModel model, Style style, ILogger logger)
@@ -29,18 +31,20 @@ namespace GtkApplication
 			this.Build();
 
 			var binder = new ModelBinder (model, logger);
-			commonBindings = new CommonBindings (binder, style, logger,
-				                     eventbox_drive,
-				                     eventbox_nav,
-				                     eventbox_cam,
-				                     eventbox_weather,
-				                     eventbox_traffic,
-				                     eventbox_options,
-				                     label_arduino_status,
-				                     label_gps_status,
-				                     label_inet_status,
-				                     label_time);
-			
+//			commonBindings = new CommonBindings (binder, style, logger,
+//				                     eventbox_drive,
+//				                     eventbox_nav,
+//				                     eventbox_cam,
+//				                     eventbox_weather,
+//				                     eventbox_traffic,
+//				                     eventbox_options,
+//				                     label_arduino_status,
+//				                     label_gps_status,
+//				                     label_inet_status,
+//				                     label_time);
+
+			CommonBindings.CreateTaskbarButtons (binder, hbox5, style);
+
             binder.BindCustomAction<object>(speed =>
 				label_speed.Markup = 
 	CB.CreateMarkup(m_SPEED, CB.m_FG_WHITE, CB.m_BG_EMPTY, speed.ToString())

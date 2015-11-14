@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <app>
-  <default model="MainPage"/>
+  <default model="DrivePage"/>
   <pages>
     <page model="DrivePage" default_view="DrivePage">
       <Cancel model="MainPage" caption="Main page" behavior="Release"/>
       <F1 model="NavigationAppPage" caption="NAV"/>
       <F2 model="WebCamPage" caption="CAM"/>
       <F3 model="WeatherPage" caption="WTHR"/>
-      <F4 model="WeatherPage" caption="TRAF"/>
+      <F4 model="TrafficPage" caption="TRAF"/>
     </page>
     <page model="NavigationAppPage" default_view="ExternalApplicationPage">
       <Cancel model="DrivePage"/>

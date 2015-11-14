@@ -27,6 +27,57 @@ namespace GtkApplication
 
 		private const string m_TIME = "<span {0} {1} size='18000'>{2}</span><span {0} {1} size='10000'> : {3}</span>";
 
+		private const string m_TASKBAR_BUTTON = "<span foreground='#606060' size='15000'>{0}</span>";
+
+		public static void CreateTaskbarButtons(ModelBinder ModelBinder, HBox taskbar, Style style)
+		{
+			var buttonLabelPropertyNames = new string[] 
+			{ 
+				ModelNames.ButtonF1Label, 
+				ModelNames.ButtonF2Label,
+				ModelNames.ButtonF3Label,
+				ModelNames.ButtonF4Label,
+				ModelNames.ButtonF5Label,
+				ModelNames.ButtonF6Label,
+				ModelNames.ButtonF7Label,
+				ModelNames.ButtonF8Label,
+				ModelNames.ButtonAcceptLabel,
+				ModelNames.ButtonCancelLabel
+			};
+
+			foreach (var propName in buttonLabelPropertyNames) 
+			{
+				var labelValue = string.Concat (ModelBinder.Model.GetProperty<object> (propName));
+
+				if (!string.IsNullOrEmpty (labelValue)) 
+				{
+					var eventBox = new EventBox ();
+
+					eventBox.HeightRequest = 10;
+
+					taskbar.Add (eventBox);
+
+					var boxChild = (Gtk.Box.BoxChild)taskbar[eventBox];
+					boxChild.Expand = true;
+					boxChild.Fill = true;
+                    
+
+					var button = new Label ();
+
+					button.HeightRequest = 10;
+
+					eventBox.Add (button);
+
+					style.Window.Apply (eventBox);
+
+                    
+
+					button.UseMarkup = true;
+					button.Markup = CreateMarkup (m_TASKBAR_BUTTON, labelValue);
+				}
+			}
+		}
+
 		public CommonBindings (ModelBinder binder, Style style, ILogger logger, 
 			EventBox eventbox_drive,
 			EventBox eventbox_nav,
