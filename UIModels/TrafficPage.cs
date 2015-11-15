@@ -63,26 +63,29 @@ namespace UIModels
 
         private void OnDownloadException(Exception ex)
         {
+            SetProperty("status", "Unexpected error.");
             hc.Logger.Log(this, ex);
         }
 
-        private void BeginDownload()
+        private async void BeginDownload()
         {
             if (hc.Config.IsInternetConnected)
             {
                 var location = hc.GetController<IGPSController>().Location;
                 SetProperty("status", "Loading...");
-                provider.GetMapAsync(location, 600, 450, scales[scale], MapLayers.map | MapLayers.trf,
-                    mapStream =>
-                    {
-                        if (mapStream != null)
-                        {
-                            SetProperty("traffic_image_stream", mapStream);
-                            downloadOperationScope.Reset();
-                        }
 
-                        SetProperty("status", null);
-                    });
+                var stream = await provider.GetMapAsync(location, 600, 450, scales[scale], MapLayers.map | MapLayers.trf);
+
+                if (stream != null)
+                {
+                    SetProperty("status", null);
+                    SetProperty("traffic_image_stream", stream);
+                    downloadOperationScope.Reset();
+                }
+                else
+                {
+                    SetProperty("status", "Download error.");
+                }
             }
         }
     }

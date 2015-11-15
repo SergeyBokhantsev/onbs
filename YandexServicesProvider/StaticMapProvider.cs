@@ -105,5 +105,10 @@ namespace YandexServicesProvider
                         callback(mapStream);
                 });
         }
+
+        public async Task<Stream> GetMapAsync(GeoPoint center, int width, int height, int zoom, MapLayers layers)
+        {
+            return await Task.Run<Stream>(() => GetMap(center, width, height, zoom, layers));
+        }
     }
 }
