@@ -79,8 +79,8 @@ namespace UIModels
 			}
 		}
 
-        public WebCamPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map, hc.ProcessRunnerFactory.Create("cam"))
+        public WebCamPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+            : base(viewName, hc, pageDescriptor, hc.ProcessRunnerFactory.Create("cam"))
         {
             this.Disposing += WebCamPageDisposing;
         }

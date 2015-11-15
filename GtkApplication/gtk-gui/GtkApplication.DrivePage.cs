@@ -74,7 +74,6 @@ namespace GtkApplication
 			this.Name = "GtkApplication.DrivePage";
 			// Container child GtkApplication.DrivePage.Gtk.Container+ContainerChild
 			this.vbox1 = new global::Gtk.VBox ();
-			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox ();
@@ -368,11 +367,11 @@ namespace GtkApplication
 			this.hbox5.Name = "hbox5";
 			this.hbox5.Homogeneous = true;
 			this.hbox5.Spacing = 6;
-			this.hbox5.BorderWidth = ((uint)(10));
 			this.vbox1.Add (this.hbox5);
 			global::Gtk.Box.BoxChild w29 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox5]));
 			w29.PackType = ((global::Gtk.PackType)(1));
 			w29.Position = 4;
+			w29.Expand = false;
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();

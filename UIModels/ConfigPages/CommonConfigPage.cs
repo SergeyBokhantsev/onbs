@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UIController;
 
-namespace UIModels.ConfigPages
+namespace UIModels
 {
     class CommonConfigPage : ModelBase
     {
@@ -22,8 +22,8 @@ namespace UIModels.ConfigPages
         private const string ToggleArduinoMode = "ToggleArduinoMode";
         private const string ChangeLogLevel = "ChangeLogLevel";
 
-        public CommonConfigPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            :base(viewName, hc, map)
+        public CommonConfigPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+            :base(viewName, hc, pageDescriptor)
         {
             SetProperty(ModelNames.PageTitle, "Common Configuration");
             UpdateUseArduinoPortFakeProperty();
@@ -61,13 +61,13 @@ namespace UIModels.ConfigPages
         private void UpdateUseArduinoPortFakeProperty()
         {
             var useFake = hc.Config.GetBool(CfgNames.ArduinoPortFake);
-            map.UpdateLabelForAction(this, ToggleArduinoMode, string.Concat("Use fake arduino: ", useFake ? "Yes" : "No"));
+            UpdateLabelForAction(ToggleArduinoMode, string.Concat("Use fake arduino: ", useFake ? "Yes" : "No"));
         }
 
         private void UpdateLogLevelProperty()
         {
             var levelStr = hc.Config.GetString(CfgNames.LogLevel);
-            map.UpdateLabelForAction(this, ChangeLogLevel, string.Concat("Log Level: ", levelStr));
+            UpdateLabelForAction(ChangeLogLevel, string.Concat("Log Level: ", levelStr));
         }
     }
 }

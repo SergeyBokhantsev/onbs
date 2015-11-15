@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UIController;
 
-namespace UIModels.ConfigPages
+namespace UIModels
 {
     public class ConfigGPSPage : ModelBase
     {
@@ -19,8 +19,8 @@ namespace UIModels.ConfigPages
 
         private const string ToggleGPSDaemon = "ToggleGPSDaemon";
 
-        public ConfigGPSPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            :base(viewName, hc, map)
+        public ConfigGPSPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+            :base(viewName, hc, pageDescriptor)
         {
             SetProperty(ModelNames.PageTitle, "GPS Configuration");
 
@@ -45,7 +45,7 @@ namespace UIModels.ConfigPages
         private void UpdateGPSdaemonProperty()
         {
             var enabled = hc.Config.GetBool(CfgNames.GPSDEnabled);
-            map.UpdateLabelForAction(this, ToggleGPSDaemon, string.Concat("GPS Daemon ", enabled ? "enabled" : "disabled"));
+            UpdateLabelForAction(ToggleGPSDaemon, string.Concat("GPS Daemon ", enabled ? "enabled" : "disabled"));
         }
     }
 }

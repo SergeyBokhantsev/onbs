@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 
 namespace UIController
 {
+    public delegate IPageModel PageConstructorDelegate(MappedPage pageDescriptor, string viewModelName);
+
     public class UIController : IUIController
     {
         public event Action<bool> DialogPending;
@@ -25,7 +27,7 @@ namespace UIController
         private readonly Stack<IDialogModel> dialogs = new Stack<IDialogModel>();
         private IDialogModel currentDialog;
         private readonly IHostController hostController;
-        private readonly Func<ApplicationMap, IPageModel> startPageConstructor;
+        private readonly PageConstructorDelegate pageConstructor;
         private int mainThreadId;
 
         private ApplicationMap map;
@@ -34,14 +36,14 @@ namespace UIController
 
         private bool shutdowning;
 
-        public UIController(string uiHostAssemblyPath, string uiHostClassName, string applicationMapFilePath, IHostController hostController, Func<ApplicationMap, IPageModel> startPageConstructor)
+        public UIController(string uiHostAssemblyPath, string uiHostClassName, ApplicationMap map, IHostController hostController, PageConstructorDelegate pageConstructor)
         {
-            this.map = new ApplicationMap(applicationMapFilePath);
+            this.map = map;
 
             this.uiHostAssemblyPath = uiHostAssemblyPath;
             this.uiHostClassName = uiHostClassName;
             this.hostController = hostController;
-            this.startPageConstructor = startPageConstructor;
+            this.pageConstructor = pageConstructor;
             this.mainThreadId = Thread.CurrentThread.ManagedThreadId;
 
             hostController.CreateTimer(3 * 60 * 1000, t =>
@@ -102,13 +104,21 @@ namespace UIController
             {
                 logger.Log(this, "Restarting UI Host...", LogLevels.Info);
                 StartUIThread();
-                ShowDefaultPage();
+                hostController.SyncContext.Post(o => ShowDefaultPage(), null);
             }
         }
 
         public void ShowDefaultPage()
         {
-            ShowPage(startPageConstructor(map));
+            var pageDescriptor = map.GetPage(map.DefaultPageName);
+            var model = pageConstructor(pageDescriptor, map.DefaultPageViewName);
+            ShowPage(model);
+        }
+
+        public void ShowPage(string descriptorName, string viewName)
+        {
+            var pageDescriptor = map.GetPage(descriptorName);
+            ShowPage(pageConstructor(pageDescriptor, viewName));
         }
 
         public void ShowPage(IPageModel model)

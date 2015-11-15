@@ -111,8 +111,6 @@ namespace GtkApplication
             logger.Log(this, args.ExceptionObject as Exception);
         }
 
-
-
         private void ShowPage(object sender, EventArgs args)
         {
             var showPageArgs = args as ShowPageEventArgs;
@@ -133,6 +131,10 @@ namespace GtkApplication
 			try
 			{
 				var pageType = Type.GetType(string.Concat("GtkApplication.", model.ViewName));
+
+                if (pageType == null)
+                    throw new Exception(string.Format("View model doesnt exist: {0}", model.ViewName));
+
 				var constructor = pageType.GetConstructor(new Type[] { typeof(IPageModel), typeof(Style), typeof(ILogger) });
 				var page = constructor.Invoke(new object[] { model, style, logger }) as Gtk.Bin;
 
@@ -149,6 +151,11 @@ namespace GtkApplication
 
         public void ShowPage(IPageModel model)
         {
+            if (model == null)
+            {
+                model = new ErrorPageModel(new ArgumentNullException("Model is null"));
+            }
+
             Application.Invoke(this, new ShowPageEventArgs(model), ShowPage);
         }
 

@@ -1,4 +1,5 @@
 ﻿using Interfaces;
+
 using Interfaces.GPS;
 using Interfaces.Input;
 using Interfaces.UI;
@@ -20,11 +21,33 @@ namespace UIModels
         private readonly StaticMapProvider provider;
 
         private ManualResetGuard downloadOperationScope = new ManualResetGuard();
+        private int[] scales = new[] { 13, 12, 8 }; 
+        private int scale = 0;
 
-        public TrafficPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map)
+        public TrafficPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+            : base(viewName, hc, pageDescriptor)
         {
             this.provider = new StaticMapProvider(hc.Logger);
+        }
+
+        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
+        {
+            switch (name)
+            {
+                case "Scale":
+                    if (++scale == scales.Length) scale = 0;
+                    SetProperty("traffic_image_stream", null);
+                    RefreshTraffic();
+                    break;
+
+                case "Refresh":
+                    RefreshTraffic();
+                    break;
+
+                default:
+                    base.DoAction(name, actionArgs);
+                    break;
+            }
         }
 
         protected override void OnSecondaryTimer(IHostTimer timer)
@@ -33,7 +56,7 @@ namespace UIModels
             base.OnSecondaryTimer(timer);
         }
 
-        private void RefreshTraffic(object sender, EventArgs e)
+        private void RefreshTraffic()
         {
             downloadOperationScope.ExecuteIfFree(BeginDownload, OnDownloadException);
         }
@@ -48,7 +71,8 @@ namespace UIModels
             if (hc.Config.IsInternetConnected)
             {
                 var location = hc.GetController<IGPSController>().Location;
-                provider.GetMapAsync(location, 600, 450, 12, MapLayers.map | MapLayers.trf,
+                SetProperty("status", "Loading...");
+                provider.GetMapAsync(location, 600, 450, scales[scale], MapLayers.map | MapLayers.trf,
                     mapStream =>
                     {
                         if (mapStream != null)
@@ -56,6 +80,8 @@ namespace UIModels
                             SetProperty("traffic_image_stream", mapStream);
                             downloadOperationScope.Reset();
                         }
+
+                        SetProperty("status", null);
                     });
             }
         }

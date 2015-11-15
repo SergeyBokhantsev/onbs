@@ -20,17 +20,26 @@ namespace GtkApplication
 			this.Build ();
 		
 			var binder = new ModelBinder (model, logger);
-			commonBindings = new CommonBindings (binder, style, logger,
-				eventbox_drive,
-				eventbox_nav,
-				eventbox_cam,
-				eventbox_weather,
-				eventbox_traffic,
-				eventbox_options,
-				label_arduino_status,
-				label_gps_status,
-				label_inet_status,
-				label_time);
+//			commonBindings = new CommonBindings (binder, style, logger,
+//				eventbox_drive,
+//				eventbox_nav,
+//				eventbox_cam,
+//				eventbox_weather,
+//				eventbox_traffic,
+//				eventbox_options,
+//				label_arduino_status,
+//				label_gps_status,
+//				label_inet_status,
+//				label_time);
+
+			CommonBindings.CreateTaskbarButtons (binder, hbox5, style);
+
+			binder.BindLabelMarkup(label15, "status", o => 
+				CommonBindings.CreateMarkup(
+					CommonBindings.m_WND_STATUS,
+					CommonBindings.m_BG_EMPTY,
+					CommonBindings.m_FG_GRAY,
+					o != null ? o.ToString() : string.Empty));
 
 			binder.BindCustomAction<Stream> (imageStream => 
 				{

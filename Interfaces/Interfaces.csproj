@@ -76,6 +76,7 @@
     <Compile Include="SerialTransportProtocol\IFramesAcceptor.cs" />
     <Compile Include="SerialTransportProtocol\ISTPCodec.cs" />
     <Compile Include="SerialTransportProtocol\STPFrame.cs" />
+    <Compile Include="UI\ApplicationMap.cs" />
     <Compile Include="UI\IDialog.cs" />
     <Compile Include="UI\IPageModel.cs" />
     <Compile Include="UI\IUIHost.cs" />

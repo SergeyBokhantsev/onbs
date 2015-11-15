@@ -19,8 +19,8 @@ namespace UIModels
 
         private List<IMetricsProvider> metricsProviders;
 
-        public MainPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map)
+        public MainPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+            : base(viewName, hc, pageDescriptor)
         {
             this.Disposing += MainPageDisposing;
 

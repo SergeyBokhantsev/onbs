@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace UIController
+namespace Interfaces.UI
 {
     public enum MappedActionBehaviors { All = 0, PressOrHold = 1, Press = 43, Hold = 44, Release = 45 }
 
@@ -27,13 +27,13 @@ namespace UIController
 
     public class MappedPageAction : MappedActionBase
     {
-        public string ModelTypeName { get; private set; }
+        public string PageName { get; private set; }
         public string ViewName { get; private set; }
 
-        public MappedPageAction(string buttonActionName, string caption, MappedActionBehaviors behavior, string modelTypeName, string viewName)
+        public MappedPageAction(string buttonActionName, string caption, MappedActionBehaviors behavior, string pageName, string viewName)
             :base(buttonActionName, caption, behavior)
         {
-            ModelTypeName = modelTypeName;
+            PageName = pageName;
             ViewName = viewName;
         }
     }
@@ -51,12 +51,16 @@ namespace UIController
 
     public class MappedPage
     {
+        public string Name { get; private set; }
         public string ModelTypeName { get; private set; }
         public string DefaultViewName { get; private set; }
         public List<MappedActionBase> ButtonsMap { get; private set; }
 
-        public MappedPage(string modelTypeName, string defaultViewName, List<MappedActionBase> buttonsMap)
+        public MappedPage(string name, string modelTypeName, string defaultViewName, List<MappedActionBase> buttonsMap)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException("name is not provided");
+
             if (string.IsNullOrWhiteSpace(modelTypeName))
                 throw new ArgumentNullException("modelTypeName is not provided");
 
@@ -66,6 +70,7 @@ namespace UIController
             if (buttonsMap == null)
                 throw new ArgumentNullException("buttonsMap");
 
+            Name = name;
             ModelTypeName = modelTypeName;
             DefaultViewName = defaultViewName;
             ButtonsMap = buttonsMap;
@@ -74,7 +79,7 @@ namespace UIController
 
     public class ApplicationMap
     {
-        public string DefaultPageModelTypeName { get; private set; }
+        public string DefaultPageName { get; private set; }
         public string DefaultPageViewName { get; private set; }
 
         private List<MappedPage> Pages;
@@ -82,6 +87,7 @@ namespace UIController
         public ApplicationMap(string applicationMapFilePath)
         {
             const string DEFAULT = "default";
+            const string PAGENAME = "name";
             const string MODEL = "model";
             const string VIEW = "view";
             const string DEFAULTVIEW = "default_view";
@@ -100,14 +106,15 @@ namespace UIController
             }
 
             var defaultElement = doc.Root.Element(DEFAULT);
-            DefaultPageModelTypeName = defaultElement.Attribute(MODEL) != null ? defaultElement.Attribute(MODEL).Value : null;
-            if (string.IsNullOrWhiteSpace(DefaultPageModelTypeName))
+            DefaultPageName = defaultElement.Attribute(PAGENAME) != null ? defaultElement.Attribute(PAGENAME).Value : null;
+            if (string.IsNullOrWhiteSpace(DefaultPageName))
                 throw new Exception("Application default model is not provided");
             
             DefaultPageViewName = defaultElement.Attribute(VIEW) != null ? defaultElement.Attribute(VIEW).Value : null;
 
             foreach (var pageElement in doc.Root.Element(PAGES).Elements(PAGE))
             {
+                var pageName = pageElement.Attribute(PAGENAME).Value;
                 var pageModelTypeName = pageElement.Attribute(MODEL).Value;
                 var defaultViewName = pageElement.Attribute(DEFAULTVIEW) != null ? pageElement.Attribute(DEFAULTVIEW).Value : null;
 
@@ -116,10 +123,10 @@ namespace UIController
                 foreach(var buttonElement in pageElement.Elements())
                 {
                     MappedActionBase mappedAction = null;
-                    var modelTypeName = buttonElement.Attribute(MODEL) != null ? buttonElement.Attribute(MODEL).Value : null;
+                    var actionPageName = buttonElement.Attribute(PAGENAME) != null ? buttonElement.Attribute(PAGENAME).Value : null;
                     var view = buttonElement.Attribute(VIEW) != null ? buttonElement.Attribute(VIEW).Value : null;
                     var customAction = buttonElement.Attribute(ACTION) != null ? buttonElement.Attribute(ACTION).Value : null;
-                    var caption = buttonElement.Attribute(CAPTION) != null ? buttonElement.Attribute(CAPTION).Value : null;
+                    var caption = buttonElement.Attribute(CAPTION) != null ? buttonElement.Attribute(CAPTION).Value : actionPageName ?? customAction;
                     var behavior = buttonElement.Attribute(BEHAVIOR) != null ? (MappedActionBehaviors)Enum.Parse(typeof(MappedActionBehaviors), buttonElement.Attribute(BEHAVIOR).Value) : MappedActionBehaviors.Press;
                     
                     if (!string.IsNullOrWhiteSpace(customAction))
@@ -128,22 +135,22 @@ namespace UIController
                     }
                     else
                     {
-                        if (string.IsNullOrWhiteSpace(modelTypeName))
+                        if (string.IsNullOrWhiteSpace(actionPageName))
                             throw new ArgumentException(string.Format("Nor action nor model weren't provided for button item {0}", buttonElement.Name));
 
-                        mappedAction = new MappedPageAction(buttonElement.Name.LocalName, caption, behavior, modelTypeName, view);
+                        mappedAction = new MappedPageAction(buttonElement.Name.LocalName, caption, behavior, actionPageName, view);
                     }
 
                     buttonsMap.Add(mappedAction);
                 }
 
-                Pages.Add(new MappedPage(pageModelTypeName, defaultViewName, buttonsMap));
+                Pages.Add(new MappedPage(pageName, pageModelTypeName, defaultViewName, buttonsMap));
             }
         }
 
-        public MappedPage GetPage(string modelName)
+        public MappedPage GetPage(string pageName)
         {
-            return Pages.FirstOrDefault(p => p.ModelTypeName == modelName);
+            return Pages.FirstOrDefault(p => p.Name == pageName);
         }
 
         public string GetMappedButtonForCustomAction(IPageModel model, string actionName)
@@ -183,30 +190,12 @@ namespace UIController
             return null;
         }
 
-        public void SetCaptions(IPageModel model)
+        public static void SetCaptions(IPageModel model, MappedPage page)
         {
-            var typeName = model.GetType().Name;
-            var mappedPage = Pages.FirstOrDefault(p => p.ModelTypeName == typeName);
-            if (mappedPage != null)
+            foreach (var action in page.ButtonsMap)
             {
-                foreach(var action in mappedPage.ButtonsMap)
-                {
-                    if (!string.IsNullOrWhiteSpace(action.Caption))
-                        model.SetProperty(ModelNames.ResolveButtonLabelName(action.ButtonActionName), action.Caption);
-                }
-            }
-        }
-    }
-
-    public static class MapExtensions
-    {
-        public static void UpdateLabelForAction(this ApplicationMap map, IPageModel model, string customActionName, string labelValue)
-        {
-            var buttonName = map.GetMappedButtonForCustomAction(model, customActionName);
-            if (buttonName != null)
-            {
-                var buttonLabelPropertyName = ModelNames.ResolveButtonLabelName(buttonName);
-                model.SetProperty(buttonLabelPropertyName, labelValue);
+                if (!string.IsNullOrWhiteSpace(action.Caption))
+                    model.SetProperty(ModelNames.ResolveButtonLabelName(action.ButtonActionName), action.Caption);
             }
         }
     }

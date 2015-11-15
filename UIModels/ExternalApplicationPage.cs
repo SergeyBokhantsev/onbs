@@ -19,8 +19,8 @@ namespace UIModels
             set;
         }
 
-		protected ExternalApplicationPage(string viewName, IHostController hc, ApplicationMap map, IProcessRunner runner)
-            : base(viewName, hc, map)
+        protected ExternalApplicationPage(string viewName, IHostController hc, MappedPage pageDescriptor, IProcessRunner runner)
+            : base(viewName, hc, pageDescriptor)
         {
             NoDialogsAllowed = true;
 

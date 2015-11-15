@@ -21,8 +21,8 @@ namespace UIModels
         private readonly WeatherProvider weather;
         private bool weatherProviderBusy;
 
-        public WeatherPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map)
+        public WeatherPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+            : base(viewName, hc, pageDescriptor)
         {
             this.weather = new WeatherProvider(hc.Logger, hc.Config.DataFolder);
         }

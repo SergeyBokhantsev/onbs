@@ -8,6 +8,8 @@ using System.Text;
 using LogLib;
 using System.Net;
 using System.Threading;
+using Interfaces.UI;
+using UIController;
 
 namespace HostController
 {
@@ -183,12 +185,13 @@ namespace HostController
 
             travelController = new TravelController.TravelController(this);
 
+            var map = new ApplicationMap(Path.Combine(config.DataFolder, "application.xml"));
+
             uiController = new UIController.UIController(
                 Config.GetString(ConfigNames.UIHostAssemblyName), 
                 Config.GetString(ConfigNames.UIHostClass), 
-                Path.Combine(config.DataFolder, "application.xml"),
-                this,
-                (map) => UIModels.ModelBase.CreateModel(this, map));
+                map,
+                this, (MappedPage pdescr, string viewModelName) => UIModels.ModelBase.CreateModel(this, pdescr, viewModelName));
 
             uiController.DialogPending += uiController_DialogPending;
             uiController.ShowDefaultPage();

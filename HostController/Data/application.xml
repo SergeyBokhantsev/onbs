@@ -1,16 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <app>
-  <default model="DrivePage"/>
+  <default name="Drive1"/>
   <pages>
-    <page model="DrivePage" default_view="DrivePage">
-      <Cancel model="MainPage" caption="Main page" behavior="Release"/>
-      <F1 model="NavigationAppPage" caption="NAV"/>
-      <F2 model="WebCamPage" caption="CAM"/>
-      <F3 model="WeatherPage" caption="WTHR"/>
-      <F4 model="TrafficPage" caption="TRAF"/>
+    <page name="Drive1" model="DrivePage" default_view="DrivePage">
+      <Accept name="Drive2" caption="NEXT"/>
+      <F1 name="NavApp" caption="NAV"/>
+      <F2 name="WebCam" caption="CAM"/>
+      <F3 name="Weather" caption="WTHR"/>
+      <F4 name="Traffic" caption="TRAF"/>
+      <F5 name="OBDEngine" caption="ENG"/>
     </page>
-    <page model="NavigationAppPage" default_view="ExternalApplicationPage">
-      <Cancel model="DrivePage"/>
+    <page name="Drive2" model="DrivePage" default_view="DrivePage">
+      <Accept name="Drive1" caption="NEXT"/>
+      <F1 name="CommonConfig" caption="CFG"/>
+      <F8 name="Shutdown" caption="PWR"/>
+    </page>
+    <page name="NavApp" model="NavigationAppPage" default_view="ExternalApplicationPage">
+      <Cancel name="Drive1"/>
       <F1 action="-"/>
       <F2 action="Up" behavior="PressOrHold"/>
       <F3 action="+"/>
@@ -20,8 +26,8 @@
       <F7 action="Right" behavior="PressOrHold"/>
       <F8 action="d"/>
     </page>
-    <page model="WebCamPage" default_view="ExternalApplicationPage">
-      <Cancel model="DrivePage"/>
+    <page name="WebCam" model="WebCamPage" default_view="ExternalApplicationPage">
+      <Cancel name="Drive1"/>
       <F1 action="Color+" behavior="PressOrHold"/>
       <F5 action="Color-" behavior="PressOrHold"/>
       <F2 action="Contrast+" behavior="PressOrHold"/>
@@ -29,39 +35,48 @@
       <F3 action="Bright+" behavior="PressOrHold"/>
       <F7 action="Bright-" behavior="PressOrHold"/>
     </page>
-    <page model="WeatherPage" default_view="WeatherPage">
+    <page name="Weather" model="WeatherPage" default_view="WeatherPage">
       
     </page>
-    <page model="TrafficPage" default_view="TrafficPage">
+    <page name="Traffic" model="TrafficPage" default_view="TrafficPage">
+      <Cancel name="Drive1" caption="Back"/>
+      <F1 action="Scale" caption="Change scale"/>
+      <F2 action="Refresh" caption="Refresh"/>
+    </page>
+    <page name="OBDEngine" model="OBDEngine1" default_view="OBDEngineAndFuel">
       
     </page>
-    <page model="OBDEngine1" default_view="OBDEngineAndFuel">
+    <page name="OBDEngine2" model="OBDEngine2" default_view="OBDEngineAndFuel">
       
     </page>
-    <page model="OBDEngine2" default_view="OBDEngineAndFuel">
+    <page name="OBD_DTC" model="OBD_DTCPage" default_view="OBD_DTCPage">
       
     </page>
-    <page model="OBD_DTCPage" default_view="OBD_DTCPage">
-      
+    <page name="Main" model="MainPage" default_view="MainPage">
+      <Cancel name="Drive1" caption="Drive"/>
     </page>
-    <page model="MainPage" default_view="MainPage">
-      <Cancel model="DrivePage" caption="Drive"/>
+    <page name="Shutdown" model="ShutdownPage" default_view="CommonVertcalStackPage">
+      <Cancel name="Drive1" caption="Return"/>
+      <F1 action="Quit" caption="Quit application"/>
+      <F2 action="Restart" caption="Restart system"/>
+      <F3 action="Shutdown" caption="Shutdown"/>
     </page>
-    <page model="CommonConfigPage" default_view="CommonVertcalStackPage">
+    <page name="CommonConfig" model="CommonConfigPage" default_view="CommonVertcalStackPage">
       <Cancel action="SaveAndReturn" caption="Return to Main Menu"/>
-      <Accept model="ConfigGPSPage" view="CommonVertcalStackPage" caption="Go to GPS Config"/>
+      <Accept name="ConfigGPS" caption="Go to GPS Config"/>
       <F1 action="ToggleArduinoMode"/>
       <F2 action="ChangeLogLevel"/>
+      <F3 name="ConfigGPS" caption="GPS and Navigation"/>
     </page>
-    <page model="ConfigGPSPage" default_view="CommonVertcalStackPage">
-      <Accept model="NavitCommonConfigPage" caption="Go to Navit Config"/>
-      <Cancel model="CommonConfigPage" caption="Back"/>
+    <page name="ConfigGPS" model="ConfigGPSPage" default_view="CommonVertcalStackPage">
+      <Accept name="NavitCommonConfig" caption="Go to Navit Config"/>
+      <Cancel name="CommonConfig" caption="Back"/>
       <F1 action="ToggleGPSDaemon" />
-      <F2 model="NavitCommonConfigPage" caption="Navit common config"/>
-      <F3 model="NavitOSDConfigPage" caption="Navit OSD config"/>
+      <F2 name="NavitCommonConfig" caption="Navit common config"/>
+      <F3 name="NavitOSDConfig" caption="Navit OSD config"/>
     </page>
-    <page model="NavitCommonConfigPage" default_view="CommonVertcalStackPage">
-      <Cancel model="ConfigGPSPage" caption="Back"/>
+    <page name="NavitCommonConfig" model="NavitCommonConfigPage" default_view="CommonVertcalStackPage">
+      <Cancel name="ConfigGPS" caption="Back"/>
       <F1 action="ActivateGPS"/>
       <F2 action="Autozoom"/>
       <F3 action="Menubar"/>
@@ -71,8 +86,8 @@
       <F7 action="LockRoad"/>
       <F8 action="Zoom"/>
     </page>
-    <page model="NavitOSDConfigPage" default_view="CommonVertcalStackPage">
-      <Cancel model="ConfigGPSPage" caption="Back"/>
+    <page name="NavitOSDConfig" model="NavitOSDConfigPage" default_view="CommonVertcalStackPage">
+      <Cancel name="ConfigGPS" caption="Back"/>
       <F1 action="Compass"/>
       <F2 action="ETA"/>
       <F3 action="Navigation"/>

@@ -8,12 +8,12 @@ using Interfaces.Input;
 using Interfaces.UI;
 using UIController;
 
-namespace UIModels.ConfigPages
+namespace UIModels
 {
     public class ShutdownPage : ModelBase
     {
-        public ShutdownPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map)
+        public ShutdownPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+            : base(viewName, hc, pageDescriptor)
         {
             SetProperty(ModelNames.PageTitle, "System power management");
         }

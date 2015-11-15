@@ -24,56 +24,52 @@ namespace GtkApplication
 		private const string m_ARD = "<span {0} {1} size='12000'>  ARD  </span>";
 		private const string m_GPS = "<span {0} {1} size='12000'>  GPS  </span>";
 		private const string m_INET = "<span {0} {1} size='12000'>  INET  </span>";
+		public const string m_WND_STATUS = "<span {0} {1} size='12000'>{2}</span>";
 
 		private const string m_TIME = "<span {0} {1} size='18000'>{2}</span><span {0} {1} size='10000'> : {3}</span>";
 
-		private const string m_TASKBAR_BUTTON = "<span foreground='#606060' size='15000'>{0}</span>";
+        private const string m_TASKBAR_BUTTON = "<span {0} size='8000'>{1}</span><span foreground='#606060' size='15000'>{2}</span>";
 
-		public static void CreateTaskbarButtons(ModelBinder ModelBinder, HBox taskbar, Style style)
+		public static void CreateTaskbarButtons(ModelBinder binder, HBox taskbar, Style style)
 		{
-			var buttonLabelPropertyNames = new string[] 
+            var buttonLabelPropertyNames = new Tuple<string, string, string>[] 
 			{ 
-				ModelNames.ButtonF1Label, 
-				ModelNames.ButtonF2Label,
-				ModelNames.ButtonF3Label,
-				ModelNames.ButtonF4Label,
-				ModelNames.ButtonF5Label,
-				ModelNames.ButtonF6Label,
-				ModelNames.ButtonF7Label,
-				ModelNames.ButtonF8Label,
-				ModelNames.ButtonAcceptLabel,
-				ModelNames.ButtonCancelLabel
-			};
+                new Tuple<string, string, string>(ModelNames.ButtonF1, "1", m_FG_GRAY_DARK),
+				new Tuple<string, string, string>(ModelNames.ButtonF2, "2", m_FG_GRAY_DARK),
+				new Tuple<string, string, string>(ModelNames.ButtonF3, "3", m_FG_GRAY_DARK),
+                new Tuple<string, string, string>(ModelNames.ButtonF4, "4", m_FG_GRAY_DARK),
+                new Tuple<string, string, string>(ModelNames.ButtonF5, "5", m_FG_GRAY_DARK),
+			    new Tuple<string, string, string>(ModelNames.ButtonF6, "6", m_FG_GRAY_DARK),
+			    new Tuple<string, string, string>(ModelNames.ButtonF7, "7", m_FG_GRAY_DARK),
+			    new Tuple<string, string, string>(ModelNames.ButtonF8, "8", m_FG_GRAY_DARK),
+			    new Tuple<string, string, string>(ModelNames.ButtonAccept, "A", "foreground='#20dd20'"),
+			    new Tuple<string, string, string>(ModelNames.ButtonCancel, "C", "foreground='#ff2020'")
+            };
 
-			foreach (var propName in buttonLabelPropertyNames) 
+			foreach (var prop in buttonLabelPropertyNames) 
 			{
-				var labelValue = string.Concat (ModelBinder.Model.GetProperty<object> (propName));
+				var labelValue = string.Concat (binder.Model.GetProperty<object> (ModelNames.ResolveButtonLabelName(prop.Item1)));
 
 				if (!string.IsNullOrEmpty (labelValue)) 
 				{
 					var eventBox = new EventBox ();
-
-					eventBox.HeightRequest = 10;
-
 					taskbar.Add (eventBox);
+
+                    binder.BindEventBoxClick(eventBox, prop.Item1);
 
 					var boxChild = (Gtk.Box.BoxChild)taskbar[eventBox];
 					boxChild.Expand = true;
 					boxChild.Fill = true;
-                    
-
+                   
 					var button = new Label ();
-
-					button.HeightRequest = 10;
-
 					eventBox.Add (button);
 
 					style.Window.Apply (eventBox);
 
-                    
+                    button.Yalign = 0.2f;
 
 					button.UseMarkup = true;
-					button.Markup = CreateMarkup (m_TASKBAR_BUTTON, labelValue);
+					button.Markup = CreateMarkup (m_TASKBAR_BUTTON, prop.Item3, string.Concat("[", prop.Item2, "] "), labelValue);
 				}
 			}
 		}

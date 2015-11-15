@@ -68,8 +68,8 @@ namespace UIModels
 
         private int secondaryDivider;
 
-        public OBDChartPage(string viewName, IHostController hc, ApplicationMap map, int secondaryDivider)
-            : base(viewName, hc, map)
+        public OBDChartPage(string viewName, IHostController hc, MappedPage pageDescriptor, int secondaryDivider)
+            : base(viewName, hc, pageDescriptor)
         {
             elm = hc.GetController<IElm327Controller>();
             obd = new OBDProcessor(elm);
@@ -171,8 +171,8 @@ namespace UIModels
 
     public class OBDEngine1 : OBDChartPage
     {
-        public OBDEngine1(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map, 30)
+        public OBDEngine1(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+            : base(viewName, hc, pageDescriptor, 30)
         {
         }
 
@@ -198,8 +198,8 @@ namespace UIModels
 
     public class OBDEngine2 : OBDChartPage
     {
-        public OBDEngine2(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map, 30)
+        public OBDEngine2(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+            : base(viewName, hc, pageDescriptor, 30)
         {
         }
 
@@ -225,8 +225,8 @@ namespace UIModels
 
     public class OBD_DTCPage : CommonPageBase
     {
-        public OBD_DTCPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map)
+        public OBD_DTCPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+            : base(viewName, hc, pageDescriptor)
         {
             var elm327 = hc.GetController<IElm327Controller>();
             var obd = new OBDProcessor(elm327);

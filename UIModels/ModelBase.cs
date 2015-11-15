@@ -21,7 +21,7 @@ namespace UIModels
         private readonly Dictionary<string, object> properties = new Dictionary<string, object>();
 
         protected readonly IHostController hc;
-        protected readonly ApplicationMap map;
+        protected readonly MappedPage pageDesctiptor;
 
         protected bool Disposed 
         { 
@@ -41,16 +41,16 @@ namespace UIModels
             protected set;
         }
 
-        protected ModelBase(string viewName, IHostController hc, ApplicationMap map)
+        protected ModelBase(string viewName, IHostController hc, MappedPage pageDesctiptor)
         {
             if (hc == null)
                 throw new ArgumentNullException("IHostController");
             
-            if (map == null)
-                throw new ArgumentNullException("ApplicationMap");
+            if (pageDesctiptor == null)
+                throw new ArgumentNullException("pageDescriptor");
 
             ViewName = viewName;
-            this.map = map;
+            this.pageDesctiptor = pageDesctiptor;
             this.hc = hc;
         }
 
@@ -89,45 +89,58 @@ namespace UIModels
             OnPropertyChanged(name);
         }
 
-        public static IPageModel CreateModel(IHostController hc, ApplicationMap map, string modelTypeName = null, string viewName = null, object arg = null)
+        protected void UpdateLabelForAction(string customActionName, string labelValue)
+        {
+            var mappedAction = pageDesctiptor.ButtonsMap.OfType<MappedCustomAction>().FirstOrDefault(a => a.CustomActionName == customActionName);
+            if (mappedAction != null)
+            {
+                var buttonLabelPropertyName = ModelNames.ResolveButtonLabelName(mappedAction.ButtonActionName);
+                SetProperty(buttonLabelPropertyName, labelValue);
+            }
+        }
+
+        public static IPageModel CreateModel(IHostController hc, MappedPage pageDescriptor, string viewName = null, object arg = null)
         {
             try
             {
-                if (modelTypeName == null)
+                if (pageDescriptor != null)
                 {
-                    modelTypeName = map.DefaultPageModelTypeName;
-                }
-
-                var type = Assembly.GetExecutingAssembly().GetType(string.Concat("UIModels.", modelTypeName));
-                if (type != null)
-                {
-                    var constructor = type.GetConstructor(new Type[] { typeof(string), typeof(IHostController), typeof(ApplicationMap), typeof(object) });
-                    if (constructor != null)
+                    var type = Assembly.GetExecutingAssembly().GetType(string.Concat("UIModels.", pageDescriptor.ModelTypeName));
+                    if (type != null)
                     {
-                        if (viewName == null)
+                        var constructor = type.GetConstructor(new Type[] { typeof(string), typeof(IHostController), typeof(MappedPage), typeof(object) });
+                        if (constructor != null)
                         {
-                            viewName = map.GetPage(modelTypeName).DefaultViewName;
-                        }
+                            if (viewName == null)
+                            {
+                                viewName = pageDescriptor.DefaultViewName;
+                            }
 
-                        var model = constructor.Invoke(new[] { viewName, hc, map, arg }) as IPageModel;
-                        map.SetCaptions(model);
-                        return model;
+                            var model = constructor.Invoke(new[] { viewName, hc, pageDescriptor, arg }) as IPageModel;
+                            ApplicationMap.SetCaptions(model, pageDescriptor);
+                            return model;
+                        }
+                        else
+                        {
+                            hc.Logger.Log(typeof(ModelBase), string.Format("Apropriate constructor is not found for model '{0}'", pageDescriptor.ModelTypeName), LogLevels.Warning);
+                            return null;
+                        }
                     }
                     else
                     {
-                        hc.Logger.Log(typeof(ModelBase), string.Format("Apropriate constructor is not found for model '{0}'", modelTypeName), LogLevels.Warning);
+                        hc.Logger.Log(typeof(ModelBase), string.Format("Page model is not found '{0}'", pageDescriptor.ModelTypeName), LogLevels.Warning);
                         return null;
                     }
                 }
                 else
                 {
-                    hc.Logger.Log(typeof(ModelBase), string.Format("Page model is not found '{0}'", modelTypeName), LogLevels.Warning);
+                    hc.Logger.Log(typeof(ModelBase), string.Format("Mapped page is not found '{0}'", pageDescriptor.Name), LogLevels.Warning);
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                hc.Logger.Log(typeof(ModelBase), string.Format("Exception constructing page model '{0}'. Exception was: {1}", modelTypeName, ex.Message), LogLevels.Error);
+                hc.Logger.Log(typeof(ModelBase), string.Format("Exception constructing page model for mapped page '{0}'. Exception was: {1}", pageDescriptor.Name, ex.Message), LogLevels.Error);
                 return null;
             }
         }
@@ -136,23 +149,19 @@ namespace UIModels
         {
             hc.Logger.LogIfDebug(this, string.Format("Performing PageModel action '{0}'", actionArgs.ActionName));
 
-            var mappedAction = map.GetMappedActionFor(this, actionArgs);
+            var mappedAction = pageDesctiptor.ButtonsMap.FirstOrDefault(b => b.ButtonActionName == actionArgs.ActionName);
 
             if (mappedAction != null)
             {
                 hc.SyncContext.Post((o) =>
                 {
                     var pageAction = o as MappedPageAction;
-
+                    
                     if (pageAction != null)
                     {
                         if (actionArgs.State == ButtonStates.Press)
                         {
-                            var model = CreateModel(hc, map, pageAction.ModelTypeName, pageAction.ViewName, GetArgumentForPage(pageAction));
-                            if (model != null)
-                            {
-                                hc.GetController<IUIController>().ShowPage(model);
-                            }
+                            hc.GetController<IUIController>().ShowPage(pageAction.PageName, pageAction.ViewName);
                         }
                     }
                     else

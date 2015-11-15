@@ -23,8 +23,8 @@ namespace UIModels
         private readonly ManualResetGuard weatherGuard = new ManualResetGuard();
         private readonly IOperationGuard geocoderGuard = new TimedGuard(new TimeSpan(0, 0, 3));
 
-        public DrivePage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map)
+        public DrivePage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+            : base(viewName, hc, pageDescriptor)
         {
             this.tc = hc.GetController<ITravelController>();
 

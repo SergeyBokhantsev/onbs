@@ -7,15 +7,15 @@ using Interfaces;
 using Interfaces.UI;
 using UIController;
 
-namespace UIModels.ConfigPages
+namespace UIModels
 {
     public class NavitCommonConfigPage : ModelBase
     {
         private const string YES = "Yes";
         private const string NO = "No";
 
-        public NavitCommonConfigPage(string viewName, IHostController hc, ApplicationMap map, object arg)
-            : base(viewName, hc, map)
+        public NavitCommonConfigPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+            : base(viewName, hc, pageDescriptor)
         {
             SetProperty(ModelNames.PageTitle, "Navit common options");            
             UpdateButtonLabels();
@@ -68,14 +68,14 @@ namespace UIModels.ConfigPages
 
         private void UpdateButtonLabels()
         {
-            map.UpdateLabelForAction(this, "ActivateGPS", string.Concat("Activate GPS: ", hc.Config.GetBool(ConfigNames.NavitGPSActive) ? YES : NO));
-            map.UpdateLabelForAction(this, "Autozoom", string.Concat("Autozoom: ", hc.Config.GetBool(ConfigNames.NavitAutozoom) ? YES : NO));
-            map.UpdateLabelForAction(this, "Menubar", string.Concat("Show Menubar: ", hc.Config.GetBool(ConfigNames.NavitMenubar) ? YES : NO));
-            map.UpdateLabelForAction(this, "Toolbar", string.Concat("Show Toolbar: ", hc.Config.GetBool(ConfigNames.NavitToolbar) ? YES : NO));
-            map.UpdateLabelForAction(this, "Statusbar", string.Concat("Show Statusbar: ", hc.Config.GetBool(ConfigNames.NavitStatusbar) ? YES : NO));
-            map.UpdateLabelForAction(this, "KeepNorth", string.Concat("Keep North orient: ", hc.Config.GetBool(ConfigNames.NavitKeepNorth) ? YES : NO));
-            map.UpdateLabelForAction(this, "LockRoad", string.Concat("Lock on Road: ", hc.Config.GetBool(ConfigNames.NavitLockOnRoad) ? YES : NO));
-            map.UpdateLabelForAction(this, "Zoom", string.Concat("Zoom: ", hc.Config.GetInt(ConfigNames.NavitZoom).ToString()));
+            UpdateLabelForAction("ActivateGPS", string.Concat("Activate GPS: ", hc.Config.GetBool(ConfigNames.NavitGPSActive) ? YES : NO));
+            UpdateLabelForAction("Autozoom", string.Concat("Autozoom: ", hc.Config.GetBool(ConfigNames.NavitAutozoom) ? YES : NO));
+            UpdateLabelForAction("Menubar", string.Concat("Show Menubar: ", hc.Config.GetBool(ConfigNames.NavitMenubar) ? YES : NO));
+            UpdateLabelForAction("Toolbar", string.Concat("Show Toolbar: ", hc.Config.GetBool(ConfigNames.NavitToolbar) ? YES : NO));
+            UpdateLabelForAction("Statusbar", string.Concat("Show Statusbar: ", hc.Config.GetBool(ConfigNames.NavitStatusbar) ? YES : NO));
+            UpdateLabelForAction("KeepNorth", string.Concat("Keep North orient: ", hc.Config.GetBool(ConfigNames.NavitKeepNorth) ? YES : NO));
+            UpdateLabelForAction("LockRoad", string.Concat("Lock on Road: ", hc.Config.GetBool(ConfigNames.NavitLockOnRoad) ? YES : NO));
+            UpdateLabelForAction("Zoom", string.Concat("Zoom: ", hc.Config.GetInt(ConfigNames.NavitZoom).ToString()));
         }
     }
 }
