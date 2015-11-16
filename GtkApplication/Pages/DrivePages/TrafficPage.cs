@@ -14,32 +14,30 @@ namespace GtkApplication
 	public partial class TrafficPage : Gtk.Bin
 	{
 		private readonly CommonBindings commonBindings;
+        private Gdk.PixbufAnimation daisy;
 
 		public TrafficPage (IPageModel model, Style style, ILogger logger)
 		{
 			this.Build ();
 		
 			var binder = new ModelBinder (model, logger);
-//			commonBindings = new CommonBindings (binder, style, logger,
-//				eventbox_drive,
-//				eventbox_nav,
-//				eventbox_cam,
-//				eventbox_weather,
-//				eventbox_traffic,
-//				eventbox_options,
-//				label_arduino_status,
-//				label_gps_status,
-//				label_inet_status,
-//				label_time);
 
 			CommonBindings.CreateTaskbarButtons (binder, hbox5, style);
 
-			binder.BindLabelMarkup(label15, "status", o => 
+			binder.BindLabelMarkup(label15, "wnd_status", o => 
 				CommonBindings.CreateMarkup(
 					CommonBindings.m_WND_STATUS,
 					CommonBindings.m_BG_EMPTY,
 					CommonBindings.m_FG_GRAY,
 					o != null ? o.ToString() : string.Empty));
+
+            binder.BindCustomAction<string>(gifPath =>
+            {
+                if (gifPath != null)
+                {
+                    daisy = new Gdk.PixbufAnimation(gifPath);
+                }
+            }, "daisy_path");
 
 			binder.BindCustomAction<Stream> (imageStream => 
 				{
@@ -52,6 +50,10 @@ namespace GtkApplication
                         loader.Write(stream.ToArray());
                         loader.Close();
                         image_traffic.Pixbuf = loader.Pixbuf;
+                    }
+                    else if (daisy != null)
+                    {
+                        image_traffic.PixbufAnimation = daisy;
                     }
 				}, "traffic_image_stream");
 

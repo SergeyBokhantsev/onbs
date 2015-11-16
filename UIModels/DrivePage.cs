@@ -36,17 +36,26 @@ namespace UIModels
 
         protected override void OnSecondaryTimer(IHostTimer timer)
         {
-            if (!Disposed && hc.Config.IsInternetConnected)
+            if (!Disposed)
             {
-                weatherGuard.ExecuteIfFree(() => 
-                    weather.GetForecastAsync(hc.Config.GetString(ConfigNames.WeatherCityId), OnWeatherForecast));
+                weatherGuard.ExecuteIfFree(UpdateWeatherForecast);
             }
 
             base.OnSecondaryTimer(timer);
         }
 
-        private void OnWeatherForecast(forecast f)
+        private async void UpdateWeatherForecast()
         {
+            if (!hc.Config.IsInternetConnected)
+                return;
+
+            var cityId = hc.Config.GetString(ConfigNames.WeatherCityId);
+
+            if (string.IsNullOrWhiteSpace(cityId))
+                return;
+
+            var f = await weather.GetForecastAsync(cityId);
+
             if (!Disposed && f != null)
             {
                 SetProperty("air_temp", f != null
@@ -62,6 +71,15 @@ namespace UIModels
             }
 
             weatherGuard.Reset();
+        }
+
+        private async void UpdateAddres(GeoPoint location)
+        {
+            if (!Disposed && hc.Config.IsInternetConnected)
+            {
+                var addres = await geocoder.GetAddresAsync(location);
+                SetProperty("heading", addres);
+            }
         }
 
         protected override void OnPrimaryTick(IHostTimer timer)
@@ -93,9 +111,9 @@ namespace UIModels
                 SetProperty("speed", gprmc.Active ? gprmc.Speed.ToString("0") : "-");
                 SetProperty("location", gprmc.Location);
 
-                if (gprmc.Active && hc.Config.IsInternetConnected)
+                if (gprmc.Active)
                 {
-                    geocoderGuard.ExecuteIfFree(() => geocoder.GetAddresAsync(gprmc.Location, addres => SetProperty("heading", addres)));
+                    geocoderGuard.ExecuteIfFree(() => UpdateAddres(gprmc.Location));
                 }
             }
         }

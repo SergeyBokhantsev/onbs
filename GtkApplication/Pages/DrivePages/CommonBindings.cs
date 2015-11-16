@@ -16,7 +16,6 @@ namespace GtkApplication
 		public const string m_FG_GRAY = "foreground='#d6d6d6'";
 		public const string m_FG_GRAY_DARK = "foreground='#aaaaaa'";
 
-
 		public const string m_FG_YELLOW = "foreground='#FFFF00'";
 		public const string m_FG_RED = "foreground='#FF0000'";
 		public const string m_FG_BLUE = "foreground='#0000FF'";
@@ -29,6 +28,52 @@ namespace GtkApplication
 		private const string m_TIME = "<span {0} {1} size='18000'>{2}</span><span {0} {1} size='10000'> : {3}</span>";
 
         private const string m_TASKBAR_BUTTON = "<span {0} size='8000'>{1}</span><span foreground='#606060' size='15000'>{2}</span>";
+
+		public static void CreateStatusbar(ModelBinder binder, HBox bar, Style style)
+		{
+			bar.Homogeneous = true;
+
+			// WINDOW STATUS LABEL
+			var wnd_status_label = new Label();
+            wnd_status_label.UseMarkup = true;
+            wnd_status_label.Markup = CreateMarkup(m_WND_STATUS, m_BG_EMPTY, m_FG_GRAY, string.Empty);
+			binder.BindLabelMarkup (wnd_status_label, "wnd_status", o => CreateMarkup (m_WND_STATUS, m_BG_EMPTY, m_FG_GRAY, o.ToString ()));
+			bar.Add (wnd_status_label);
+
+			// SYSTEM STATUS LEDS
+			var system_status_box = new HBox();
+			system_status_box.Homogeneous = true;
+			bar.Add (system_status_box);
+
+			// ARDUINO LED
+			var arduino_status_label = new Label();
+            arduino_status_label.UseMarkup = true;
+            arduino_status_label.Markup = CreateMarkup(m_ARD, m_FG_TOP_STATUS_TEXT, m_BG_RED);
+			binder.BindCustomAction<bool> (status => arduino_status_label.Markup = CreateMarkup (m_ARD, m_FG_TOP_STATUS_TEXT, status ? m_BG_EMPTY : m_BG_RED), "ard_status");
+			system_status_box.Add (arduino_status_label);
+
+			// GPS LED
+			var gps_status_label = new Label();
+            gps_status_label.UseMarkup = true;
+            gps_status_label.Markup = CreateMarkup(m_ARD, m_FG_TOP_STATUS_TEXT, m_BG_RED);
+			binder.BindCustomAction<bool> (status => gps_status_label.Markup = CreateMarkup (m_GPS, m_FG_TOP_STATUS_TEXT, status ? m_BG_EMPTY : m_BG_RED), "gps_status");
+			system_status_box.Add (gps_status_label);
+
+			// INET LED
+			var inet_status_label = new Label();
+            inet_status_label.UseMarkup = true;
+            inet_status_label.Markup = CreateMarkup(m_ARD, m_FG_TOP_STATUS_TEXT, m_BG_RED);
+			binder.BindCustomAction<bool> (status => inet_status_label.Markup = CreateMarkup (m_INET, m_FG_TOP_STATUS_TEXT, status ? m_BG_EMPTY : m_BG_RED), "inet_status");
+			system_status_box.Add (inet_status_label);
+
+			// TIME LABEL
+			var time_label = new Label();
+            time_label.Xalign = 1;
+            time_label.UseMarkup = true;
+            time_label.Markup = CreateMarkup(m_TIME, m_FG_GRAY, m_BG_EMPTY, DateTime.Now.ToString("HH:mm"), DateTime.Now.ToString("ss"));
+			binder.BindCustomAction<DateTime> (time => time_label.Markup = CreateMarkup (m_TIME, m_FG_GRAY, m_BG_EMPTY, time.ToString ("HH:mm"), time.ToString ("ss")), "time");
+            bar.Add(time_label);
+		}
 
 		public static void CreateTaskbarButtons(ModelBinder binder, HBox taskbar, Style style)
 		{

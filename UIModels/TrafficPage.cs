@@ -28,6 +28,8 @@ namespace UIModels
             : base(viewName, hc, pageDescriptor)
         {
             this.provider = new StaticMapProvider(hc.Logger);
+
+            SetProperty("daisy_path", Path.Combine(hc.Config.DataFolder, "loader_small.gif"));
         }
 
         protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
@@ -52,7 +54,7 @@ namespace UIModels
 
         protected override void OnSecondaryTimer(IHostTimer timer)
         {
-            downloadOperationScope.ExecuteIfFree(BeginDownload, OnDownloadException);
+            RefreshTraffic();
             base.OnSecondaryTimer(timer);
         }
 
@@ -73,19 +75,23 @@ namespace UIModels
             {
                 var location = hc.GetController<IGPSController>().Location;
                 SetProperty("status", "Loading...");
+                SetProperty("traffic_image_stream", null);
 
                 var stream = await provider.GetMapAsync(location, 600, 450, scales[scale], MapLayers.map | MapLayers.trf);
-
+                
                 if (stream != null)
                 {
                     SetProperty("status", null);
                     SetProperty("traffic_image_stream", stream);
-                    downloadOperationScope.Reset();
+                    
                 }
                 else
                 {
                     SetProperty("status", "Download error.");
+                    SetProperty("traffic_image_stream", new MemoryStream(File.ReadAllBytes(Path.Combine(hc.Config.DataFolder, "error.png"))));
                 }
+
+                downloadOperationScope.Reset();
             }
         }
     }

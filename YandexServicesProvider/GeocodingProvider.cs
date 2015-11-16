@@ -65,5 +65,10 @@ namespace YandexServicesProvider
                     callback(addres);
             });
         }
+
+        public async Task<string> GetAddresAsync(GeoPoint location)
+        {
+            return await Task.Run<string>(() => GetAddres(location));
+        }
     }
 }

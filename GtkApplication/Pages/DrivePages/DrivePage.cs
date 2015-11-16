@@ -31,18 +31,8 @@ namespace GtkApplication
 			this.Build();
 
 			var binder = new ModelBinder (model, logger);
-//			commonBindings = new CommonBindings (binder, style, logger,
-//				                     eventbox_drive,
-//				                     eventbox_nav,
-//				                     eventbox_cam,
-//				                     eventbox_weather,
-//				                     eventbox_traffic,
-//				                     eventbox_options,
-//				                     label_arduino_status,
-//				                     label_gps_status,
-//				                     label_inet_status,
-//				                     label_time);
 
+			CommonBindings.CreateStatusbar (binder, hbox1, style);
 			CommonBindings.CreateTaskbarButtons (binder, hbox5, style);
 
             binder.BindCustomAction<object>(speed =>
@@ -79,7 +69,7 @@ namespace GtkApplication
 
 			binder.BindCustomAction<string>(icon_path => image_weather_icon.File = icon_path, "weather_icon");
 
-			model.RefreshAllProps();
+			binder.UpdateBindings ();
 		}
     }
 }

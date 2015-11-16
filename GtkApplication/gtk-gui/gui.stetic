@@ -727,89 +727,18 @@
         <child>
           <widget class="Gtk.HBox" id="hbox1">
             <property name="MemberName" />
+            <property name="HeightRequest">35</property>
             <property name="Homogeneous">True</property>
             <property name="Spacing">6</property>
             <property name="BorderWidth">5</property>
             <child>
-              <widget class="Gtk.Label" id="label15">
-                <property name="MemberName" />
-              </widget>
-              <packing>
-                <property name="Position">0</property>
-                <property name="AutoSize">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.HBox" id="hbox2">
-                <property name="MemberName" />
-                <property name="Homogeneous">True</property>
-                <property name="Spacing">6</property>
-                <child>
-                  <widget class="Gtk.Label" id="label_arduino_status">
-                    <property name="MemberName" />
-                    <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;ARD&lt;/span&gt;</property>
-                    <property name="UseMarkup">True</property>
-                  </widget>
-                  <packing>
-                    <property name="Position">0</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gtk.Label" id="label_gps_status">
-                    <property name="MemberName" />
-                    <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;  GPS  &lt;/span&gt;</property>
-                    <property name="UseMarkup">True</property>
-                  </widget>
-                  <packing>
-                    <property name="Position">1</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gtk.Label" id="label_inet_status">
-                    <property name="MemberName" />
-                    <property name="LabelProp" translatable="yes">&lt;span foreground='#205768' size='12000'&gt;INET&lt;/span&gt;</property>
-                    <property name="UseMarkup">True</property>
-                  </widget>
-                  <packing>
-                    <property name="Position">2</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
-                </child>
-              </widget>
-              <packing>
-                <property name="Position">1</property>
-                <property name="AutoSize">True</property>
-                <property name="Expand">False</property>
-                <property name="Fill">False</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="Gtk.Label" id="label_time">
-                <property name="MemberName" />
-                <property name="Xalign">1</property>
-                <property name="LabelProp">&lt;span foreground='#d6d6d6' size='18000'&gt;--:--&lt;/span&gt;&lt;span size='10000'&gt; : --&lt;/span&gt;</property>
-                <property name="UseMarkup">True</property>
-              </widget>
-              <packing>
-                <property name="PackType">End</property>
-                <property name="Position">2</property>
-                <property name="AutoSize">False</property>
-              </packing>
+              <placeholder />
             </child>
           </widget>
           <packing>
             <property name="Position">0</property>
-            <property name="AutoSize">True</property>
+            <property name="AutoSize">False</property>
             <property name="Expand">False</property>
-            <property name="Fill">False</property>
           </packing>
         </child>
         <child>

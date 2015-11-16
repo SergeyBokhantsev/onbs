@@ -69,6 +69,11 @@ namespace YandexServicesProvider
             });
         }
 
+        public async Task<forecast> GetForecastAsync(string cityId)
+        {
+            return await Task.Run<forecast>(() => GetForecast(cityId));
+        }
+
         public string GetWeatherIcon(string code)
         {
             return Path.Combine(iconPath, string.Concat(code, ".png"));
