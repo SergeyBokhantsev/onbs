@@ -44,13 +44,19 @@
       <F2 action="Refresh" caption="Refresh"/>
     </page>
     <page name="OBDEngine" model="OBDEngine1" default_view="OBDEngineAndFuel">
-      
+      <Cancel name="Drive1" caption="Back"/>
+      <F1 name="OBDEngine2" caption="ENG 2"/>
+      <F2 name="OBD_DTC" caption="Errors"/>
     </page>
     <page name="OBDEngine2" model="OBDEngine2" default_view="OBDEngineAndFuel">
-      
+      <Cancel name="Drive1" caption="Back"/>
+      <F1 name="OBDEngine1" caption="ENG 1"/>
+      <F2 name="OBD_DTC" caption="Errors"/>
     </page>
     <page name="OBD_DTC" model="OBD_DTCPage" default_view="OBD_DTCPage">
-      
+      <Cancel name="Drive1" caption="Back"/>
+      <F1 name="OBDEngine1" caption="ENG 1"/>
+      <F2 name="OBDEngine2" caption="ENG 2"/>
     </page>
     <page name="Main" model="MainPage" default_view="MainPage">
       <Cancel name="Drive1" caption="Drive"/>

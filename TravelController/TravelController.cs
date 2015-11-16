@@ -94,8 +94,6 @@ namespace TravelController
             {
                 if (result.Travel != null)
                 {
-                    var minutesGapToOpenNewTravel = hc.Config.GetInt(ConfigNames.TravelServiceMinutesGapToOpenNewTravel);
-
                     if (result.Travel.Closed)
                     {
                         this.travel = null;
@@ -104,19 +102,30 @@ namespace TravelController
                     }
                     else
                     {
-                        var dRes = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Travel exist", "Continue existing travel or start new?", "(Y)Continue", "(N)Create new", hc, 30000, Interfaces.UI.DialogResults.Yes));
+                        var minutesGapToOpenNewTravel = hc.Config.GetInt(ConfigNames.TravelServiceMinutesGapToOpenNewTravel);
 
-                        if (dRes == Interfaces.UI.DialogResults.Yes)
+                        if (result.Travel.EndTime.AddMinutes(minutesGapToOpenNewTravel) < DateTime.Now)
                         {
                             this.travel = result.Travel;
                             state.Value = States.Ready;
-                            hc.Logger.Log(this, string.Format("Continuing travel Id={0}", result.Travel.ID), LogLevels.Info);
+                            hc.Logger.Log(this, string.Format("Continuing travel Id={0} because existing travel time match", result.Travel.ID), LogLevels.Info);
                         }
                         else
                         {
-                            this.travel = null;
-                            state.Value = States.ToOpenNewTravel;
-                            hc.Logger.Log(this, string.Format("Found travel Id={0} but user had declined it. New travel will be created.", result.Travel.ID), LogLevels.Info);
+                            var dRes = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Travel exist", "Start new on continue existing travel?", "(Y)New", "(N)Continue", hc, 60000, Interfaces.UI.DialogResults.Yes));
+
+                            if (dRes == Interfaces.UI.DialogResults.No)
+                            {
+                                this.travel = result.Travel;
+                                state.Value = States.Ready;
+                                hc.Logger.Log(this, string.Format("Continuing travel Id={0} because of user confirmation", result.Travel.ID), LogLevels.Info);
+                            }
+                            else
+                            {
+                                this.travel = null;
+                                state.Value = States.ToOpenNewTravel;
+                                hc.Logger.Log(this, string.Format("Found travel Id={0} but user had declined it. New travel will be created.", result.Travel.ID), LogLevels.Info);
+                            }
                         }
                     }
                 }
