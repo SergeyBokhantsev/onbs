@@ -13,7 +13,7 @@ using WebApp.Models;
 
 namespace WebApp.Controllers
 {
-    public class TravelPointsController : TravelApiControllerBase
+    public class TravelPointsController : ONBSApiControllerBase
     {
         [HttpPost]
         [ActionName("add")]

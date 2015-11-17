@@ -62,6 +62,7 @@
     <Compile Include="NavitConfigGeneratorTest.cs" />
     <Compile Include="TravelClientTest\TestTravelClient.cs" />
     <Compile Include="TestProcessRunner.cs" />
+    <Compile Include="TravelClientTest\TestGeneralLogging.cs" />
     <Compile Include="YandexProvidersTest.cs" />
   </ItemGroup>
   <ItemGroup>

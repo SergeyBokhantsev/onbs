@@ -30,5 +30,15 @@ namespace WebApp.Models
 
             return travel;
         }
+
+        public static LogEntry GetLogEntry(this ONBSContext db, int id)
+        {
+            var entry = db.GeneralLogs.Where(u => u.ID == id).FirstOrDefault();
+
+            if (entry == null)
+                throw new LogEntryNotFoundException(id);
+
+            return entry;
+        }
     }
 }

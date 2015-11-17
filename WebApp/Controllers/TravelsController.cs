@@ -14,7 +14,7 @@ using WebApp.Models;
 
 namespace WebApp.Controllers
 {
-    public class TravelsController : TravelApiControllerBase
+    public class TravelsController : ONBSApiControllerBase
     {
         // GET api/Travels/active
         [HttpGet]

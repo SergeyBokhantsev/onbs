@@ -52,5 +52,11 @@ namespace Tests.Mocks
             get;
             set;
         }
+
+
+        public string DataFolder
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }

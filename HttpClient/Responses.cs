@@ -16,6 +16,14 @@ namespace HttpClient
 
         public string Error { get; protected set; }
 
+        public WebHeaderCollection Headers
+        {
+            get
+            {
+                return webResponse != null ? webResponse.Headers : null;
+            }
+        }
+
         public ClientResponse(HttpWebResponse webResponse)
         {
             if (webResponse == null)

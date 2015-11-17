@@ -53,7 +53,8 @@ namespace Tests
         public void GetWeatherForecast()
         {
             //INIT
-            var provider = new WeatherProvider(new Mocks.Logger());
+            var config = new Mocks.Config();
+            var provider = new WeatherProvider(new Mocks.Logger(), config.DataFolder);
 
             //ACT
             var forecast = provider.GetForecast("33345");
@@ -67,7 +68,8 @@ namespace Tests
         public void GetForecastAsync()
         {
             //INIT
-            var provider = new WeatherProvider(new Mocks.Logger());
+            var config = new Mocks.Config();
+            var provider = new WeatherProvider(new Mocks.Logger(), config.DataFolder);
             forecast forecast = null;
             var callbackExecuted = false;
 

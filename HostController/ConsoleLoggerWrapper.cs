@@ -11,7 +11,7 @@ namespace HostController
 {
     public class ConsoleLoggerWrapper : ILogger
     {
-        private readonly ILogger logger;
+        private readonly ILogger[] loggers;
 
         public LogLevels Level
         {
@@ -21,35 +21,46 @@ namespace HostController
             }
         }
 
-        internal ConsoleLoggerWrapper(ILogger logger)
+        internal ConsoleLoggerWrapper(ILogger[] loggers)
         {
-            this.logger = logger;
+            if (loggers == null)
+                throw new ArgumentNullException("loggers");
+
+            this.loggers = loggers;
         }
 
         public void Log(object caller, string message, LogLevels level)
         {
             WriteToConsole(string.Concat(DateTime.Now, " | ", level, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message), level);
-            logger.Log(caller, message, level);
+
+            foreach (var logger in loggers)
+            {
+                logger.Log(caller, message, level);
+            }
         }
 
         public void Log(object caller, Exception ex)
         {
             WriteToConsole(string.Concat(ex.Message, Environment.NewLine, ex.StackTrace), LogLevels.Error);
-            logger.Log(caller, ex);
+
+            foreach (var logger in loggers)
+            {
+                logger.Log(caller, ex);
+            }
         }
 
         [Conditional("DEBUG")]
         private void WriteToConsole(string message, LogLevels level)
         {
             Console.WriteLine(message);
-
-            //if (level < LogLevels.Info)
-              //  Thread.Sleep(5000);
         }
 
         public void Flush()
         {
-            logger.Flush();
+            foreach (var logger in loggers)
+            {
+                logger.Flush();
+            }
         }
     }
 }

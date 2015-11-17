@@ -36,6 +36,15 @@ namespace HttpClient
             return ExecuteRequest(request, body);
         }
 
+        public ClientResponse Put(Uri uri, string body, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
+        {
+            var request = InsertHeaders(WebRequest.Create(uri) as HttpWebRequest, headers);
+
+            request.Method = "PUT";
+
+            return ExecuteRequest(request, body);
+        }
+
         public ClientResponse Delete(Uri uri, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
         {
             var request = InsertHeaders(WebRequest.Create(uri) as HttpWebRequest, headers);

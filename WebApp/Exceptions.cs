@@ -21,4 +21,12 @@ namespace WebApp
         {
         }
     }
+
+    internal class LogEntryNotFoundException : Exception
+    {
+        public LogEntryNotFoundException(int id)
+            : base(string.Format("LogEntry '{0}' was not found", id))
+        {
+        }
+    }
 }

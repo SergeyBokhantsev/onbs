@@ -10,7 +10,7 @@ using WebApp.Models;
 
 namespace WebApp.Controllers
 {
-    public abstract class TravelApiControllerBase : ApiController
+    public abstract class ONBSApiControllerBase : ApiController
     {
         protected ONBSContext db = new ONBSContext();
 
@@ -26,6 +26,10 @@ namespace WebApp.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, ex);
             }
             catch (TravelNotFoundException ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
+            }
+            catch (LogEntryNotFoundException ex)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, ex);
             }
