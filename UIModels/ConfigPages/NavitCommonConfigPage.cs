@@ -14,7 +14,7 @@ namespace UIModels
         private const string YES = "Yes";
         private const string NO = "No";
 
-        public NavitCommonConfigPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+        public NavitCommonConfigPage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)
         {
             SetProperty(ModelNames.PageTitle, "Navit common options");            

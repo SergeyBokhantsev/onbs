@@ -24,7 +24,7 @@ namespace UIModels
         private int[] scales = new[] { 13, 12, 8 }; 
         private int scale = 0;
 
-        public TrafficPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+        public TrafficPage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)
         {
             this.provider = new StaticMapProvider(hc.Logger);

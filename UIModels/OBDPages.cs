@@ -171,7 +171,7 @@ namespace UIModels
 
     public class OBDEngine1 : OBDChartPage
     {
-        public OBDEngine1(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+        public OBDEngine1(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor, 30)
         {
         }
@@ -198,7 +198,7 @@ namespace UIModels
 
     public class OBDEngine2 : OBDChartPage
     {
-        public OBDEngine2(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+        public OBDEngine2(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor, 30)
         {
         }
@@ -225,7 +225,7 @@ namespace UIModels
 
     public class OBD_DTCPage : CommonPageBase
     {
-        public OBD_DTCPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+        public OBD_DTCPage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)
         {
             var elm327 = hc.GetController<IElm327Controller>();

@@ -14,7 +14,7 @@ namespace UIModels
     {
         private readonly IAutomationController automation;
 
-        public NavigationAppPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+        public NavigationAppPage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor, CreateProcessRunner(hc))
         {
             automation = hc.GetController<IAutomationController>();

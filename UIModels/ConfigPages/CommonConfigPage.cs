@@ -22,7 +22,7 @@ namespace UIModels
         private const string ToggleArduinoMode = "ToggleArduinoMode";
         private const string ChangeLogLevel = "ChangeLogLevel";
 
-        public CommonConfigPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+        public CommonConfigPage(string viewName, IHostController hc, MappedPage pageDescriptor)
             :base(viewName, hc, pageDescriptor)
         {
             SetProperty(ModelNames.PageTitle, "Common Configuration");

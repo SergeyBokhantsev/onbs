@@ -14,7 +14,7 @@ namespace UIModels
         private const string YES = "Yes";
         private const string NO = "No";
 
-        public NavitOSDConfigPage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+        public NavitOSDConfigPage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)
         {
             SetProperty(ModelNames.PageTitle, "Navit OSD configuration");            
