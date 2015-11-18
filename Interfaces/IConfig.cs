@@ -37,7 +37,8 @@ namespace Interfaces
 
         public static readonly string Elm327Port = "Elm327Port";
 
-        public static readonly string ArduinoPortFake = "ArduinoPortFake";
+        public static readonly string TestEnv = "TestEnv";
+
         public static readonly string ArduinoPort = "ArduinoPort";
         public static readonly string ArduinoPortEnabled = "ArduinoPortEnabled";
         public static readonly string ArduinoPortSpeed = "ArduinoPortSpeed";

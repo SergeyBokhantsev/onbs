@@ -32,6 +32,8 @@ namespace HostController
         private HostSynchronizationContext syncContext;
         private HostTimersController timersController;
 
+        private OnlineLogger onlineLogger;
+
         public IConfig Config
         {
             get
@@ -117,7 +119,9 @@ namespace HostController
             if (!Directory.Exists(logFolder))
                 Directory.CreateDirectory(logFolder);
 
-            Logger = new ConsoleLoggerWrapper(new GeneralLogger(Config));
+            onlineLogger = new OnlineLogger(Config);
+
+            Logger = new ConsoleLoggerWrapper(new ILogger[] { new GeneralLogger(Config), onlineLogger});
             Logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
 
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
@@ -169,7 +173,7 @@ namespace HostController
 
             elm327Controller = new Elm327Controller.Elm327Controller(this);
 
-            var useFakeArduPort = Config.GetBool(ConfigNames.ArduinoPortFake);
+            var useFakeArduPort = Config.GetBool(ConfigNames.TestEnv);
             var arduPort = useFakeArduPort ? new ArduinoEmulatorPort() as IPort : new SerialArduPort(Logger, Config) as IPort;
             arduController = new ArduinoController.ArduinoController(arduPort, this);
             arduController.RegisterFrameAcceptor(inputController);
@@ -196,7 +200,8 @@ namespace HostController
             uiController.DialogPending += uiController_DialogPending;
             uiController.ShowDefaultPage();
 
-            gpsCtrl.GPRMCReseived += CheckSystemTimeFromGPS;
+            if (!config.GetBool(ConfigNames.TestEnv))
+                gpsCtrl.GPRMCReseived += CheckSystemTimeFromGPS;
 
             StartTimers();
         }
@@ -283,6 +288,8 @@ namespace HostController
             Logger.Log(this, "--- Logging finished ---", LogLevels.Info);
 
             Logger.Flush();
+
+            onlineLogger.Upload();
 
             switch (mode)
             {

@@ -37,7 +37,7 @@ namespace GtkApplication
 			var wnd_status_label = new Label();
             wnd_status_label.UseMarkup = true;
             wnd_status_label.Markup = CreateMarkup(m_WND_STATUS, m_BG_EMPTY, m_FG_GRAY, string.Empty);
-			binder.BindLabelMarkup (wnd_status_label, "wnd_status", o => CreateMarkup (m_WND_STATUS, m_BG_EMPTY, m_FG_GRAY, o.ToString ()));
+			binder.BindLabelMarkup (wnd_status_label, "wnd_status", o => CreateMarkup (m_WND_STATUS, m_BG_EMPTY, m_FG_GRAY, o));
 			bar.Add (wnd_status_label);
 
 			// SYSTEM STATUS LEDS
@@ -162,7 +162,7 @@ namespace GtkApplication
 			binder.BindEventBoxClick(eventbox_options, ModelNames.ButtonCancel);
 		}
 
-		public static string CreateMarkup(string template, params string[] args)
+		public static string CreateMarkup(string template, params object[] args)
 		{
 			return string.Format(template, args);
 		}

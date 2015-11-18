@@ -58,14 +58,22 @@ namespace HostController
                 {
                     logger.Log(this, "Updating system time...", LogLevels.Info);
 
-                    var args = string.Format(setTimeArgs, validTime.ToString(setTimeSetFormat));
-                    var pr = processRunnerFactory.Create(setTimeCommand, args, false);
-                    pr.Run();
-					pr.WaitForExit(5000);
-					if (GetTimeValidity (validTime))
-						return IsSystemTimeValid (validTime);
-					else
-						return false;
+                    try
+                    {
+                        var args = string.Format(setTimeArgs, validTime.ToString(setTimeSetFormat));
+                        var pr = processRunnerFactory.Create(setTimeCommand, args, false);
+                        pr.Run();
+                        pr.WaitForExit(5000);
+                        if (GetTimeValidity(validTime))
+                            return IsSystemTimeValid(validTime);
+                        else
+                            return false;
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Log(this, ex);
+                        return false;
+                    }
                 }
                 else
                 {

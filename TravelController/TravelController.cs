@@ -190,7 +190,7 @@ namespace TravelController
             else if (!hc.Config.IsSystemTimeValid || !hc.Config.IsInternetConnected)
             {
                 hc.Logger.LogIfDebug(this, string.Format("Skipping Operation because of precondition failed: SystemTimeIsValid = {0} and InternetIsConnected = {1}",
-                                                                     hc.Config.IsSystemTimeValid, hc.Config.IsInternetConnected), LogLevels.Warning);
+                                                                     hc.Config.IsSystemTimeValid, hc.Config.IsInternetConnected));
                 state.Value = States.NotStarted;
                 travel = null;
                 metricsError = true;
@@ -217,7 +217,7 @@ namespace TravelController
                         }
                         else
                         {
-                            hc.Logger.Log(this, string.Concat("Skipping export because points < ", minPointsToStart), LogLevels.Info);
+                            hc.Logger.Log(this, string.Concat("Skipping export because points < ", minPointsToStart), LogLevels.Debug);
                         }
                         break;
 

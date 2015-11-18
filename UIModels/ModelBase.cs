@@ -54,11 +54,6 @@ namespace UIModels
             this.hc = hc;
         }
 
-        protected virtual object GetArgumentForPage(MappedPageAction mappedPageAction)
-        {
-            return null;
-        }
-
         protected virtual void DoAction(string name, PageModelActionEventArgs actionArgs)
         {
             hc.Logger.Log(this, string.Format("No '{0}' action exists to execute for button {1}, state {2}.", name, actionArgs.ActionName, actionArgs.State), LogLevels.Warning);
@@ -99,7 +94,7 @@ namespace UIModels
             }
         }
 
-        public static IPageModel CreateModel(IHostController hc, MappedPage pageDescriptor, string viewName = null, object arg = null)
+        public static IPageModel CreateModel(IHostController hc, MappedPage pageDescriptor, string viewName)
         {
             try
             {
@@ -108,7 +103,7 @@ namespace UIModels
                     var type = Assembly.GetExecutingAssembly().GetType(string.Concat("UIModels.", pageDescriptor.ModelTypeName));
                     if (type != null)
                     {
-                        var constructor = type.GetConstructor(new Type[] { typeof(string), typeof(IHostController), typeof(MappedPage), typeof(object) });
+                        var constructor = type.GetConstructor(new Type[] { typeof(string), typeof(IHostController), typeof(MappedPage) });
                         if (constructor != null)
                         {
                             if (viewName == null)
@@ -116,7 +111,7 @@ namespace UIModels
                                 viewName = pageDescriptor.DefaultViewName;
                             }
 
-                            var model = constructor.Invoke(new[] { viewName, hc, pageDescriptor, arg }) as IPageModel;
+                            var model = constructor.Invoke(new object[] { viewName, hc, pageDescriptor }) as IPageModel;
                             ApplicationMap.SetCaptions(model, pageDescriptor);
                             return model;
                         }

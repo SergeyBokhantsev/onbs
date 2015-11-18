@@ -5,29 +5,35 @@ using System.Text;
 using System.Threading.Tasks;
 using Interfaces;
 using TravelsClient;
+using System.Threading;
 
 namespace HostController
 {
     public class OnlineLogger : ILogger
     {
+        private const int logMaxSize = 100 * 1024;
+
+        private readonly IConfig config;
+        private readonly LogLevels level;
         private readonly StringBuilder buffer = new StringBuilder();
         private readonly GeneralLoggerClient client;
+        private readonly InterlockedGuard uploadLocker = new InterlockedGuard();
 
-        public LogLevels Level
-        {
-            get;
-            private set;
-        }
+        private int logId = -1;
+        private int logSize;
 
         public OnlineLogger(IConfig config)
         {
-            Level = (LogLevels)Enum.Parse(typeof(LogLevels), config.GetString(ConfigNames.LogLevel));
-            client = new GeneralLoggerClient
+            this.config = config;
+            level = LogLevels.Info;
+            client = new GeneralLoggerClient(new Uri(config.GetString(ConfigNames.TravelServiceUrl)),
+                                             config.GetString(ConfigNames.TravelServiceKey),
+                                             config.GetString(ConfigNames.TravelServiceVehicle));
         }
 
         public void Log(object caller, string message, LogLevels level)
         {
-            if (level <= this.Level)
+            if (level <= this.level)
             {
                 string className = caller != null ? caller.GetType().ToString() : "NULL";
 
@@ -49,20 +55,54 @@ namespace HostController
             Flush();
         }
 
-        public void Flush()
+        public void Upload()
         {
-            var body = null;
-
-            lock (buffer)
+            uploadLocker.ExecuteIfFree(() =>
             {
-                if (buffer.Length == 0)
+                if (!config.IsInternetConnected)
                     return;
 
-                body = buffer.ToString();
-                buffer.Clear();
-            }
+                string body = null;
 
-            
+                lock (buffer)
+                {
+                    if (buffer.Length == 0)
+                        return;
+
+                    if (logSize + buffer.Length > logMaxSize)
+                    {
+                        logId = -1;
+                        logSize = 0;
+                    }
+
+                    body = buffer.ToString();
+                    buffer.Clear();
+                }
+
+                try
+                {
+                    if (logId == -1)
+                    {
+                        logId = client.CreateNewLog(body);
+                    }
+                    else
+                    {
+                        client.AppendLog(logId, body);
+                    }
+
+                    logSize += body.Length;
+                }
+                catch (Exception ex)
+                {
+                    buffer.Insert(0, body);
+                    Log(this, ex);
+                }
+            });
+        }
+
+        public void Flush()
+        {
+            ThreadPool.QueueUserWorkItem(o => Upload());
         }
     }
 }

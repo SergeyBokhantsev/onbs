@@ -16,13 +16,26 @@ namespace UIModels
         protected readonly IHostTimer primaryTimer;
         protected readonly IHostTimer secondaryTimer;
 
+        protected readonly IGPSController gpsController;
+
         protected CommonPageBase(string viewName, IHostController hc, MappedPage pageDescriptor)
             :base(viewName, hc, pageDescriptor)
         {
             this.Disposing += OnDisposing;
 
+            gpsController = hc.GetController<IGPSController>();
+            gpsController.GPRMCReseived += GPRMCReseived;
+
             primaryTimer = hc.CreateTimer(1000, OnPrimaryTick, true, true);
             secondaryTimer = hc.CreateTimer(60000, OnSecondaryTimer, true, true);
+        }
+
+        void GPRMCReseived(GPRMC gprmc)
+        {
+            if (!Disposed)
+            {
+                SetProperty("gps_status", gprmc.Active);
+            }
         }
 
         protected virtual void OnPrimaryTick(IHostTimer timer)
@@ -43,6 +56,7 @@ namespace UIModels
 
         protected virtual void OnDisposing(object sender, EventArgs e)
         {
+            gpsController.GPRMCReseived -= GPRMCReseived;
             primaryTimer.Dispose();
             secondaryTimer.Dispose();
         }

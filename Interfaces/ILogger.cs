@@ -18,7 +18,6 @@ namespace Interfaces
 
     public interface ILogger
     {
-        LogLevels Level { get; }
         void Log(object caller, string message, LogLevels level);
         void Log(object caller, Exception ex);
         void Flush();

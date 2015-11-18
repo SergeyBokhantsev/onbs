@@ -23,7 +23,7 @@ namespace UIModels
         private readonly ManualResetGuard weatherGuard = new ManualResetGuard();
         private readonly IOperationGuard geocoderGuard = new TimedGuard(new TimeSpan(0, 0, 3));
 
-        public DrivePage(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+        public DrivePage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)
         {
             this.tc = hc.GetController<ITravelController>();
@@ -31,7 +31,7 @@ namespace UIModels
             this.weather = new WeatherProvider(hc.Logger, hc.Config.DataFolder);
             this.geocoder = new GeocodingProvider(hc.Logger);
 
-            hc.GetController<IGPSController>().GPRMCReseived += GPRMCReseived;
+            gpsController.GPRMCReseived += GPRMCReseived;
         }
 
         protected override void OnSecondaryTimer(IHostTimer timer)
@@ -99,15 +99,14 @@ namespace UIModels
             weatherGuard.Dispose();
             geocoderGuard.Dispose();
 
-            hc.GetController<IGPSController>().GPRMCReseived -= GPRMCReseived;
+            gpsController.GPRMCReseived -= GPRMCReseived;
             base.OnDisposing(sender, e);
         }
 
-        void GPRMCReseived(GPRMC gprmc)
+        private void GPRMCReseived(GPRMC gprmc)
         {
             if (!Disposed)
             {
-                SetProperty("gps_status", gprmc.Active);
                 SetProperty("speed", gprmc.Active ? gprmc.Speed.ToString("0") : "-");
                 SetProperty("location", gprmc.Location);
 

@@ -5,11 +5,11 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArduinoBoardEmulator", "ArduinoBoardEmulator\ArduinoBoardEmulator.csproj", "{AD10FACA-05B4-49E9-A6A7-41137252ED5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpServer", "..\TcpServer\TcpServer.csproj", "{5A40ADDF-71E7-45D4-8AC6-3D03F2DAD131}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpServer", "TcpServer\TcpServer.csproj", "{5A40ADDF-71E7-45D4-8AC6-3D03F2DAD131}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "..\Interfaces\Interfaces.csproj", "{3F066CD9-3523-4248-B37C-3378B44C426A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\Interfaces.csproj", "{3F066CD9-3523-4248-B37C-3378B44C426A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialTransportProtocol", "..\SerialTransportProtocol\SerialTransportProtocol.csproj", "{B1069B60-BC03-4A71-B8D2-C33F0043D96C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialTransportProtocol", "SerialTransportProtocol\SerialTransportProtocol.csproj", "{B1069B60-BC03-4A71-B8D2-C33F0043D96C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -12,15 +12,6 @@ namespace HostController
     public class ConsoleLoggerWrapper : ILogger
     {
         private readonly ILogger[] loggers;
-
-        public LogLevels Level
-        {
-            get
-            {
-                return logger.Level;
-            }
-        }
-
         internal ConsoleLoggerWrapper(ILogger[] loggers)
         {
             if (loggers == null)
@@ -31,6 +22,11 @@ namespace HostController
 
         public void Log(object caller, string message, LogLevels level)
         {
+            if (level == LogLevels.Error)
+            {
+
+            }
+
             WriteToConsole(string.Concat(DateTime.Now, " | ", level, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message), level);
 
             foreach (var logger in loggers)

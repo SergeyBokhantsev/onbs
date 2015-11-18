@@ -37,7 +37,7 @@ namespace GtkApplication
 
             binder.BindCustomAction<object>(speed =>
 				label_speed.Markup = 
-	CB.CreateMarkup(m_SPEED, CB.m_FG_WHITE, CB.m_BG_EMPTY, speed.ToString())
+	CB.CreateMarkup(m_SPEED, CB.m_FG_WHITE, CB.m_BG_EMPTY, speed)
                 , "speed");
 			
             binder.BindCustomAction<double>(travel_span => 
