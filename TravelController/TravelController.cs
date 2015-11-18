@@ -104,7 +104,7 @@ namespace TravelController
                     {
                         var minutesGapToOpenNewTravel = hc.Config.GetInt(ConfigNames.TravelServiceMinutesGapToOpenNewTravel);
 
-                        if (result.Travel.EndTime.AddMinutes(minutesGapToOpenNewTravel) < DateTime.Now)
+                        if (result.Travel.EndTime.AddMinutes(minutesGapToOpenNewTravel) > DateTime.Now)
                         {
                             this.travel = result.Travel;
                             state.Value = States.Ready;
@@ -112,7 +112,7 @@ namespace TravelController
                         }
                         else
                         {
-                            var dRes = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Travel exist", "Start new on continue existing travel?", "(Y)Start new", "(N)Continue", hc, 60000, Interfaces.UI.DialogResults.Yes));
+                            var dRes = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Travel exist", "Start new travel or continue last one?", "(Y)Start new", "(N)Continue", hc, 60000, Interfaces.UI.DialogResults.Yes));
 
                             if (dRes == Interfaces.UI.DialogResults.No)
                             {

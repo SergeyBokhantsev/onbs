@@ -22,14 +22,8 @@ namespace GtkApplication
 		
 			var binder = new ModelBinder (model, logger);
 
+			CommonBindings.CreateStatusbar (binder, hbox1, style);
 			CommonBindings.CreateTaskbarButtons (binder, hbox5, style);
-
-			binder.BindLabelMarkup(label15, "wnd_status", o => 
-				CommonBindings.CreateMarkup(
-					CommonBindings.m_WND_STATUS,
-					CommonBindings.m_BG_EMPTY,
-					CommonBindings.m_FG_GRAY,
-					o != null ? o.ToString() : string.Empty));
 
             binder.BindCustomAction<string>(gifPath =>
             {

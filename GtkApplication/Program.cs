@@ -168,7 +168,7 @@ namespace GtkApplication
         {
             var model = (args as ShowDialogEventArgs).Model as IDialogModel;
 
-            Func<string> getWindowCaption = () => string.Format("({0}) {1}", model.RemainingTime, model.Caption);
+            Func<string> getWindowCaption = () => string.Format("({0}) {1}", model.RemainingTime / 1000, model.Caption);
 
             var dlg = new Gtk.MessageDialog(win, DialogFlags.DestroyWithParent, MessageType.Warning, ButtonsType.None, model.Message);
 

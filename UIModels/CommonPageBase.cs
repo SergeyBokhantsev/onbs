@@ -13,6 +13,8 @@ namespace UIModels
 {
     public abstract class CommonPageBase : ModelBase
     {
+        protected readonly static Dictionary<string, object> crossPageProperties = new Dictionary<string, object>();
+
         protected readonly IHostTimer primaryTimer;
         protected readonly IHostTimer secondaryTimer;
 
@@ -22,6 +24,9 @@ namespace UIModels
             :base(viewName, hc, pageDescriptor)
         {
             this.Disposing += OnDisposing;
+
+            foreach (var key in crossPageProperties.Keys)
+                SetProperty(key, crossPageProperties[key]);
 
             gpsController = hc.GetController<IGPSController>();
             gpsController.GPRMCReseived += GPRMCReseived;
@@ -59,6 +64,10 @@ namespace UIModels
             gpsController.GPRMCReseived -= GPRMCReseived;
             primaryTimer.Dispose();
             secondaryTimer.Dispose();
+
+            crossPageProperties["ard_status"] = GetProperty<bool>("ard_status");
+            crossPageProperties["inet_status"] = GetProperty<bool>("inet_status");
+            crossPageProperties["gps_status"] = GetProperty<bool>("gps_status");
         }
     }
 }

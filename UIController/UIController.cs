@@ -110,24 +110,19 @@ namespace UIController
 
         public void ShowDefaultPage()
         {
-            var pageDescriptor = map.GetPage(map.DefaultPageName);
-            var model = pageConstructor(pageDescriptor, map.DefaultPageViewName);
-            ShowPage(model);
+            ShowPage(map.DefaultPageName, map.DefaultPageViewName);
         }
 
         public void ShowPage(string descriptorName, string viewName)
-        {
-            var pageDescriptor = map.GetPage(descriptorName);
-            ShowPage(pageConstructor(pageDescriptor, viewName));
-        }
-
-        public void ShowPage(IPageModel model)
         {
             AssertThread();
             AssertHost();
 
             if (current != null)
                 current.Dispose();
+
+            var pageDescriptor = map.GetPage(descriptorName);
+            var model = pageConstructor(pageDescriptor, viewName);
 
             current = model;
 
