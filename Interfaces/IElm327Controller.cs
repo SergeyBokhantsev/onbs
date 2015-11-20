@@ -12,6 +12,7 @@ namespace Interfaces
         void Reset();
         byte[] GetPIDValue(uint pid);
         Nullable<T> GetPIDValue<T>(uint pid, int expectedBytesCount, Func<byte[], T> formula) where T : struct;
-        string GetTroubleCodes();
+        IEnumerable<string> GetTroubleCodeFrames();
+        bool ResetTroubleCodes();
     }
 }

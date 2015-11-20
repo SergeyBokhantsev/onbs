@@ -40,6 +40,8 @@ namespace OBD
     {
         private readonly IElm327Controller elm;
 
+
+
         public OBDProcessor(IElm327Controller elm)
         {
             if (elm == null)
@@ -60,22 +62,35 @@ namespace OBD
 
         public IEnumerable<string> GetTroubleCodes()
         {
-            var SAEFrame = elm.GetTroubleCodes();
+            var SAEFrames = elm.GetTroubleCodeFrames();
 
-            var codeClasses = new Dictionary<string , string> { {"0", "P0"}, {"1", "P1"}, {"2", "P2"}, {"3", "P3"}, {"4", "C0"}, {"5", "C1"}, {"6", "C2"}, {"7", "C3"}, {"8", "B0"}, {"9", "B1"}, {"A", "B2"}, {"B", "B3"}, {"C", "U0"}, {"D", "U1"}, {"E", "U2"}, {"F", "U3"} };
-
-            if (SAEFrame != null && SAEFrame.Length == 12)
+            if (SAEFrames != null)
             {
-                for(var i = 0; i< SAEFrame.Length; i+=4)
-                {
-                    if (SAEFrame[i] == '0' && SAEFrame[i + 1] == '0' && SAEFrame[i + 2] == '0' && SAEFrame[i + 3] == '0')
-                        continue;
+                var codeClasses = new Dictionary<string, string> { { "0", "P0" }, { "1", "P1" }, { "2", "P2" }, { "3", "P3" }, { "4", "C0" }, { "5", "C1" }, { "6", "C2" }, { "7", "C3" }, { "8", "B0" }, { "9", "B1" }, { "A", "B2" }, { "B", "B3" }, { "C", "U0" }, { "D", "U1" }, { "E", "U2" }, { "F", "U3" } };
 
-                    yield return string.Concat(codeClasses[SAEFrame[i].ToString()], SAEFrame.Substring(i + 1, 3));
+                foreach (var SAEFrame in SAEFrames)
+                {
+                    if (SAEFrame != null && SAEFrame.Length == 14)
+                    {
+                        for (var i = 2; i < SAEFrame.Length; i += 4)
+                        {
+                            if (SAEFrame[i] == '0' && SAEFrame[i + 1] == '0' && SAEFrame[i + 2] == '0' && SAEFrame[i + 3] == '0')
+                                continue;
+
+                            yield return string.Concat(codeClasses[SAEFrame[i].ToString()], SAEFrame.Substring(i + 1, 3));
+                        }
+                    }
                 }
             }
             else
+            {
                 yield break;
+            }
+        }
+
+        public bool ResetTroubleCodes()
+        {
+            return elm.ResetTroubleCodes();
         }
 
         public int? GetSpeed()

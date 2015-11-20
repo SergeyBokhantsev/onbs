@@ -121,6 +121,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\mikas103.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\mikas120.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\NavitConfig\template.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

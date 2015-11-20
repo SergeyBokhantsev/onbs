@@ -2,6 +2,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Interfaces;
 using System.Linq;
+using System.Collections.Generic;
+using Elm327;
+using OBD;
 
 namespace Tests
 {
@@ -30,32 +33,30 @@ namespace Tests
                 throw new NotImplementedException();
             }
 
-            public string GetTroubleCodes()
+            public IEnumerable<string> GetTroubleCodeFrames()
             {
-                return "0133D0160000"; 
-            }
+                var elmRaw = new string[] { "43 16 12 01 05 15 30 ",
+                       "43 04 80 03 04 03 01 ",
+                       "43 03 02 03 03 05 05 ",
+                       "",
+                       ">"};
 
-            private byte[] HexToBytes(string str)
-            {
-                str = str.Replace(" ", string.Empty);
+                return BitHelper.AllHexStrings(elmRaw).Select(l => l.Trim().Replace(" ", string.Empty));
 
-                var ret = new byte[str.Length / 2];
-
-                for (int i = 0; i < str.Length; i += 2)
-                {
-                    ret[i / 2] = Convert.ToByte(str.Substring(i, 2), 16);
-                }
-
-                return ret;
             }
         }
 
         [TestMethod]
+        [DeploymentItem("Data", "Data")]
         public void TestMethod1()
         {
             var processor = new OBD.OBDProcessor(new MockElm327());
 
             var tc = processor.GetTroubleCodes().ToArray();
+
+            var descriptor = new DTCDescriptor(new string[] { "Data\\mikas103.txt", "Data\\mikas120.txt", "Data\\mikas120.txt" });
+
+            var descriptions = tc.Select(c => string.Format("{0}: {1}", c, descriptor.GetDescription(c))).ToArray();
         }
     }
 }

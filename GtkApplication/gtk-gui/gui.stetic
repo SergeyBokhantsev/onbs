@@ -2373,7 +2373,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="GtkApplication.OBD_DTCPage" design-size="300 300">
+  <widget class="Gtk.Bin" id="GtkApplication.OBD_DTCPage" design-size="780 315">
     <property name="MemberName" />
     <property name="Visible">False</property>
     <child>
@@ -2381,13 +2381,29 @@
         <property name="MemberName" />
         <property name="Spacing">6</property>
         <child>
-          <placeholder />
-        </child>
-        <child>
           <widget class="Gtk.EventBox" id="eventbox_codes">
             <property name="MemberName" />
             <child>
               <widget class="Gtk.Label" id="label_codes">
+                <property name="MemberName" />
+                <property name="WidthRequest">700</property>
+                <property name="Xalign">0.1</property>
+                <property name="Yalign">0.1</property>
+                <property name="LabelProp" translatable="yes">Выход сигнала датчика температуры охлаждающей жидкости за допустимый диапазон</property>
+                <property name="Wrap">True</property>
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.EventBox" id="eventbox_buttons">
+            <property name="MemberName" />
+            <child>
+              <widget class="Gtk.Label" id="label_buttons">
                 <property name="MemberName" />
                 <property name="LabelProp" translatable="yes">label1</property>
               </widget>
@@ -2398,10 +2414,8 @@
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
+            <property name="Padding">10</property>
           </packing>
-        </child>
-        <child>
-          <placeholder />
         </child>
       </widget>
     </child>

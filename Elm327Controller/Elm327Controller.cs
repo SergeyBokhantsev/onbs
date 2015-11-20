@@ -91,74 +91,36 @@ namespace Elm327Controller
             {
                 if (EnsureElm())
                 {
-                    result = FirstHexString(elm.Send(0x0100 + pid, "X4"));
+                    result = BitHelper.FirstHexString(elm.Send(0x0100 + pid, "X4"));
                 }
             }
 
             return result;
         }
 
-        public string GetTroubleCodes()
+        public IEnumerable<string> GetTroubleCodeFrames()
         {
-            byte[] result = null;
-
             lock (locker)
             {
                 if (EnsureElm())
                 {
-                    result = FirstHexString(elm.Send(0x03, "X2"));
+                    return BitHelper.AllHexStrings(elm.Send(0x03, "X2"));
                 }
-            }
-
-            return "013300000000"; //result;
-        }
-
-        private byte[] FirstHexString(string[] response)
-        {
-            if (response != null)
-            {
-                foreach (var line in response)
+                else
                 {
-                    if (IsHexString(line))
-                    {
-                        return HexToBytes(line);
-                    }
+                    return null;
                 }
             }
-
-            return null;
         }
 
-        private bool IsHexString(string str)
+        public bool ResetTroubleCodes()
         {
-            for (int i = 0; i < str.Length; ++i)
+            lock (locker)
             {
-                if (!(str[i] >= 48 && str[i] <= 57)
-                    && !(str[i] >= 65 && str[i] <= 70)
-                    && !(str[i] >= 97 && str[i] <= 102)
-                    && str[i] != 32)
-                    return false;
+                var result = BitHelper.FirstHexString(elm.Send(0x04, "X2"));
+
+                return result != null && result.Any() && result.First() == (byte)0x44;
             }
-
-            return true;
-        }
-
-        private byte[] HexToBytes(string str)
-        {
-            str = str.Replace(" ", string.Empty);
-
-            hc.Logger.LogIfDebug(this, string.Concat("Begin converting to HEX: ", str));
-
-            var ret = new byte[str.Length / 2];
-
-            for (int i = 0; i < str.Length; i += 2)
-            {
-                ret[i / 2] = Convert.ToByte(str.Substring(i, 2), 16);
-            }
-
-            hc.Logger.LogIfDebug(this, string.Concat("Resulting bytes: ", string.Join(", ", ret)));
-
-            return ret;
         }
 
         public void Dispose()

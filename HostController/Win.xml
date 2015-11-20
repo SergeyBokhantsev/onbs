@@ -114,5 +114,9 @@
     <add key="TravelServiceGPSFilterDeadZoneMeters" value="1" />
 
     <add key="WeatherCityId" value="33345"/>
+
+    <!-- OBD -->
+    <add key="OBD_DTC_DescriptionFiles" value="dtc/mikas103.txt; dtc/mikas113.txt; dtc/mikas120.txt; dtc/mikas76.txt" />
+    
   </appSettings>
 </configuration>

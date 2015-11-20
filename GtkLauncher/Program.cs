@@ -231,28 +231,17 @@ namespace GtkLauncher
 		{
 			var page = new EmptyPageModel ("OBD_DTCPage");
 
-			int i = 0;
+			page.SetProperty("codes", string.Join("\r\n", new string[] 
+				{ "P0480: Неисправность цепи управления реле вентилятора № 1", 
+					"P1612: Ошибка сброса контроллера",
+					"P0105: ",
+					"P1530: ",
+					"P0304: Пропуски воспламенения в цилиндре 4",
+					"P0116: Выход сигнала датчика температуры охлаждающей жидкости за допустимый диапазон"
+				}));
 
-			page.SetProperty("codes", string.Join("\r\n", new string[] { "U00001", "U00002", "U00003" }));
-
-			var timer = new Timer (new TimerCallback (o => 
-			{
-
-				if (i == 0)
-				{
-					page.SetProperty("codes", string.Join("\r\n", new string[] { "U00001", "U00002", "U00003" }));
-						i++;
-				}
-					else
-					{
-						page.SetProperty("codes", null);
-						i = 0;
-					}
-
-			}), 
-				null, 1000, 1000);
-
-			page.SetProperty ("_timer", timer);
+			page.SetProperty (ModelNames.ButtonF8Label, "Clear codes");
+			page.SetProperty (ModelNames.ButtonCancelLabel, "Back");
 
 			return page;
 		}

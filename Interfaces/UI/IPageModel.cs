@@ -65,5 +65,22 @@ namespace Interfaces.UI
 		{
 			return string.Concat(buttonName, "_label");
 		}
+
+        public static KeyValuePair<string, string>[] GetButtonAndLabelNames()
+        {
+            return new KeyValuePair<string, string>[] 
+            { 
+                new KeyValuePair<string, string>(ButtonAccept, ButtonAcceptLabel),
+                new KeyValuePair<string, string>(ButtonCancel, ButtonCancelLabel),
+                new KeyValuePair<string, string>(ButtonF1, ButtonF1Label),
+                new KeyValuePair<string, string>(ButtonF2, ButtonF2Label),
+                new KeyValuePair<string, string>(ButtonF3, ButtonF3Label),
+                new KeyValuePair<string, string>(ButtonF4, ButtonF4Label),
+                new KeyValuePair<string, string>(ButtonF5, ButtonF5Label),
+                new KeyValuePair<string, string>(ButtonF6, ButtonF6Label),
+                new KeyValuePair<string, string>(ButtonF7, ButtonF7Label),
+                new KeyValuePair<string, string>(ButtonF8, ButtonF8Label)
+            };
+        }
     }
 }

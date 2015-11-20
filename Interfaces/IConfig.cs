@@ -98,5 +98,7 @@ namespace Interfaces
         public static readonly string InetKeeperCheckFolder = "InetKeeperCheckFolder";
 
         public static readonly string WeatherCityId = "WeatherCityId";
+
+        public static readonly string OBD_DTC_DescriptionFiles = "OBD_DTC_DescriptionFiles";
     }
 }

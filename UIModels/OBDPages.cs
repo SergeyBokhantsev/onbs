@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Interfaces.UI;
 using System.Diagnostics;
 using UIController;
+using System.IO;
+using UIModels.Dialogs;
 
 namespace UIModels
 {
@@ -225,13 +227,63 @@ namespace UIModels
 
     public class OBD_DTCPage : CommonPageBase
     {
+        private readonly OBDProcessor obd;
+
         public OBD_DTCPage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)
         {
             var elm327 = hc.GetController<IElm327Controller>();
-            var obd = new OBDProcessor(elm327);
+            obd = new OBDProcessor(elm327);
 
-            ThreadPool.QueueUserWorkItem((o) => SetProperty("codes", string.Join("\r\n", obd.GetTroubleCodes())));
+            Refresh();
+        }
+
+        private void Refresh()
+        {
+            ThreadPool.QueueUserWorkItem(o =>
+            {
+                try
+                {
+                    var dtcFiles = hc.Config.GetString(ConfigNames.OBD_DTC_DescriptionFiles).Split(';').Select(f => Path.Combine(hc.Config.DataFolder, f.Trim())).ToArray();
+                    var dtcDescriptor = new DTCDescriptor(dtcFiles);
+
+                    var tcodes = obd.GetTroubleCodes().Select(tc => string.Format("{0}: {1}", tc, dtcDescriptor.GetDescription(tc)));
+
+                    SetProperty("codes", string.Join("\r\n", tcodes));
+                }
+                catch (Exception ex)
+                {
+                    hc.Logger.Log(this, ex);
+                }
+            }, null);
+        }
+
+        protected async override void DoAction(string name, PageModelActionEventArgs actionArgs)
+        {
+            switch (name)
+            {
+                case "Clear":
+                    var confirmation = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Reseting DTC", "Please confirm reseting trouble codes", "Reset", "Cancel", hc, 10000, DialogResults.No));
+                    if (confirmation == DialogResults.Yes)
+                    {
+                        hc.Logger.Log(this, "Performing DTC resetting...", LogLevels.Warning);
+                        var resetResult = obd.ResetTroubleCodes();
+                        hc.Logger.Log(this, string.Format("DTC resetting result: {0}", resetResult ? "SUCCESS" : "FAIL"), LogLevels.Warning);
+                    }
+                    else
+                    {
+                        hc.Logger.Log(this, "DTC resetting was cancelled by user", LogLevels.Warning);
+                    }
+                    break;
+
+                case "Refresh":
+                    Refresh();
+                    break;
+
+                default:
+                    base.DoAction(name, actionArgs);
+                    break;
+            }
         }
     }
 }
