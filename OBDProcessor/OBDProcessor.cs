@@ -60,38 +60,18 @@ namespace OBD
 
         public IEnumerable<string> GetTroubleCodes()
         {
-            var dtcBytes = elm.GetTroubleCodes();
+            var SAEFrame = elm.GetTroubleCodes();
 
-            if (dtcBytes != null && dtcBytes.Length > 2)
+            var codeClasses = new Dictionary<string , string> { {"0", "P0"}, {"1", "P1"}, {"2", "P2"}, {"3", "P3"}, {"4", "C0"}, {"5", "C1"}, {"6", "C2"}, {"7", "C3"}, {"8", "B0"}, {"9", "B1"}, {"A", "B2"}, {"B", "B3"}, {"C", "U0"}, {"D", "U1"}, {"E", "U2"}, {"F", "U3"} };
+
+            if (SAEFrame != null && SAEFrame.Length == 12)
             {
-                int i = 1;
-                while (dtcBytes.Length > i + 1)
+                for(var i = 0; i< SAEFrame.Length; i+=4)
                 {
-                    var A = dtcBytes[i];
-                    var B = dtcBytes[i + 1];
+                    if (SAEFrame[i] == '0' && SAEFrame[i + 1] == '0' && SAEFrame[i + 2] == '0' && SAEFrame[i + 3] == '0')
+                        continue;
 
-                    string C1 = null;
-
-                    switch (A & 192)
-                    {
-                        case 0: C1 = "P";
-                            break;
-                        case 1: C1 = "C";
-                            break;
-                        case 2: C1 = "B";
-                            break;
-                        case 3: C1 = "U";
-                            break;
-                    }
-
-                    var C2 = A & 48;
-                    var C3 = A & 15;
-                    var C4 = B & 240;
-                    var C5 = B & 15;
-
-                    yield return string.Concat(C1, C2, C3, C4, C5); 
-
-                    i += 2;
+                    yield return string.Concat(codeClasses[SAEFrame[i].ToString()], SAEFrame.Substring(i + 1, 3));
                 }
             }
             else

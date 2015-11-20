@@ -16,9 +16,8 @@ namespace Tests.TravelClientTest
         public void CreateNewGeneralLogTest()
         {
             //INIT
-            var logger = new Mocks.Logger();
             var serviceUri = new Uri(serviceUrl);
-            var logClient = new TravelsClient.GeneralLoggerClient(serviceUri, userKey, vehicleId, logger);
+            var logClient = new TravelsClient.GeneralLoggerClient(serviceUri, userKey, vehicleId);
 
             //ACT
             var logId = logClient.CreateNewLog("test initial body");
@@ -31,17 +30,14 @@ namespace Tests.TravelClientTest
         public void AppendGeneralLogTest()
         {
             //INIT
-            var logger = new Mocks.Logger();
             var serviceUri = new Uri(serviceUrl);
-            var logClient = new TravelsClient.GeneralLoggerClient(serviceUri, userKey, vehicleId, logger);
+            var logClient = new TravelsClient.GeneralLoggerClient(serviceUri, userKey, vehicleId);
 
             //ACT
             var logId = logClient.CreateNewLog("test initial body");
             Assert.IsTrue(logId != -1);
 
-            var appendResult = logClient.AppendLog(logId, "appended message");
-
-            Assert.IsTrue(appendResult);
+            logClient.AppendLog(logId, "appended message");
         }
     }
 }

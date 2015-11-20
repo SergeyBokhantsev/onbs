@@ -33,7 +33,7 @@ namespace HostController
 
         public void Log(object caller, string message, LogLevels level)
         {
-            if (level <= this.level)
+            if (level <= this.level || caller is Elm327.Client)
             {
                 string className = caller != null ? caller.GetType().ToString() : "NULL";
 

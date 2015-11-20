@@ -98,7 +98,7 @@ namespace Elm327Controller
             return result;
         }
 
-        public byte[] GetTroubleCodes()
+        public string GetTroubleCodes()
         {
             byte[] result = null;
 
@@ -110,7 +110,7 @@ namespace Elm327Controller
                 }
             }
 
-            return result;
+            return "013300000000"; //result;
         }
 
         private byte[] FirstHexString(string[] response)
