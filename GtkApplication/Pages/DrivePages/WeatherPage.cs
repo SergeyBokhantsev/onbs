@@ -29,17 +29,9 @@ namespace GtkApplication
 			this.Build();
 
 			var binder = new ModelBinder (model, logger);
-			commonBindings = new CommonBindings (binder, style, logger,
-				eventbox_drive,
-				eventbox_nav,
-				eventbox_cam,
-				eventbox_weather,
-				eventbox_traffic,
-				eventbox_options,
-				label_arduino_status,
-				label_gps_status,
-				label_inet_status,
-				label_time);
+
+			CommonBindings.CreateStatusbar (binder, hbox1, style);
+			CommonBindings.CreateTaskbarButtons (binder, hbox5, style);
 
 //			// FACT
 //			style.Window.Apply (eventbox_weather_now_caption);

@@ -36,7 +36,7 @@
       <F7 action="Bright-" behavior="PressOrHold"/>
     </page>
     <page name="Weather" model="WeatherPage" default_view="WeatherPage">
-      
+      <Cancel name="Drive1" caption="Back"/>
     </page>
     <page name="Traffic" model="TrafficPage" default_view="TrafficPage">
       <Cancel name="Drive1" caption="Back"/>
