@@ -13,7 +13,6 @@ namespace GtkApplication
 	[System.ComponentModel.ToolboxItem (true)]
 	public partial class TrafficPage : Gtk.Bin
 	{
-		private readonly CommonBindings commonBindings;
         private Gdk.PixbufAnimation daisy;
 
 		public TrafficPage (IPageModel model, Style style, ILogger logger)

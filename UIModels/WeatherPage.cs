@@ -16,8 +16,6 @@ namespace UIModels
 {
     public class WeatherPage : CommonPageBase
     {
-        private readonly string iconPath;
-
         private readonly WeatherProvider weather;
         private bool weatherProviderBusy;
 

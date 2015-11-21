@@ -22,10 +22,6 @@ namespace GtkApplication
 		private const string m_HEADING = "<span {0} {1} size='20000'>{2}</span>";
 		private const string m_AIR_TEMP = "<span {0} {1} size='14000'>{2}</span>";
 
-
-
-		private readonly CommonBindings commonBindings;
-
 		public DrivePage (IPageModel model, Style style, ILogger logger)
 		{
 			this.Build();

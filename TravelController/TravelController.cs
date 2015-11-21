@@ -181,7 +181,7 @@ namespace TravelController
             requestCustomPoint = 4;
         }
 
-        private void Operate(IHostTimer timer)
+        private async void Operate(IHostTimer timer)
         {
             if (disposed)
             {
@@ -227,7 +227,7 @@ namespace TravelController
 
                     case States.Ready:
                         timer.Span = exportRateMs;
-                        ExportPoints();
+                        await ExportPoints();
                         break;
 
                     default:
