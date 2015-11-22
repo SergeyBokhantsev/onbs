@@ -37,11 +37,11 @@ namespace HostController
             {
                 string className = caller != null ? caller.GetType().ToString() : "NULL";
 
-                Add(string.Concat(DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff"), " | ", level, " | ", className, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message, Environment.NewLine));
+                AddLine(string.Concat(DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff"), " | ", level, " | ", className, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message, Environment.NewLine));
             }
         }
 
-        private void Add(string p)
+        private void AddLine(string p)
         {
             lock (buffer)
             {
