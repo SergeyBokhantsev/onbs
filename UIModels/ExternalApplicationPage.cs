@@ -13,7 +13,7 @@ namespace UIModels
 {
     public abstract class ExternalApplicationPage : ModelBase
     {
-        protected IProcessRunner Runner
+        private IProcessRunner Runner
         {
             get;
             set;

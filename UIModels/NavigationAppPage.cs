@@ -18,6 +18,7 @@ namespace UIModels
             : base(viewName, hc, pageDescriptor, CreateProcessRunner(hc))
         {
             automation = hc.GetController<IAutomationController>();
+            Run();
         }
 
         private static IProcessRunner CreateProcessRunner(IHostController hc)
