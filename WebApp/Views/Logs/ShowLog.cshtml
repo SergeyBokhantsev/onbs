@@ -1,0 +1,26 @@
+﻿@model WebApp.Models.LogEntry
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ShowLog</title>
+</head>
+<body>
+    <div>
+        @if (@Model != null)
+        {            
+              @Html.Raw("<pre>" + Html.Encode(@Model.Message) + "</pre>");
+        }
+        else
+        {
+        <h1>Ошибка, лог не найден</h1>
+        }
+        </div>
+</body>
+</html>

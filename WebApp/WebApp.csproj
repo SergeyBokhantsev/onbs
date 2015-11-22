@@ -133,6 +133,7 @@
   <ItemGroup>
     <Compile Include="Controllers\GeneralLogController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LogsController.cs" />
     <Compile Include="Controllers\ONBSApiControllerBase.cs" />
     <Compile Include="Controllers\TravelPointsController.cs" />
     <Compile Include="Controllers\TravelsController.cs" />
@@ -180,6 +181,8 @@
     <Content Include="Views\Home\CurrentTravel.cshtml" />
     <Content Include="Views\Home\EmptyTravel.cshtml" />
     <Content Include="Views\Home\TravelsList.cshtml" />
+    <Content Include="Views\Logs\List.cshtml" />
+    <Content Include="Views\Logs\ShowLog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">

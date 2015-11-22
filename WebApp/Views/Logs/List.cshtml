@@ -1,0 +1,26 @@
+﻿@model WebApp.Models.LinkItemsBag
+
+@{
+    ViewBag.Title = "LogsList";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>LogsList</title>
+</head>
+<body>
+    <div>
+        <h1>Крайние 20 логов:</h1>
+        <ul>
+            @foreach (WebApp.Models.LinkItem item in @Model.Items)
+            {
+                <li>@Html.ActionLink(item.Caption, item.Action, item.Args)</li>
+            }
+        </ul>
+    </div>
+</body>
+</html>
+
