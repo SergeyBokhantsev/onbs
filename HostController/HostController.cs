@@ -32,7 +32,7 @@ namespace HostController
         private HostSynchronizationContext syncContext;
         private HostTimersController timersController;
 
-        private OnlineLogger onlineLogger;
+        private TravelsClient.OnlineLogger onlineLogger;
 
         public IConfig Config
         {
@@ -119,7 +119,7 @@ namespace HostController
             if (!Directory.Exists(logFolder))
                 Directory.CreateDirectory(logFolder);
 
-            onlineLogger = new OnlineLogger(Config);
+            onlineLogger = new TravelsClient.OnlineLogger(Config);
 
             Logger = new ConsoleLoggerWrapper(new ILogger[] { new GeneralLogger(Config), onlineLogger});
             Logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
@@ -289,7 +289,7 @@ namespace HostController
 
             Logger.Flush();
 
-            onlineLogger.Upload();
+            onlineLogger.Upload(true);
 
             switch (mode)
             {

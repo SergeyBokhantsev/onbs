@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Client.cs" />
     <Compile Include="GeneralLoggerClient.cs" />
+    <Compile Include="OnlineLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Travel.cs" />
     <Compile Include="TravelPoint.cs" />

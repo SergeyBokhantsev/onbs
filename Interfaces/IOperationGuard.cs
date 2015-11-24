@@ -16,6 +16,15 @@ namespace Interfaces
     {
         private int busy;
         private bool disposed;
+        private ManualResetEventSlim waitHandler = new ManualResetEventSlim(true);
+
+        public WaitHandle WaitHandle
+        {
+            get
+            {
+                return waitHandler.WaitHandle;
+            }
+        }
 
         public bool ExecuteIfFree(Action action, Action<Exception> exceptionHandler = null)
         {
@@ -23,9 +32,10 @@ namespace Interfaces
             {
                 try
                 {
+                    waitHandler.Reset();
                     action();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     if (exceptionHandler != null)
                         exceptionHandler(ex);
@@ -33,6 +43,7 @@ namespace Interfaces
                 finally
                 {
                     Interlocked.Exchange(ref busy, 0);
+                    waitHandler.Set();
                 }
 
                 return true;

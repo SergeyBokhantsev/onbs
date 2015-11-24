@@ -7,7 +7,7 @@ using Interfaces;
 using TravelsClient;
 using System.Threading;
 
-namespace HostController
+namespace TravelsClient
 {
     public class OnlineLogger : ILogger
     {
@@ -33,7 +33,7 @@ namespace HostController
 
         public void Log(object caller, string message, LogLevels level)
         {
-            if (level <= this.level || caller is Elm327.Client)
+            if (level <= this.level)
             {
                 string className = caller != null ? caller.GetType().ToString() : "NULL";
 
@@ -55,8 +55,13 @@ namespace HostController
             Flush();
         }
 
-        public void Upload()
+        public void Upload(bool blocking)
         {
+            if (blocking)
+            {
+                uploadLocker.WaitHandle.WaitOne(10000);
+            }
+
             uploadLocker.ExecuteIfFree(() =>
             {
                 if (!config.IsInternetConnected)
@@ -102,7 +107,7 @@ namespace HostController
 
         public void Flush()
         {
-            ThreadPool.QueueUserWorkItem(o => Upload());
+            ThreadPool.QueueUserWorkItem(o => Upload(false));
         }
     }
 }

@@ -44,11 +44,16 @@ namespace Tests
                 return BitHelper.AllHexStrings(elmRaw).Select(l => l.Trim().Replace(" ", string.Empty));
 
             }
+
+            public bool ResetTroubleCodes()
+            {
+                throw new NotImplementedException();
+            }
         }
 
         [TestMethod]
         [DeploymentItem("Data", "Data")]
-        public void TestMethod1()
+        public void GetTroubleCodes()
         {
             var processor = new OBD.OBDProcessor(new MockElm327());
 
