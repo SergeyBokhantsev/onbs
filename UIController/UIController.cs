@@ -113,7 +113,7 @@ namespace UIController
             ShowPage(map.DefaultPageName, map.DefaultPageViewName);
         }
 
-        public void ShowPage(string descriptorName, string viewName)
+        public IPageModel ShowPage(string descriptorName, string viewName)
         {
             AssertThread();
             AssertHost();
@@ -129,6 +129,8 @@ namespace UIController
             uiHost.ShowPage(current);
 
             ProcessDialogsQueue();
+
+            return model;
         }
 
         public void Shutdown()

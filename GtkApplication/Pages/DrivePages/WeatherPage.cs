@@ -12,8 +12,6 @@ namespace GtkApplication
 	[System.ComponentModel.ToolboxItem (true)]
 	public partial class WeatherPage : Gtk.Bin
 	{
-		private readonly CommonBindings commonBindings;
-
 		private const string m_WEATHER_CONDITION_LARGE = "<span {0} {1} size='10000'>{2}</span>";
 		private const string m_TEMP_LARGE = "<span {0} {1} size='18000'>{2} C°</span>";
 		private const string m_TEMP_MEDIUM = "<span {0} {1} size='13000'>{2} C°</span>";

@@ -9,7 +9,7 @@ namespace Interfaces
 {
     public interface IUIController : IController
     {
-        void ShowPage(string descriptorName, string viewName);
+        IPageModel ShowPage(string descriptorName, string viewName);
         void ShowDefaultPage();
         void ShowDialog(IDialogModel model);
         Task<DialogResults> ShowDialogAsync(IDialogModel model);

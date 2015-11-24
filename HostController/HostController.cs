@@ -253,43 +253,60 @@ namespace HostController
 
         public void Shutdown(HostControllerShutdownModes mode)
         {
+            var shutdownModel = uiController.ShowPage("ShutdownProgress", null) as UIModels.ShutdownProgressModel;
+
+            shutdownModel.AddLine(string.Format("Begin shutdown in {0} mode", mode));
             Logger.Log(this, string.Format("Begin shutdown in {0} mode", mode), LogLevels.Info);
 
+            shutdownModel.AddLine("Disposing ELM327 Controller");
             elm327Controller.Dispose();
 
+            shutdownModel.AddLine("Disposing Travel Controller");
             travelController.Dispose();
 
+            shutdownModel.AddLine("Disposing InetKeeper");
 			netKeeper.Dispose();
 
+            shutdownModel.AddLine("Stopping GPSD service");
 			gpsd.Stop();
 
+            shutdownModel.AddLine("Disconnecting time checking events");
             DisconnectSystemTimeChecking();
 
+            shutdownModel.AddLine("Disabling GPS Controller");
             gpsController.Shutdown();
 
-            uiController.Shutdown();
-
+            shutdownModel.AddLine("Stopping timers");
             StopTimers();
 
+            shutdownModel.AddLine("Stopping SyncContext");
             syncContext.Stop();
 
             if (mode != HostControllerShutdownModes.UnhandledException)
             {
                 try
                 {
+                    shutdownModel.AddLine("Saving Configuration");
                     Config.Save();
                 }
                 catch (Exception ex)
                 {
+                    shutdownModel.AddLine(ex.Message);
                     Logger.Log(this, ex);
                 }
             }
 
             Logger.Log(this, "--- Logging finished ---", LogLevels.Info);
 
+            shutdownModel.AddLine("Flushing loggers");
             Logger.Flush();
 
+            shutdownModel.AddLine("Flushing online log");
             onlineLogger.Upload(true);
+
+            shutdownModel.AddLine("Stopping UI...");
+
+            uiController.Shutdown();
 
             switch (mode)
             {

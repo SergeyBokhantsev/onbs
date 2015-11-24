@@ -37,6 +37,8 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -106,6 +108,8 @@
     <Compile Include="gtk-gui\GtkApplication.ErrorPage.cs" />
     <Compile Include="Pages\DrivePages\OBD_DTCPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.OBD_DTCPage.cs" />
+    <Compile Include="Pages\MultilineView.cs" />
+    <Compile Include="gtk-gui\GtkApplication.MultilineView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">

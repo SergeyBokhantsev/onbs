@@ -62,6 +62,12 @@ namespace GtkLauncher
 
 		#endregion
 
+		public void RaisePropertyChangedEvent(string name)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(name);
+		}
+
 		#region IDisposable implementation
 
 		public void Dispose()

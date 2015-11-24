@@ -14,7 +14,7 @@ namespace GtkLauncher
 			{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-				app.ShowPage(GetOBD_DTCPage());
+				app.ShowPage(GetMultilineView());
 
 				app.Run(false);
 			}
@@ -313,6 +313,30 @@ namespace GtkLauncher
 				            null, 500, 100);
 			
 			page.SetProperty ("_timer", timer);
+
+			return page;
+		}
+
+		private static IPageModel GetMultilineView()
+		{
+			var page = new EmptyPageModel ("MultilineView");
+
+			var logList = new System.Collections.Concurrent.ConcurrentQueue<string> ();
+
+			page.SetProperty (ModelNames.PageTitle, "shutdown...");
+
+			logList.Enqueue("Starting shutdown...");
+
+			page.SetProperty ("lines_queue", logList);
+
+			var timer = new Timer (new TimerCallback (o => 
+				{
+					logList.Enqueue(Guid.NewGuid().ToString());
+					page.RaisePropertyChangedEvent("lines_queue");
+				}
+			), null, 200, 200);
+
+			page.SetProperty ("timer", timer);
 
 			return page;
 		}

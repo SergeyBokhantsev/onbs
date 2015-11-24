@@ -202,7 +202,7 @@ namespace UIModels
             }
         }
 
-        private void OnPropertyChanged(string name)
+        protected void OnPropertyChanged(string name)
         {
             var handler = PropertyChanged;
             if (handler != null)

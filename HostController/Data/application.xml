@@ -103,5 +103,7 @@
       <F5 action="DistanceToTarget"/>
       <F6 action="NextTurn"/>
     </page>
+    <page name="ShutdownProgress" model="ShutdownProgressModel" default_view="MultilineView">
+    </page>
   </pages>
 </app>
