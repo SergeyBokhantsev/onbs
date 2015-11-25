@@ -3,7 +3,8 @@ using System;
 using System.IO.Ports;
 using System.Threading;
 using System.Diagnostics;
-namespace HostController
+
+namespace HostController.Lin
 {
 	public class SerialArduPort : IPort
 	{

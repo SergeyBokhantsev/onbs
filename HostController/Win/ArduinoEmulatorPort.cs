@@ -8,7 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HostController
+namespace HostController.Win
 {
     public class ArduinoEmulatorPort : IPort
     {

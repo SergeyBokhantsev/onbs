@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Interfaces;
 using System.IO;
 
-namespace HostController
+namespace HostController.Lin
 {
     internal class InternetConnectionKeeper : IDisposable
     {

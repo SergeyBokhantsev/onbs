@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
+    public enum Environments { Win, RPi };
+
     public interface ISessionConfig
     {
+        Environments Environment { get; }
         bool IsSystemTimeValid { get; }
         bool IsInternetConnected { get; }
         string DataFolder { get; }
@@ -25,6 +28,8 @@ namespace Interfaces
 
     public static class ConfigNames
     {
+        public static readonly string Placeholder_Elm327Port = "ELM327PORT";
+
         public static readonly string UIHostAssemblyName = "UIHostAssemblyName";
         public static readonly string UIHostClass = "UIHostClass";
         public static readonly string UIFullscreen = "UIFullscreen";
@@ -36,8 +41,6 @@ namespace Interfaces
         public static readonly string GPSDEnabled = "GPSDEnabled";
 
         public static readonly string Elm327Port = "Elm327Port";
-
-        public static readonly string TestEnv = "TestEnv";
 
         public static readonly string ArduinoPort = "ArduinoPort";
         public static readonly string ArduinoPortEnabled = "ArduinoPortEnabled";

@@ -32,6 +32,8 @@ namespace UIModels
             this.geocoder = new GeocodingProvider(hc.Logger);
 
             gpsController.GPRMCReseived += GPRMCReseived;
+
+            hc.Logger.Log(this, hc.Config.GetString(ConfigNames.Elm327Port), LogLevels.Fatal);
         }
 
         protected override void OnSecondaryTimer(IHostTimer timer)

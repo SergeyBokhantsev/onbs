@@ -10,7 +10,7 @@ using SerialTransportProtocol;
 using System.Threading;
 using Interfaces.Input;
 
-namespace HostController
+namespace HostController.Win
 {
     public class MockArduPort : IPort
     {

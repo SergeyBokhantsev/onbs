@@ -10,6 +10,8 @@ using System.Net;
 using System.Threading;
 using Interfaces.UI;
 using UIController;
+using HostController.Lin;
+using HostController.Win;
 
 namespace HostController
 {
@@ -63,14 +65,29 @@ namespace HostController
             }
         }
 
+        private Environments ResolveEnvironment()
+        {
+            var os = Environment.OSVersion;
+            var pid = os.Platform;
+            switch (pid)
+            {
+                case PlatformID.Win32NT:
+                case PlatformID.Win32S:
+                case PlatformID.Win32Windows:
+                case PlatformID.WinCE:
+                    return Environments.Win;
+
+                case PlatformID.Unix:
+                    return Environments.RPi;
+
+                default:
+                    throw new Exception("Unknown environment");
+            }
+        }
+
         public void Run()
         {
-            config = new Configuration();
-
-            config.IsSystemTimeValid = config.GetBool(ConfigNames.SystemTimeValidByDefault);
-
-			if (DateTime.Now.Year >= 2015)
-				config.IsSystemTimeValid = true;
+            CreateConfig();
 
             CreateLogger();
 
@@ -103,6 +120,33 @@ namespace HostController
                 throw new NotImplementedException(typeof(T).ToString());
         }
 
+        private void CreateConfig()
+        {
+            var env = ResolveEnvironment();
+            ConfigValuesResolver configResolver = null;
+
+            switch (env)
+            {
+                case Environments.Win:
+                    configResolver = new Win.MockConfigResolver();
+                    break;
+
+                case Environments.RPi:
+                    configResolver = new Lin.RPiConfigResolver(this);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
+
+            config = new Configuration(configResolver);
+            config.Environment = env;
+            config.IsSystemTimeValid = config.GetBool(ConfigNames.SystemTimeValidByDefault);
+
+            if (DateTime.Now.Year >= 2015)
+                config.IsSystemTimeValid = true;
+        }
+
         private void CreateLogger()
         {
             var workingDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -123,6 +167,7 @@ namespace HostController
 
             Logger = new ConsoleLoggerWrapper(new ILogger[] { new GeneralLogger(Config), onlineLogger});
             Logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
+            Logger.Log(this, string.Format("Environment: {0}", Config.Environment), LogLevels.Info);
 
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
                 {
@@ -173,8 +218,7 @@ namespace HostController
 
             elm327Controller = new Elm327Controller.Elm327Controller(this);
 
-            var useFakeArduPort = Config.GetBool(ConfigNames.TestEnv);
-            var arduPort = useFakeArduPort ? new ArduinoEmulatorPort() as IPort : new SerialArduPort(Logger, Config) as IPort;
+            var arduPort = config.Environment == Environments.Win ? new ArduinoEmulatorPort() as IPort : new SerialArduPort(Logger, Config) as IPort;
             arduController = new ArduinoController.ArduinoController(arduPort, this);
             arduController.RegisterFrameAcceptor(inputController);
 
@@ -200,7 +244,7 @@ namespace HostController
             uiController.DialogPending += uiController_DialogPending;
             uiController.ShowDefaultPage();
 
-            if (!config.GetBool(ConfigNames.TestEnv))
+            if (config.Environment == Environments.RPi)
                 gpsCtrl.GPRMCReseived += CheckSystemTimeFromGPS;
 
             StartTimers();
@@ -339,6 +383,9 @@ namespace HostController
 
         public IProcessRunner Create(string exePath, string args, bool waitForUI)
         {
+            if (Logger == null)
+                throw new InvalidOperationException("Unable to create ProcessRunner before logger will be fully initialized");
+
             return new ProcessRunner.ProcessRunnerImpl(exePath, args, waitForUI, Logger);
         }
 

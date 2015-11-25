@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Interfaces;
 
-namespace HostController
+namespace HostController.Lin
 {
     internal class SystemTimeCorrector
     {
