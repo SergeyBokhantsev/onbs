@@ -30,6 +30,8 @@ namespace UIModels
             {
                 Runner.Exited += RunnerExited;
 
+                this.Disposing += (s, e) => Runner.Exit();
+
                 SetProperty("label_launch_info", string.Format("Launching {0}...", Runner.Name));
                 SetProperty("is_error", "0");
             }

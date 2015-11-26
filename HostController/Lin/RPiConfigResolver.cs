@@ -19,7 +19,10 @@ namespace HostController.Lin
 
             resolvers = new Dictionary<string, Func<string>>
             {
-                { ConfigNames.Placeholder_Elm327Port, GetElm327Port }
+                { ConfigNames.Placeholder_Elm327Port, GetElm327Port },
+                { ConfigNames.Placeholder_UIFullscreen, () => "True" },
+                { ConfigNames.Placeholder_Vehicle, () => "AH2392II" },
+                { "ttyUSBEnum", () => string.Join(Environment.NewLine, NixHelpers.DmesgFinder.EnumerateTTYUSBDevices(processRunnerFactory)) }
             };
         }
 
@@ -33,22 +36,8 @@ namespace HostController.Lin
 
         private string GetElm327Port()
         {
-            try
-            {
-                var pr = processRunnerFactory.Create("sudo", "dmesg", false);
-
-                pr.Run();
-
-                pr.WaitForExit(5000);
-
-                var output = pr.GetFromStandardOutput();
-
-                return output;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(string.Format("Exception in RPiConfigResolver.GetElm327Port resolver: {0}", ex.Message), ex);
-            }
+            const string ElmDeviceName = "COM_FTDI Device";
+            return NixHelpers.DmesgFinder.FindTTYUSBPort(ElmDeviceName, processRunnerFactory);
         }
     }
 }

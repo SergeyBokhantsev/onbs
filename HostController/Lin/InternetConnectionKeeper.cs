@@ -38,7 +38,7 @@ namespace HostController.Lin
 
         public void StartChecking()
         {
-            if (config.GetBool(ConfigNames.InetKeeperEnabled))
+            if (config.GetBool(ConfigNames.InetKeeperEnabled) && config.Environment == Environments.RPi)
             {
                 var thread = new Thread(CheckerThread);
                 thread.Name = "Inet Keeper";

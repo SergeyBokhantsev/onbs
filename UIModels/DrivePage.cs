@@ -33,7 +33,7 @@ namespace UIModels
 
             gpsController.GPRMCReseived += GPRMCReseived;
 
-            hc.Logger.Log(this, hc.Config.GetString(ConfigNames.Elm327Port), LogLevels.Fatal);
+            hc.Logger.Log(this, hc.Config.GetString("{_ttyUSBEnum_}"), LogLevels.Fatal);
         }
 
         protected override void OnSecondaryTimer(IHostTimer timer)

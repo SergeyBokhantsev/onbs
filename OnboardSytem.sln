@@ -71,6 +71,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elm327Controller", "Elm327C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OBD", "OBDProcessor\OBD.csproj", "{EAE855E8-89E1-4F2F-8947-39187B7C9F51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NixHelpers", "NixHelpers\NixHelpers.csproj", "{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -355,6 +357,16 @@ Global
 		{EAE855E8-89E1-4F2F-8947-39187B7C9F51}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{EAE855E8-89E1-4F2F-8947-39187B7C9F51}.Release|x86.ActiveCfg = Release|Any CPU
 		{EAE855E8-89E1-4F2F-8947-39187B7C9F51}.Release|x86.Build.0 = Release|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -379,6 +391,7 @@ Global
 		{03E3079E-F438-4C00-8C22-3B13AFC3C644} = {74505182-02D1-42B6-9FCD-0B935F35E348}
 		{ED21248D-2AF6-4B71-90C8-2CE86A5603E2} = {08194974-F3C8-4166-97C8-6B5DF021468C}
 		{EAE855E8-89E1-4F2F-8947-39187B7C9F51} = {74505182-02D1-42B6-9FCD-0B935F35E348}
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401} = {74505182-02D1-42B6-9FCD-0B935F35E348}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = HostController\HostController.csproj

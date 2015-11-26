@@ -64,6 +64,7 @@
     <Compile Include="TestProcessRunner.cs" />
     <Compile Include="TravelClientTest\TestGeneralLogging.cs" />
     <Compile Include="OBDProcessorTest.cs" />
+    <Compile Include="NixHelpersTest.cs" />
     <Compile Include="YandexProvidersTest.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +103,10 @@
     <ProjectReference Include="..\NavitConfigGenerator\NavitConfigGenerator.csproj">
       <Project>{34252c77-00d2-4e38-b432-274b6d6a0032}</Project>
       <Name>NavitConfigGenerator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NixHelpers\NixHelpers.csproj">
+      <Project>{a822c3f5-f40f-4ded-b568-caeb1cf6a401}</Project>
+      <Name>NixHelpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\OBDProcessor\OBD.csproj">
       <Project>{eae855e8-89e1-4f2f-8947-39187b7c9f51}</Project>

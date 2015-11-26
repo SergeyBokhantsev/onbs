@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elm327Controller", "Elm327C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OBD", "OBDProcessor\OBD.csproj", "{EAE855E8-89E1-4F2F-8947-39187B7C9F51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NixHelpers", "NixHelpers\NixHelpers.csproj", "{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -130,6 +132,12 @@ Global
 		{EAE855E8-89E1-4F2F-8947-39187B7C9F51}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EAE855E8-89E1-4F2F-8947-39187B7C9F51}.Windows|Any CPU.ActiveCfg = Windows|Any CPU
 		{EAE855E8-89E1-4F2F-8947-39187B7C9F51}.Windows|Any CPU.Build.0 = Windows|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Windows|Any CPU.ActiveCfg = Release|Any CPU
+		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Windows|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

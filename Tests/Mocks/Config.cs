@@ -58,5 +58,10 @@ namespace Tests.Mocks
         {
             get { throw new NotImplementedException(); }
         }
+
+        public Environments Environment
+        {
+            get { return Environments.Win; }
+        }
     }
 }

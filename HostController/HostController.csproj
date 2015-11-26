@@ -129,6 +129,10 @@
       <Project>{AEDAD09E-C7EE-464C-9FA8-E3AEA59A5A12}</Project>
       <Name>LogLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NixHelpers\NixHelpers.csproj">
+      <Project>{a822c3f5-f40f-4ded-b568-caeb1cf6a401}</Project>
+      <Name>NixHelpers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ProcessRunner\ProcessRunner.csproj">
       <Project>{34176ec8-ab7f-4e25-9f04-b6c07eb71cfb}</Project>
       <Name>ProcessRunner</Name>
@@ -269,12 +273,12 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Win.xml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>if $(PlatformName) == x86 copy "$(ProjectDir)Win.xml" "$(ProjectDir)App.config" /Y</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>

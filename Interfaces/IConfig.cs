@@ -29,6 +29,9 @@ namespace Interfaces
     public static class ConfigNames
     {
         public static readonly string Placeholder_Elm327Port = "ELM327PORT";
+        public static readonly string Placeholder_UIFullscreen = "FULLSCREEN";
+        public static readonly string Placeholder_Vehicle = "VEHICLE";
+        
 
         public static readonly string UIHostAssemblyName = "UIHostAssemblyName";
         public static readonly string UIHostClass = "UIHostClass";
