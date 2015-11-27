@@ -164,8 +164,7 @@ namespace HostController
                 Directory.CreateDirectory(logFolder);
 
             onlineLogger = new TravelsClient.OnlineLogger(Config);
-            var onlineLogTimer = CreateTimer(60000, ht => onlineLogger.Upload(false), true, false);
-
+            
             Logger = new ConsoleLoggerWrapper(new ILogger[] { new GeneralLogger(Config), onlineLogger});
             Logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
             Logger.Log(this, string.Format("Environment: {0}", Config.Environment), LogLevels.Info);
@@ -247,6 +246,8 @@ namespace HostController
 
             if (config.Environment == Environments.RPi)
                 gpsCtrl.GPRMCReseived += CheckSystemTimeFromGPS;
+
+			var onlineLogTimer = CreateTimer(60000, ht => onlineLogger.Upload(false), true, false);
 
             StartTimers();
         }
