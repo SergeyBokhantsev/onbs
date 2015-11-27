@@ -50,6 +50,9 @@ namespace Elm327Controller
                 try
                 {
                     var portName = hc.Config.GetString(ConfigNames.Elm327Port);
+
+                    hc.Logger.Log(this, string.Concat("ELM327 port resolved as ", portName), LogLevels.Info);
+
                     elm = new Client(hc.Logger);
                     elm.Run(portName);
 

@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Interfaces;
 using System.Linq;
+using System.IO;
 
 namespace Tests
 {
@@ -33,12 +34,7 @@ namespace Tests
 
             public string GetFromStandardOutput()
             {
-                return "[ 0.000000] console [tty0] enabled" + Environment.NewLine
-                    + "[ 34.210105] usb 2-1.1: GSM modem (1-port) converter now attached to ttyUSB0" + Environment.NewLine
-                    + "[ 34.210198] usb 2-1.1: GSM modem (1-port) converter now attached to ttyUSB1" + Environment.NewLine
-                    + "[ 34.210285] usb 2-1.1: FTDI now attached to ttyUSB2" + Environment.NewLine
-                    + "[ 41.586902] Bluetooth: RFCOMM TTY layer initialized" + Environment.NewLine
-                    + "[ 197.980023] option1 ttyUSB0: option_instat_callback: error -108" + Environment.NewLine;
+                return File.ReadAllText("all.txt");
             }
 
             public bool WaitForExit(int timeoutMilliseconds)
@@ -63,39 +59,32 @@ namespace Tests
     }
 
     [TestClass]
+    [DeploymentItem("Data\\dmesg")]
     public class NixHelpersTest
     {
         [TestMethod]
-        public void EnumerateTTYUSBDevices()
+        public void FindUSBDevice()
         {
             //INIT
             var prf = new MockProcessRunnerFactoryForNixHelpers();
 
             //ACT
-            var ttyUSBDevices = NixHelpers.DmesgFinder.EnumerateTTYUSBDevices(prf).ToArray();
+            var device = NixHelpers.DmesgFinder.FindUSBDevice("0403", "6001", prf);
+            var no_device = NixHelpers.DmesgFinder.FindUSBDevice("99hh", "6001", prf);
 
             //ASSERT
-            Assert.AreEqual(3, ttyUSBDevices.Length);
-            Assert.IsTrue(ttyUSBDevices[0].Contains("ttyUSB0"));
-            Assert.IsTrue(ttyUSBDevices[1].Contains("ttyUSB1"));
-            Assert.IsTrue(ttyUSBDevices[2].Contains("ttyUSB2"));
+            Assert.IsNull(no_device);
+
+            Assert.IsNotNull(device);
+            Assert.AreEqual("/dev/ttyUSB0", device.AttachedTo.First());
         }
 
         [TestMethod]
-        public void FindTTYUSBPort()
+        public void ParseUSBDevices()
         {
-            //INIT
-            var devName1 = "GSM modem (1-port)";
-            var devName2 = "FTDI";
-            var prf = new MockProcessRunnerFactoryForNixHelpers();
+            var i = NixHelpers.USBDevice.Parse(File.ReadAllText("all.txt")).ToArray();
 
-            //ACT
-            var port1 = NixHelpers.DmesgFinder.FindTTYUSBPort(devName1, prf);
-            var port2 = NixHelpers.DmesgFinder.FindTTYUSBPort(devName2, prf);
-
-            //ASSERT
-            Assert.AreEqual("/dev/ttyUSB0", port1);
-            Assert.AreEqual("/dev/ttyUSB2", port2);
+            var t = i;
         }
     }
 }

@@ -9,14 +9,14 @@ namespace NixHelpers
 {
     public static class DmesgFinder
     {
-        public static IEnumerable<string> EnumerateTTYUSBDevices(IProcessRunnerFactory prf)
+        public static IEnumerable<USBDevice> EnumerateUSBDevices(IProcessRunnerFactory prf)
         {
             try
             {
                 if (prf == null)
                     throw new ArgumentNullException("ProcessRunnerFactory is null");
 
-                var pr = prf.Create("sudo", "dmesg | grep -i tty", false);
+                var pr = prf.Create("sudo", "dmesg | grep -i usb", false);
 
                 pr.Run();
 
@@ -24,41 +24,17 @@ namespace NixHelpers
 
                 var output = pr.GetFromStandardOutput();
 
-                return output.Split('\n').Where(l => l.Contains("now attached to ttyUSB")).Select(l => l.Trim());
+                return USBDevice.Parse(output);
             }
             catch (Exception ex)
             {
-                throw new Exception(string.Format("Exception in EnumerateTTYUSBDevices: {0}", ex.Message), ex);
+                throw new Exception(string.Format("Exception in EnumerateUSBDevices: {0}", ex.Message), ex);
             }
         }
 
-        public static string FindTTYUSBPort(string deviceName, IProcessRunnerFactory prf)
+        public static USBDevice FindUSBDevice(string vid, string pid, IProcessRunnerFactory prf)
         {
-            try
-            {
-                if (deviceName == null)
-                    throw new ArgumentNullException("deviceName is null");
-
-                // Looking for lines like:
-                // [ 34.210198] usb 2-1.1: ElmDeviceName now attached to ttyUSB1
-
-                foreach (var line in EnumerateTTYUSBDevices(prf).Where(l => l.Contains(deviceName)))
-                {
-                    const string ttyUSBString = "ttyUSB";
-                    int ttyUSBIndex = line.IndexOf(ttyUSBString);
-
-                    if (ttyUSBIndex != -1)
-                    {
-                        return string.Concat("/dev/", line.Substring(ttyUSBIndex, ttyUSBString.Length + 1));
-                    }
-                }
-
-                return string.Empty;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(string.Format("Exception in RPiConfigResolver.GetElm327Port resolver: {0}", ex.Message), ex);
-            }
+            return EnumerateUSBDevices(prf).FirstOrDefault(d => d.VID == vid && d.PID == pid);
         }
     }
 }

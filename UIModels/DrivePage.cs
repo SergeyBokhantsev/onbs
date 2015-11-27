@@ -32,8 +32,6 @@ namespace UIModels
             this.geocoder = new GeocodingProvider(hc.Logger);
 
             gpsController.GPRMCReseived += GPRMCReseived;
-
-            hc.Logger.Log(this, hc.Config.GetString("{_ttyUSBEnum_}"), LogLevels.Fatal);
         }
 
         protected override void OnSecondaryTimer(IHostTimer timer)

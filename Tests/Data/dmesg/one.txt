@@ -1,0 +1,9 @@
+﻿[    2.579001] usb 1-1.3: new full-speed USB device number 4 using dwc_otg
+[    2.706128] usb 1-1.3: New USB device found, idVendor=0403, idProduct=6001
+[    2.709032] usb 1-1.3: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[    2.711693] usb 1-1.3: Product: FT232R USB UART
+[    2.714515] usb 1-1.3: Manufacturer: FTDI
+[    2.717130] usb 1-1.3: SerialNumber: A601NSP5
+[    5.447775] ftdi_sio 1-1.3:1.0: FTDI USB Serial Device converter detected
+[    5.450599] usb 1-1.3: Detected FT232RL
+[    5.462719] usb 1-1.3: FTDI USB Serial Device converter now attached to ttyUSB0
