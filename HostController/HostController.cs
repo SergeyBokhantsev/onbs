@@ -164,6 +164,7 @@ namespace HostController
                 Directory.CreateDirectory(logFolder);
 
             onlineLogger = new TravelsClient.OnlineLogger(Config);
+            var onlineLogTimer = CreateTimer(60000, ht => onlineLogger.Upload(false), true, false);
 
             Logger = new ConsoleLoggerWrapper(new ILogger[] { new GeneralLogger(Config), onlineLogger});
             Logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
