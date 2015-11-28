@@ -15,17 +15,17 @@ namespace ProcessRunner
         public event ExitedEventHandler Exited;
 
         private Process proc;
-        private readonly string appPath;
-        private readonly string arguments;
-        private readonly bool waitForUI;
+        private readonly ProcessConfig config;
         private readonly ILogger logger;
 
         private bool closing;
 
         public string Name
         {
-            get;
-            private set;
+            get
+            {
+                return string.Format("{0} {1}", Path.GetFileName(config.ExePath), config.Args);
+            }
         }
 
         public bool HasExited
@@ -39,20 +39,19 @@ namespace ProcessRunner
             }
         }
 
-        public ProcessRunnerImpl(string appPath, string arguments, bool waitForUI, ILogger logger)
+        public ProcessRunnerImpl(ProcessConfig config, ILogger logger)
         {
-            if (string.IsNullOrEmpty(appPath))
-                throw new Exception("appPath");
+            if (config == null)
+                throw new ArgumentNullException("config");
+
+            if (string.IsNullOrEmpty(config.ExePath))
+                throw new Exception("app exe Path");
 
             if (logger == null)
                 throw new Exception("logger");
 
-            this.appPath = appPath;
-            this.arguments = arguments;
-            this.waitForUI = waitForUI;
+            this.config = config;
             this.logger = logger;
-
-            Name = string.Format("{0} {1}", Path.GetFileName(appPath), arguments);
 
             logger.LogIfDebug(this, string.Concat("Process runner created for {0}", Name));
         }
@@ -64,13 +63,13 @@ namespace ProcessRunner
 
             try
             {
+                if (!config.Silent)
+                    logger.Log(this, string.Format("Launching {0}", Name), LogLevels.Info);
 
-                logger.Log(this, string.Format("Launching {0}", Name), LogLevels.Info);
-
-                var psi = new ProcessStartInfo(appPath);
-                psi.Arguments = arguments;
+                var psi = new ProcessStartInfo(config.ExePath);
+                psi.Arguments = config.Args;
                 psi.UseShellExecute = false;
-                psi.WorkingDirectory = Path.GetDirectoryName(appPath);
+                psi.WorkingDirectory = Path.GetDirectoryName(config.ExePath);
                 psi.RedirectStandardInput = true;
                 psi.RedirectStandardOutput = true;
 
@@ -78,7 +77,7 @@ namespace ProcessRunner
 
                 logger.LogIfDebug(this, string.Format("Launched {0}", Name));
 
-                if (waitForUI)
+                if (config.WaitForUI)
                 {
                     logger.LogIfDebug(this, "Waiting for UI becomes initialized...");
                     proc.WaitForInputIdle(10000);
@@ -108,7 +107,8 @@ namespace ProcessRunner
                     Thread.Sleep(1000);
                 }
 
-                logger.Log(this, string.Format("{0} has exited", Name), LogLevels.Info);
+                if (!config.Silent)
+                    logger.Log(this, string.Format("{0} has exited", Name), LogLevels.Info);
             }
             catch (Exception ex)
             {

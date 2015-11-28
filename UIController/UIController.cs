@@ -48,7 +48,7 @@ namespace UIController
 
             hostController.CreateTimer(3 * 60 * 1000, t =>
                 {
-                    hostController.ProcessRunnerFactory.Create(ConfigNames.XScreenForceOn).Run();
+                   // hostController.ProcessRunnerFactory.Create(ConfigNames.XScreenForceOn).Run();
                     hostController.GetController<IAutomationController>().MouseMove(mouseLocation++, mouseLocation++);
                     if (mouseLocation > 3)
                         mouseLocation = 0;

@@ -51,10 +51,14 @@ namespace UIModels
 
                 navitConfig.WriteConfig(templatePath, outFile);
 
-                var exe = config.GetString(ConfigNames.NavitExe);
-                var args = string.Format(config.GetString(ConfigNames.NavitArgs), outFile);
+                var processConfig = new ProcessConfig
+                {
+                    ExePath = config.GetString(ConfigNames.NavitExe),
+                    Args = string.Format(config.GetString(ConfigNames.NavitArgs), outFile),
+                    WaitForUI = true
+                };
 
-                return hc.ProcessRunnerFactory.Create(exe, args, true);
+                return hc.ProcessRunnerFactory.Create(processConfig);
             }
             catch (Exception ex)
             {

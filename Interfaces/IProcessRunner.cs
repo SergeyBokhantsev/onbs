@@ -25,9 +25,20 @@ namespace Interfaces
         void Exit();
     }
 
+    public class ProcessConfig
+    {
+        public string ExePath { get; set; }
+        public string Args { get; set; }
+        public bool WaitForUI { get; set; }
+        /// <summary>
+        /// No info messages to log
+        /// </summary>
+        public bool Silent { get; set; }
+    }
+
     public interface IProcessRunnerFactory
     {
         IProcessRunner Create(string appKey);
-        IProcessRunner Create(string exePath, string args, bool waitForUI);
+        IProcessRunner Create(ProcessConfig param);
     }
 }

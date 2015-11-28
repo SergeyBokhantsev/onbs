@@ -33,13 +33,15 @@ namespace AutomationController.ToolAdapters
         private IProcessRunner CreateRunner(params AutomationKeys[] key)
         {
             var args = string.Concat("key ", string.Join("+", key));
-            return processRunnerFactory.Create(automationTool, args, waitForUI);
+            var config = new ProcessConfig { ExePath = automationTool, Args = args, WaitForUI = waitForUI, Silent = true };
+            return processRunnerFactory.Create(config);
         }
 
         public void MouseMove(int x, int y)
         {
             var args = string.Format("mousemove {0} {1}", x, y);
-            processRunnerFactory.Create(automationTool, args, waitForUI).Run();
+            var config = new ProcessConfig { ExePath = automationTool, Args = args, WaitForUI = waitForUI, Silent = true };
+            processRunnerFactory.Create(config).Run();
         }
     }
 }

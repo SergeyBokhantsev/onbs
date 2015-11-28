@@ -60,8 +60,13 @@ namespace HostController.Lin
 
                     try
                     {
-                        var args = string.Format(setTimeArgs, validTime.ToString(setTimeSetFormat));
-                        var pr = processRunnerFactory.Create(setTimeCommand, args, false);
+                        var processConfig = new ProcessConfig
+                        {
+                            ExePath = setTimeCommand,
+                            Args = string.Format(setTimeArgs, validTime.ToString(setTimeSetFormat)),
+                        };
+
+                        var pr = processRunnerFactory.Create(processConfig);
                         pr.Run();
                         pr.WaitForExit(5000);
                         if (GetTimeValidity(validTime))

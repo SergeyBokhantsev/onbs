@@ -109,25 +109,37 @@ namespace UIModels
 
         private void UpdateColor()
         {
-            var command = hc.Config.GetString(WebcamControlCommand);
-            var arg = string.Format(hc.Config.GetString(WebcamControlColorArgs), Color);
-            hc.ProcessRunnerFactory.Create(command, arg, false).Run();
+            var processConfig = new ProcessConfig
+            {
+                ExePath = hc.Config.GetString(WebcamControlCommand),
+                Args = string.Format(hc.Config.GetString(WebcamControlColorArgs), Color),
+            };
+
+            hc.ProcessRunnerFactory.Create(processConfig).Run();
             Thread.Sleep(300);
         }
 
         private void UpdateContrast()
         {
-            var command = hc.Config.GetString(WebcamControlCommand);
-            var arg = string.Format(hc.Config.GetString(WebcamControlContrastArgs), Contrast);
-            hc.ProcessRunnerFactory.Create(command, arg, false).Run();
+            var processConfig = new ProcessConfig
+            {
+                ExePath = hc.Config.GetString(WebcamControlCommand),
+                Args = string.Format(hc.Config.GetString(WebcamControlContrastArgs), Contrast),
+            };
+
+            hc.ProcessRunnerFactory.Create(processConfig).Run();
             Thread.Sleep(300);
         }
 
 		private void UpdateBright()
 		{
-			var command = hc.Config.GetString(WebcamControlCommand);
-			var arg = string.Format(hc.Config.GetString(WebcamControlBrightArgs), Bright);
-			hc.ProcessRunnerFactory.Create(command, arg, false).Run();
+            var processConfig = new ProcessConfig
+            {
+                ExePath = hc.Config.GetString(WebcamControlCommand),
+                Args = string.Format(hc.Config.GetString(WebcamControlBrightArgs), Bright),
+            };
+
+			hc.ProcessRunnerFactory.Create(processConfig).Run();
 			Thread.Sleep(300);
 		}
 

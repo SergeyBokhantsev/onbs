@@ -358,17 +358,25 @@ namespace HostController
             {
                 case HostControllerShutdownModes.Restart:
                     {
-                        var command = Config.GetString(ConfigNames.SystemRestartCommand);
-                        var arg = Config.GetString(ConfigNames.SystemRestartArg);
-                        ProcessRunnerFactory.Create(command, arg, false).Run();
+                        var processConfig = new ProcessConfig
+                        {
+                            ExePath = Config.GetString(ConfigNames.SystemRestartCommand),
+                            Args = Config.GetString(ConfigNames.SystemRestartArg) 
+                        };
+
+                        ProcessRunnerFactory.Create(processConfig).Run();
                     }
                     break;
 
                 case HostControllerShutdownModes.Shutdown:
                     {
-                        var command = Config.GetString(ConfigNames.SystemShutdownCommand);
-                        var arg = Config.GetString(ConfigNames.SystemShutdownArg);
-                        ProcessRunnerFactory.Create(command, arg, false).Run();
+                        var processConfig = new ProcessConfig
+                        {
+                            ExePath = Config.GetString(ConfigNames.SystemShutdownCommand),
+                            Args = Config.GetString(ConfigNames.SystemShutdownArg)
+                        };
+
+                        ProcessRunnerFactory.Create(processConfig).Run();
                     }
                     break;
             }
@@ -376,19 +384,22 @@ namespace HostController
 
         public IProcessRunner Create(string appKey)
         {
-            var appName = Config.GetString(string.Concat(appKey, "_exe"));
-            var commandLine = Config.GetString(string.Concat(appKey, "_args"));
-            var waitForUI = Config.GetBool(string.Concat(appKey, "_wait_UI"));
+            var processConfig = new ProcessConfig
+            {
+                ExePath = Config.GetString(string.Concat(appKey, "_exe")),
+                Args = Config.GetString(string.Concat(appKey, "_args")),
+                WaitForUI = Config.GetBool(string.Concat(appKey, "_wait_UI"))
+            };
 
-            return Create(appName, commandLine, waitForUI);
+            return Create(processConfig);
         }
 
-        public IProcessRunner Create(string exePath, string args, bool waitForUI)
+        public IProcessRunner Create(ProcessConfig config)
         {
             if (Logger == null)
                 throw new InvalidOperationException("Unable to create ProcessRunner before logger will be fully initialized");
 
-            return new ProcessRunner.ProcessRunnerImpl(exePath, args, waitForUI, Logger);
+            return new ProcessRunner.ProcessRunnerImpl(config, Logger);
         }
 
         public IHostTimer CreateTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly)
