@@ -72,9 +72,8 @@
     <page name="CommonConfig" model="CommonConfigPage" default_view="CommonVertcalStackPage">
       <Cancel action="SaveAndReturn" caption="Return to Main Menu"/>
       <Accept name="ConfigGPS" caption="Go to GPS Config"/>
-      <F1 action="ToggleArduinoMode"/>
-      <F2 action="ChangeLogLevel"/>
-      <F3 name="ConfigGPS" caption="GPS and Navigation"/>
+      <F1 action="ChangeLogLevel"/>
+      <F2 name="ConfigGPS" caption="GPS and Navigation"/>
     </page>
     <page name="ConfigGPS" model="ConfigGPSPage" default_view="CommonVertcalStackPage">
       <Accept name="NavitCommonConfig" caption="Go to Navit Config"/>
@@ -102,6 +101,9 @@
       <F4 action="DistanceToNext"/>
       <F5 action="DistanceToTarget"/>
       <F6 action="NextTurn"/>
+    </page>
+    <page name="UnexpectedError" model="UnexpectedErrorModel" default_view="MultilineView">
+      <Cancel name="Drive1" caption="Back"/>
     </page>
     <page name="ShutdownProgress" model="ShutdownProgressModel" default_view="MultilineView">
     </page>

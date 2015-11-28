@@ -113,6 +113,12 @@ namespace UIController
             ShowPage(map.DefaultPageName, map.DefaultPageViewName);
         }
 
+        private IPageModel CreateModel(string descriptorName, string viewName = null)
+        {
+            var pageDescriptor = map.GetPage(descriptorName);
+            return pageConstructor(pageDescriptor, viewName);
+        }
+
         public IPageModel ShowPage(string descriptorName, string viewName)
         {
             AssertThread();
@@ -121,8 +127,22 @@ namespace UIController
             if (current != null)
                 current.Dispose();
 
-            var pageDescriptor = map.GetPage(descriptorName);
-            var model = pageConstructor(pageDescriptor, viewName);
+            IPageModel model = null;
+
+            try
+            {
+                model = CreateModel(descriptorName, viewName);
+            }
+            catch (Exception ex)
+            {
+                model = CreateModel("UnexpectedError");
+                dynamic unexpectedErrorModel = model;
+                unexpectedErrorModel.AddLine(string.Concat("Cannot create model for descriptor: ", descriptorName));
+                unexpectedErrorModel.AddLine(string.Concat("Exception: ", ex.Message));
+                unexpectedErrorModel.AddLine(string.Concat("Inner exception: ", ex.InnerException != null ? ex.InnerException.Message : "Null"));
+                unexpectedErrorModel.AddLine("Stack trace:");
+                unexpectedErrorModel.AddLine(ex.StackTrace.Substring(0, Math.Min(ex.StackTrace.Length, 1200)));
+            }
 
             current = model;
 

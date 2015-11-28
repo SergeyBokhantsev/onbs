@@ -136,7 +136,7 @@ namespace UIModels
             catch (Exception ex)
             {
                 hc.Logger.Log(typeof(ModelBase), string.Format("Exception constructing page model for mapped page '{0}'. Exception was: {1}", pageDescriptor.Name, ex.Message), LogLevels.Error);
-                return null;
+                throw;
             }
         }
 

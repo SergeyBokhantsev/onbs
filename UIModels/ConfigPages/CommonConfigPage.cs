@@ -26,7 +26,6 @@ namespace UIModels
             :base(viewName, hc, pageDescriptor)
         {
             SetProperty(ModelNames.PageTitle, "Common Configuration");
-            UpdateUseArduinoPortFakeProperty();
             UpdateLogLevelProperty();
         }
 
@@ -37,11 +36,6 @@ namespace UIModels
                 case SaveAndReturn:
                     hc.Config.Save();
                     hc.GetController<IUIController>().ShowDefaultPage();
-                    break;
-
-                case ToggleArduinoMode:
-                    hc.Config.InvertBoolSetting(CfgNames.ArduinoPortFake);
-                    UpdateUseArduinoPortFakeProperty();
                     break;
 
                 case ChangeLogLevel:
@@ -56,12 +50,6 @@ namespace UIModels
                     base.DoAction(name, actionArgs);
                     break;
             }
-        }
-
-        private void UpdateUseArduinoPortFakeProperty()
-        {
-            var useFake = hc.Config.GetBool(CfgNames.ArduinoPortFake);
-            UpdateLabelForAction(ToggleArduinoMode, string.Concat("Use fake arduino: ", useFake ? "Yes" : "No"));
         }
 
         private void UpdateLogLevelProperty()

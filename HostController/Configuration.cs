@@ -17,6 +17,9 @@ namespace HostController
 
         public string Resolve(string input)
         {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
             var begInd = input.IndexOf(PlaceholderBegin);
 
             if (begInd != -1)
@@ -98,7 +101,12 @@ namespace HostController
 
         public string GetString(string name)
         {
-            return valuesResolver.Resolve(cfg.AppSettings.Settings[name].Value);
+            var v = cfg.AppSettings.Settings[name];
+
+            if (v == null)
+                throw new Exception(string.Format("Config setting is not exist: {0}", name));
+
+            return valuesResolver.Resolve(v.Value);
         }
 
         public int GetInt(string name)
