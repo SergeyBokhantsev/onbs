@@ -107,5 +107,8 @@
     </page>
     <page name="ShutdownProgress" model="ShutdownProgressModel" default_view="MultilineView">
     </page>
+    <page name="SystemInfoCatalog" model="PagesSelectorPage" default_view="CommonVertcalStackPage">
+      <F1 name="LsUsb" caption="lsusb (USB info)"/>
+    </page>
   </pages>
 </app>

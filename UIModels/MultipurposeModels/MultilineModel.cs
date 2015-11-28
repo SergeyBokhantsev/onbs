@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UIModels
+namespace UIModels.MultipurposeModels
 {
     public class MultilineModel : ModelBase
     {
@@ -23,6 +23,11 @@ namespace UIModels
         {
             lines_queue.Enqueue(line);
             OnPropertyChanged("lines_queue");
+        }
+
+        public void Clear()
+        {
+            SetProperty("clear", null);
         }
     }
 }

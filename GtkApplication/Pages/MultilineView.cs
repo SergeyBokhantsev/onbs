@@ -40,6 +40,8 @@ namespace GtkApplication
 				}
 			}, "lines_queue");
 
+            binder.BindCustomAction<object>(o => textview_log.Buffer.Clear(), "clear");
+
 			binder.UpdateBindings ();
 		}
 	}

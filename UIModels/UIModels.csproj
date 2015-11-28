@@ -61,12 +61,13 @@
     <Compile Include="ExternalApplicationPage.cs" />
     <Compile Include="MainPage.cs" />
     <Compile Include="ModelBase.cs" />
-    <Compile Include="MultilineModel.cs" />
+    <Compile Include="MultipurposeModels\MultilineModel.cs" />
     <Compile Include="NavigationAppPage.cs" />
     <Compile Include="OBDPages.cs" />
-    <Compile Include="PagesSelectorPage.cs" />
+    <Compile Include="MultipurposeModels\PagesSelectorPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShutdownProgressModel.cs" />
+    <Compile Include="SystemInfoModels\LsUsbModel.cs" />
     <Compile Include="TrafficPage.cs" />
     <Compile Include="UnexpectedErrorModel.cs" />
     <Compile Include="WeatherPage.cs" />
