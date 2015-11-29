@@ -25,6 +25,9 @@ namespace UIModels
                         pr.Run();
                         pr.WaitForExit(5000);
                         var output = pr.GetFromStandardOutput();
+
+                        hc.Logger.Log(this, output, LogLevels.Info);
+
                         if (!string.IsNullOrEmpty(output))
                         {
                             foreach (var line in output.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
@@ -39,6 +42,7 @@ namespace UIModels
                     }
                     catch (Exception ex)
                     {
+                        hc.Logger.Log(this, ex);
                         AddLine(ex.Message);
                     }
                 });
