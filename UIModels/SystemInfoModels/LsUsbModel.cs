@@ -6,13 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UIModels.SystemInfoModels
+namespace UIModels
 {
-    public class LsUsbModel : ModelBase
+    public class LsUsbModel : ExecuteToolModel
     {
         public LsUsbModel(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)
         {
+            ExecuteTool("lsusb");
         }
     }
 }

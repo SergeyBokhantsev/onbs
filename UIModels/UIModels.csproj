@@ -67,6 +67,7 @@
     <Compile Include="MultipurposeModels\PagesSelectorPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShutdownProgressModel.cs" />
+    <Compile Include="SystemInfoModels\ExecuteToolModel.cs" />
     <Compile Include="SystemInfoModels\LsUsbModel.cs" />
     <Compile Include="TrafficPage.cs" />
     <Compile Include="UnexpectedErrorModel.cs" />

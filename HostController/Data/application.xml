@@ -13,6 +13,7 @@
     <page name="Drive2" model="DrivePage" default_view="DrivePage">
       <Accept name="Drive1" caption="NEXT"/>
       <F1 name="CommonConfig" caption="CFG"/>
+      <F2 name="SystemInfoCatalog" caption="SYS"/>
       <F8 name="Shutdown" caption="PWR"/>
     </page>
     <page name="NavApp" model="NavigationAppPage" default_view="ExternalApplicationPage">
@@ -108,6 +109,11 @@
     <page name="ShutdownProgress" model="ShutdownProgressModel" default_view="MultilineView">
     </page>
     <page name="SystemInfoCatalog" model="PagesSelectorPage" default_view="CommonVertcalStackPage">
+      <Cancel name="Drive2" caption="Back"/>
+      <F1 name="LsUsb" caption="lsusb (USB info)"/>
+    </page>
+    <page name="LsUsb" model="LsUsbModel" default_view="MultilineView">
+      <Cancel name="SystemInfoCatalog" caption="Back"/>
       <F1 name="LsUsb" caption="lsusb (USB info)"/>
     </page>
   </pages>

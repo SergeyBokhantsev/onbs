@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UIModels.MultipurposeModels
+namespace UIModels
 {
     public class PagesSelectorPage : CommonPageBase
     {
