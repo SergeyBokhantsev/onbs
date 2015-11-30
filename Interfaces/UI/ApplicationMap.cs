@@ -194,8 +194,11 @@ namespace Interfaces.UI
         {
             foreach (var action in page.ButtonsMap)
             {
-                if (!string.IsNullOrWhiteSpace(action.Caption))
+                if (!string.IsNullOrWhiteSpace(action.Caption)
+                    && model.GetProperty<object>(ModelNames.ResolveButtonLabelName(action.ButtonActionName)) == null)
+                {
                     model.SetProperty(ModelNames.ResolveButtonLabelName(action.ButtonActionName), action.Caption);
+                }
             }
         }
     }
