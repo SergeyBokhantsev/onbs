@@ -12,18 +12,23 @@ namespace Interfaces.GPS
     {
         private readonly double distanceToSpeedRatio;
         private readonly int deadZoneMeters;
+        private readonly int deadZoneSpeed;
         private GPRMC lastGprmc;
 
-        public GPSLogFilter(double distanceToSpeedRatio, int deadZoneMeters)
+        public GPSLogFilter(double distanceToSpeedRatio, int deadZoneMeters, int deadZoneSpeed)
         {
             this.distanceToSpeedRatio = distanceToSpeedRatio;
             this.deadZoneMeters = deadZoneMeters;
+            this.deadZoneSpeed = deadZoneSpeed;
         }
 
         public bool Match(GPRMC gprmc)
         {
             if (lastGprmc != null)
             {
+                if (gprmc.Speed < deadZoneSpeed)
+                    return false;
+
                 var distance = Math.Abs(Interfaces.GPS.Helpers.GetDistance(lastGprmc.Location, gprmc.Location));
 
                 if (distance < deadZoneMeters)

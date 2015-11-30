@@ -73,7 +73,8 @@ namespace TravelController
             this.hc = hc;
 
             logFilter = new GPSLogFilter(hc.Config.GetDouble(ConfigNames.TravelServiceGPSFilterDistanceToSpeedRatio), 
-                                         hc.Config.GetInt(ConfigNames.TravelServiceGPSFilterDeadZoneMeters));
+                                         hc.Config.GetInt(ConfigNames.TravelServiceGPSFilterDeadZoneMeters),
+                                         hc.Config.GetInt(ConfigNames.TravelServiceGPSFilterDeadZoneSpeed));
 
             this.exportRateMs = Math.Max(minimalExportRateMs, hc.Config.GetInt(ConfigNames.TravelServiceExportRateSeconds) * 1000);
 
