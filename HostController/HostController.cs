@@ -208,7 +208,7 @@ namespace HostController
         {
             ServicePointManager.ServerCertificateValidationCallback = (s1, s2, s3, s4) => true;
 
-            netKeeper = new InternetConnectionKeeper(Config, Logger);
+            netKeeper = new InternetConnectionKeeper(Config, Logger, this);
             netKeeper.InternetConnectionStatus += connected => config.IsInternetConnected = connected;
             netKeeper.InternetTime += CheckSystemTimeFromInternet;
             netKeeper.RestartNeeded += InetKeeperRestartNeeded;
