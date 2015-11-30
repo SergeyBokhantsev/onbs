@@ -21,14 +21,21 @@ namespace HostController.Lin
         private readonly ILogger logger;
         private readonly string checkFolder;
 
+        private readonly ModemSwitcher modemSwitcher;
+        private readonly Dialer dialer;
+
         private DateTime? inetDisconnectedAt;
 
         private bool disposed;
 
-        public InternetConnectionKeeper(IConfig config, ILogger logger)
+        public InternetConnectionKeeper(IConfig config, ILogger logger, IProcessRunnerFactory prf)
         {
-            this.config = config;
-            this.logger = logger;
+            this.config = Assert.ArgumentIsNotNull(config);
+            this.logger = Assert.ArgumentIsNotNull(logger);
+            Assert.ArgumentIsNotNull(prf);
+
+            modemSwitcher = new ModemSwitcher(logger, prf);
+            dialer = new Dialer(logger, config, prf);
 
             checkFolder = config.GetString(ConfigNames.InetKeeperCheckFolder);
 
@@ -54,8 +61,31 @@ namespace HostController.Lin
         {
             while (!disposed)
             {
-                OnInternetConnectionStatus(GetConnected());
-                Wait(10000);
+                var connected = GetConnected();
+                OnInternetConnectionStatus(connected);
+
+                if (!connected)
+                {
+                    logger.LogIfDebug(this, "Begin inet connection procedures...");
+
+                    if (modemSwitcher.CheckAndSwitch())
+                    {
+                        if (dialer.CheckAndRun())
+                        {
+                            logger.Log(this, "Ined connection procedure succseed", LogLevels.Info);
+                        }
+                        else
+                        {
+                            logger.Log(this, "Ined dialer procedure failed", LogLevels.Warning);
+                        }
+                    }
+                    else
+                    {
+                        logger.Log(this, "Modem switch procedure failed", LogLevels.Warning);
+                    }
+                }
+
+                Wait(30000);
             }
         }
 
@@ -167,6 +197,131 @@ namespace HostController.Lin
         public void Dispose()
         {
             disposed = true;
+        }
+    }
+
+    internal class ModemSwitcher
+    {
+        //http://dmitrykhn.homedns.org/wp/2011/01/ubuntu-3g-modem-terminal/
+
+        private enum ModemModes { Modem, Storage, NotFound };
+
+        const string modemVid = "12d1";
+        const string modemPid_storageMode = "1441";
+        const string modemPid_modemMode = "1501";
+
+        private readonly ILogger logger;
+        private readonly IProcessRunnerFactory prf;
+
+        public ModemSwitcher(ILogger logger, IProcessRunnerFactory prf)
+        {
+            this.logger = Assert.ArgumentIsNotNull(logger);
+            this.prf = Assert.ArgumentIsNotNull(prf);
+        }
+
+        public bool CheckAndSwitch()
+        {
+            var mode = GetModemMode();
+
+            switch (mode)
+            {
+                case ModemModes.Modem:
+                    return true;
+
+                case ModemModes.Storage:
+                    return SwitchToModem();
+                    
+                default:
+                    logger.Log(this, "USB Modem device was not found in the system", LogLevels.Warning);
+                    return false;
+            }
+        }
+
+        private bool SwitchToModem()
+        {
+            try
+            {
+                var pr = prf.Create("modeswitch");
+                pr.Run();
+                pr.WaitForExit(10000);
+                var output = pr.GetFromStandardOutput();
+                var result = output.Contains("Mode switch succeeded. Bye.");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                logger.Log(this, ex);
+                return false;
+            }
+        }
+
+        private ModemModes GetModemMode()
+        {
+            foreach(var dev in NixHelpers.DmesgFinder.EnumerateUSBDevices(prf))
+            {
+                if (dev.VID == modemVid)
+                {
+                    if (dev.PID == modemPid_modemMode)
+                        return ModemModes.Modem;
+
+                    if (dev.PID == modemPid_storageMode)
+                        return ModemModes.Storage;
+                }
+            }
+
+            return ModemModes.NotFound;
+        }
+    }
+
+    internal class Dialer
+    {
+        private readonly ILogger logger;
+        private readonly IConfig config;
+        private readonly IProcessRunnerFactory prf;
+
+        public Dialer(ILogger logger, IConfig config, IProcessRunnerFactory prf)
+        {
+            this.logger = Assert.ArgumentIsNotNull(logger);
+            this.config = Assert.ArgumentIsNotNull(config);
+            this.prf = Assert.ArgumentIsNotNull(prf);
+        }
+
+        public bool CheckAndRun()
+        {
+            try
+            {
+                KillRunningDialers();
+                return RunDialer();
+            }
+            catch (Exception ex)
+            {
+                logger.Log(this, ex);
+                return false;
+            }
+        }
+
+        private bool RunDialer()
+        {
+            var dialer = prf.Create("dialer");
+            dialer.Run();
+            Thread.Sleep(2000);
+            return !dialer.HasExited;
+        }
+
+        private void KillRunningDialers()
+        {
+            var dialerAppName = config.GetString("dialer_exe");
+
+            foreach (var proc in Process.GetProcessesByName(dialerAppName))
+            {
+                var processConfig = new ProcessConfig
+                {
+                    ExePath = "sudo",
+                    Args = string.Concat("kill", proc.Id),
+                };
+
+                prf.Create(processConfig).Run();
+            }
         }
     }
 }

@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assert.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GPS\GPSLogFilter.cs" />
     <Compile Include="GPS\Helpers.cs" />
