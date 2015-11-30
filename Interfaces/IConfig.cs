@@ -104,6 +104,10 @@ namespace Interfaces
         public static readonly string InetKeeperCheckMethod = "InetKeeperCheckMethod";
         public static readonly string InetKeeperCheckFolder = "InetKeeperCheckFolder";
 
+        public static readonly string Modem_vid = "Modem_vid";
+        public static readonly string Modem_storagemode_pid = "Modem_storagemode_pid";
+        public static readonly string Modem_modemmode_pid = "Modem_modemmode_pid";
+
         public static readonly string WeatherCityId = "WeatherCityId";
 
         public static readonly string OBD_DTC_DescriptionFiles = "OBD_DTC_DescriptionFiles";

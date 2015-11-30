@@ -34,7 +34,7 @@ namespace HostController.Lin
             this.logger = Assert.ArgumentIsNotNull(logger);
             Assert.ArgumentIsNotNull(prf);
 
-            modemSwitcher = new ModemSwitcher(logger, prf);
+            modemSwitcher = new ModemSwitcher(logger, config, prf);
             dialer = new Dialer(logger, config, prf);
 
             checkFolder = config.GetString(ConfigNames.InetKeeperCheckFolder);
@@ -206,16 +206,14 @@ namespace HostController.Lin
 
         private enum ModemModes { Modem, Storage, NotFound };
 
-        const string modemVid = "12d1";
-        const string modemPid_storageMode = "1441";
-        const string modemPid_modemMode = "1501";
-
         private readonly ILogger logger;
+        private readonly IConfig config;
         private readonly IProcessRunnerFactory prf;
 
-        public ModemSwitcher(ILogger logger, IProcessRunnerFactory prf)
+        public ModemSwitcher(ILogger logger, IConfig config, IProcessRunnerFactory prf)
         {
             this.logger = Assert.ArgumentIsNotNull(logger);
+            this.config = Assert.ArgumentIsNotNull(config);
             this.prf = Assert.ArgumentIsNotNull(prf);
         }
 
@@ -259,6 +257,10 @@ namespace HostController.Lin
         {
             foreach(var dev in NixHelpers.DmesgFinder.EnumerateUSBDevices(prf))
             {
+                var modemVid = config.GetString(ConfigNames.Modem_vid);
+                var modemPid_modemMode = config.GetString(ConfigNames.Modem_modemmode_pid);
+                var modemPid_storageMode = config.GetString(ConfigNames.Modem_storagemode_pid);
+
                 if (dev.VID == modemVid)
                 {
                     if (dev.PID == modemPid_modemMode)
