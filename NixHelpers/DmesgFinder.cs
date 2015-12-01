@@ -13,8 +13,7 @@ namespace NixHelpers
         {
             try
             {
-                if (prf == null)
-                    throw new ArgumentNullException("ProcessRunnerFactory is null");
+                Ensure.ArgumentIsNotNull(prf);
 
 				var pr = prf.Create("dmesg");
 

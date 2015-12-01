@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests
@@ -13,7 +14,13 @@ namespace Tests
         {
             //INIT
             var logger = new Mocks.Logger();
-            var ping = new ProcessRunner.ProcessRunnerImpl("ping", "localhost", false, logger);
+            var config = new ProcessConfig
+            {
+                ExePath = "ping",
+                Args = "localhost"
+            };
+
+            var ping = new ProcessRunner.ProcessRunnerImpl(config, logger);
 
             //ACT
             ping.Run();
@@ -35,7 +42,13 @@ namespace Tests
         {
             //INIT
             var logger = new Mocks.Logger();
-            var ping = new ProcessRunner.ProcessRunnerImpl("ping", "localhost", false, logger);
+            var config = new ProcessConfig
+            {
+                ExePath = "ping",
+                Args = "localhost"
+            };
+
+            var ping = new ProcessRunner.ProcessRunnerImpl(config, logger);
 
             //ACT
             ping.Run();
@@ -52,7 +65,13 @@ namespace Tests
         {
             //INIT
             var logger = new Mocks.Logger();
-            var ping = new ProcessRunner.ProcessRunnerImpl("ping", "localhost", false, logger);
+            var config = new ProcessConfig
+            {
+                ExePath = "ping",
+                Args = "localhost"
+            };
+
+            var ping = new ProcessRunner.ProcessRunnerImpl(config, logger);
 
             //ACT
             var sw = new Stopwatch();
