@@ -10,18 +10,11 @@ namespace GtkLauncher
 	{
 		public static void Main(string[] args)
 		{
-			try
-			{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
 				app.ShowPage(GetMultilineView());
 
 				app.Run(false);
-			}
-			catch (Exception ex)
-			{
-				
-			}
 
 			Console.ReadKey();
 		}

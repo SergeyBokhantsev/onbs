@@ -26,4 +26,7 @@ Global
 		{C0FFA4A5-8B59-4386-9C03-B36AEACAA6E2}.Release|x86.ActiveCfg = Release|x86
 		{C0FFA4A5-8B59-4386-9C03-B36AEACAA6E2}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = GtkLauncher\GtkLauncher.csproj
+	EndGlobalSection
 EndGlobal

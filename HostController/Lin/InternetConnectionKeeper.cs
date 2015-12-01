@@ -312,7 +312,7 @@ namespace HostController.Lin
 
         private void KillRunningDialers()
         {
-            var dialerAppName = config.GetString("dialer_exe");
+			var dialerAppName = config.GetString("dialer_exe");
 
             var dialerPID = NixHelpers.ProcessFinder.FindProcess(dialerAppName, prf);
 
@@ -320,8 +320,8 @@ namespace HostController.Lin
             {
                 var processConfig = new ProcessConfig
                 {
-                    ExePath = "sudo",
-                    Args = string.Concat("kill", dialerPID),
+                    ExePath = "kill",
+					Args = dialerPID.ToString(),
                 };
 
                 prf.Create(processConfig).Run();
