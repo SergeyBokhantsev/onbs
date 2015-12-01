@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
-    public static class Assert
+    public static class Ensure
     {
         public static T ArgumentIsNotNull<T>(T o)
             where T : class

@@ -12,6 +12,13 @@ namespace Tests
         {
             public event ExitedEventHandler Exited;
 
+            private readonly string filename;
+
+            public MockProcessRunnerForNixHelpers(string filename)
+            {
+                this.filename = filename;
+            }
+
             public string Name
             {
                 get;
@@ -34,7 +41,7 @@ namespace Tests
 
             public string GetFromStandardOutput()
             {
-                return File.ReadAllText("all.txt");
+                return File.ReadAllText(filename);
             }
 
             public bool WaitForExit(int timeoutMilliseconds)
@@ -47,26 +54,33 @@ namespace Tests
             }
         }
 
-        public IProcessRunner Create(string appKey)
+        private readonly string filename;
+
+        public MockProcessRunnerFactoryForNixHelpers(string filename)
         {
-            return null;
+            this.filename = filename;
         }
 
-        public IProcessRunner Create(string exePath, string args, bool waitForUI)
+        public IProcessRunner Create(string appKey)
         {
-            return new MockProcessRunnerForNixHelpers();
+            return new MockProcessRunnerForNixHelpers(filename);
+        }
+
+        public IProcessRunner Create(ProcessConfig config)
+        {
+            return new MockProcessRunnerForNixHelpers(filename);
         }
     }
 
     [TestClass]
-    [DeploymentItem("Data\\dmesg")]
     public class NixHelpersTest
     {
         [TestMethod]
+        [DeploymentItem("Data\\dmesg")]
         public void FindUSBDevice()
         {
             //INIT
-            var prf = new MockProcessRunnerFactoryForNixHelpers();
+            var prf = new MockProcessRunnerFactoryForNixHelpers("all.txt");
 
             //ACT
             var device = NixHelpers.DmesgFinder.FindUSBDevice("0403", "6001", prf);
@@ -80,11 +94,32 @@ namespace Tests
         }
 
         [TestMethod]
+        [DeploymentItem("Data\\dmesg")]
         public void ParseUSBDevices()
         {
             var i = NixHelpers.USBDevice.Parse(File.ReadAllText("all.txt")).ToArray();
 
             var t = i;
+        }
+
+        [TestMethod]
+        [DeploymentItem("Data\\ps")]
+        public void FindProcess()
+        {
+            //INIT
+            var prf = new MockProcessRunnerFactoryForNixHelpers("ps.txt");
+
+            //ACT
+            var kworkerPID = NixHelpers.ProcessFinder.FindProcess("kworker", prf);
+            var bashPID = NixHelpers.ProcessFinder.FindProcess("bash", prf);
+            var sudoPID = NixHelpers.ProcessFinder.FindProcess("sudo", prf);
+            var nonExistPID = NixHelpers.ProcessFinder.FindProcess("someFakeApp", prf);
+
+            //ASSERT
+            Assert.AreEqual(1, kworkerPID);
+            Assert.AreEqual(12, bashPID);
+            Assert.AreEqual(123, sudoPID);
+            Assert.AreEqual(-1, nonExistPID);
         }
     }
 }

@@ -30,9 +30,9 @@ namespace HostController.Lin
 
         public InternetConnectionKeeper(IConfig config, ILogger logger, IProcessRunnerFactory prf)
         {
-            this.config = Assert.ArgumentIsNotNull(config);
-            this.logger = Assert.ArgumentIsNotNull(logger);
-            Assert.ArgumentIsNotNull(prf);
+            this.config = Ensure.ArgumentIsNotNull(config);
+            this.logger = Ensure.ArgumentIsNotNull(logger);
+            Ensure.ArgumentIsNotNull(prf);
 
             modemSwitcher = new ModemSwitcher(logger, config, prf);
             dialer = new Dialer(logger, config, prf);
@@ -212,9 +212,9 @@ namespace HostController.Lin
 
         public ModemSwitcher(ILogger logger, IConfig config, IProcessRunnerFactory prf)
         {
-            this.logger = Assert.ArgumentIsNotNull(logger);
-            this.config = Assert.ArgumentIsNotNull(config);
-            this.prf = Assert.ArgumentIsNotNull(prf);
+            this.logger = Ensure.ArgumentIsNotNull(logger);
+            this.config = Ensure.ArgumentIsNotNull(config);
+            this.prf = Ensure.ArgumentIsNotNull(prf);
         }
 
         public bool CheckAndSwitch()
@@ -283,9 +283,9 @@ namespace HostController.Lin
 
         public Dialer(ILogger logger, IConfig config, IProcessRunnerFactory prf)
         {
-            this.logger = Assert.ArgumentIsNotNull(logger);
-            this.config = Assert.ArgumentIsNotNull(config);
-            this.prf = Assert.ArgumentIsNotNull(prf);
+            this.logger = Ensure.ArgumentIsNotNull(logger);
+            this.config = Ensure.ArgumentIsNotNull(config);
+            this.prf = Ensure.ArgumentIsNotNull(prf);
         }
 
         public bool CheckAndRun()
@@ -314,12 +314,14 @@ namespace HostController.Lin
         {
             var dialerAppName = config.GetString("dialer_exe");
 
-            foreach (var proc in Process.GetProcessesByName(dialerAppName))
+            var dialerPID = NixHelpers.ProcessFinder.FindProcess(dialerAppName, prf);
+
+            if (dialerPID !=-1)
             {
                 var processConfig = new ProcessConfig
                 {
                     ExePath = "sudo",
-                    Args = string.Concat("kill", proc.Id),
+                    Args = string.Concat("kill", dialerPID),
                 };
 
                 prf.Create(processConfig).Run();
