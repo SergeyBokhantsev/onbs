@@ -275,7 +275,7 @@
     <Content Include="Data\weather\skc_n.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\12d1:1446">
+    <Content Include="Data\12d1_1446.cfg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\wvdial.conf">
