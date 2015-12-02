@@ -1,25 +1,12 @@
 ﻿using Interfaces;
-using Interfaces.Input;
 using Interfaces.UI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UIController;
 
 namespace UIModels
 {
     class CommonConfigPage : ModelBase
     {
-        private class CfgNames
-        {
-            public const string ArduinoPortFake = "ArduinoPortFake";
-            public const string LogLevel = "LogLevel";
-        }
-
         private const string SaveAndReturn = "SaveAndReturn";
-        private const string ToggleArduinoMode = "ToggleArduinoMode";
         private const string ChangeLogLevel = "ChangeLogLevel";
 
         public CommonConfigPage(string viewName, IHostController hc, MappedPage pageDescriptor)
@@ -39,10 +26,10 @@ namespace UIModels
                     break;
 
                 case ChangeLogLevel:
-                    var levelStr = hc.Config.GetString(CfgNames.LogLevel);
+                    var levelStr = hc.Config.GetString(ConfigNames.LogLevel);
                     var level = (LogLevels)Enum.Parse(typeof(LogLevels), levelStr);
                     level = ((int)level == 0) ? LogLevels.Debug : level - 1;
-                    hc.Config.Set<string>(CfgNames.LogLevel, level.ToString());
+                    hc.Config.Set(ConfigNames.LogLevel, level.ToString());
                     UpdateLogLevelProperty();
                     break;
 
@@ -54,7 +41,7 @@ namespace UIModels
 
         private void UpdateLogLevelProperty()
         {
-            var levelStr = hc.Config.GetString(CfgNames.LogLevel);
+            var levelStr = hc.Config.GetString(ConfigNames.LogLevel);
             UpdateLabelForAction(ChangeLogLevel, string.Concat("Log Level: ", levelStr));
         }
     }

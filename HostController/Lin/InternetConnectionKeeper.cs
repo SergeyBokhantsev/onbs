@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Interfaces;
 using System.IO;
 
@@ -40,17 +36,21 @@ namespace HostController.Lin
             checkFolder = config.GetString(ConfigNames.InetKeeperCheckFolder);
 
             if (string.IsNullOrWhiteSpace(checkFolder))
-                throw new ArgumentNullException("ConfigNames.InetKeeperCheckFolder");
+                // ReSharper disable once NotResolvedInText
+                throw new ArgumentNullException("InetKeeperCheckFolder is not configured");
         }
 
         public void StartChecking()
         {
             if (config.GetBool(ConfigNames.InetKeeperEnabled) && config.Environment == Environments.RPi)
             {
-                var thread = new Thread(CheckerThread);
-                thread.Name = "Inet Keeper";
-                thread.IsBackground = true;
-                thread.Priority = ThreadPriority.Lowest;
+                var thread = new Thread(CheckerThread)
+                {
+                    Name = "Inet Keeper",
+                    IsBackground = true,
+                    Priority = ThreadPriority.Lowest
+                };
+
                 thread.Start();
             }
             else
@@ -199,12 +199,18 @@ namespace HostController.Lin
                 if (!Directory.Exists(checkFolder))
                     return false;
 
-                var request = WebRequest.Create(config.GetString
-                                                (ConfigNames.InetKeeperCheckUrl)) as HttpWebRequest;
+                var request = WebRequest.Create(config.GetString(ConfigNames.InetKeeperCheckUrl)) as HttpWebRequest;
+
+                if (request == null)
+                    throw new Exception("Request is null");
+
                 request.Method = config.GetString(ConfigNames.InetKeeperCheckMethod);
 
                 using (var response = request.GetResponse() as HttpWebResponse)
                 {
+                    if (response == null)
+                        return false;
+
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         if (InternetTime != null)
@@ -302,7 +308,7 @@ namespace HostController.Lin
         private void ResetDevice(ModemModes mode)
         {
             var deviceVid = config.GetString(ConfigNames.Modem_vid);
-            var devicePid = string.Empty;
+            string devicePid;
 
             switch (mode)
             {
@@ -440,7 +446,7 @@ namespace HostController.Lin
         {
 			var dialerAppName = config.GetString("dialer_exe");
 
-			var dialerPID = -1;
+			int dialerPID;
 
 			while ((dialerPID = NixHelpers.ProcessFinder.FindProcess(dialerAppName, prf)) !=-1)
             {

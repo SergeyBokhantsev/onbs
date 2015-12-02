@@ -3,8 +3,6 @@ using Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OBD
 {
@@ -52,7 +50,7 @@ namespace OBD
 
         public MonitorStatus? GetMonitorStatus()
         {
-            return elm.GetPIDValue<MonitorStatus>((uint)PID.MonitorStatus, 6, bytes =>
+            return elm.GetPIDValue((uint)PID.MonitorStatus, 6, bytes =>
             {
                 var mil = (bytes[2] & 128) > 0;
                 var dtc_count = bytes[2] & 127;
@@ -82,10 +80,6 @@ namespace OBD
                     }
                 }
             }
-            else
-            {
-                yield break;
-            }
         }
 
         public bool ResetTroubleCodes()
@@ -95,22 +89,22 @@ namespace OBD
 
         public int? GetSpeed()
         {
-            return elm.GetPIDValue<int>((uint)PID.Speed, 3, bytes => (int)bytes[2]);
+            return elm.GetPIDValue((uint)PID.Speed, 3, bytes => (int)bytes[2]);
         }
 
         public int? GetRPM()
         {
-            return elm.GetPIDValue<int>((uint)PID.EngineRPM, 4, bytes => (bytes[2] * 256 + bytes[3]) / 4);
+            return elm.GetPIDValue((uint)PID.EngineRPM, 4, bytes => (bytes[2] * 256 + bytes[3]) / 4);
         }
 
         public int? GetEngineLoad()
         {
-            return elm.GetPIDValue<int>((uint)PID.EngineLoad, 3, bytes => (int)bytes[2] * 100 / 255);
+            return elm.GetPIDValue((uint)PID.EngineLoad, 3, bytes => (int)bytes[2] * 100 / 255);
         }
 
         public int? GetCoolantTemp()
         {
-            return elm.GetPIDValue<int>((uint)PID.CoolantTemp, 3, bytes => (int)bytes[2] - 40);
+            return elm.GetPIDValue((uint)PID.CoolantTemp, 3, bytes => (int)bytes[2] - 40);
         }
 
         /// <summary>
@@ -119,17 +113,17 @@ namespace OBD
         /// <returns></returns>
         public double? GetMAF()
         {
-            return elm.GetPIDValue<double>((uint)PID.MAF, 4, bytes => (((double)bytes[2] * 256d) + (double)bytes[3]) / 100d);
+            return elm.GetPIDValue((uint)PID.MAF, 4, bytes => (((double)bytes[2] * 256d) + (double)bytes[3]) / 100d);
         }
 
         public int? GetMAP()
         {
-            return elm.GetPIDValue<int>((uint)PID.MAP, 3, bytes => (int)bytes[2]);
+            return elm.GetPIDValue((uint)PID.MAP, 3, bytes => (int)bytes[2]);
         }
 
         public int? GetIntakeAirTemp()
         {
-            return elm.GetPIDValue<int>((uint)PID.IntakeAirTemp, 3, bytes => (int)bytes[2] - 40);
+            return elm.GetPIDValue((uint)PID.IntakeAirTemp, 3, bytes => (int)bytes[2] - 40);
         }
 
         /// <summary>
@@ -137,7 +131,7 @@ namespace OBD
         /// </summary>
         public double GetFuelFlowPerHour(double map, double rpm, double iat)
         {
-            const double volumetricEfficiency = 95 / 100;
+            const double volumetricEfficiency = 95d / 100d;
             const double displacement = 1.5; //liters
             const double stoich = 14.7;
 
@@ -148,7 +142,7 @@ namespace OBD
 
         public int? GetThrottlePosition()
         {
-            return elm.GetPIDValue<int>((uint)PID.ThrottlePosition, 3, bytes => (int)bytes[2] * 100 / 255);
+            return elm.GetPIDValue((uint)PID.ThrottlePosition, 3, bytes => (int)bytes[2] * 100 / 255);
         }
 
         public IEnumerable<PID> GetSupportedPids()

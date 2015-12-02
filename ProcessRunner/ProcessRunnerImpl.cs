@@ -1,12 +1,9 @@
 ﻿using Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ProcessRunner
 {
@@ -66,14 +63,20 @@ namespace ProcessRunner
                 if (!config.Silent)
                     logger.Log(this, string.Format("Launching {0}", Name), LogLevels.Info);
 
-                var psi = new ProcessStartInfo(config.ExePath);
-                psi.Arguments = config.Args;
-                psi.UseShellExecute = false;
-                psi.WorkingDirectory = Path.GetDirectoryName(config.ExePath);
-                psi.RedirectStandardInput = true;
-                psi.RedirectStandardOutput = true;
+                var psi = new ProcessStartInfo(config.ExePath)
+                {
+                    Arguments = config.Args,
+                    UseShellExecute = false,
+                    // ReSharper disable once AssignNullToNotNullAttribute
+                    WorkingDirectory = string.IsNullOrWhiteSpace(config.ExePath) ? string.Empty : Path.GetDirectoryName(config.ExePath),
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true
+                };
 
                 proc = Process.Start(psi);
+
+                if (proc == null)
+                    throw new Exception("Created process is null unexpectedly");
 
                 logger.LogIfDebug(this, string.Format("Launched {0}", Name));
 
@@ -130,7 +133,6 @@ namespace ProcessRunner
                 {
                     logger.LogIfDebug(this, "Trying to close main window...");
 
-                    var handle = proc.MainWindowHandle;
                     proc.CloseMainWindow();
 
                     proc.WaitForExit(5000);
@@ -170,7 +172,7 @@ namespace ProcessRunner
         {
             StringBuilder res = new StringBuilder();
             var buffer = new char[1024];
-            int readed = 0;
+            int readed;
 
             do
             {

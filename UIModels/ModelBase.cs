@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.Input;
 using Interfaces.UI;
-using System.Threading;
-using UIController;
 using System.Reflection;
 
 namespace UIModels
@@ -103,7 +99,7 @@ namespace UIModels
                     var type = Assembly.GetExecutingAssembly().GetType(string.Concat("UIModels.", pageDescriptor.ModelTypeName));
                     if (type != null)
                     {
-                        var constructor = type.GetConstructor(new Type[] { typeof(string), typeof(IHostController), typeof(MappedPage) });
+                        var constructor = type.GetConstructor(new[] { typeof(string), typeof(IHostController), typeof(MappedPage) });
                         if (constructor != null)
                         {
                             if (viewName == null)
@@ -115,27 +111,21 @@ namespace UIModels
                             ApplicationMap.SetCaptions(model, pageDescriptor);
                             return model;
                         }
-                        else
-                        {
-                            hc.Logger.Log(typeof(ModelBase), string.Format("Apropriate constructor is not found for model '{0}'", pageDescriptor.ModelTypeName), LogLevels.Warning);
-                            return null;
-                        }
-                    }
-                    else
-                    {
-                        hc.Logger.Log(typeof(ModelBase), string.Format("Page model is not found '{0}'", pageDescriptor.ModelTypeName), LogLevels.Warning);
+
+                        hc.Logger.Log(typeof(ModelBase), string.Format("Apropriate constructor is not found for model '{0}'", pageDescriptor.ModelTypeName), LogLevels.Warning);
                         return null;
                     }
-                }
-                else
-                {
-                    hc.Logger.Log(typeof(ModelBase), string.Format("Mapped page is not found '{0}'", pageDescriptor.Name), LogLevels.Warning);
+
+                    hc.Logger.Log(typeof(ModelBase), string.Format("Page model is not found '{0}'", pageDescriptor.ModelTypeName), LogLevels.Warning);
                     return null;
                 }
+
+                hc.Logger.Log(typeof(ModelBase), "pageDescriptor is not provided", LogLevels.Warning);
+                return null;
             }
             catch (Exception ex)
             {
-                hc.Logger.Log(typeof(ModelBase), string.Format("Exception constructing page model for mapped page '{0}'. Exception was: {1}", pageDescriptor.Name, ex.Message), LogLevels.Error);
+                hc.Logger.Log(typeof(ModelBase), string.Format("Exception constructing page model for mapped page '{0}'. Exception was: {1}", pageDescriptor != null ? pageDescriptor.Name : "No pageDescriptor", ex.Message), LogLevels.Error);
                 throw;
             }
         }
@@ -148,7 +138,7 @@ namespace UIModels
 
             if (mappedAction != null)
             {
-                hc.SyncContext.Post((o) =>
+                hc.SyncContext.Post(o =>
                 {
                     var pageAction = o as MappedPageAction;
                     
@@ -196,7 +186,14 @@ namespace UIModels
 
         public void RefreshAllProps()
         {
-            foreach(var pname in properties.Keys)
+            IEnumerable<string> propNames;
+
+            lock (properties)
+            {
+                propNames = properties.Keys.ToArray();
+            }
+
+            foreach (var pname in propNames)
             {
                 OnPropertyChanged(pname);
             }

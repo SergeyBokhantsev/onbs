@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Interfaces;
 
 namespace NixHelpers
@@ -24,7 +21,7 @@ namespace NixHelpers
 
                 var output = pr.GetFromStandardOutput();
 
-                return output.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                return output.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             }
             catch (Exception ex)
             {

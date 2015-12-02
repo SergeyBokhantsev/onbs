@@ -1,13 +1,7 @@
 ﻿using Interfaces.UI;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Interfaces;
-using Interfaces.Input;
-using System.Timers;
-using UIController;
 
 namespace UIModels
 {
@@ -34,7 +28,7 @@ namespace UIModels
             timer = hc.CreateTimer(1000, TimerTick, true, true);
         }
 
-        private void TimerTick(IHostTimer timer)
+        private void TimerTick(IHostTimer t)
         {
             SetProperty("time", DateTime.Now.ToUniversalTime().AddHours(localTimeZone));
             SetProperty("time_valid", hc.Config.IsSystemTimeValid ? "1" : "0");

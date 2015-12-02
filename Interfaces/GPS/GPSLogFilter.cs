@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Interfaces.GPS
 {
@@ -29,7 +23,7 @@ namespace Interfaces.GPS
                 if (gprmc.Speed < deadZoneSpeed)
                     return false;
 
-                var distance = Math.Abs(Interfaces.GPS.Helpers.GetDistance(lastGprmc.Location, gprmc.Location));
+                var distance = Math.Abs(Helpers.GetDistance(lastGprmc.Location, gprmc.Location));
 
                 if (distance < deadZoneMeters)
                     return false;

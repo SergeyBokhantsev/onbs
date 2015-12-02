@@ -1,14 +1,10 @@
 ﻿using Interfaces;
 using OBD;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Interfaces.UI;
 using System.Diagnostics;
-using UIController;
 using System.IO;
 using UIModels.Dialogs;
 
@@ -35,55 +31,55 @@ namespace UIModels
     public abstract class OBDChartPage : CommonPageBase
     {
         private readonly IElm327Controller elm;
-        private readonly OBDProcessor obd;
         private readonly OBDChart[] primary;
         private readonly OBDChart[] secondary;
         
         protected static OBDChart CreateRPMChart(OBDProcessor obd)
         {
-            return new OBDChart(chart => { var result = obd.GetRPM(); chart.Add(result.HasValue ? (double)result.Value : 0d); }) { Title = "RPM", Scale = 5000 };
+            return new OBDChart(chart => { var result = obd.GetRPM(); chart.Add(result ?? 0d); }) { Title = "RPM", Scale = 5000 };
         }
         protected static OBDChart CreateLoadChart(OBDProcessor obd)
         {
-            return new OBDChart(chart => { var result = obd.GetEngineLoad(); chart.Add(result.HasValue ? (double)result.Value : 0d); }) { Title = "Load", UnitText = "%", Scale = 100 };
+            return new OBDChart(chart => { var result = obd.GetEngineLoad(); chart.Add(result ?? 0d); }) { Title = "Load", UnitText = "%", Scale = 100 };
         }
         protected static OBDChart CreateSpeedChart(OBDProcessor obd)
         {
-            return new OBDChart(chart => { var result = obd.GetSpeed(); chart.Add(result.HasValue ? (double)result.Value : 0d); }) { Title = "Speed", UnitText = "km/h", Scale = 100 };
+            return new OBDChart(chart => { var result = obd.GetSpeed(); chart.Add(result ?? 0d); }) { Title = "Speed", UnitText = "km/h", Scale = 100 };
         }
         protected static OBDChart CreateCoolantTempChart(OBDProcessor obd)
         {
-            return new OBDChart(chart => { var result = obd.GetCoolantTemp(); chart.Add(result.HasValue ? (double)result.Value : 0d); }) { Title = "C-temp", UnitText = "C°", Scale = 100 };
+            return new OBDChart(chart => { var result = obd.GetCoolantTemp(); chart.Add(result ?? 0d); }) { Title = "C-temp", UnitText = "C°", Scale = 100 };
         }
         protected static OBDChart CreateThrottleChart(OBDProcessor obd)
         {
-            return new OBDChart(chart => { var result = obd.GetThrottlePosition(); chart.Add(result.HasValue ? (double)result.Value : 0d); }) { Title = "Thr.", UnitText = "%", Scale = 100 };
+            return new OBDChart(chart => { var result = obd.GetThrottlePosition(); chart.Add(result ?? 0d); }) { Title = "Thr.", UnitText = "%", Scale = 100 };
         }
         protected static OBDChart CreateMAPChart(OBDProcessor obd)
         {
-            return new OBDChart(chart => { var result = obd.GetMAP(); chart.Add(result.HasValue ? (double)result.Value : 0d); }) { Title = "MAP", UnitText = "kPa", Scale = 255 };
+            return new OBDChart(chart => { var result = obd.GetMAP(); chart.Add(result ?? 0d); }) { Title = "MAP", UnitText = "kPa", Scale = 255 };
         }
         protected static OBDChart CreateIntakeAirTempChart(OBDProcessor obd)
         {
-            return new OBDChart(chart => { var result = obd.GetIntakeAirTemp(); chart.Add(result.HasValue ? (double)result.Value : 0d); }) { Title = "IAT", UnitText = "C°", Scale = 100 };
+            return new OBDChart(chart => { var result = obd.GetIntakeAirTemp(); chart.Add(result ?? 0d); }) { Title = "IAT", UnitText = "C°", Scale = 100 };
         }
 
-        private int secondaryDivider;
+        private readonly int secondaryDivider;
 
-        public OBDChartPage(string viewName, IHostController hc, MappedPage pageDescriptor, int secondaryDivider)
+        protected OBDChartPage(string viewName, IHostController hc, MappedPage pageDescriptor, int secondaryDivider)
             : base(viewName, hc, pageDescriptor)
         {
             elm = hc.GetController<IElm327Controller>();
-            obd = new OBDProcessor(elm);
+            var obd = new OBDProcessor(elm);
 
+            // ReSharper disable once VirtualMemberCallInContructor
             this.primary = GetPrimaryCharts(obd);
+            // ReSharper disable once VirtualMemberCallInContructor
             this.secondary = GetSecondaryCharts(obd);
             this.secondaryDivider = secondaryDivider;
             
             InitProperties();
 
-            var elmThread = new Thread(RequestElm);
-            elmThread.IsBackground = true;
+            var elmThread = new Thread(RequestElm) {IsBackground = true};
             elmThread.Start();
         }
 
@@ -180,7 +176,7 @@ namespace UIModels
 
         protected override OBDChart[] GetPrimaryCharts(OBDProcessor obd)
         {
-            return new OBDChart[] 
+            return new[] 
             {
                 CreateRPMChart(obd),
                 CreateLoadChart(obd),
@@ -190,7 +186,7 @@ namespace UIModels
 
         protected override OBDChart[] GetSecondaryCharts(OBDProcessor obd)
         {
-            return new OBDChart[] 
+            return new[] 
             {
                 CreateCoolantTempChart(obd),
                 CreateIntakeAirTempChart(obd)
@@ -207,7 +203,7 @@ namespace UIModels
 
         protected override OBDChart[] GetPrimaryCharts(OBDProcessor obd)
         {
-            return new OBDChart[] 
+            return new[] 
             {
                 CreateThrottleChart(obd),
                 CreateLoadChart(obd),
@@ -217,7 +213,7 @@ namespace UIModels
 
         protected override OBDChart[] GetSecondaryCharts(OBDProcessor obd)
         {
-            return new OBDChart[] 
+            return new[] 
             {
                 CreateCoolantTempChart(obd),
                 CreateIntakeAirTempChart(obd)

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace NixHelpers
 {
     public class USBDevice
     {
-        private List<string> attachedTo = new List<string>(3);
+        private readonly List<string> attachedTo = new List<string>(3);
 
         public string Key { get; private set; }
         public string VID { get; private set; }
@@ -56,8 +52,10 @@ namespace NixHelpers
             
             foreach(var key in devicesMap.Keys)
             {
-                var device = new USBDevice();
-                device.Key = key;
+                var device = new USBDevice
+                {
+                    Key = key
+                };
 
                 foreach (var item in devicesMap[key])
                 {
@@ -88,8 +86,6 @@ namespace NixHelpers
 
                 yield return device;
             }
-
-            yield break;
         }
     }
 }

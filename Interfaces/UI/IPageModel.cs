@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Interfaces.Input;
 
 namespace Interfaces.UI
@@ -68,7 +64,7 @@ namespace Interfaces.UI
 
         public static KeyValuePair<string, string>[] GetButtonAndLabelNames()
         {
-            return new KeyValuePair<string, string>[] 
+            return new[] 
             { 
                 new KeyValuePair<string, string>(ButtonAccept, ButtonAcceptLabel),
                 new KeyValuePair<string, string>(ButtonCancel, ButtonCancelLabel),

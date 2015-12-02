@@ -1,13 +1,7 @@
 ﻿using Interfaces;
-using Interfaces.Input;
 using Interfaces.UI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using UIController;
 
 namespace UIModels
 {
@@ -38,7 +32,7 @@ namespace UIModels
                 else if (value < 0)
                     value = 0;
 
-                hc.Config.Set<int>(WebcamControlColor, value);
+                hc.Config.Set(WebcamControlColor, value);
                 configDirty = true;
             }
         }
@@ -56,7 +50,7 @@ namespace UIModels
                 else if (value < 0)
                     value = 0;
 
-                hc.Config.Set<int>(WebcamControlContrast, value);
+                hc.Config.Set(WebcamControlContrast, value);
                 configDirty = true;
             }
         }
@@ -74,7 +68,7 @@ namespace UIModels
 				else if (value < 0)
 					value = 0;
 
-				hc.Config.Set<int>(WebcamControlBright, value);
+				hc.Config.Set(WebcamControlBright, value);
 				configDirty = true;
 			}
 		}

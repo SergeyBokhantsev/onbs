@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.GPS;
-using TcpServer;
 using System.Net.Sockets;
 
 namespace GPSD.Net
@@ -15,17 +9,13 @@ namespace GPSD.Net
     public class GPSD
     {
         private readonly TcpServer.Server server;
-        private readonly IGPSController gps;
         private readonly ILogger logger;
-        private readonly IConfig config;
         private readonly List<GPSDClient> clients;
 
         //http://www.catb.org/gpsd/gpsd_json.html
         //http://wiki.navit-project.org/index.php/Configuration
         public GPSD(IGPSController gps, IConfig config, ILogger logger)
         {
-            this.gps = gps;
-            this.config = config;
             this.logger = logger;
             this.clients = new List<GPSDClient>();
 

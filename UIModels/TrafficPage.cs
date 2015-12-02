@@ -1,18 +1,8 @@
 ﻿using Interfaces;
-
-using Interfaces.GPS;
-using Interfaces.Input;
 using Interfaces.UI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YandexServicesProvider;
-using System.Reflection;
 using System.IO;
-using System.Threading;
-using UIController;
 
 namespace UIModels
 {
@@ -20,9 +10,9 @@ namespace UIModels
     {
         private readonly StaticMapProvider provider;
 
-        private ManualResetGuard downloadOperationScope = new ManualResetGuard();
-        private int[] scales = new[] { 13, 12, 8 }; 
-        private int scale = 0;
+        private readonly ManualResetGuard downloadOperationScope = new ManualResetGuard();
+        private readonly int[] scales = new[] { 13, 12, 8 }; 
+        private int scale;
 
         public TrafficPage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)

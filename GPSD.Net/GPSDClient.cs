@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using GPSD.Net.Messages;
 using Interfaces;
 using Interfaces.GPS;
-using TcpServer;
 using System.Net.Sockets;
 
 namespace GPSD.Net
@@ -134,14 +129,14 @@ namespace GPSD.Net
 			logger.LogIfDebug (this, "End respond on Watch");
         }
 
-        private void BytesReceived(byte[] buffer, int count)
+        private void BytesReceived(byte[] data, int count)
         {
 			if (disposed)
 				return;
 
             logger.LogIfDebug(this, string.Concat("Received: ", count));
 
-            queryBuffer += enc.GetString(buffer, 0, count);
+            queryBuffer += enc.GetString(data, 0, count);
 
             if (queryBuffer.EndsWith("\n"))
             {
@@ -189,7 +184,7 @@ namespace GPSD.Net
                 var jsonStr = query.Trim().Substring(query.IndexOf('=') + 1);
                 var jsonData = enc.GetBytes(jsonStr);
 
-                Json.JsonObj json = null;
+                Json.JsonObj json;
                 if (!Json.JsonParser.TryParse(jsonData, out json))
                     return null;
 
@@ -235,8 +230,7 @@ namespace GPSD.Net
         {
 			logger.LogIfDebug (this, "Begin send nmea");
 
-			var nmea = this.nmea.Value;
-            var data = enc.GetBytes(nmea);
+            var data = enc.GetBytes(this.nmea.Value);
 
             if (Active)
             {

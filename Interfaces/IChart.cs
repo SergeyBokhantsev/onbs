@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Interfaces
 {
-    public interface IChart<T>
+    public interface IChart<out T>
     {
         string Title { get; }
         string UnitText { get; }
@@ -86,12 +83,12 @@ namespace Interfaces
 
         public void Add(int? value)
         {
-            Add(value.HasValue ? (double)value.Value : 0d);
+            Add(value ?? 0d);
         }
 
         public void Add(double? value)
         {
-            Add(value.HasValue ? value.Value : 0d);
+            Add(value ?? 0d);
         }
 
         public void Add(double value)
@@ -112,10 +109,7 @@ namespace Interfaces
         {
             lock (data)
             {
-                if (data.Count > 0)
-                    data.Add(data.Last());
-                else
-                    data.Add(0);
+                data.Add(data.Count > 0 ? data.Last() : 0);
             }
         }
     }

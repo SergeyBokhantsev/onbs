@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace TcpServer
 {
@@ -48,15 +44,15 @@ namespace TcpServer
             this.client = client;
         }
 
-        public void Start(BytesReceivedEventHandler bytesReceived)
+        public void Start(BytesReceivedEventHandler receiveHandler)
         {
             if (this.bytesReceived != null)
                 throw new InvalidOperationException("already started");
 
-            if (bytesReceived == null)
+            if (receiveHandler == null)
                 throw new ArgumentNullException("bytesReceived");
 
-            this.bytesReceived = bytesReceived;
+            bytesReceived = receiveHandler;
             BeginReadAsync();
         }
 
@@ -95,12 +91,13 @@ namespace TcpServer
                         bytesReceived(readBuffer, count);
                     }
                     else
-                        System.Threading.Thread.Sleep(100);
+                        Thread.Sleep(100);
                 }
             }
-			catch 
-			{
-			}
+            catch
+            {
+                // ignored
+            }
             finally
             {
                 if (Active)

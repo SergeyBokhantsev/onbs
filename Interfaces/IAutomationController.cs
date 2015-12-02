@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Interfaces
+﻿namespace Interfaces
 {
     /// <summary>
     /// http://wiki.linuxquestions.org/wiki/List_of_keysyms

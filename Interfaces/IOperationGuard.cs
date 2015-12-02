@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Interfaces
 {
@@ -16,7 +12,7 @@ namespace Interfaces
     {
         private int busy;
         private bool disposed;
-        private ManualResetEventSlim waitHandler = new ManualResetEventSlim(true);
+        private readonly ManualResetEventSlim waitHandler = new ManualResetEventSlim(true);
 
         public WaitHandle WaitHandle
         {
@@ -72,7 +68,7 @@ namespace Interfaces
 
         public bool ExecuteIfFree(Action action, Action<Exception> exceptionHandler = null)
         {
-            if (!disposed && (DateTime.Now - lastExecutionTime) >= minInterval)
+            if (!disposed && DateTime.Now - lastExecutionTime >= minInterval)
             {
                 try
                 {

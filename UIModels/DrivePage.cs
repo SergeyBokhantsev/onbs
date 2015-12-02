@@ -1,15 +1,9 @@
 ﻿using Interfaces;
 using Interfaces.GPS;
-using Interfaces.Input;
 using Interfaces.UI;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using YandexServicesProvider;
-using UIController;
 
 namespace UIModels
 {
@@ -58,9 +52,7 @@ namespace UIModels
 
             if (!Disposed && f != null)
             {
-                SetProperty("air_temp", f != null
-                    ? string.Format("{0}°, {1}", f.fact.First().temperature.Value, f.fact.First().weather_type)
-                    : "--");
+                SetProperty("air_temp", string.Format("{0}°, {1}", f.fact.First().temperature.Value, f.fact.First().weather_type));
 
                 SetProperty("weather_icon", weather.GetWeatherIcon(f.fact.First().imagev3.First().Value));
             }

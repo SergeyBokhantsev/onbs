@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Interfaces;
+﻿using Interfaces;
 using Interfaces.UI;
-using UIController;
 
 namespace UIModels
 {
@@ -55,7 +49,7 @@ namespace UIModels
 
                 case "Zoom":
                     var zoom = hc.Config.GetInt(ConfigNames.NavitZoom) + 15;
-                    hc.Config.Set<int>(ConfigNames.NavitZoom, zoom > 256 ? 0 : zoom);
+                    hc.Config.Set(ConfigNames.NavitZoom, zoom > 256 ? 0 : zoom);
                     break;
 
                 default:

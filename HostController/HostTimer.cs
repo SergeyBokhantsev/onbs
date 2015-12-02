@@ -1,16 +1,13 @@
 ﻿using Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace HostController
 {
     public class HostTimer : IHostTimer
     {
-        private readonly EventWaitHandle shedulerSignal;
+        private readonly EventWaitHandle schedulerSignal;
         private readonly Action<IHostTimer> action;
 
         private int span;
@@ -33,7 +30,7 @@ namespace HostController
                 if (span > 0)
                 {
                     span = value;
-                    shedulerSignal.Set();
+                    schedulerSignal.Set();
                 }
                 else
                     throw new ArgumentException("Span must be positive!");
@@ -44,24 +41,24 @@ namespace HostController
         {
             get
             {
-                return Disposed ? false : enabled;
+                return !Disposed && enabled;
             }
             set
             {
                 enabled = value;
-                shedulerSignal.Set();
+                schedulerSignal.Set();
             }
         }
 
-        public HostTimer(EventWaitHandle shedulerSignal, int span, Action<IHostTimer> action, bool isEnabled)
+        public HostTimer(EventWaitHandle schedulerSignal, int span, Action<IHostTimer> action, bool isEnabled)
         {
-            if (shedulerSignal == null)
+            if (schedulerSignal == null)
                 throw new ArgumentNullException("schedulerSignal");
 
             if (span <= 0)
                 throw new ArgumentException("Span must be positive!");
 
-            this.shedulerSignal = shedulerSignal;
+            this.schedulerSignal = schedulerSignal;
             this.span = span;
             this.action = action;
             this.enabled = isEnabled;
@@ -107,8 +104,7 @@ namespace HostController
             if (schedulerThread != null)
                 throw new InvalidOperationException("already started");
 
-            schedulerThread = new Thread(Scheduler);
-            schedulerThread.IsBackground = true;
+            schedulerThread = new Thread(Scheduler) {IsBackground = true};
             schedulerThread.Start();
         }
 
@@ -146,7 +142,7 @@ namespace HostController
                     {
                         if (info.Timer.IsEnabled)
                         {
-                            int nextExecutionSpan = 0;
+                            int nextExecutionSpan;
 
                             if (info.LastExecutionTime.AddMilliseconds(info.Timer.Span) <= now)
                             {
