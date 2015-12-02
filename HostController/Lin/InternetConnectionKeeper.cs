@@ -70,13 +70,43 @@ namespace HostController.Lin
 
                     if (modemSwitcher.CheckAndSwitch())
                     {
-                        if (dialer.CheckAndRun())
+						var dialerProcess = dialer.CheckAndRun ();
+
+						if (dialerProcess != null)
                         {
-                            logger.Log(this, "Ined connection procedure succseed", LogLevels.Info);
+                            logger.Log(this, "Dialler started", LogLevels.Info);
+
+							int repeat = 0;
+							bool success = false;
+
+							while (repeat++ < 10) 
+							{
+								if (dialerProcess.HasExited) 
+								{
+									logger.Log(this, "Dialer process exited unexpectedly", LogLevels.Warning);
+									logger.Log(this, dialerProcess.GetFromStandardOutput(), LogLevels.Warning);
+									break;
+								}
+
+								if (GetConnected ()) 
+								{
+									logger.Log(this, "Inet connection confirmed.", LogLevels.Info);
+									success = true;
+									break;
+								}
+
+								logger.Log(this, "Waiting for inet connection...", LogLevels.Info);
+								Thread.Sleep (5000);
+							}
+
+							if (!success)
+								continue;
+
+							logger.Log(this, "Going to normal mode...", LogLevels.Info);
                         }
                         else
                         {
-                            logger.Log(this, "Ined dialer procedure failed", LogLevels.Warning);
+                            logger.Log(this, "Inet dialer procedure failed", LogLevels.Warning);
                         }
                     }
                     else
@@ -239,12 +269,17 @@ namespace HostController.Lin
         {
             try
             {
-                var pr = prf.Create("modeswitch");
+				var modemSwitchConfigFilePath = Path.Combine(config.DataFolder, "12d1:1446");
+				var pr = prf.Create("modeswitch", new object[] { modemSwitchConfigFilePath });
                 pr.Run();
-                pr.WaitForExit(10000);
+                pr.WaitForExit(30000);
                 var output = pr.GetFromStandardOutput();
-                var result = output.Contains("Mode switch succeeded. Bye.");
-                return result;
+                var result = output.Contains("Mode switch succeeded");
+
+				if (!result)
+					logger.Log(this, output, LogLevels.Warning);
+
+				return result;
             }
             catch (Exception ex)
             {
@@ -255,18 +290,18 @@ namespace HostController.Lin
 
         private ModemModes GetModemMode()
         {
+			var modemVid = config.GetString(ConfigNames.Modem_vid);
+			var modemPid_modemMode = config.GetString(ConfigNames.Modem_modemmode_pid);
+			var modemPid_storageMode = config.GetString(ConfigNames.Modem_storagemode_pid);
+
             foreach(var dev in NixHelpers.DmesgFinder.EnumerateUSBDevices(prf))
             {
-                var modemVid = config.GetString(ConfigNames.Modem_vid);
-                var modemPid_modemMode = config.GetString(ConfigNames.Modem_modemmode_pid);
-                var modemPid_storageMode = config.GetString(ConfigNames.Modem_storagemode_pid);
-
                 if (dev.VID == modemVid)
                 {
-                    if (dev.PID == modemPid_modemMode)
+					if (modemPid_modemMode.Equals(dev.PID, StringComparison.InvariantCultureIgnoreCase))
                         return ModemModes.Modem;
 
-                    if (dev.PID == modemPid_storageMode)
+					if (modemPid_storageMode.Equals(dev.PID, StringComparison.InvariantCultureIgnoreCase))
                         return ModemModes.Storage;
                 }
             }
@@ -288,7 +323,7 @@ namespace HostController.Lin
             this.prf = Ensure.ArgumentIsNotNull(prf);
         }
 
-        public bool CheckAndRun()
+        public IProcessRunner CheckAndRun()
         {
             try
             {
@@ -298,33 +333,48 @@ namespace HostController.Lin
             catch (Exception ex)
             {
                 logger.Log(this, ex);
-                return false;
+				return null;
             }
         }
 
-        private bool RunDialer()
+        private IProcessRunner RunDialer()
         {
-            var dialer = prf.Create("dialer");
+			var modemVid = config.GetString(ConfigNames.Modem_vid);
+			var modemPid_modemMode = config.GetString(ConfigNames.Modem_modemmode_pid);
+			var modemDevice = NixHelpers.DmesgFinder.FindUSBDevice (modemVid, modemPid_modemMode, prf);
+
+			var usbPort = modemDevice.AttachedTo.First ();
+
+			var dialConfigTemplatePath = Path.Combine (config.DataFolder, "wvdial.conf");
+			var dialConfig = File.ReadAllText (dialConfigTemplatePath);
+			dialConfig = string.Format (dialConfig, usbPort);
+
+			var dialConfigPath = Path.Combine (config.DataFolder, "_wd.conf");
+			File.WriteAllText (dialConfigPath, dialConfig);
+
+			var dialer = prf.Create("dialer", new object[] { dialConfigPath });
             dialer.Run();
-            Thread.Sleep(2000);
-            return !dialer.HasExited;
+			dialer.WaitForExit (10000);
+            return dialer;
         }
 
         private void KillRunningDialers()
         {
 			var dialerAppName = config.GetString("dialer_exe");
 
-            var dialerPID = NixHelpers.ProcessFinder.FindProcess(dialerAppName, prf);
+			var dialerPID = -1;
 
-            if (dialerPID !=-1)
+			while ((dialerPID = NixHelpers.ProcessFinder.FindProcess(dialerAppName, prf)) !=-1)
             {
                 var processConfig = new ProcessConfig
                 {
-                    ExePath = "kill",
-					Args = dialerPID.ToString(),
+                    ExePath = "sudo",
+					Args = "kill " + dialerPID.ToString(),
                 };
 
                 prf.Create(processConfig).Run();
+
+				Thread.Sleep (2000);
             }
         }
     }

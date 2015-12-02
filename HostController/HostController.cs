@@ -382,12 +382,17 @@ namespace HostController
             }
         }
 
-        public IProcessRunner Create(string appKey)
+		public IProcessRunner Create(string appKey, object[] argumentParameters = null)
         {
+			var args = Config.GetString (string.Concat (appKey, "_args"));
+
+			if (argumentParameters != null)
+				args = string.Format (args, argumentParameters);
+
             var processConfig = new ProcessConfig
             {
                 ExePath = Config.GetString(string.Concat(appKey, "_exe")),
-                Args = Config.GetString(string.Concat(appKey, "_args")),
+                Args = args,
                 WaitForUI = Config.GetBool(string.Concat(appKey, "_wait_UI"))
             };
 

@@ -38,6 +38,8 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>HostController.EntryPoint</StartupObject>
@@ -51,6 +53,8 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -60,6 +64,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Windows|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -70,6 +75,8 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -106,11 +113,11 @@
       <Name>InputController</Name>
     </ProjectReference>
     <ProjectReference Include="..\Elm327Controller\Elm327Controller.csproj">
-      <Project>{ed21248d-2af6-4b71-90c8-2ce86a5603e2}</Project>
+      <Project>{ED21248D-2AF6-4B71-90C8-2CE86A5603E2}</Project>
       <Name>Elm327Controller</Name>
     </ProjectReference>
     <ProjectReference Include="..\Elm327\Elm327.csproj">
-      <Project>{03e3079e-f438-4c00-8c22-3b13afc3c644}</Project>
+      <Project>{03E3079E-F438-4C00-8C22-3B13AFC3C644}</Project>
       <Name>Elm327</Name>
     </ProjectReference>
     <ProjectReference Include="..\GPSController\GPSController.csproj">
@@ -122,7 +129,7 @@
       <Name>GPSD.Net</Name>
     </ProjectReference>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
-      <Project>{3f066cd9-3523-4248-b37c-3378b44c426a}</Project>
+      <Project>{3F066CD9-3523-4248-B37C-3378B44C426A}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\LogLib\LogLib.csproj">
@@ -130,11 +137,11 @@
       <Name>LogLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\NixHelpers\NixHelpers.csproj">
-      <Project>{a822c3f5-f40f-4ded-b568-caeb1cf6a401}</Project>
+      <Project>{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}</Project>
       <Name>NixHelpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProcessRunner\ProcessRunner.csproj">
-      <Project>{34176ec8-ab7f-4e25-9f04-b6c07eb71cfb}</Project>
+      <Project>{34176EC8-AB7F-4E25-9F04-B6C07EB71CFB}</Project>
       <Name>ProcessRunner</Name>
     </ProjectReference>
     <ProjectReference Include="..\SerialTransportProtocol\SerialTransportProtocol.csproj">
@@ -142,11 +149,11 @@
       <Name>SerialTransportProtocol</Name>
     </ProjectReference>
     <ProjectReference Include="..\TravelController\TravelController.csproj">
-      <Project>{cf96102a-0c8d-4fcd-bcc0-4b240c8130c3}</Project>
+      <Project>{CF96102A-0C8D-4FCD-BCC0-4B240C8130C3}</Project>
       <Name>TravelController</Name>
     </ProjectReference>
     <ProjectReference Include="..\TravelsClient\TravelsClient.csproj">
-      <Project>{fbdb1458-ca4b-45d9-9e7e-7b9484959859}</Project>
+      <Project>{FBDB1458-CA4B-45D9-9E7E-7B9484959859}</Project>
       <Name>TravelsClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\UIController\UIController.csproj">
@@ -266,6 +273,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\weather\skc_n.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\12d1:1446">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\wvdial.conf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
