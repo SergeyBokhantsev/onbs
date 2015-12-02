@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace UIModels
 {
-    public class WebCamPage : ExternalApplicationPage
+    public sealed class WebCamPage : ExternalApplicationPage
     {
         private const string WebcamControlCommand = "WebcamControlCommand";
         private const string WebcamControlColorArgs = "WebcamControlColorArgs";
@@ -77,6 +77,7 @@ namespace UIModels
             : base(viewName, hc, pageDescriptor, hc.ProcessRunnerFactory.Create("cam"))
         {
             this.Disposing += WebCamPageDisposing;
+			Run ();
         }
 
         public override bool Run()
