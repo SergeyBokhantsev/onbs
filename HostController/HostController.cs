@@ -247,7 +247,11 @@ namespace HostController
 			CreateTimer(60000, ht => onlineLogger.Upload(false), true, false);
 
             StartTimers();
+
+            telemetry = new Telemetry.TelemetryServer(Logger);
         }
+
+        private Telemetry.TelemetryServer telemetry;
 
         void uiController_DialogPending(bool obj)
         {
