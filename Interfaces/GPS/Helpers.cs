@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Interfaces.GPS
 {
@@ -34,7 +30,7 @@ namespace Interfaces.GPS
                 if (dLong > 0d)
                     dLong = -(2d * Math.PI - dLong);
                 else
-                    dLong = (2d * Math.PI + dLong);
+                    dLong = 2d * Math.PI + dLong;
             }
 
             return (RadianToDegree(Math.Atan2(dLong, dPhi)) + 360.0) % 360.0;
@@ -49,10 +45,10 @@ namespace Interfaces.GPS
             var df = DegreeToRadian(c2.Lat.Degrees - c1.Lat.Degrees);
             var dl = DegreeToRadian(c2.Lon.Degrees - c1.Lon.Degrees);
 
-            var a = System.Math.Sin(df / 2) * System.Math.Sin(df / 2) +
-                    System.Math.Cos(f1) * System.Math.Cos(f2) *
-                    System.Math.Sin(dl / 2) * System.Math.Sin(dl / 2);
-            var c = 2 * System.Math.Atan2(System.Math.Sqrt(a), System.Math.Sqrt(1 - a));
+            var a = Math.Sin(df / 2) * Math.Sin(df / 2) +
+                    Math.Cos(f1) * Math.Cos(f2) *
+                    Math.Sin(dl / 2) * Math.Sin(dl / 2);
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
 
             return R * c;
         }

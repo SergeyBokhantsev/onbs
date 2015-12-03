@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace HttpClient
 {
@@ -67,9 +66,11 @@ namespace HttpClient
                 }
             }
 
-            if (headers != null && headers.Any())
+            if (headers != null)
             {
-                foreach( var pair in headers)
+                var pairs = headers as KeyValuePair<HttpRequestHeader, string>[] ?? headers.ToArray();
+
+                foreach(var pair in pairs)
                 {
                     request.Headers.Add(pair.Key, pair.Value);
                 }
@@ -110,13 +111,13 @@ namespace HttpClient
                 if (httpResponse != null)
                     return new ClientResponse(httpResponse.StatusCode, ex.Message);
                 else
-                    return new ClientResponse((HttpStatusCode)0, ex.Message);
+                    return new ClientResponse(0, ex.Message);
             }
             catch (Exception ex)
             {
                 OnException(ex);
 
-                return new ClientResponse((HttpStatusCode)0, ex.Message);
+                return new ClientResponse(0, ex.Message);
             }
         }
 

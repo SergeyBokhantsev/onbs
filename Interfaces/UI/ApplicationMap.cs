@@ -1,10 +1,7 @@
-﻿using Interfaces.UI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Interfaces.UI
@@ -82,7 +79,7 @@ namespace Interfaces.UI
         public string DefaultPageName { get; private set; }
         public string DefaultPageViewName { get; private set; }
 
-        private List<MappedPage> Pages;
+        private readonly List<MappedPage> Pages;
 
         public ApplicationMap(string applicationMapFilePath)
         {
@@ -99,20 +96,32 @@ namespace Interfaces.UI
 
             Pages = new List<MappedPage>();
 
-            XDocument doc = null;
+            XDocument doc;
             using (var stream = File.OpenRead(applicationMapFilePath))
             {
                 doc = XDocument.Load(stream);
             }
 
+            if (doc == null || doc.Root == null)
+                throw new Exception(string.Format("Error opening {0}", applicationMapFilePath));
+
             var defaultElement = doc.Root.Element(DEFAULT);
+
+            if (defaultElement == null)
+                throw new Exception("ApplicationMap error #1");
+
             DefaultPageName = defaultElement.Attribute(PAGENAME) != null ? defaultElement.Attribute(PAGENAME).Value : null;
             if (string.IsNullOrWhiteSpace(DefaultPageName))
                 throw new Exception("Application default model is not provided");
             
             DefaultPageViewName = defaultElement.Attribute(VIEW) != null ? defaultElement.Attribute(VIEW).Value : null;
 
-            foreach (var pageElement in doc.Root.Element(PAGES).Elements(PAGE))
+            var pages = doc.Root.Element(PAGES);
+
+            if (pages == null)
+                throw new Exception("ApplicationMap error #2");
+
+            foreach (var pageElement in pages.Elements(PAGE))
             {
                 var pageName = pageElement.Attribute(PAGENAME).Value;
                 var pageModelTypeName = pageElement.Attribute(MODEL).Value;
@@ -122,7 +131,7 @@ namespace Interfaces.UI
 
                 foreach(var buttonElement in pageElement.Elements())
                 {
-                    MappedActionBase mappedAction = null;
+                    MappedActionBase mappedAction;
                     var actionPageName = buttonElement.Attribute(PAGENAME) != null ? buttonElement.Attribute(PAGENAME).Value : null;
                     var view = buttonElement.Attribute(VIEW) != null ? buttonElement.Attribute(VIEW).Value : null;
                     var customAction = buttonElement.Attribute(ACTION) != null ? buttonElement.Attribute(ACTION).Value : null;

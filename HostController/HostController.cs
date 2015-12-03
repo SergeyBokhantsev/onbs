@@ -1,7 +1,5 @@
 ﻿using Interfaces;
 using System;
-using System.Threading.Tasks;
-using System.Configuration;
 using System.Reflection;
 using System.IO;
 using System.Text;
@@ -9,7 +7,6 @@ using LogLib;
 using System.Net;
 using System.Threading;
 using Interfaces.UI;
-using UIController;
 using HostController.Lin;
 using HostController.Win;
 
@@ -102,54 +99,53 @@ namespace HostController
         public T GetController<T>() 
             where T : class, IController
         {
-            if (typeof(T).Equals(typeof(IUIController)))
+            if (typeof(T) == typeof(IUIController))
                 return uiController as T;
-            else if (typeof(T).Equals(typeof(IInputController)))
+            if (typeof(T) == typeof(IInputController))
                 return inputController as T;
-            else if (typeof(T).Equals(typeof(IArduinoController)))
+            if (typeof(T) == typeof(IArduinoController))
                 return arduController as T;
-            else if (typeof(T).Equals(typeof(IGPSController)))
+            if (typeof(T) == typeof(IGPSController))
                 return gpsController as T;
-            else if (typeof(T).Equals(typeof(IAutomationController)))
+            if (typeof(T) == typeof(IAutomationController))
                 return automationController as T;
-            else if (typeof(T).Equals(typeof(ITravelController)))
+            if (typeof(T) == typeof(ITravelController))
                 return travelController as T;
-            else if (typeof(T).Equals(typeof(IElm327Controller)))
+            if (typeof(T) == typeof(IElm327Controller))
                 return elm327Controller as T;
-            else
-                throw new NotImplementedException(typeof(T).ToString());
+
+            throw new NotImplementedException(typeof(T).ToString());
         }
 
         private void CreateConfig()
         {
             var env = ResolveEnvironment();
-            ConfigValuesResolver configResolver = null;
+            ConfigValuesResolver configResolver;
 
             switch (env)
             {
                 case Environments.Win:
-                    configResolver = new Win.MockConfigResolver();
+                    configResolver = new MockConfigResolver();
                     break;
 
                 case Environments.RPi:
-                    configResolver = new Lin.RPiConfigResolver(this);
+                    configResolver = new RPiConfigResolver(this);
                     break;
 
                 default:
                     throw new NotImplementedException();
             }
 
-            config = new Configuration(configResolver);
-            config.Environment = env;
-            config.IsSystemTimeValid = config.GetBool(ConfigNames.SystemTimeValidByDefault);
-
-            if (DateTime.Now.Year >= 2015)
-                config.IsSystemTimeValid = true;
+            config = new Configuration(configResolver) {Environment = env};
+            config.IsSystemTimeValid = config.GetBool(ConfigNames.SystemTimeValidByDefault) || DateTime.Now.Year >= 2015;
         }
 
         private void CreateLogger()
         {
             var workingDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            if (string.IsNullOrWhiteSpace(workingDir))
+                throw new Exception("Working directory cannot be resolved");
 
             try
             {
@@ -218,7 +214,7 @@ namespace HostController
 
             elm327Controller = new Elm327Controller.Elm327Controller(this);
 
-            var arduPort = config.Environment == Environments.Win ? new ArduinoEmulatorPort() as IPort : new SerialArduPort(Logger, Config) as IPort;
+            var arduPort = config.Environment == Environments.Win ? new ArduinoEmulatorPort() : new SerialArduPort(Logger, Config) as IPort;
             arduController = new ArduinoController.ArduinoController(arduPort, this);
             arduController.RegisterFrameAcceptor(inputController);
 
@@ -239,7 +235,7 @@ namespace HostController
                 Config.GetString(ConfigNames.UIHostAssemblyName), 
                 Config.GetString(ConfigNames.UIHostClass), 
                 map,
-                this, (MappedPage pdescr, string viewModelName) => UIModels.ModelBase.CreateModel(this, pdescr, viewModelName));
+                this, (pdescr, viewModelName) => UIModels.ModelBase.CreateModel(this, pdescr, viewModelName));
 
             uiController.DialogPending += uiController_DialogPending;
             uiController.ShowDefaultPage();
@@ -247,7 +243,8 @@ namespace HostController
             if (config.Environment == Environments.RPi)
                 gpsCtrl.GPRMCReseived += CheckSystemTimeFromGPS;
 
-			var onlineLogTimer = CreateTimer(60000, ht => onlineLogger.Upload(false), true, false);
+            // Timer for online log upoad
+			CreateTimer(60000, ht => onlineLogger.Upload(false), true, false);
 
             StartTimers();
         }
@@ -261,10 +258,10 @@ namespace HostController
         {
             netKeeper.RestartNeeded -= InetKeeperRestartNeeded;
 
-            var dialog = new UIModels.Dialogs.YesNoDialog("Restart", "Failed to get internet connection. Restart now?", "Yes", "No", this, 30000, Interfaces.UI.DialogResults.Yes);
+            var dialog = new UIModels.Dialogs.YesNoDialog("Restart", "Failed to get internet connection. Restart now?", "Yes", "No", this, 30000, DialogResults.Yes);
             dialog.Closed += dr => 
             {
-                if (dr == Interfaces.UI.DialogResults.Yes)
+                if (dr == DialogResults.Yes)
                 {
                     Logger.Log(this, "Begin restart because of Internet keeper request...", LogLevels.Warning);
                     SyncContext.Post(o => Shutdown(HostControllerShutdownModes.Restart), null);
@@ -284,8 +281,9 @@ namespace HostController
 
         private void CheckSystemTimeFromInternet(DateTime inetTime)
         {
-            if (config.IsSystemTimeValid = new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(inetTime))
+            if (new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(inetTime))
             {
+                config.IsSystemTimeValid = true;
                 DisconnectSystemTimeChecking();
             }
         }
@@ -301,56 +299,58 @@ namespace HostController
         {
             var shutdownModel = uiController.ShowPage("ShutdownProgress", null) as UIModels.ShutdownProgressModel;
 
-            shutdownModel.AddLine(string.Format("Begin shutdown in {0} mode", mode));
+            Action<string> showLine = line => { if (shutdownModel != null) { shutdownModel.AddLine(line); } };
+
+            showLine(string.Format("Begin shutdown in {0} mode", mode));
             Logger.Log(this, string.Format("Begin shutdown in {0} mode", mode), LogLevels.Info);
 
-            shutdownModel.AddLine("Disposing ELM327 Controller");
+            showLine("Disposing ELM327 Controller");
             elm327Controller.Dispose();
 
-            shutdownModel.AddLine("Disposing Travel Controller");
+            showLine("Disposing Travel Controller");
             travelController.Dispose();
 
-            shutdownModel.AddLine("Disposing InetKeeper");
+            showLine("Disposing InetKeeper");
 			netKeeper.Dispose();
 
-            shutdownModel.AddLine("Stopping GPSD service");
+            showLine("Stopping GPSD service");
 			gpsd.Stop();
 
-            shutdownModel.AddLine("Disconnecting time checking events");
+            showLine("Disconnecting time checking events");
             DisconnectSystemTimeChecking();
 
-            shutdownModel.AddLine("Disabling GPS Controller");
+            showLine("Disabling GPS Controller");
             gpsController.Shutdown();
 
-            shutdownModel.AddLine("Stopping timers");
+            showLine("Stopping timers");
             StopTimers();
 
-            shutdownModel.AddLine("Stopping SyncContext");
+            showLine("Stopping SyncContext");
             syncContext.Stop();
 
             if (mode != HostControllerShutdownModes.UnhandledException)
             {
                 try
                 {
-                    shutdownModel.AddLine("Saving Configuration");
+                    showLine("Saving Configuration");
                     Config.Save();
                 }
                 catch (Exception ex)
                 {
-                    shutdownModel.AddLine(ex.Message);
+                    showLine(ex.Message);
                     Logger.Log(this, ex);
                 }
             }
 
             Logger.Log(this, "--- Logging finished ---", LogLevels.Info);
 
-            shutdownModel.AddLine("Flushing loggers");
+            showLine("Flushing loggers");
             Logger.Flush();
 
-            shutdownModel.AddLine("Flushing online log");
+            showLine("Flushing online log");
             onlineLogger.Upload(true);
 
-            shutdownModel.AddLine("Stopping UI...");
+            showLine("Stopping UI...");
 
             uiController.Shutdown();
 
@@ -399,12 +399,12 @@ namespace HostController
             return Create(processConfig);
         }
 
-        public IProcessRunner Create(ProcessConfig config)
+        public IProcessRunner Create(ProcessConfig processConfig)
         {
             if (Logger == null)
                 throw new InvalidOperationException("Unable to create ProcessRunner before logger will be fully initialized");
 
-            return new ProcessRunner.ProcessRunnerImpl(config, Logger);
+            return new ProcessRunner.ProcessRunnerImpl(processConfig, Logger);
         }
 
         public IHostTimer CreateTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly)

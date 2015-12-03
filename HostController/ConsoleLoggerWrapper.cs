@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Interfaces;
 using System.Diagnostics;
 
@@ -27,7 +23,7 @@ namespace HostController
 
             }
 
-            WriteToConsole(string.Concat(DateTime.Now, " | ", level, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message), level);
+            WriteToConsole(string.Concat(DateTime.Now, " | ", level, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message));
 
             foreach (var logger in loggers)
             {
@@ -37,7 +33,7 @@ namespace HostController
 
         public void Log(object caller, Exception ex)
         {
-            WriteToConsole(string.Concat(ex.Message, Environment.NewLine, ex.StackTrace), LogLevels.Error);
+            WriteToConsole(string.Concat(ex.Message, Environment.NewLine, ex.StackTrace));
 
             foreach (var logger in loggers)
             {
@@ -46,7 +42,7 @@ namespace HostController
         }
 
         [Conditional("DEBUG")]
-        private void WriteToConsole(string message, LogLevels level)
+        private void WriteToConsole(string message)
         {
             Console.WriteLine(message);
         }

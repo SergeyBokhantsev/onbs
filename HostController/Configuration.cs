@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Interfaces;
 using System.IO;
 using System.Reflection;
@@ -20,11 +16,11 @@ namespace HostController
             if (string.IsNullOrEmpty(input))
                 return input;
 
-            var begInd = input.IndexOf(PlaceholderBegin);
+            var begInd = input.IndexOf(PlaceholderBegin, StringComparison.Ordinal);
 
             if (begInd != -1)
             {
-                var endInd = input.IndexOf(PlaceholderEnd);
+                var endInd = input.IndexOf(PlaceholderEnd, StringComparison.Ordinal);
 
                 if (endInd != -1 && endInd > begInd)
                 {
@@ -76,15 +72,8 @@ namespace HostController
 
         public string DataFolder
         {
-            get
-            {
-                if (dataFolder == null)
-                {
-                    dataFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data");
-                }
-
-                return dataFolder;
-            }
+            // ReSharper disable once AssignNullToNotNullAttribute
+            get { return dataFolder ?? (dataFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data")); }
         }
 
         #endregion

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Interfaces;
 using Interfaces.UI;
 using Interfaces.Input;
@@ -20,7 +15,7 @@ namespace UIModels.Dialogs
 
             Caption = caption;
             Message = message;
-            Buttons = new Dictionary<Interfaces.UI.DialogResults, string> { { DialogResults.Yes, yesCaption }, { DialogResults.No, noCaption } };
+            Buttons = new Dictionary<DialogResults, string> { { DialogResults.Yes, yesCaption }, { DialogResults.No, noCaption } };
         }
 
         public override void HardwareButtonClick(Buttons button)

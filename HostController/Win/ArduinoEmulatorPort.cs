@@ -5,7 +5,6 @@ using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HostController.Win
@@ -20,10 +19,10 @@ namespace HostController.Win
                 private set;
             }
 
-            public int Len
+            private int Len
             {
-                get;
-                private set;
+                get; 
+                set;
             }
 
             public int Offset
@@ -52,12 +51,11 @@ namespace HostController.Win
         private TcpClient tcpClient;
         private NetworkStream stream;
 
-        private List<IncomingChunk> incoming = new List<IncomingChunk>();
+        private readonly List<IncomingChunk> incoming = new List<IncomingChunk>();
 
         public long OverallReadedBytes
         {
-            get;
-            private set;
+            get { return 0; }
         }
 
         public ArduinoEmulatorPort()
@@ -70,6 +68,7 @@ namespace HostController.Win
             if (delay > 0)
                 await Task.Delay(delay);
 
+            // ReSharper disable once UseObjectOrCollectionInitializer
             tcpClient = new TcpClient();
             tcpClient.Client.ReceiveTimeout = 300000;
             tcpClient.Client.SendTimeout = 300000;

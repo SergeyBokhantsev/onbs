@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Interfaces
 {
@@ -14,7 +10,7 @@ namespace Interfaces
 
     public class Metrics : IMetrics
     {
-        private KeyValuePair<string, object>[] metrics;
+        private readonly KeyValuePair<string, object>[] metrics;
 
         public string ProviderName { get; private set; }
 

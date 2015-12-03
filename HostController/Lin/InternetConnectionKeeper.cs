@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Interfaces;
 using System.IO;
 
@@ -40,17 +36,21 @@ namespace HostController.Lin
             checkFolder = config.GetString(ConfigNames.InetKeeperCheckFolder);
 
             if (string.IsNullOrWhiteSpace(checkFolder))
-                throw new ArgumentNullException("ConfigNames.InetKeeperCheckFolder");
+                // ReSharper disable once NotResolvedInText
+                throw new ArgumentNullException("InetKeeperCheckFolder is not configured");
         }
 
         public void StartChecking()
         {
             if (config.GetBool(ConfigNames.InetKeeperEnabled) && config.Environment == Environments.RPi)
             {
-                var thread = new Thread(CheckerThread);
-                thread.Name = "Inet Keeper";
-                thread.IsBackground = true;
-                thread.Priority = ThreadPriority.Lowest;
+                var thread = new Thread(CheckerThread)
+                {
+                    Name = "Inet Keeper",
+                    IsBackground = true,
+                    Priority = ThreadPriority.Lowest
+                };
+
                 thread.Start();
             }
             else
@@ -59,6 +59,8 @@ namespace HostController.Lin
 
         private void CheckerThread()
         {
+            int generalRetries = 0;
+
             while (!disposed)
             {
                 var connected = GetConnected();
@@ -68,9 +70,18 @@ namespace HostController.Lin
                 {
                     logger.LogIfDebug(this, "Begin inet connection procedures...");
 
+                    generalRetries++;
+
+                    if (generalRetries > 3)
+                    {
+                        logger.Log(this, "Still no inet connection. Trying to find and reset modem...", LogLevels.Warning);
+                        modemSwitcher.CheckAndReset();
+                        generalRetries = 0;
+                    }
+
                     if (modemSwitcher.CheckAndSwitch())
                     {
-						var dialerProcess = dialer.CheckAndRun ();
+						var dialerProcess = dialer.CheckAndRun();
 
 						if (dialerProcess != null)
                         {
@@ -81,17 +92,19 @@ namespace HostController.Lin
 
 							while (repeat++ < 10) 
 							{
-								if (dialerProcess.HasExited) 
+								if (dialerProcess.HasExited)
 								{
 									logger.Log(this, "Dialer process exited unexpectedly", LogLevels.Warning);
 									logger.Log(this, dialerProcess.GetFromStandardOutput(), LogLevels.Warning);
 									break;
 								}
 
-								if (GetConnected ()) 
+								if (GetConnected ())
 								{
 									logger.Log(this, "Inet connection confirmed.", LogLevels.Info);
+                                    OnInternetConnectionStatus(true);
 									success = true;
+                                    generalRetries = 0;
 									break;
 								}
 
@@ -111,8 +124,12 @@ namespace HostController.Lin
                     }
                     else
                     {
-                        logger.Log(this, "Modem switch procedure failed", LogLevels.Warning);
+                        logger.Log(this, "No modem found or modem switch procedure failed", LogLevels.Warning);
                     }
+                }
+                else
+                {
+                    generalRetries = 0;
                 }
 
                 Wait(30000);
@@ -182,12 +199,18 @@ namespace HostController.Lin
                 if (!Directory.Exists(checkFolder))
                     return false;
 
-                var request = WebRequest.Create(config.GetString
-                                                (ConfigNames.InetKeeperCheckUrl)) as HttpWebRequest;
+                var request = WebRequest.Create(config.GetString(ConfigNames.InetKeeperCheckUrl)) as HttpWebRequest;
+
+                if (request == null)
+                    throw new Exception("Request is null");
+
                 request.Method = config.GetString(ConfigNames.InetKeeperCheckMethod);
 
                 using (var response = request.GetResponse() as HttpWebResponse)
                 {
+                    if (response == null)
+                        return false;
+
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         if (InternetTime != null)
@@ -265,11 +288,61 @@ namespace HostController.Lin
             }
         }
 
+        internal void CheckAndReset()
+        {
+            var mode = GetModemMode();
+
+            switch (mode)
+            {
+                case ModemModes.Modem:
+                case ModemModes.Storage:
+                    ResetDevice(mode);
+                    break;
+
+                default:
+                    logger.Log(this, "No modem found, nothing to reset", LogLevels.Warning);
+                    break;
+            }
+        }
+
+        private void ResetDevice(ModemModes mode)
+        {
+            var deviceVid = config.GetString(ConfigNames.Modem_vid);
+            string devicePid;
+
+            switch (mode)
+            {
+                case ModemModes.Modem:
+                    devicePid = config.GetString(ConfigNames.Modem_modemmode_pid);
+                    break;
+
+                case ModemModes.Storage:
+                    devicePid = config.GetString(ConfigNames.Modem_storagemode_pid);
+                    break;
+
+                default:
+                    return;
+            }
+
+            var pr = prf.Create("modeswitch_reset", new object[] { deviceVid, devicePid });
+            pr.Run();
+            pr.WaitForExit(60000);
+
+            if (pr.HasExited)
+            {
+                logger.Log(this, "Device {0}:{1} was reset successfully", LogLevels.Info);
+            }
+            else
+            {
+                logger.Log(this, "There was some truoble resetting Device {0}:{1}. The Reset process still not finished after 60 seconds.", LogLevels.Warning);
+            }
+        }
+
         private bool SwitchToModem()
         {
             try
             {
-				var modemSwitchConfigFilePath = Path.Combine(config.DataFolder, "12d1:1446");
+                var modemSwitchConfigFilePath = Path.Combine(config.DataFolder, "12d1_1446.cfg");
 				var pr = prf.Create("modeswitch", new object[] { modemSwitchConfigFilePath });
                 pr.Run();
                 pr.WaitForExit(30000);
@@ -343,7 +416,16 @@ namespace HostController.Lin
 			var modemPid_modemMode = config.GetString(ConfigNames.Modem_modemmode_pid);
 			var modemDevice = NixHelpers.DmesgFinder.FindUSBDevice (modemVid, modemPid_modemMode, prf);
 
-			var usbPort = modemDevice.AttachedTo.First ();
+            if (modemDevice == null)
+                throw new Exception(string.Format("No {0}:{1} USB device found", modemVid, modemPid_modemMode));
+
+            if (modemDevice.AttachedTo == null || !modemDevice.AttachedTo.Any())
+                throw new Exception(string.Format("USB device {0}:{1} has no any ttyUSB attached", modemDevice.VID, modemDevice.PID));
+
+			var usbPort = modemDevice.AttachedTo.First();
+
+            if (string.IsNullOrWhiteSpace(usbPort) || !usbPort.Contains("ttyUSB"))
+                throw new Exception(string.Format("USB device {0}:{1} has invalid attached ttyUSB: {2}", modemDevice.VID, modemDevice.PID, usbPort));
 
 			var dialConfigTemplatePath = Path.Combine (config.DataFolder, "wvdial.conf");
 			var dialConfig = File.ReadAllText (dialConfigTemplatePath);
@@ -352,9 +434,11 @@ namespace HostController.Lin
 			var dialConfigPath = Path.Combine (config.DataFolder, "_wd.conf");
 			File.WriteAllText (dialConfigPath, dialConfig);
 
+            logger.Log(this, string.Format("Running Dialer for {0}, config file created in {1}", usbPort, dialConfigPath), LogLevels.Info);
+
 			var dialer = prf.Create("dialer", new object[] { dialConfigPath });
             dialer.Run();
-			dialer.WaitForExit (10000);
+			dialer.WaitForExit(10000);
             return dialer;
         }
 
@@ -362,7 +446,7 @@ namespace HostController.Lin
         {
 			var dialerAppName = config.GetString("dialer_exe");
 
-			var dialerPID = -1;
+			int dialerPID;
 
 			while ((dialerPID = NixHelpers.ProcessFinder.FindProcess(dialerAppName, prf)) !=-1)
             {
@@ -371,6 +455,8 @@ namespace HostController.Lin
                     ExePath = "sudo",
 					Args = "kill " + dialerPID.ToString(),
                 };
+
+                logger.Log(this, string.Format("Another dialler instance found, pid {0}, trying to kill...", dialerPID), LogLevels.Info);
 
                 prf.Create(processConfig).Run();
 

@@ -2,7 +2,6 @@ using Interfaces;
 using System;
 using System.IO.Ports;
 using System.Threading;
-using System.Diagnostics;
 
 namespace HostController.Lin
 {
@@ -30,10 +29,9 @@ namespace HostController.Lin
                 throw new ArgumentNullException("logger");
 
             this.logger = logger;
-           
-            var t = new System.Threading.Thread(() => Monitor(config));
-			t.IsBackground = true;
-			t.Start ();
+
+            var t = new Thread(() => Monitor(config)) {IsBackground = true};
+            t.Start ();
         }
 
         private void Monitor(IConfig config)
@@ -42,8 +40,6 @@ namespace HostController.Lin
 
             while (true)
             {
-                int delay;
-
                 try
                 {
                     if (port == null)
@@ -70,6 +66,8 @@ namespace HostController.Lin
 
                     while (true)
                     {
+                        int delay;
+
                         lock (portLocker)
                         {
                             if (port.BytesToRead > 0)

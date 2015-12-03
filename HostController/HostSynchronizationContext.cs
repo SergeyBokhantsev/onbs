@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Interfaces;
 
 namespace HostController
@@ -87,7 +83,7 @@ namespace HostController
         private Thread ownerThread;
 
         private bool disposed;
-        private object locker = new object();
+        private readonly object locker = new object();
 
         private double loadSum;
         private int loadNum;
@@ -109,16 +105,16 @@ namespace HostController
         public void Pump()
         {
             ownerThread = Thread.CurrentThread;
-            SynchronizationContext.SetSynchronizationContext(this);
+            SetSynchronizationContext(this);
 
             var fullCycleWatch = new Stopwatch();
             var iddleWatch = new Stopwatch();
 
-            WorkItem workItem;
-
             while (!disposed)
             {
                 fullCycleWatch.Restart();
+
+                WorkItem workItem;
 
                 while (pumpItems.TryDequeue(out workItem))
                 {
@@ -135,7 +131,7 @@ namespace HostController
                 fullCycleWatch.Stop();
                 iddleWatch.Stop();
 
-                var currentLoad = (double)(fullCycleWatch.ElapsedTicks - iddleWatch.ElapsedTicks) / (double)fullCycleWatch.ElapsedTicks;
+                var currentLoad = (fullCycleWatch.ElapsedTicks - iddleWatch.ElapsedTicks) / (double)fullCycleWatch.ElapsedTicks;
                 loadSum += currentLoad;
                 loadNum++;
 

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OBD
 {
@@ -29,7 +26,7 @@ namespace OBD
                     var lines = File.ReadAllLines(file);
                     foreach(var line in lines)
                     {
-                        var items = line.Split(new char[] { (char)9 }, StringSplitOptions.RemoveEmptyEntries);
+                        var items = line.Split(new[] { (char)9 }, StringSplitOptions.RemoveEmptyEntries);
 
                         if (items.Length == 2 && !string.IsNullOrWhiteSpace(items[0]) && !string.IsNullOrWhiteSpace(items[1]) && !descriptions.ContainsKey(items[0]))
                         {

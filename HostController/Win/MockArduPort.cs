@@ -1,14 +1,11 @@
 ﻿using Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO.Ports;
 using Interfaces.SerialTransportProtocol;
 using SerialTransportProtocol;
 using System.Threading;
-using Interfaces.Input;
 
 namespace HostController.Win
 {
@@ -16,10 +13,10 @@ namespace HostController.Win
     {
         public event SerialDataReceivedEventHandler DataReceived;
 
-        private Queue<byte> buffer;
-        private ISTPCodec codec;
+        private readonly Queue<byte> buffer;
+        private readonly ISTPCodec codec;
 
-        private string fakeNmea;
+        private readonly string fakeNmea;
         private int fakeNmeaPos;
 
         private long readedCount;
@@ -42,8 +39,7 @@ namespace HostController.Win
 
             fakeNmea = System.IO.File.ReadAllText("./Data/fake_nmea.txt");
 
-            var t = new Thread(() => SetData());
-            t.IsBackground = true;
+            var t = new Thread(SetData) {IsBackground = true};
             t.Start();
         }
 
@@ -51,8 +47,6 @@ namespace HostController.Win
         {
             while(true)
             {
-               // var data = codec.Encode(new STPFrame(new byte[] { (byte)Buttons.Accept, (byte)ButtonStates.Press }, STPFrame.Types.Button)).ToList();
-
 				const int chunk = 60;
 
 				if (fakeNmeaPos + chunk >= fakeNmea.Length)
@@ -65,7 +59,6 @@ namespace HostController.Win
 
                 lock(buffer)
                 {
-                   // data.ForEach(buffer.Enqueue);
                     nmeaData.ForEach(buffer.Enqueue);
                 }
 
@@ -74,6 +67,7 @@ namespace HostController.Win
 
                 Thread.Sleep(1000);
             }
+            // ReSharper disable once FunctionNeverReturns
         }
 
         public int Read(byte[] buff, int offset, int count)
@@ -100,7 +94,7 @@ namespace HostController.Win
             return readed;
         }
 
-        public void Write(byte[] buffer, int offset, int count)
+        public void Write(byte[] sourceBuffer, int offset, int count)
         {
         }
     }

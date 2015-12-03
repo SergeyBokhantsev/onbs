@@ -1,13 +1,6 @@
 ﻿using Interfaces;
 using Interfaces.UI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Interfaces.Input;
-using System.Threading;
-using UIController;
 
 namespace UIModels
 {

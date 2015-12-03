@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Interfaces.GPS
 {
     public struct GeoCoordinate
     {
+        private const double equolityTolerance = 0.000001;
+
         public double Degrees;
 
         public GeoCoordinate(double degrees)
@@ -58,22 +56,22 @@ namespace Interfaces.GPS
 
         public static bool operator ==(GeoCoordinate c1, GeoCoordinate c2)
         {
-            return c1.Degrees == c2.Degrees;
+            return Math.Abs(c1.Degrees - c2.Degrees) < equolityTolerance;
         }
 
         public static bool operator ==(GeoCoordinate c, double d)
         {
-            return c.Degrees == d;
+            return Math.Abs(c.Degrees - d) < equolityTolerance;
         }
 
         public static bool operator !=(GeoCoordinate c1, GeoCoordinate c2)
         {
-            return c1.Degrees != c2.Degrees;
+            return Math.Abs(c1.Degrees - c2.Degrees) > equolityTolerance;
         }
 
         public static bool operator !=(GeoCoordinate c, double d)
         {
-            return c.Degrees != d;
+            return Math.Abs(c.Degrees - d) > equolityTolerance;
         }
 
         public override bool Equals(object obj)
@@ -82,20 +80,20 @@ namespace Interfaces.GPS
                 return false;
 
             if (obj is double)
-                return this.Degrees == (double)obj;
+                return Math.Abs(this.Degrees - (double)obj) < equolityTolerance;
 
             if (obj is int)
-                return this.Degrees == (double)(int)obj;
+                return Math.Abs(this.Degrees - (int)obj) < equolityTolerance;
 
             if (obj is GeoCoordinate)
-                return this.Degrees == ((GeoCoordinate)obj).Degrees;
+                return Math.Abs(this.Degrees - ((GeoCoordinate)obj).Degrees) < equolityTolerance;
 
             return false;
         }
 
         public override int GetHashCode()
         {
-            return Degrees.GetHashCode();
+            return 0;
         }
 
         public static GeoCoordinate operator +(GeoCoordinate c, double d)
@@ -173,6 +171,8 @@ namespace Interfaces.GPS
 
     public struct GeoRect
     {
+        private const double equolityTolerance = 0.000001;
+
         public GeoCoordinate Lat;
         public GeoCoordinate Lon;
         public double LatSize;
@@ -187,7 +187,7 @@ namespace Interfaces.GPS
         {
             get
             {
-                return Lat.Degrees != 0 && Lon.Degrees != 0;
+                return Math.Abs(Lat.Degrees) > equolityTolerance && Math.Abs(Lon.Degrees) > equolityTolerance;
             }
         }
 
@@ -211,8 +211,8 @@ namespace Interfaces.GPS
 
     public class GPRMC
     {
-        private GeoPoint location = new GeoPoint();
-        private DateTime time = new DateTime();
+        private GeoPoint location;
+        private DateTime time;
 
         public GeoPoint Location { get { return location; } }
         public DateTime Time { get { return time; } }
@@ -232,6 +232,7 @@ namespace Interfaces.GPS
             this.location = location;
             this.time = time;
             Active = active;
+            Revision = revision;
         }
 
         public bool Parse(string[] items)

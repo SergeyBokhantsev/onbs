@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Json;
+﻿using Json;
 
 namespace GPSD.Net.Messages
 {
@@ -29,17 +24,18 @@ namespace GPSD.Net.Messages
             pps = false;
         }
 
-        public static WatchMsg Parse(Json.JsonObj json)
+        public static WatchMsg Parse(JsonObj json)
         {
-            var ret = new WatchMsg();
-
-            ret.enable = JPath.GetFieldValue<bool>(json, "enable");
-            ret.json = JPath.GetFieldValue<bool>(json, "json");
-            ret.nmea = JPath.GetFieldValue<bool>(json, "nmea");
-            ret.raw = JPath.GetFieldValue<int>(json, "raw");
-            ret.timing = JPath.GetFieldValue<bool>(json, "timing");
-            ret.scaled = JPath.GetFieldValue<bool>(json, "scaled");
-            ret.pps = JPath.GetFieldValue<bool>(json, "pps");
+            var ret = new WatchMsg
+            {
+                enable = JPath.GetFieldValue<bool>(json, "enable"),
+                json = JPath.GetFieldValue<bool>(json, "json"),
+                nmea = JPath.GetFieldValue<bool>(json, "nmea"),
+                raw = JPath.GetFieldValue<int>(json, "raw"),
+                timing = JPath.GetFieldValue<bool>(json, "timing"),
+                scaled = JPath.GetFieldValue<bool>(json, "scaled"),
+                pps = JPath.GetFieldValue<bool>(json, "pps")
+            };
 
             return ret;
         }
