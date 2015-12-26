@@ -25,7 +25,7 @@ bool reset_gsm()
   return true;
 }
 
-void set_descr(char* descr, char* what)
+void set_descr(char* descr, const char* what)
 {
 	for (int i=0; i<BACK_DESCRIPTOR_LEN; ++i)
 	{
@@ -44,7 +44,8 @@ frame_sender(_comPort, ports, ports_types, 3, COMM_FRAME_MAX_SIZE),
 frame_receiver(_comPort),
 outcom_writer(&out_buffer),
 button_processor(&outcom_writer),
-disable_buttons(false)
+disable_buttons(false),
+oled()
 {
 	ports[0] = _gsmPort;
 	ports[1] = _gpsPort;
@@ -113,6 +114,10 @@ void AMCController::process_frame(char* frame_array, int frame_len, char frame_t
 			
 		case ARDUINO_COMMAND_FRAME_TYPE:
 			result = process_incoming_arduino_command(frame_array, frame_len, descr);
+			break;
+			
+		case OLED_COMMAND_FRAME_TYPE:
+			result = oled.process(frame_array, frame_len);
 			break;
 	}
 

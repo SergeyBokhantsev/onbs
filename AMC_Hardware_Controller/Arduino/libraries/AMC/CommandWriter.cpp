@@ -16,7 +16,7 @@ void CommandWriter::write(char c)
 	buffer->write((uint8_t)c);
 }
 
-void CommandWriter::write_line(char* line)
+void CommandWriter::write_line(const char* line)
 {
 	int i = 0;
 	while(line[i] != 0)

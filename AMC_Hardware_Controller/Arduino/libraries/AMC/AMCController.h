@@ -7,6 +7,7 @@
 #include "CommFrameReceiver.h"
 #include "CommandWriter.h"
 #include "ButtonProcessor.h"
+#include "OledController.h"
 
 #define COMM_FRAME_MAX_SIZE 512
 
@@ -43,6 +44,8 @@ private:
 	CommandWriter outcom_writer;
 
 	ButtonProcessor button_processor;
+	
+	OledController oled;
 
 	void process_incoming();
 	void process_frame(char* frame_array, int frame_len, char frame_type);

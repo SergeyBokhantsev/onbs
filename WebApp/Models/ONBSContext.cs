@@ -12,6 +12,7 @@ namespace WebApp.Models
         public DbSet<Travel> Travels { get; set; }
         public DbSet<TravelPoint> TravelPoints { get; set; }
         public DbSet<LogEntry> GeneralLogs { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         public ONBSContext()
             : base(System.Configuration.ConfigurationManager.AppSettings["DBConnectionString"])

@@ -11,7 +11,7 @@ class CommandWriter
 	public:	
 	CommandWriter(HardwareSerial* _buffer);
 	void write(char c);
-	void write_line(char* line);
+	void write_line(const char* line);
 	void open_command(char command_type);
 	void close_command();
 

@@ -136,8 +136,12 @@
       <Project>{AEDAD09E-C7EE-464C-9FA8-E3AEA59A5A12}</Project>
       <Name>LogLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MiniDisplayController\MiniDisplayController.csproj">
+      <Project>{7f57b7a8-6743-4975-8491-900b4cc09ddc}</Project>
+      <Name>MiniDisplayController</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NixHelpers\NixHelpers.csproj">
-      <Project>{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}</Project>
+      <Project>{a822c3f5-f40f-4ded-b568-caeb1cf6a401}</Project>
       <Name>NixHelpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProcessRunner\ProcessRunner.csproj">
@@ -147,6 +151,10 @@
     <ProjectReference Include="..\SerialTransportProtocol\SerialTransportProtocol.csproj">
       <Project>{B1069B60-BC03-4A71-B8D2-C33F0043D96C}</Project>
       <Name>SerialTransportProtocol</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Telemetry\Telemetry.csproj">
+      <Project>{5a0ec45f-9757-45ac-80b0-4c854986aaf9}</Project>
+      <Name>Telemetry</Name>
     </ProjectReference>
     <ProjectReference Include="..\TravelController\TravelController.csproj">
       <Project>{CF96102A-0C8D-4FCD-BCC0-4B240C8130C3}</Project>

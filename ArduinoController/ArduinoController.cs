@@ -58,7 +58,8 @@ namespace ArduinoController
 
             hc.CreateTimer(5000, t => 
             {
-                Send(new byte[] { (byte)ArduinoComands.ArduinoPingRequest });
+                var frameData = new byte[] { (byte)ArduinoComands.ArduinoPingRequest };
+                Send(new STPFrame(frameData, STPFrame.Types.ArduCommand));
 				Interlocked.Increment(ref ardPingPendings);
                 logger.LogIfDebug(this, "Ping command sended to Arduino");
                 UpdateMetrics(0);
@@ -69,13 +70,13 @@ namespace ArduinoController
             port.DataReceived += DataReceived;
         }
 
-        private void Send(byte[] data)
+        private void Send(STPFrame frame)
         {
             lock (port)
             {
                 try
                 {
-                    var serializedFrame = codec.Encode(new STPFrame(data, STPFrame.Types.ArduCommand));
+                    var serializedFrame = codec.Encode(frame);
                     port.Write(serializedFrame, 0, serializedFrame.Length);
                 }
                 catch (Exception ex)
@@ -189,12 +190,12 @@ namespace ArduinoController
 
         public void RegisterFrameProvider(IFrameProvider provider)
         {
-            throw new NotImplementedException();
+            provider.FrameToSend += Send;
         }
 
         public void UnregisterFrameProvider(IFrameProvider provider)
         {
-            throw new NotImplementedException();
+            provider.FrameToSend -= Send;
         }
     }
 }

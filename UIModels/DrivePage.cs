@@ -81,6 +81,9 @@ namespace UIModels
                 SetProperty("exported_points", string.Format("{0}/{1}", tc.BufferedPoints, tc.SendedPoints));
                 SetProperty("travel_span", tc.TravelTime.TotalMinutes);
                 SetProperty("distance", tc.TravelDistance);
+
+                hc.GetController<IMiniDisplayController>().Fill();
+                hc.GetController<IMiniDisplayController>().Update();
             }
 
             base.OnPrimaryTick(timer);
