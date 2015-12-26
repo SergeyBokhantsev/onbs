@@ -27,6 +27,7 @@ namespace HostController
         private IAutomationController automationController;
         private TravelController.TravelController travelController;
         private Elm327Controller.Elm327Controller elm327Controller;
+        private MiniDisplayController.MiniDisplayController miniDisplayController;
 
         private HostSynchronizationContext syncContext;
         private HostTimersController timersController;
@@ -113,6 +114,8 @@ namespace HostController
                 return travelController as T;
             if (typeof(T) == typeof(IElm327Controller))
                 return elm327Controller as T;
+            if (typeof(T) == typeof(IMiniDisplayController))
+                return miniDisplayController as T;
 
             throw new NotImplementedException(typeof(T).ToString());
         }
@@ -217,6 +220,8 @@ namespace HostController
             var arduPort = config.Environment == Environments.Win ? new ArduinoEmulatorPort() : new SerialArduPort(Logger, Config) as IPort;
             arduController = new ArduinoController.ArduinoController(arduPort, this);
             arduController.RegisterFrameAcceptor(inputController);
+
+            miniDisplayController = new MiniDisplayController.MiniDisplayController(Logger);
 
             var gpsCtrl = new GPSController.GPSController(Config, SyncContext, Logger);
             

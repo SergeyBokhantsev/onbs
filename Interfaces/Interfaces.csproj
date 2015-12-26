@@ -67,6 +67,7 @@
     <Compile Include="IHostController.cs" />
     <Compile Include="IInputController.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="IMiniDisplayController.cs" />
     <Compile Include="Input\Buttons.cs" />
     <Compile Include="IOperationGuard.cs" />
     <Compile Include="IPort.cs" />

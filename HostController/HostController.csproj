@@ -136,6 +136,10 @@
       <Project>{AEDAD09E-C7EE-464C-9FA8-E3AEA59A5A12}</Project>
       <Name>LogLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MiniDisplayController\MiniDisplayController.csproj">
+      <Project>{7f57b7a8-6743-4975-8491-900b4cc09ddc}</Project>
+      <Name>MiniDisplayController</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NixHelpers\NixHelpers.csproj">
       <Project>{a822c3f5-f40f-4ded-b568-caeb1cf6a401}</Project>
       <Name>NixHelpers</Name>
