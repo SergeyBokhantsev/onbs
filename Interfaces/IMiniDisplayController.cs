@@ -82,8 +82,10 @@ namespace Interfaces.MiniDisplay
             ShowCaption("LINES");
             for (int i = 0; i< 100; ++i)
             {
-                mc.DrawLine((byte)r.Next(128), (byte)r.Next(128), (byte)r.Next(128), (byte)r.Next(128));
+                mc.DrawLine((byte)r.Next(128), (byte)r.Next(64), 
+				            (byte)r.Next(128), (byte)r.Next(64));
                 mc.Update();
+				Thread.Sleep (5);
             }
 
             Thread.Sleep(1000);
@@ -96,20 +98,20 @@ namespace Interfaces.MiniDisplay
 
             Thread.Sleep(1000);
 
-            ShowCaption("INVERT");
-            mc.Print(0, 20, "INVERT", TextAlingModes.Center);
-            for (int i = 0; i < 10; ++i)
-            {
-                mc.Invert();
-                mc.Update();
-                Thread.Sleep(50);
-            }
-
             ShowCaption("PIXEL");
+
+			for (byte y=0; y<64; y++) {
+				for (byte x=0; x<128; ++x) {
+					mc.SetPixel (x, y);
+					mc.Update ();
+				}
+			}
+
             for (int i = 0; i < 1000; ++i)
             {
-                mc.SetPixel((byte)r.Next(128), (byte)r.Next(128));
+                mc.SetPixel((byte)r.Next(128), (byte)r.Next(64));
                 mc.Update();
+				Thread.Sleep (5);
             }
 
             for (int i = 0; i < 1000; ++i)

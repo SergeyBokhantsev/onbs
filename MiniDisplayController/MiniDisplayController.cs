@@ -71,6 +71,7 @@ namespace MiniDisplayController
         {
             oneByteData[0] = (byte)OLEDCommands.OLED_COMMAND_UPDATE;
             CreateAndSendFrame(oneByteData);
+			System.Threading.Thread.Sleep (25);
         }
 
         public void Fill()
