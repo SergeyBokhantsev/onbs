@@ -83,9 +83,12 @@ namespace UIModels
                 SetProperty("travel_span", tc.TravelTime.TotalMinutes);
                 SetProperty("distance", tc.TravelDistance);
 
+				hc.GetController<IMiniDisplayController>().SetFont(Fonts.BigNumbers);
+
                 hc.GetController<IMiniDisplayController>().Cls();
 
-                hc.GetController<IMiniDisplayController>().Print(0, 32, DateTime.Now.Second.ToString(), TextAlingModes.Center);
+                hc.GetController<IMiniDisplayController>()
+					.Print(0, 32, DateTime.Now.Second.ToString(), TextAlingModes.Center);
 
                 hc.GetController<IMiniDisplayController>().Update();
             }
