@@ -71,6 +71,7 @@ bool OledController::process(const char* frame_array, int frame_len)
 			// 1 - X Align mode
 			// 2 - X
 			// 3 - Y
+			
 			if (frame_len > 4)
 			{
 				int strLen = frame_len - 4;
@@ -81,7 +82,7 @@ bool OledController::process(const char* frame_array, int frame_len)
 					if (i == TEXT_BUFFER_SIZE)
 						break;
 					
-					text_buffer[i] = frame_array[i + 3];
+					text_buffer[i] = frame_array[i + 4];
 				}
 				text_buffer[i] = 0;
 				
@@ -141,6 +142,10 @@ bool OledController::process(const char* frame_array, int frame_len)
 			
 		case OLED_COMMAND_CLR_CIRCLE:
 			display.clrCircle(OLED_1_ARG, OLED_2_ARG, OLED_3_ARG);
+			return true;
+			
+		case OLED_COMMAND_BRIGHTNESS:
+			display.setBrightness(OLED_1_ARG);
 			return true;
 	}
 	
