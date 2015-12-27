@@ -1,4 +1,5 @@
 ﻿using Interfaces;
+using Interfaces.MiniDisplay;
 using Interfaces.SerialTransportProtocol;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,7 @@ namespace MiniDisplayController
 
         private readonly ILogger logger;
         private readonly byte[] oneByteData = new byte[1];
+        private readonly byte[] twoByteData = new byte[2];
 
         public MiniDisplayController(ILogger logger)
         {
@@ -110,6 +112,13 @@ namespace MiniDisplayController
             }
 
 			CreateAndSendFrame (data);
+        }
+
+        public void SetFont(Fonts font)
+        {
+            twoByteData[0] = (byte)OLEDCommands.OLED_COMMAND_FONT;
+            twoByteData[1] = (byte)font;
+            CreateAndSendFrame(twoByteData);
         }
     }
 }

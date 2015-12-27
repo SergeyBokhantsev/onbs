@@ -1,5 +1,6 @@
 ﻿using Interfaces;
 using Interfaces.GPS;
+using Interfaces.MiniDisplay;
 using Interfaces.UI;
 using System;
 using System.Linq;

@@ -9,6 +9,7 @@ using System.Threading;
 using Interfaces.UI;
 using HostController.Lin;
 using HostController.Win;
+using Interfaces.MiniDisplay;
 
 namespace HostController
 {
