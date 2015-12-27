@@ -51,6 +51,16 @@ namespace MiniDisplayController
             this.logger = logger;
         }
 
+        private void CreateAndSendFrame(byte[] data)
+        {
+            var handler = FrameToSend;
+            if (handler != null)
+            {
+                var frame = new STPFrame(data, STPFrame.Types.MiniDisplay);
+                handler(frame);
+            }
+        }
+
         public void Update()
         {
             oneByteData[0] = (byte)OLEDCommands.OLED_COMMAND_UPDATE;
@@ -69,13 +79,34 @@ namespace MiniDisplayController
             CreateAndSendFrame(oneByteData);
         }
 
-        private void CreateAndSendFrame(byte[] data)
+        public void Print(int x, int y, string text, TextAlingModes align = TextAlingModes.None)
         {
-            var handler = FrameToSend;
-            if (handler != null)
+            var data = new byte[text.Length + 4];
+
+            data[0] = (byte)OLEDCommands.OLED_COMMAND_PRINT;
+
+            switch(align)
             {
-                var frame = new STPFrame(data, STPFrame.Types.MiniDisplay);
-                handler(frame);
+                case TextAlingModes.None:
+                    data[1] = (byte)OLEDTextAlignModes.OLED_TEXT_X_ALIGN_MODE_NONE;
+                    break;
+                case TextAlingModes.Left:
+                    data[1] = (byte)OLEDTextAlignModes.OLED_TEXT_X_ALIGN_MODE_LEFT;
+                    break;
+                case TextAlingModes.Center:
+                    data[1] = (byte)OLEDTextAlignModes.OLED_TEXT_X_ALIGN_MODE_CENTER;
+                    break;
+                case TextAlingModes.Right:
+                    data[1] = (byte)OLEDTextAlignModes.OLED_TEXT_X_ALIGN_MODE_RIGHT;
+                    break;
+            }
+
+            data[2] = (byte)x;
+            data[3] = (byte)y;
+
+            for (int i=0; i<text.Length; ++i)
+            {
+                data[4 + i] = (byte)text[i];
             }
         }
     }

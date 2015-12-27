@@ -41,6 +41,8 @@ public:
 	~OledController();
 
 	bool process(const char* frame_array, int frame_len);
+	
+	void draw_clock();
 private:
 
 	OLED display;

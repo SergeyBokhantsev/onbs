@@ -1,6 +1,3 @@
-//To enable watchdog - comment WDT_Disable() call within the following file:
-//C:\Users\Mau\AppData\Roaming\Arduino15\packages\arduino\hardware\sam\1.6.4\variants\arduino_due_x
-
 #include <AMCController.h>
 
 #include <DueTimer.h>
@@ -21,15 +18,14 @@ AMCController ctrl(gsm_port_enabled ? &gsm_port : 0,
                    gps_port_enabled ? &gps_port : 0,
                    &comm_port);
 
-//#define __WDP_MS 2048 // edit this number accordingly
-
 //##########################################
 //############## SETUP #####################
 //##########################################
 
 void watchdogSetup (void)
 {
- // watchdogEnable(5000);
+  // watchdog for 5 seconds
+  watchdogEnable(5000);
 }
 
 void setup() 
@@ -51,8 +47,6 @@ void setup()
   }
   
    ctrl.init();
-   
-  //WDT_Enable(WDT, 0x2000 | __WDP_MS | ( __WDP_MS << 16 ));
 }
 
 //##########################################
@@ -62,4 +56,5 @@ void setup()
 void loop() 
 {
  ctrl.run();
+ watchdogReset();
 }

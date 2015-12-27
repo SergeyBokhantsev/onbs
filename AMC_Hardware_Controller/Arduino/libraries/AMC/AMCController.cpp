@@ -58,6 +58,8 @@ oled()
 	outcom_writer.open_command(ARDUINO_COMMAND_FRAME_TYPE);
     outcom_writer.write_line("ARDUINO STARTED");
     outcom_writer.close_command();
+	
+	oled.draw_clock();
 }
 
 AMCController::~AMCController()

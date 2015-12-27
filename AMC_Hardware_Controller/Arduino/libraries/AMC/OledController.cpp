@@ -4,6 +4,8 @@ extern uint8_t SmallFont[]; // FONT 0
 extern uint8_t MediumNumbers[]; // FONT 1
 extern uint8_t BigNumbers[]; // FONT 2
 
+extern uint8_t clock_64_img[];
+
 OledController::OledController() : display(SDA, SCL)
 {
 	display.begin();
@@ -12,6 +14,12 @@ OledController::OledController() : display(SDA, SCL)
 
 OledController::~OledController()
 {
+}
+
+void OledController::draw_clock()
+{
+	display.drawBitmap (32, 0, clock_64_img, 64, 64);
+	display.update();
 }
 
 int get_x_aligned(int x, int mode)
