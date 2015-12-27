@@ -222,6 +222,7 @@ namespace HostController
             arduController.RegisterFrameAcceptor(inputController);
 
             miniDisplayController = new MiniDisplayController.MiniDisplayController(Logger);
+			arduController.RegisterFrameProvider (miniDisplayController);
 
             var gpsCtrl = new GPSController.GPSController(Config, SyncContext, Logger);
             

@@ -108,6 +108,8 @@ namespace MiniDisplayController
             {
                 data[4 + i] = (byte)text[i];
             }
+
+			CreateAndSendFrame (data);
         }
     }
 }
