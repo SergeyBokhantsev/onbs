@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MiniDisplayController
 {
-    internal enum OLEDCommands : byte
+    public enum OLEDCommands : byte
     {
         OLED_COMMAND_CLS = 0,
         OLED_COMMAND_FILL = 1,
@@ -30,7 +30,7 @@ namespace MiniDisplayController
         OLED_COMMAND_BRIGHTNESS = 16
     }
 
-    internal enum OLEDTextAlignModes
+    public enum OLEDTextAlignModes
     {
         OLED_TEXT_X_ALIGN_MODE_NONE = 0,
         OLED_TEXT_X_ALIGN_MODE_LEFT = 1,

@@ -71,6 +71,10 @@ namespace ArduinoBoardEmulator
                             server.OnPing();
                         }
                         break;
+
+                    case STPFrame.Types.MiniDisplay:
+                        server.MiniDisplay.ProcessFrame(frame);
+                        break;
                 }
             }
         }

@@ -65,6 +65,13 @@ namespace Interfaces.MiniDisplay
             mc.Update();
             Thread.Sleep(2000);
 
+            ShowCaption("INVERT");
+            mc.Print(0, 20, "INVERT", TextAlingModes.Center);
+            mc.Update();
+            mc.Invert();
+            mc.Update();
+            Thread.Sleep(1000);
+
             ShowCaption("PRINT");
             mc.SetFont(Fonts.Small);
             mc.Print(0, 15, "Left", TextAlingModes.Left);
@@ -80,12 +87,12 @@ namespace Interfaces.MiniDisplay
             Thread.Sleep(2000);
 
             ShowCaption("LINES");
-            for (int i = 0; i< 100; ++i)
+            for (int i = 0; i < 100; ++i)
             {
-                mc.DrawLine((byte)r.Next(128), (byte)r.Next(64), 
-				            (byte)r.Next(128), (byte)r.Next(64));
+                mc.DrawLine((byte)r.Next(128), (byte)r.Next(64),
+                            (byte)r.Next(128), (byte)r.Next(64));
                 mc.Update();
-				Thread.Sleep (5);
+                Thread.Sleep(5);
             }
 
             Thread.Sleep(1000);
@@ -100,30 +107,63 @@ namespace Interfaces.MiniDisplay
 
             ShowCaption("PIXEL");
 
-			for (byte y=0; y<64; y++) {
-				for (byte x=0; x<128; ++x) {
-					mc.SetPixel (x, y);
-					mc.Update ();
-				}
-			}
+            //for (byte y=0; y<64; y++) {
+            //    for (byte x=0; x<128; ++x) {
+            //        mc.SetPixel (x, y);
+            //        mc.Update ();
+            //    }
+            //}
 
-            for (int i = 0; i < 1000; ++i)
+            for (int i = 0; i < 100; ++i)
             {
                 mc.SetPixel((byte)r.Next(128), (byte)r.Next(64));
                 mc.Update();
-				Thread.Sleep (5);
+                Thread.Sleep(5);
             }
 
-            for (int i = 0; i < 1000; ++i)
-            {
-                mc.InvertPixel((byte)r.Next(128), (byte)r.Next(128));
-                mc.Update();
-            }
+            //for (int i = 0; i < 100; ++i)
+            //{
+            //    mc.InvertPixel((byte)r.Next(128), (byte)r.Next(128));
+            //    mc.Update();
+            //}
 
-            for (int i = 0; i < 1000; ++i)
+            mc.Fill();
+            mc.Update();
+
+            for (int i = 0; i < 100; ++i)
             {
                 mc.ClearPixel((byte)r.Next(128), (byte)r.Next(128));
                 mc.Update();
+            }
+
+            ShowCaption("RECTANGLES");
+            for (int i = 0; i < 13; ++i)
+            {
+                mc.DrawRect((byte)(i * 2), (byte)(i * 2), (byte)(128 - i * 2-1), (byte)(64 - i * 2-1));
+                mc.Update();
+                Thread.Sleep(200);
+            }
+
+            for (int i = 0; i < 13; ++i)
+            {
+                mc.ClearRect((byte)(i * 2), (byte)(i * 2), (byte)(128 - i * 2-1), (byte)(64 - i * 2-1));
+                mc.Update();
+                Thread.Sleep(200);
+            }
+
+            ShowCaption("CIRCLES");
+            for (int i = 0; i < 13; ++i)
+            {
+                mc.DrawCircle((byte)64, (byte)32, (byte)(i * 2));
+                mc.Update();
+                Thread.Sleep(200);
+            }
+
+            for (int i = 0; i < 13; ++i)
+            {
+                mc.ClearCircle((byte)64, (byte)32, (byte)(i * 2));
+                mc.Update();
+                Thread.Sleep(200);
             }
 
             ShowCaption("OVER...");

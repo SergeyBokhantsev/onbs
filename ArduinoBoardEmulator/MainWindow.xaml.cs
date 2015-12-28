@@ -31,7 +31,50 @@ namespace ArduinoBoardEmulator
 
             disp = Dispatcher.CurrentDispatcher;
 
+            controller.Arduino.MiniDisplay.Updated += MiniDisplay_Updated;
+
             controller.Arduino.PingSignal += Arduino_PingSignal;
+        }
+
+        //void MiniDisplay_Updated(System.Drawing.Bitmap bmp)
+        //{
+            
+
+            
+
+        //    disp.Invoke(async () =>
+        //    {
+        //        bmp = new System.Drawing.Bitmap(128, 64);
+
+        //        var g = System.Drawing.Graphics.FromImage(bmp);
+
+        //        g.DrawLine(System.Drawing.Pens.Black, 0, 0, 100, 100);
+
+        //        g.Dispose();
+
+        //        var logo = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+        //                    bmp.GetHbitmap(),
+        //                    IntPtr.Zero,
+        //                    Int32Rect.Empty,
+        //                    BitmapSizeOptions.FromEmptyOptions());
+
+        //        miniDisplay.Source = logo;
+        //    });
+        //}
+
+        void MiniDisplay_Updated(System.Drawing.Bitmap bmp)
+        {
+            disp.Invoke(async () =>
+                {
+
+                    var screen = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                                 bmp.GetHbitmap(),
+                                 IntPtr.Zero,
+                                 Int32Rect.Empty,
+                                 BitmapSizeOptions.FromEmptyOptions());
+
+                    miniDisplay.Source = screen;
+                });
         }
 
         private void Arduino_PingSignal()

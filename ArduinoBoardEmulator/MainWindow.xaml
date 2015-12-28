@@ -19,7 +19,10 @@
                 <Button Content="Accept" Padding="8" FontSize="30" Click="Button_Click"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="20">
-                <Label Name="lPing" Background="LightGray" Padding="20"/>
+                <Label Name="lPing" Background="LightGray" Width="32" Height="32" Padding="20"/>
+                <Border Margin="10" BorderBrush="Black" BorderThickness="1">
+                    <Image Name="miniDisplay" />
+                </Border>
             </StackPanel>
         </StackPanel>
     </Grid>

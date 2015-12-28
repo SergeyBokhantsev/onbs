@@ -18,9 +18,17 @@ namespace ArduinoBoardEmulator
         private ArduinoClient client;
         private FakeGPS gps;
 
+        public MiniDisplay MiniDisplay
+        {
+            get;
+            private set;
+        }
+
         public ArduinoServer(ILogger logger)
         {
             gps = new FakeGPS();
+
+            MiniDisplay = new ArduinoBoardEmulator.MiniDisplay(new System.Drawing.Size(128, 64));
 
             tcpServer = new Server(33400, logger);
             tcpServer.ClientConnected += tcpServer_ClientConnected;
