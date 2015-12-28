@@ -10,6 +10,7 @@ using Interfaces.UI;
 using HostController.Lin;
 using HostController.Win;
 using Interfaces.MiniDisplay;
+using Implementation.MiniDisplay;
 
 namespace HostController
 {
@@ -28,7 +29,7 @@ namespace HostController
         private IAutomationController automationController;
         private TravelController.TravelController travelController;
         private Elm327Controller.Elm327Controller elm327Controller;
-        private MiniDisplayController.MiniDisplayController miniDisplayController;
+        private MiniDisplayController miniDisplayController;
 
         private HostSynchronizationContext syncContext;
         private HostTimersController timersController;
@@ -222,7 +223,7 @@ namespace HostController
             arduController = new ArduinoController.ArduinoController(arduPort, this);
             arduController.RegisterFrameAcceptor(inputController);
 
-            miniDisplayController = new MiniDisplayController.MiniDisplayController(Logger);
+            miniDisplayController = new MiniDisplayController(Logger);
 			arduController.RegisterFrameProvider (miniDisplayController);
 
             var gpsCtrl = new GPSController.GPSController(Config, SyncContext, Logger);
@@ -260,9 +261,9 @@ namespace HostController
 
         private Telemetry.TelemetryServer telemetry;
 
-        void uiController_DialogPending(bool obj)
+        void uiController_DialogPending(bool isPending)
         {
-           
+            miniDisplayController.IsMessagePending = isPending;
         }
 
         void InetKeeperRestartNeeded()
@@ -362,6 +363,8 @@ namespace HostController
             onlineLogger.Upload(true);
 
             showLine("Stopping UI...");
+
+            miniDisplayController.Dispose();
 
             uiController.Shutdown();
 

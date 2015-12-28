@@ -83,11 +83,8 @@ namespace UIModels
                 SetProperty("travel_span", tc.TravelTime.TotalMinutes);
                 SetProperty("distance", tc.TravelDistance);
 
-               // hc.GetController<IMiniDisplayController>().Cls();
-              //  hc.GetController<IMiniDisplayController>().Update();
-
-                var demo = new Interfaces.MiniDisplay.Demo(hc.GetController<IMiniDisplayController>());
-                demo.RunDemo1();
+                hc.GetController<IMiniDisplayController>().Graphics.Invert();
+                hc.GetController<IMiniDisplayController>().Graphics.Update();
             }
 
             base.OnPrimaryTick(timer);
