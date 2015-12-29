@@ -7,6 +7,8 @@
         Environments Environment { get; }
         bool IsSystemTimeValid { get; }
         bool IsInternetConnected { get; }
+        bool IsGPSLock { get; }
+        bool IsMessagePending { get; }
         string DataFolder { get; }
     }
 

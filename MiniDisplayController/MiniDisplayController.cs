@@ -13,8 +13,6 @@ namespace Implementation.MiniDisplay
 {
     public class MiniDisplayController : IMiniDisplayController, IDisposable
     {
-        public event Action AfterReset;
-
         public event FrameToSendDelegate FrameToSend;
 
         private readonly ManualResetEventSlim framesWaitHandler = new ManualResetEventSlim(false);
@@ -92,35 +90,17 @@ namespace Implementation.MiniDisplay
             }
         }
 
-        public void Reset()
+        public void ResetQueue()
         {
             lock (graphics.Frames)
             {
                 graphics.Frames.Clear();
-                graphics.Cls();
             }
-
-            OnAfterReset();
         }
 
-        private void OnAfterReset()
-        {
-            var handler = AfterReset;
-            if (handler != null)
-                handler();
-        }
-        
         public void Dispose()
         {
             disposed = true;
-        }
-
-        public bool IsMessagePending
-        {
-            set
-            {
-                
-            }
         }
     }
 
@@ -304,9 +284,12 @@ namespace Implementation.MiniDisplay
             CreateFrame(new byte[2] { (byte)OLEDCommands.OLED_COMMAND_BRIGHTNESS, level });
         }
 
-        public void Delay()
+        public void Delay(int ms)
         {
-            CreateFrame(new byte[1] { (byte)OLEDCommands.INTERNAL_SEND_DELAY });
+            int delayFrameCount = ms / 100;
+
+            for (int i = 0; i < delayFrameCount; ++i)
+                CreateFrame(new byte[1] { (byte)OLEDCommands.INTERNAL_SEND_DELAY });
         }
     }
 }

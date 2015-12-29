@@ -227,7 +227,8 @@ namespace HostController
 			arduController.RegisterFrameProvider (miniDisplayController);
 
             var gpsCtrl = new GPSController.GPSController(Config, SyncContext, Logger);
-            
+            gpsCtrl.GPRMCReseived += gprmc => config.IsGPSLock = gprmc.Active;
+
             arduController.RegisterFrameAcceptor(gpsCtrl);
             gpsController = gpsCtrl;
             gpsd = new GPSD.Net.GPSD(gpsController, Config, Logger);
@@ -245,7 +246,19 @@ namespace HostController
                 map,
                 this, (pdescr, viewModelName) => UIModels.ModelBase.CreateModel(this, pdescr, viewModelName));
 
-            uiController.DialogPending += uiController_DialogPending;
+            uiController.DialogPending += value => config.IsMessagePending = value;
+            uiController.PageChanging += (string descriptorName, string viewName) =>
+            {
+                miniDisplayController.ResetQueue();
+                miniDisplayController.Graphics.Delay(500);
+                miniDisplayController.Graphics.Cls();
+                miniDisplayController.Graphics.SetFont(Fonts.Small);
+                miniDisplayController.Graphics.Print(0, 10, "PAGE", TextAlingModes.Center);
+                miniDisplayController.Graphics.Print(0, 25, descriptorName ?? "NO DESCR", TextAlingModes.Center);
+                miniDisplayController.Graphics.Print(0, 40, viewName?? "def. view", TextAlingModes.Center);
+                miniDisplayController.Graphics.Update();
+            };
+
             uiController.ShowDefaultPage();
 
             if (config.Environment == Environments.RPi)
@@ -256,15 +269,10 @@ namespace HostController
 
             StartTimers();
 
-            telemetry = new Telemetry.TelemetryServer(Logger);
+            //telemetry = new Telemetry.TelemetryServer(Logger);
         }
 
         private Telemetry.TelemetryServer telemetry;
-
-        void uiController_DialogPending(bool isPending)
-        {
-            miniDisplayController.IsMessagePending = isPending;
-        }
 
         void InetKeeperRestartNeeded()
         {
@@ -363,6 +371,13 @@ namespace HostController
             onlineLogger.Upload(true);
 
             showLine("Stopping UI...");
+
+            miniDisplayController.ResetQueue();
+            miniDisplayController.Graphics.Cls();
+            miniDisplayController.Graphics.SetFont(Fonts.Small);
+            miniDisplayController.Graphics.Print(0, 25, "OFF", TextAlingModes.Center);
+            miniDisplayController.Graphics.Update();
+            Thread.Sleep(1000);
 
             miniDisplayController.Dispose();
 

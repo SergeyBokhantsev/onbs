@@ -18,6 +18,8 @@ namespace UIController
     {
         public event Action<bool> DialogPending;
 
+        public event Action<string, string> PageChanging;
+
         private readonly string uiHostAssemblyPath;
         private readonly string uiHostClassName;
 
@@ -129,6 +131,8 @@ namespace UIController
 
             IPageModel model = null;
 
+            OnPageChanging(descriptorName, viewName);
+
             try
             {
                 model = CreateModel(descriptorName, viewName);
@@ -151,6 +155,13 @@ namespace UIController
             ProcessDialogsQueue();
 
             return model;
+        }
+
+        private void OnPageChanging(string descriptorName, string viewName)
+        {
+            var handler = PageChanging;
+            if (handler != null)
+                handler(descriptorName, viewName);
         }
 
         public void Shutdown()

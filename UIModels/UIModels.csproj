@@ -60,8 +60,9 @@
     <Compile Include="DrivePage.cs" />
     <Compile Include="ExternalApplicationPage.cs" />
     <Compile Include="MainPage.cs" />
-    <Compile Include="MiniDisplay\CommonPage.cs" />
+    <Compile Include="MiniDisplay\CommonMiniDisplayModel.cs" />
     <Compile Include="MiniDisplay\Demo.cs" />
+    <Compile Include="MiniDisplay\DriveMiniDisplayModel.cs" />
     <Compile Include="ModelBase.cs" />
     <Compile Include="MultipurposeModels\MultilineModel.cs" />
     <Compile Include="NavigationAppPage.cs" />

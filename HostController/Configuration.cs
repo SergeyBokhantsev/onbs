@@ -70,6 +70,18 @@ namespace HostController
             set;
         }
 
+        public bool IsGPSLock
+        {
+            get;
+            set;
+        }
+
+        public bool IsMessagePending
+        {
+            get;
+            set;
+        }
+
         public string DataFolder
         {
             // ReSharper disable once AssignNullToNotNullAttribute

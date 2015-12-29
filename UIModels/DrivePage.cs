@@ -2,8 +2,10 @@
 using Interfaces.GPS;
 using Interfaces.MiniDisplay;
 using Interfaces.UI;
+using OBD;
 using System;
 using System.Linq;
+using UIModels.MiniDisplay;
 using YandexServicesProvider;
 
 namespace UIModels
@@ -18,9 +20,18 @@ namespace UIModels
         private readonly ManualResetGuard weatherGuard = new ManualResetGuard();
         private readonly IOperationGuard geocoderGuard = new TimedGuard(new TimeSpan(0, 0, 3));
 
+        private readonly DriveMiniDisplayModel miniDisplayModel;
+
+        private readonly OBDProcessor obdProcessor;
+
         public DrivePage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)
         {
+            var elm = hc.GetController<IElm327Controller>();
+            obdProcessor = new OBDProcessor(elm);
+
+            miniDisplayModel = new DriveMiniDisplayModel(hc, pageDescriptor.Name);
+
             this.tc = hc.GetController<ITravelController>();
 
             this.weather = new WeatherProvider(hc.Logger, hc.Config.DataFolder);
@@ -34,6 +45,13 @@ namespace UIModels
             if (!Disposed)
             {
                 weatherGuard.ExecuteIfFree(UpdateWeatherForecast);
+
+                System.Threading.ThreadPool.QueueUserWorkItem(state =>
+                {
+                    var engineTemp = obdProcessor.GetCoolantTemp() ?? int.MinValue;
+                    miniDisplayModel.EngineTemp = engineTemp;
+                    SetProperty("eng_temp", engineTemp);
+                });
             }
 
             base.OnSecondaryTimer(timer);
@@ -53,6 +71,10 @@ namespace UIModels
 
             if (!Disposed && f != null)
             {
+                int t = int.MinValue;
+                int.TryParse(f.fact.First().temperature.Value, out t);
+                miniDisplayModel.AirTemp = t;
+
                 SetProperty("air_temp", string.Format("{0}°, {1}", f.fact.First().temperature.Value, f.fact.First().weather_type));
 
                 SetProperty("weather_icon", weather.GetWeatherIcon(f.fact.First().imagev3.First().Value));
@@ -83,8 +105,9 @@ namespace UIModels
                 SetProperty("travel_span", tc.TravelTime.TotalMinutes);
                 SetProperty("distance", tc.TravelDistance);
 
-                hc.GetController<IMiniDisplayController>().Graphics.Invert();
-                hc.GetController<IMiniDisplayController>().Graphics.Update();
+                miniDisplayModel.BufferedPoints = tc.BufferedPoints;
+                miniDisplayModel.SendedPoints = tc.SendedPoints;
+                miniDisplayModel.Draw();
             }
 
             base.OnPrimaryTick(timer);

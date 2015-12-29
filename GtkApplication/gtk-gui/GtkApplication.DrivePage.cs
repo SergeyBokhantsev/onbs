@@ -48,6 +48,8 @@ namespace GtkApplication
 		
 		private global::Gtk.Label label_distance;
 		
+		private global::Gtk.Label label_eng_temp;
+		
 		private global::Gtk.HSeparator hseparator1;
 		
 		private global::Gtk.HBox hbox5;
@@ -277,22 +279,34 @@ namespace GtkApplication
 			w19.Position = 4;
 			w19.Expand = false;
 			w19.Fill = false;
-			this.hbox4.Add (this.vbox2);
-			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.vbox2]));
-			w20.PackType = ((global::Gtk.PackType)(1));
-			w20.Position = 2;
+			// Container child vbox2.Gtk.Box+BoxChild
+			this.label_eng_temp = new global::Gtk.Label ();
+			this.label_eng_temp.HeightRequest = 50;
+			this.label_eng_temp.Name = "label_eng_temp";
+			this.label_eng_temp.Yalign = 1F;
+			this.label_eng_temp.LabelProp = "<span size=\'20000\'></span>";
+			this.label_eng_temp.UseMarkup = true;
+			this.vbox2.Add (this.label_eng_temp);
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.label_eng_temp]));
+			w20.Position = 5;
+			w20.Expand = false;
 			w20.Fill = false;
-			this.vbox1.Add (this.hbox4);
-			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox4]));
+			this.hbox4.Add (this.vbox2);
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.vbox2]));
+			w21.PackType = ((global::Gtk.PackType)(1));
 			w21.Position = 2;
+			w21.Fill = false;
+			this.vbox1.Add (this.hbox4);
+			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox4]));
+			w22.Position = 2;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hseparator1 = new global::Gtk.HSeparator ();
 			this.hseparator1.Name = "hseparator1";
 			this.vbox1.Add (this.hseparator1);
-			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hseparator1]));
-			w22.Position = 3;
-			w22.Expand = false;
-			w22.Fill = false;
+			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hseparator1]));
+			w23.Position = 3;
+			w23.Expand = false;
+			w23.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox5 = new global::Gtk.HBox ();
 			this.hbox5.HeightRequest = 40;
@@ -300,10 +314,10 @@ namespace GtkApplication
 			this.hbox5.Homogeneous = true;
 			this.hbox5.Spacing = 6;
 			this.vbox1.Add (this.hbox5);
-			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox5]));
-			w23.PackType = ((global::Gtk.PackType)(1));
-			w23.Position = 4;
-			w23.Expand = false;
+			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox5]));
+			w24.PackType = ((global::Gtk.PackType)(1));
+			w24.Position = 4;
+			w24.Expand = false;
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();

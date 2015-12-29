@@ -24,18 +24,9 @@ namespace UIModels
                 SetProperty(key, crossPageProperties[key]);
 
             gpsController = hc.GetController<IGPSController>();
-            gpsController.GPRMCReseived += GPRMCReseived;
 
             primaryTimer = hc.CreateTimer(1000, OnPrimaryTick, true, true);
             secondaryTimer = hc.CreateTimer(60000, OnSecondaryTimer, true, true);
-        }
-
-        void GPRMCReseived(GPRMC gprmc)
-        {
-            if (!Disposed)
-            {
-                SetProperty("gps_status", gprmc.Active);
-            }
         }
 
         protected virtual void OnPrimaryTick(IHostTimer timer)
@@ -45,6 +36,7 @@ namespace UIModels
 
             SetProperty("ard_status", hc.GetController<IArduinoController>().IsCommunicationOk);
             SetProperty("inet_status", hc.Config.IsInternetConnected);
+            SetProperty("gps_status", hc.Config.IsGPSLock);
 
             if (hc.Config.IsSystemTimeValid)
                 SetProperty("time", DateTime.Now.AddHours(hc.Config.GetInt(ConfigNames.SystemTimeLocalZone)));
@@ -56,7 +48,6 @@ namespace UIModels
 
         protected virtual void OnDisposing(object sender, EventArgs e)
         {
-            gpsController.GPRMCReseived -= GPRMCReseived;
             primaryTimer.Dispose();
             secondaryTimer.Dispose();
 

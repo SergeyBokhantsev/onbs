@@ -25,12 +25,8 @@ namespace Interfaces.MiniDisplay
 
     public interface IMiniDisplayController : IController, IFrameProvider
     {
-        event Action AfterReset;
-
-        bool IsMessagePending { set; }
-
         IMiniDisplayGraphics Graphics { get; }
-        void Reset();
+        void ResetQueue();
     }
 
     public interface IMiniDisplayGraphics
@@ -56,9 +52,6 @@ namespace Interfaces.MiniDisplay
 
         //INTERNAL
 
-        /// <summary>
-        /// 100 ms delay
-        /// </summary>
-        void Delay();
+        void Delay(int ms);
     }
 }

@@ -268,7 +268,7 @@ namespace ArduinoBoardEmulator
                 }
             }
 
-            var textBounds = new Rectangle(0, y, font.Size.Width * text.Length, font.Size.Height);
+            var textBounds = new Rectangle(x, y, font.Size.Width * text.Length, font.Size.Height);
 
             switch (align)
             {
@@ -298,15 +298,15 @@ namespace ArduinoBoardEmulator
             switch (fontName)
             {
                 case Interfaces.MiniDisplay.Fonts.Small:
-                    font = new FontDescriptor { Name = Interfaces.MiniDisplay.Fonts.Small, Size = new Size(6, 8), EmulationFont = new Font("Arial", 7f) };
+                    font = new FontDescriptor { Name = Interfaces.MiniDisplay.Fonts.Small, Size = new Size(6, 8), EmulationFont = new Font("Arial", 5f) };
                     break;
 
                 case Interfaces.MiniDisplay.Fonts.MediumNumbers:
-                    font = new FontDescriptor { Name = Interfaces.MiniDisplay.Fonts.MediumNumbers, Size = new Size(12, 16), EmulationFont = new Font("Arial", 14f) };
+                    font = new FontDescriptor { Name = Interfaces.MiniDisplay.Fonts.MediumNumbers, Size = new Size(12, 16), EmulationFont = new Font("Arial", 10f) };
                     break;
 
                 case Interfaces.MiniDisplay.Fonts.BigNumbers:
-                    font = new FontDescriptor { Name = Interfaces.MiniDisplay.Fonts.Small, Size = new Size(14, 24), EmulationFont = new Font("Arial", 21f) };
+                    font = new FontDescriptor { Name = Interfaces.MiniDisplay.Fonts.BigNumbers, Size = new Size(14, 24), EmulationFont = new Font("Arial", 18f) };
                     break;
             }
         }
