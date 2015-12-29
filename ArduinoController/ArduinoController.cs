@@ -9,6 +9,7 @@ using System.IO.Ports;
 using SerialTransportProtocol;
 using System.Diagnostics;
 using System.Threading;
+using Interfaces.Relays;
 
 namespace ArduinoController
 {
@@ -42,6 +43,12 @@ namespace ArduinoController
 			}
         }
 
+        public IRelayService RelayService
+        {
+            get;
+            private set;
+        }
+
         public ArduinoController(IPort port, IHostController hc)
         {
             this.port = port;
@@ -55,6 +62,10 @@ namespace ArduinoController
 			var arduFrameBeginMarker = Encoding.UTF8.GetBytes("ac{");
 			var arduFrameEndMarker = Encoding.UTF8.GetBytes("}");
 			arduinoCommandCodec = new STPCodec(arduFrameBeginMarker, arduFrameEndMarker);
+
+            var relayService = new RelayService(hc.Logger);
+            RegisterFrameProvider(relayService);
+            RelayService = relayService;
 
             hc.CreateTimer(5000, t => 
             {
@@ -106,6 +117,10 @@ namespace ArduinoController
                         }
                         else
                             yield return frame;
+                    }
+                    else if (frame.Type == STPFrame.Types.Relay)
+                    {
+
                     }
 					else 
 						yield return frame;

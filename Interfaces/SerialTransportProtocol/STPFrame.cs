@@ -11,7 +11,8 @@ namespace Interfaces.SerialTransportProtocol
 			Button = 66, // B
 			GSM = 67, // C
 			ArduCommand = 68, // D
-            MiniDisplay = 69
+            MiniDisplay = 69,
+            Relay = 70
 		}
 
         public readonly Types Type;

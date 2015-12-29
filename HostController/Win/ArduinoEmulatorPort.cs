@@ -53,6 +53,8 @@ namespace HostController.Win
 
         private readonly List<IncomingChunk> incoming = new List<IncomingChunk>();
 
+        public bool Connected { get { return stream != null; } }
+         
         public long OverallReadedBytes
         {
             get { return 0; }
@@ -63,7 +65,7 @@ namespace HostController.Win
             Connect(0);
         }
 
-        private async void Connect(int delay)
+        private async Task Connect(int delay)
         {
             if (delay > 0)
                 await Task.Delay(delay);

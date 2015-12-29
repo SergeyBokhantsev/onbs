@@ -24,11 +24,18 @@ namespace ArduinoBoardEmulator
             private set;
         }
 
+        public Relay Relay
+        {
+            get;
+            private set;
+        }
+
         public ArduinoServer(ILogger logger)
         {
             gps = new FakeGPS();
 
             MiniDisplay = new ArduinoBoardEmulator.MiniDisplay(new System.Drawing.Size(128, 64));
+            Relay = new ArduinoBoardEmulator.Relay();
 
             tcpServer = new Server(33400, logger);
             tcpServer.ClientConnected += tcpServer_ClientConnected;

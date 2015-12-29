@@ -45,7 +45,15 @@ namespace UIModels.MiniDisplay
             if (!string.IsNullOrWhiteSpace(pageName))
                 g.Print(0, 64 - 10, pageName, TextAlingModes.Center);
 
-            DrawClient(g);
+            if (config.IsMessagePending)
+            {
+                DrawMessageWarning(g);
+                warning = true;
+            }
+            else
+            {
+                DrawClient(g);
+            }
 
             if (warning && DateTime.Now > warningBlinkTime.AddSeconds(5))
             {
@@ -57,6 +65,22 @@ namespace UIModels.MiniDisplay
             }
 
             g.Update();
+        }
+
+        private void DrawMessageWarning(IMiniDisplayGraphics g)
+        {
+            g.DrawRect(25, 0, 102, 50);
+            g.DrawRect(26, 1, 101, 49);
+            g.DrawRect(27, 2, 100, 48);
+            g.DrawRect(28, 3, 99, 47);
+
+            g.DrawLine(25, 0, 64, 25);
+            g.DrawLine(25, 1, 64, 26);
+            g.DrawLine(25, 2, 64, 27);
+
+            g.DrawLine(64, 25, 102, 0);
+            g.DrawLine(64, 26, 102, 1);
+            g.DrawLine(64, 27, 102, 2);
         }
 
         private void DrawTick(IMiniDisplayGraphics g)
@@ -75,13 +99,6 @@ namespace UIModels.MiniDisplay
             g.SetFont(Fonts.Small);
 
             byte y = 8;
-
-            if (config.IsMessagePending)
-            {
-                g.Print(0, y, "M");
-                y += 12;
-                warning = true;
-            }
 
             if (!config.IsInternetConnected)
             {

@@ -75,6 +75,10 @@ namespace ArduinoBoardEmulator
                     case STPFrame.Types.MiniDisplay:
                         server.MiniDisplay.ProcessFrame(frame);
                         break;
+
+                    case STPFrame.Types.Relay:
+                        server.Relay.ProcessFrame(frame);
+                        break;
                 }
             }
         }

@@ -3,14 +3,28 @@
 
 #include "Arduino.h"
 
-#define RELAY_1 0
-#define RELAY_2 0
-#define RELAY_3 0
-#define RELAY_4 0
+#define RELAY_MASTER_PIN -1
+#define RELAY_OBD_PIN -1
+#define RELAY_3_PIN -1
+#define RELAY_4_PIN -1
+
+#define RELAY_MASTER 0
+#define RELAY_OBD 1
+#define RELAY_3 2
+#define RELAY_4 3
+
+#define RELAY_ENABLE true
+#define RELAY_DISABLE false
+
+#define RELAY_COMMAND_SHEDULE 0
+#define RELAY_COMMAND_UNSHEDULE 1
 
 struct RelayDescriptor
 {
-	
+	bool scheduled;
+	unsigned long scheduledTime;
+	bool action;
+	int pin;
 };
 
 class RelayController
@@ -18,14 +32,16 @@ class RelayController
 	public:
 	RelayController();
 	~RelayController();
-	//void Tick();
-	//void ProcessFrame(const char* frame_array, int frame_len);
+	void tick();
+	bool process_frame(const char* frame_array, int frame_len);
 	
-	//void Enable(int relayNum);
-	//void Disable(int relayNum);
+	void schedule(int relay, bool action, int delaySec);
+	void unschedule(int relay);
 	
 	private:
-	RelayDescriptor rd1;
+	RelayDescriptor descriptors[4];
+	
+	void turn_relay(int relay, bool action);
 };
 
 #endif

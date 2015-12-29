@@ -7,10 +7,12 @@ using LogLib;
 using System.Net;
 using System.Threading;
 using Interfaces.UI;
+using Interfaces.Relays;
 using HostController.Lin;
 using HostController.Win;
 using Interfaces.MiniDisplay;
 using Implementation.MiniDisplay;
+using System.Threading.Tasks;
 
 namespace HostController
 {
@@ -205,7 +207,7 @@ namespace HostController
             }
         }
 
-        private void Initialize()
+        private async Task Initialize()
         {
             ServicePointManager.ServerCertificateValidationCallback = (s1, s2, s3, s4) => true;
 
@@ -219,7 +221,18 @@ namespace HostController
 
             elm327Controller = new Elm327Controller.Elm327Controller(this);
 
-            var arduPort = config.Environment == Environments.Win ? new ArduinoEmulatorPort() : new SerialArduPort(Logger, Config) as IPort;
+            IPort arduPort = null;
+
+            if (config.Environment == Environments.Win)
+            {
+                arduPort = new ArduinoEmulatorPort();
+                await Task.Delay(2000); // to allow connect to emulator;
+            }
+            else
+            {
+                arduPort = new SerialArduPort(Logger, Config);
+            }
+
             arduController = new ArduinoController.ArduinoController(arduPort, this);
             arduController.RegisterFrameAcceptor(inputController);
 
@@ -268,6 +281,9 @@ namespace HostController
 			CreateTimer(60000, ht => onlineLogger.Upload(false), true, false);
 
             StartTimers();
+
+            // Arduino will automatically turn off the board after 120 seconds, so we need to disable this action
+            arduController.RelayService.Unschedule(Relay.Master);
 
             //telemetry = new Telemetry.TelemetryServer(Logger);
         }
@@ -326,6 +342,11 @@ namespace HostController
 
             showLine("Disposing ELM327 Controller");
             elm327Controller.Dispose();
+
+            arduController.RelayService.Schedule(Relay.Master, RelayActions.Disable, 30);
+            arduController.RelayService.Schedule(Relay.OBD, RelayActions.Disable, 5);
+            arduController.RelayService.Schedule(Relay.Relay3, RelayActions.Disable, 5);
+            arduController.RelayService.Schedule(Relay.Relay4, RelayActions.Disable, 5);
 
             showLine("Disposing Travel Controller");
             travelController.Dispose();

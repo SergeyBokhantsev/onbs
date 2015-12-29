@@ -29,6 +29,8 @@ namespace Elm327Controller
                 if (elm != null)
                     elm.Dispose();
 
+                hc.GetController<IArduinoController>().RelayService.Schedule(Interfaces.Relays.Relay.OBD, Interfaces.Relays.RelayActions.Disable, 0);
+
                 Error = null;
                 elm = null;
             }
@@ -49,6 +51,9 @@ namespace Elm327Controller
             {
                 try
                 {
+                    hc.GetController<IArduinoController>().RelayService.Schedule(Interfaces.Relays.Relay.OBD, Interfaces.Relays.RelayActions.Enable, 0);
+                    System.Threading.Thread.Sleep(5000);
+
                     var portName = hc.Config.GetString(ConfigNames.Elm327Port);
 
                     hc.Logger.Log(this, string.Concat("ELM327 port resolved as ", portName), LogLevels.Info);

@@ -70,10 +70,15 @@ AMCController::~AMCController()
 void AMCController::init()
 {
 	button_processor.init();
+	
+	relay.schedule(RELAY_MASTER, RELAY_ENABLE, 2);
+	relay.schedule(RELAY_MASTER, RELAY_DISABLE, 120);
 }
 
 void AMCController::run()
 {
+	relay.tick();
+	
 	frame_sender.send_byte();
 
 	process_incoming();
@@ -122,6 +127,10 @@ void AMCController::process_frame(char* frame_array, int frame_len, char frame_t
 		case OLED_COMMAND_FRAME_TYPE:
 			result = oled.process(frame_array, frame_len);
 			break;
+			
+		case RELAY_COMMAND_FRAME_TYPE:
+			result = relay.process_frame(frame_array, frame_len);
+			break;
 	}
 
      outcom_writer.open_command(ARDUINO_COMMAND_FRAME_TYPE);
@@ -136,7 +145,7 @@ bool AMCController::process_incoming_arduino_command(char* data, int len, char* 
 	switch (*data)
 	{
 		case ARDUCOMMAND_EMPTY:
-			WDT_Restart(WDT);
+			//WDT_Restart(WDT);
 			set_descr(operation_descr, "PING");
 			return true;
 			

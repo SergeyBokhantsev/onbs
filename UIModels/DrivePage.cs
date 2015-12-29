@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using UIModels.MiniDisplay;
 using YandexServicesProvider;
+using System.Threading;
 
 namespace UIModels
 {
@@ -17,8 +18,9 @@ namespace UIModels
         private readonly WeatherProvider weather;
         private readonly GeocodingProvider geocoder;
 
-        private readonly ManualResetGuard weatherGuard = new ManualResetGuard();
+        private readonly IOperationGuard weatherGuard = new InterlockedGuard();
         private readonly IOperationGuard geocoderGuard = new TimedGuard(new TimeSpan(0, 0, 3));
+        private readonly IOperationGuard obdGuard = new InterlockedGuard();
 
         private readonly DriveMiniDisplayModel miniDisplayModel;
 
@@ -44,20 +46,22 @@ namespace UIModels
         {
             if (!Disposed)
             {
-                weatherGuard.ExecuteIfFree(UpdateWeatherForecast);
+                weatherGuard.ExecuteIfFreeAsync(UpdateWeatherForecast);
 
-                System.Threading.ThreadPool.QueueUserWorkItem(state =>
-                {
-                    var engineTemp = obdProcessor.GetCoolantTemp() ?? int.MinValue;
-                    miniDisplayModel.EngineTemp = engineTemp;
-                    SetProperty("eng_temp", engineTemp);
-                });
+                obdGuard.ExecuteIfFreeAsync(UpdateOBD);
             }
 
             base.OnSecondaryTimer(timer);
         }
 
-        private async void UpdateWeatherForecast()
+        private void UpdateOBD()
+        {
+            var engineTemp = obdProcessor.GetCoolantTemp() ?? int.MinValue;
+            miniDisplayModel.EngineTemp = engineTemp;
+            SetProperty("eng_temp", engineTemp);
+        }
+
+        private void UpdateWeatherForecast()
         {
             if (!hc.Config.IsInternetConnected)
                 return;
@@ -67,7 +71,7 @@ namespace UIModels
             if (string.IsNullOrWhiteSpace(cityId))
                 return;
 
-            var f = await weather.GetForecastAsync(cityId);
+            var f = weather.GetForecast(cityId);
 
             if (!Disposed && f != null)
             {
@@ -84,15 +88,13 @@ namespace UIModels
                 SetProperty("air_temp", null);
                 SetProperty("weather_icon", null);
             }
-
-            weatherGuard.Reset();
         }
 
-        private async void UpdateAddres(GeoPoint location)
+        private void UpdateAddres(GeoPoint location)
         {
             if (!Disposed && hc.Config.IsInternetConnected)
             {
-                var addres = await geocoder.GetAddresAsync(location);
+                var addres = geocoder.GetAddres(location);
                 SetProperty("heading", addres);
             }
         }
@@ -131,7 +133,7 @@ namespace UIModels
 
                 if (gprmc.Active)
                 {
-                    geocoderGuard.ExecuteIfFree(() => UpdateAddres(gprmc.Location));
+                    geocoderGuard.ExecuteIfFreeAsync(() => UpdateAddres(gprmc.Location));
                 }
             }
         }

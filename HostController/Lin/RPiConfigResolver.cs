@@ -33,8 +33,8 @@ namespace HostController.Lin
 
         private string GetElm327Port()
         {
-            if (cache.ContainsKey(ConfigNames.Placeholder_Vehicle))
-                return cache[ConfigNames.Placeholder_Vehicle] as string;
+            //if (cache.ContainsKey(ConfigNames.Placeholder_Elm327Port))
+            //    return cache[ConfigNames.Placeholder_Elm327Port] as string;
 
             const string vid = "0403";
             const string pid = "6001";
@@ -44,7 +44,7 @@ namespace HostController.Lin
             if (device != null && device.AttachedTo.Any())
             {
                 var ret = device.AttachedTo.First();
-                cache.Add(ConfigNames.Placeholder_Vehicle, ret);
+                //cache.Add(ConfigNames.Placeholder_Elm327Port, ret);
                 return ret;
             }
             else

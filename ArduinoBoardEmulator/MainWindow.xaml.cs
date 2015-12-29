@@ -31,9 +31,47 @@ namespace ArduinoBoardEmulator
 
             disp = Dispatcher.CurrentDispatcher;
 
+            controller.Arduino.Relay.RelayUpdated += Relay_RelayUpdated;
+
             controller.Arduino.MiniDisplay.Updated += MiniDisplay_Updated;
 
             controller.Arduino.PingSignal += Arduino_PingSignal;
+
+            controller.Arduino.Relay.Update(null, null);
+        }
+
+        void Relay_RelayUpdated(RelayDescriptor relay)
+        {
+            var r = relay;
+
+            disp.Invoke(async () =>
+            {
+                var text = string.Format("{0} now {1}", r.Name, r.Enabled ? "ON" : "OFF");
+
+                if (r.RemainingDelay > 0)
+                {
+                    text += string.Format(" and will be {0} in {1}", r.ScheduledAction ? "ON" : "OFF", r.RemainingDelay);
+                }
+
+                switch (r.Name)
+                {
+                    case Interfaces.Relays.Relay.Master:
+                        relayMaster.Content = text;
+                        break;
+
+                    case Interfaces.Relays.Relay.OBD:
+                        relayOBD.Content = text;
+                        break;
+
+                    case Interfaces.Relays.Relay.Relay3:
+                        relay3.Content = text;
+                        break;
+
+                    case Interfaces.Relays.Relay.Relay4:
+                        relay4.Content = text;
+                        break;
+                }
+            });
         }
 
         //void MiniDisplay_Updated(System.Drawing.Bitmap bmp)

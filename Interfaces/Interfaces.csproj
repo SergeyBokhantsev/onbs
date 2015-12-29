@@ -73,6 +73,7 @@
     <Compile Include="IPort.cs" />
     <Compile Include="IProcessRunner.cs" />
     <Compile Include="IMetricsProvider.cs" />
+    <Compile Include="IRelayService.cs" />
     <Compile Include="ITravelController.cs" />
     <Compile Include="IUIController.cs" />
     <Compile Include="LockingProperty.cs" />
