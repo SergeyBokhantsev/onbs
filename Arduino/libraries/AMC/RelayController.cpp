@@ -1,6 +1,14 @@
 #include "RelayController.h"
 
 RelayController::RelayController()
+{ 
+}
+
+RelayController::~RelayController()
+{
+}
+
+void RelayController::init()
 {
 	descriptors[RELAY_MASTER].scheduled = false;
 	descriptors[RELAY_OBD].scheduled = false;
@@ -8,19 +16,15 @@ RelayController::RelayController()
 	descriptors[RELAY_4].scheduled = false;
 	
 	descriptors[RELAY_MASTER].pin = RELAY_MASTER_PIN;
-	descriptors[RELAY_OBD_PIN].pin = RELAY_OBD_PIN;
-	descriptors[RELAY_3_PIN].pin = RELAY_3_PIN;
-	descriptors[RELAY_4_PIN].pin = RELAY_4_PIN;
+	descriptors[RELAY_OBD].pin = RELAY_OBD_PIN;
+	descriptors[RELAY_3].pin = RELAY_3_PIN;
+	descriptors[RELAY_4].pin = RELAY_4_PIN;
 	
 	for (int i=0; i<4; ++i)
 	{
 		if (descriptors[i].pin != -1)
 			pinMode(descriptors[i].pin, OUTPUT);  
-	} 
-}
-
-RelayController::~RelayController()
-{
+	}
 }
 
 void RelayController::schedule(int relay, bool action, int delaySec)
@@ -29,7 +33,7 @@ void RelayController::schedule(int relay, bool action, int delaySec)
 		return;
 	
 	descriptors[relay].scheduled = true;
-	descriptors[relay].scheduledTime = millis() + delaySec * 1000;
+	descriptors[relay].scheduledTime = millis() + (unsigned long)delaySec * (unsigned long)1000;
 	descriptors[relay].action = action;
 }
 

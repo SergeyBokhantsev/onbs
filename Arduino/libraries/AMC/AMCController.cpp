@@ -71,7 +71,10 @@ void AMCController::init()
 {
 	button_processor.init();
 	
-	relay.schedule(RELAY_MASTER, RELAY_ENABLE, 2);
+	relay.init();
+	
+	relay.turn_relay(RELAY_MASTER, RELAY_ENABLE);
+	
 	relay.schedule(RELAY_MASTER, RELAY_DISABLE, 120);
 }
 
