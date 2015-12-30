@@ -13,9 +13,6 @@
 
 #define COMM_FRAME_MAX_SIZE 512
 
-#define ARDU_ERROR_UNKNOWN_FRAME_TYPE 20
-#define ARDU_ERROR_FRAME_TYPE_DISABLED 21
-
 class AMCController
 {
 public:
@@ -47,8 +44,6 @@ private:
 	RelayController relay;
 	
 	void process_incoming();
-	void process_frame(char* frame_array, int frame_len, char frame_type);
-	int process_incoming_arduino_command(char* data, int len, char* operation_descriptor);
 };
 
 

@@ -1,11 +1,37 @@
 #include "Manager.h"
 #include "ButtonProcessor.h"
+#include "CommFrameProcessor.h"
 
-Manager::Manager(RelayController* _relay, OledController* _oled)
-: relay(_relay),
+void reset_shutdown_signal(unsigned long* ts)
+{
+	*ts = 0;
+}
+
+bool is_raise_shutdown_signal(unsigned long* ts)
+{
+	if (*ts == 0)
+	{
+		*ts = millis();
+		return false;
+	}
+	else if (*ts + MANAGER_SHUTDOWN_SIGNAL_TIMEOUT_MS < millis())
+	{
+		reset_shutdown_signal(ts);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+Manager::Manager(CommandWriter* _outcom_writer, RelayController* _relay, OledController* _oled)
+: outcom_writer(_outcom_writer),
+relay(_relay),
 oled(_oled),
 screen_timestamp(0),
-state_timestamp(0)
+state_timestamp(0),
+shutdown_signal_timestamp(0)
 {
 	set_state(MANAGER_STATE_WAITING);
 }
@@ -50,21 +76,40 @@ bool Manager::before_button_send(int button_id, char state)
 {
 	switch (state)
 	{
-		case MANAGER_STATE_ON_HOLD:
+		case MANAGER_STATE_ACTIVE:
 			if (button_id == cancel_btn_num && state == BTN_STATE_HOLDED)
+			{
+				if (is_raise_shutdown_signal(&shutdown_signal_timestamp))
+				{
+					outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
+					outcom_writer->write(ARDUCOMMAND_SHUTDOWN_SIGNAL);
+					outcom_writer->close_command();
+				}
+			}
+			else
+			{
+				reset_shutdown_signal(&shutdown_signal_timestamp);
+			}
+			return true;
+		
+		case MANAGER_STATE_ON_HOLD:
+			reset_shutdown_signal(&shutdown_signal_timestamp);
+			if (button_id == cancel_btn_num && state == BTN_STATE_PRESSED)
 			{
 				set_state(MANAGER_STATE_GUARD);
 			}
 			return false;
 			
 		case MANAGER_STATE_GUARD:
-			if (button_id == accept_btn_num && state == BTN_STATE_HOLDED)
+			reset_shutdown_signal(&shutdown_signal_timestamp);
+			if (button_id == accept_btn_num && state == BTN_STATE_PRESSED)
 			{
 				set_state(MANAGER_STATE_WAITING);
 			}
 			return false;
 			
 		default:
+			reset_shutdown_signal(&shutdown_signal_timestamp);
 			return true;
 	}
 }
@@ -75,9 +120,38 @@ void Manager::set_state(int newState)
 	state_timestamp = millis();
 }
 
-void Manager::on_incoming_frame()
+void Manager::dispatch_frame(char* frame_array, int frame_len, char frame_type)
 {
+	int result = MANAGER_ERROR_UNKNOWN_FRAME_TYPE;
+
 	set_state(MANAGER_STATE_ACTIVE);
+	
+	switch (frame_type)
+	{
+		case GSM_FRAME_TYPE:
+			result = MANAGER_ERROR_FRAME_TYPE_DISABLED;
+			break;
+			
+		case ARDUINO_COMMAND_FRAME_TYPE:
+			result = process_frame(frame_array, frame_len);
+			break;
+			
+		case OLED_COMMAND_FRAME_TYPE:
+			result = oled->process(frame_array, frame_len);
+			break;
+			
+		case RELAY_COMMAND_FRAME_TYPE:
+			result = relay->process_frame(frame_array, frame_len);
+			break;			
+	}
+
+	if (result > 0)
+	{
+     outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
+     outcom_writer->write(ARDUCOMMAND_COMMAND_RESULT);
+     outcom_writer->write((char)result);
+     outcom_writer->close_command();
+	}
 }
 
 int Manager::process_frame(char* frame_array, int frame_len)
@@ -87,8 +161,8 @@ int Manager::process_frame(char* frame_array, int frame_len)
 	
 	switch (frame_array[0])
 	{
-		case ARDUCOMMAND_EMPTY:
-			return ARDUCOMMAND_EMPTY;
+		case ARDUCOMMAND_PING_REQUEST:
+			return ARDUCOMMAND_PING_RESPONSE;
 			
 		case ARDUCOMMAND_HOLD:
 			set_state(MANAGER_STATE_ON_HOLD);
