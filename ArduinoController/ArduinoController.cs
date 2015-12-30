@@ -26,6 +26,7 @@ namespace ArduinoController
         private readonly IPort port;
         private readonly SynchronizationContext syncContext;
         private readonly ILogger logger;
+		private readonly IHostController hc;
         private readonly ISTPCodec codec;
 		private readonly ISTPCodec arduinoCommandCodec;
 
@@ -53,6 +54,7 @@ namespace ArduinoController
 
         public ArduinoController(IPort port, IHostController hc)
         {
+			this.hc = hc;
             this.port = port;
             this.syncContext = hc.SyncContext;
             this.logger = hc.Logger;
@@ -149,8 +151,8 @@ namespace ArduinoController
                                     }
                                     break;
 
-                                case ArduinoComands.ShutdownSignal:
-                                    //on shutdown;
+							case ArduinoComands.ShutdownSignal:
+		syncContext.Post(o => hc.Shutdown (HostControllerShutdownModes.Shutdown), null);
                                     break;
 
                                 default:
