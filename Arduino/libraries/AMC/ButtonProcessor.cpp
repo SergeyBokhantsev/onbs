@@ -2,8 +2,9 @@
 #include "ButtonProcessor.h"
 #include "CommFrameProcessor.h"
 
-ButtonProcessor::ButtonProcessor(CommandWriter* _writer) :
+ButtonProcessor::ButtonProcessor(CommandWriter* _writer, Manager* _manager) :
 writer(_writer),
+manager(_manager),
 buttons_last_processed(0)
 {
 }
@@ -40,7 +41,12 @@ void ButtonProcessor::process()
 	    for (int i=0; i<buttons_count; ++i)
 	    {
 	      if (check_button(button_pins[i], button_states+i, button_process_times+i))
-	        send_button_state(i, button_states[i]);
+		  {
+			  if (manager->before_button_send(i, button_states[i]))
+			  {
+				send_button_state(i, button_states[i]);
+			  }
+		  }
 	    }
 	    
 	    buttons_last_processed = now;
@@ -56,7 +62,7 @@ void ButtonProcessor::init_button_pin(int pin)
   }
 }
 
-void  ButtonProcessor::send_button_state(int button_id, char state)
+void ButtonProcessor::send_button_state(int button_id, char state)
 {
 	writer->open_command((char)BUTTON_FRAME_TYPE);
 	writer->write((char)button_id);

@@ -35,15 +35,23 @@
 #define OLED_4_ARG (int)frame_array[4]
 #define OLED_5_ARG (int)frame_array[5]
 
+#define OLED_ERROR_EXECUTING_COMMAND_UNKN_FONT 20
+#define OLED_ERROR_EXECUTING_COMMAND_ARGS_MISMATCH 21
+#define OLED_ERROR_UNKNOWN_COMMAND 22
+
 class OledController
 {
 public:
 	OledController();
 	~OledController();
 
-	bool process(const char* frame_array, int frame_len);
+	int process(const char* frame_array, int frame_len);
 	
 	void draw_clock();
+	void draw_state_waiting(int remainingSeconds);
+	void draw_state_hold();
+	void draw_state_guard();
+	
 	
 	OLED display;
 private:

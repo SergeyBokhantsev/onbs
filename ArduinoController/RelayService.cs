@@ -23,16 +23,9 @@ namespace ArduinoController
             this.logger = logger;
         }
 
-        public void Schedule(Relay relay, RelayActions action, byte delaySec)
+        private void Turn(Relay relay, RelayActions action)
         {
-            var data = new byte[4] { RelayCommands.SCHEDULE_COMMAND, (byte)relay, (byte)action, delaySec };
-            var frame = new STPFrame(data, STPFrame.Types.Relay);
-            OnFrameToSend(frame);
-        }
-
-        public void Unschedule(Relay relay)
-        {
-            var data = new byte[2] { RelayCommands.UNSCHEDULE_COMMAND, (byte)relay };
+            var data = new byte[3] { RelayCommands.TURN, (byte)relay, (byte)action };
             var frame = new STPFrame(data, STPFrame.Types.Relay);
             OnFrameToSend(frame);
         }
@@ -42,6 +35,16 @@ namespace ArduinoController
             var handler = FrameToSend;
             if (handler != null)
                 handler(frame, 20);
+        }
+
+        public void Enable(Relay relay)
+        {
+            Turn(relay, RelayActions.Enable);
+        }
+
+        public void Disable(Relay relay)
+        {
+            Turn(relay, RelayActions.Disable);
         }
     }
 }

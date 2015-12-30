@@ -2,6 +2,15 @@
 
 RelayController::RelayController()
 { 
+	descriptors[RELAY_MASTER].pin = RELAY_MASTER_PIN;
+	descriptors[RELAY_OBD].pin = RELAY_OBD_PIN;
+	descriptors[RELAY_3].pin = RELAY_3_PIN;
+	descriptors[RELAY_4].pin = RELAY_4_PIN;
+	
+	for (int i=0; i<4; ++i)
+	{
+		descriptors[i].state = RELAY_DISABLE;
+	}
 }
 
 RelayController::~RelayController()
@@ -10,16 +19,6 @@ RelayController::~RelayController()
 
 void RelayController::init()
 {
-	descriptors[RELAY_MASTER].scheduled = false;
-	descriptors[RELAY_OBD].scheduled = false;
-	descriptors[RELAY_3].scheduled = false;
-	descriptors[RELAY_4].scheduled = false;
-	
-	descriptors[RELAY_MASTER].pin = RELAY_MASTER_PIN;
-	descriptors[RELAY_OBD].pin = RELAY_OBD_PIN;
-	descriptors[RELAY_3].pin = RELAY_3_PIN;
-	descriptors[RELAY_4].pin = RELAY_4_PIN;
-	
 	for (int i=0; i<4; ++i)
 	{
 		if (descriptors[i].pin != -1)
@@ -27,73 +26,37 @@ void RelayController::init()
 	}
 }
 
-void RelayController::schedule(int relay, bool action, int delaySec)
-{
-	if (relay < 0 || relay > 3 || delaySec < 0)
-		return;
-	
-	descriptors[relay].scheduled = true;
-	descriptors[relay].scheduledTime = millis() + (unsigned long)delaySec * (unsigned long)1000;
-	descriptors[relay].action = action;
-}
-
-void RelayController::unschedule(int relay)
+void RelayController::turn_relay(int relay, bool action)
 {
 	if (relay < 0 || relay > 3)
 		return;
 	
-	descriptors[relay].scheduled = false;
-}
-
-void RelayController::tick()
-{
-	unsigned long now = millis();
+	if (descriptors[relay].state == action)
+		return;
 	
-	for (int i=0; i<4; ++i)
-	{
-		if (descriptors[i].scheduled && descriptors[i].scheduledTime <= now)
-		{
-			descriptors[i].scheduled = false;
-			turn_relay(i, descriptors[i].action);
-		}
-	}
-}
-
-void RelayController::turn_relay(int relay, bool action)
-{
 	digitalWrite(descriptors[relay].pin, action ? LOW : HIGH);
+	descriptors[relay].state = action;
 }
 
-bool RelayController::process_frame(const char* frame_array, int frame_len)
+int RelayController::process_frame(const char* frame_array, int frame_len)
 {
 	if (frame_len == 0)
-		return false;
+		return RELAY_ERROR_INVALID_FRAME;
 	
 	switch (frame_array[0])
 	{
-		case RELAY_COMMAND_SHEDULE:
-			if (frame_len == 4)
+		case RELAY_COMMAND_TURN_RELAY:
+			if (frame_len == 3)
 			{
 				int relay = frame_array[1];
-				bool action = frame_array[2] > 0;
-				int delaySec = frame_array[3];				
-				schedule(relay, action, delaySec);		
-				return true;
+				bool action = frame_array[2] > 0;				
+				turn_relay(relay, action);				
+				return 0;
 			}
 			else
-				return false;
-			
-		case RELAY_COMMAND_UNSHEDULE:
-			if (frame_len == 2)
-			{
-				int relay = frame_array[1];		
-				unschedule(relay);		
-				return true;
-			}
-			else
-				return false;
+				return RELAY_ERROR_ARGUMENTS_MISMATCH;
 			
 		default:
-			return false;
+			return RELAY_ERROR_UNKNOWN_COMMAND;
 	}
 }

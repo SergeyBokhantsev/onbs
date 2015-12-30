@@ -3,6 +3,7 @@
 
 #include "Arduino.h"
 #include "CommandWriter.h"
+#include "Manager.h"
 
 #define BTN_STATE_RELEASED 45
 #define BTN_STATE_PRESSED 43
@@ -36,13 +37,14 @@
 class ButtonProcessor
 {
 	public:	
-	ButtonProcessor(CommandWriter* _writer);
+	ButtonProcessor(CommandWriter* _writer, Manager* _manager);
 	void init();
 	void process();
 
 	private:
 	CommandWriter* writer;
-
+	Manager* manager;
+	
 	unsigned long buttons_process_interval;
 	unsigned long buttons_last_processed;
 	const static int buttons_count = 10;

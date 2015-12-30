@@ -121,9 +121,9 @@ namespace ArduinoController
                         }
 						else
 						{
-							logger.Log (this, 
-							           string.Format ("Error frame responce: {0}", frame.String),
-							           LogLevels.Error);
+                            logger.Log(this, 
+                                string.Format("Error frame responce: type {0}, all bytes: {1}", responseOnFrame, string.Concat(frame.Data.Select(b => string.Concat("'", b.ToString(), ", ")))), 
+                                LogLevels.Error);
 						}
                     }
 					else 
@@ -218,6 +218,11 @@ namespace ArduinoController
         public void UnregisterFrameProvider(IFrameProvider provider)
         {
             provider.FrameToSend -= Send;
+        }
+
+        public void HoldPower()
+        {
+            Send(new STPFrame(new byte[] { ArduinoComands.HoldPower }, STPFrame.Types.ArduCommand), 100);
         }
     }
 }

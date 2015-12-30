@@ -282,9 +282,6 @@ namespace HostController
 
             StartTimers();
 
-            // Arduino will automatically turn off the board after 120 seconds, so we need to disable this action
-            arduController.RelayService.Unschedule(Relay.Master);
-
             //telemetry = new Telemetry.TelemetryServer(Logger);
         }
 
@@ -343,14 +340,14 @@ namespace HostController
             showLine("Disposing ELM327 Controller");
             elm327Controller.Dispose();
 
-			if (mode == HostControllerShutdownModes.Shutdown) 
+			if (mode == HostControllerShutdownModes.Exit) 
 			{
-				arduController.RelayService.Schedule (Relay.Master, RelayActions.Disable, 30);
+                arduController.HoldPower();
 			}
 
-			arduController.RelayService.Schedule(Relay.OBD, RelayActions.Disable, 5);
-            arduController.RelayService.Schedule(Relay.Relay3, RelayActions.Disable, 5);
-            arduController.RelayService.Schedule(Relay.Relay4, RelayActions.Disable, 5);
+			arduController.RelayService.Disable(Relay.OBD);
+            arduController.RelayService.Disable(Relay.Relay3);
+            arduController.RelayService.Disable(Relay.Relay4);
 
             showLine("Disposing Travel Controller");
             travelController.Dispose();

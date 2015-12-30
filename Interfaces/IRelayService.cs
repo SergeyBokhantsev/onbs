@@ -8,8 +8,7 @@ namespace Interfaces.Relays
 {
     public static class RelayCommands
     {
-        public const byte UNSCHEDULE_COMMAND = 0;
-        public const byte SCHEDULE_COMMAND = 1;
+        public const byte TURN = 0;
     }
 
     public enum Relay 
@@ -28,7 +27,7 @@ namespace Interfaces.Relays
 
     public interface IRelayService
     {
-        void Schedule(Relay relay, RelayActions action, byte delaySec);
-        void Unschedule(Relay relay);
+        void Enable(Relay relay);
+        void Disable(Relay relay);
     }
 }

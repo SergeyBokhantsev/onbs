@@ -6,6 +6,7 @@ namespace Interfaces
     public static class ArduinoComands
     {
         public const byte Ping = 100;
+        public const byte HoldPower = 101;
     }
 
     public interface IArduinoController : IController, IMetricsProvider
@@ -16,5 +17,6 @@ namespace Interfaces
         void UnregisterFrameAcceptor(IFramesAcceptor acceptor);
         void RegisterFrameProvider(IFrameProvider provider);
         void UnregisterFrameProvider(IFrameProvider provider);
+        void HoldPower();
     }
 }

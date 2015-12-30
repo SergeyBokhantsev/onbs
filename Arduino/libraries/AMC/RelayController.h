@@ -16,15 +16,16 @@
 #define RELAY_ENABLE true
 #define RELAY_DISABLE false
 
-#define RELAY_COMMAND_SHEDULE 1
-#define RELAY_COMMAND_UNSHEDULE 0
+#define RELAY_COMMAND_TURN_RELAY 0
+
+#define RELAY_ERROR_INVALID_FRAME 20
+#define RELAY_ERROR_ARGUMENTS_MISMATCH 21
+#define RELAY_ERROR_UNKNOWN_COMMAND 22
 
 struct RelayDescriptor
 {
-	bool scheduled;
-	unsigned long scheduledTime;
-	bool action;
 	int pin;
+	bool state;
 };
 
 class RelayController
@@ -33,12 +34,7 @@ class RelayController
 	RelayController();
 	~RelayController();
 	void init();
-	void tick();
-	bool process_frame(const char* frame_array, int frame_len);
-	
-	void schedule(int relay, bool action, int delaySec);
-	void unschedule(int relay);
-	
+	int process_frame(const char* frame_array, int frame_len);
 	void turn_relay(int relay, bool action);
 	
 	private:
