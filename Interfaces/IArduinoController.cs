@@ -5,8 +5,7 @@ namespace Interfaces
 {
     public static class ArduinoComands
     {
-        public const char ArduinoPingRequest = 'd';
-        public const char ArduinoPingResponce = 'D';
+        public const byte Ping = 100;
     }
 
     public interface IArduinoController : IController, IMetricsProvider

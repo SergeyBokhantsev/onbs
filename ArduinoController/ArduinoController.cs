@@ -69,7 +69,7 @@ namespace ArduinoController
 
             hc.CreateTimer(5000, t => 
             {
-                var frameData = new byte[] { (byte)ArduinoComands.ArduinoPingRequest };
+                var frameData = new byte[] { ArduinoComands.Ping };
                 Send(new STPFrame(frameData, STPFrame.Types.ArduCommand), 0);
 				Interlocked.Increment(ref ardPingPendings);
                 logger.LogIfDebug(this, "Ping command sended to Arduino");
@@ -112,13 +112,19 @@ namespace ArduinoController
                     {
 						var responseOnFrame = (STPFrame.Types)frame.Data[0];
 
-						if (responseOnFrame == STPFrame.Types.ArduCommand)
+						if (responseOnFrame == STPFrame.Types.ArduCommand
+						    && frame.Data.Length > 1
+						    && frame.Data[1] == ArduinoComands.Ping)
                         {
 							Interlocked.Exchange(ref ardPingPendings, 0);
                             logger.LogIfDebug(this, "Arduino ping received");
                         }
-
-
+						else
+						{
+							logger.Log (this, 
+							           string.Format ("Error frame responce: {0}", frame.String),
+							           LogLevels.Error);
+						}
                     }
 					else 
 						yield return frame;
