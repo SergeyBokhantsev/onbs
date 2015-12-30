@@ -44,9 +44,10 @@ public:
 	bool process(const char* frame_array, int frame_len);
 	
 	void draw_clock();
+	
+	OLED display;
 private:
 
-	OLED display;
 	char text_buffer[TEXT_BUFFER_SIZE + 1];
 };
 

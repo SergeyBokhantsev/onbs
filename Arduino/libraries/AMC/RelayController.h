@@ -3,10 +3,10 @@
 
 #include "Arduino.h"
 
-#define RELAY_MASTER_PIN -1
-#define RELAY_OBD_PIN -1
-#define RELAY_3_PIN -1
-#define RELAY_4_PIN -1
+#define RELAY_MASTER_PIN 30
+#define RELAY_OBD_PIN 31
+#define RELAY_3_PIN 32
+#define RELAY_4_PIN 33
 
 #define RELAY_MASTER 0
 #define RELAY_OBD 1
@@ -16,8 +16,8 @@
 #define RELAY_ENABLE true
 #define RELAY_DISABLE false
 
-#define RELAY_COMMAND_SHEDULE 0
-#define RELAY_COMMAND_UNSHEDULE 1
+#define RELAY_COMMAND_SHEDULE 1
+#define RELAY_COMMAND_UNSHEDULE 0
 
 struct RelayDescriptor
 {
@@ -32,16 +32,17 @@ class RelayController
 	public:
 	RelayController();
 	~RelayController();
+	void init();
 	void tick();
 	bool process_frame(const char* frame_array, int frame_len);
 	
 	void schedule(int relay, bool action, int delaySec);
 	void unschedule(int relay);
 	
+	void turn_relay(int relay, bool action);
+	
 	private:
 	RelayDescriptor descriptors[4];
-	
-	void turn_relay(int relay, bool action);
 };
 
 #endif
