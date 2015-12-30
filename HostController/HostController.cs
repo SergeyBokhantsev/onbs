@@ -26,7 +26,7 @@ namespace HostController
         private Configuration config;
         private UIController.UIController uiController;
         private IInputController inputController;
-        private IArduinoController arduController;
+        private ArduinoController.ArduinoController arduController;
         private GPSController.GPSController gpsController;
         private IAutomationController automationController;
         private TravelController.TravelController travelController;
@@ -330,6 +330,8 @@ namespace HostController
 
         public void Shutdown(HostControllerShutdownModes mode)
         {
+			arduController.StopPing ();
+
             var shutdownModel = uiController.ShowPage("ShutdownProgress", null) as UIModels.ShutdownProgressModel;
 
             Action<string> showLine = line => { if (shutdownModel != null) { shutdownModel.AddLine(line); } };
@@ -340,14 +342,14 @@ namespace HostController
             showLine("Disposing ELM327 Controller");
             elm327Controller.Dispose();
 
+			arduController.RelayService.Disable(Relay.OBD);
+			arduController.RelayService.Disable(Relay.Relay3);
+			arduController.RelayService.Disable(Relay.Relay4);
+
 			if (mode == HostControllerShutdownModes.Exit) 
 			{
                 arduController.HoldPower();
 			}
-
-			arduController.RelayService.Disable(Relay.OBD);
-            arduController.RelayService.Disable(Relay.Relay3);
-            arduController.RelayService.Disable(Relay.Relay4);
 
             showLine("Disposing Travel Controller");
             travelController.Dispose();
@@ -395,11 +397,6 @@ namespace HostController
             showLine("Stopping UI...");
 
             miniDisplayController.ResetQueue();
-            miniDisplayController.Graphics.Cls();
-            miniDisplayController.Graphics.SetFont(Fonts.Small);
-            miniDisplayController.Graphics.Print(0, 25, "OFF", TextAlingModes.Center);
-            miniDisplayController.Graphics.Update();
-            Thread.Sleep(1000);
 
             miniDisplayController.Dispose();
 

@@ -35,6 +35,8 @@ namespace ArduinoController
         private long decodedFramesCount;
 		private int ardPingPendings;
 
+		private IHostTimer pingTimer;
+
         public bool IsCommunicationOk
         {
             get
@@ -67,7 +69,7 @@ namespace ArduinoController
             RegisterFrameProvider(relayService);
             RelayService = relayService;
 
-            hc.CreateTimer(5000, t => 
+            pingTimer = hc.CreateTimer(5000, t => 
             {
                 var frameData = new byte[] { (byte)ArduinoComands.PingRequest };
                 Send(new STPFrame(frameData, STPFrame.Types.ArduCommand), 0);
@@ -256,6 +258,11 @@ namespace ArduinoController
         {
             provider.FrameToSend -= Send;
         }
+
+		public void StopPing()
+		{
+			pingTimer.Dispose ();
+		}
 
         public void HoldPower()
         {
