@@ -110,16 +110,14 @@ namespace ArduinoController
                 {
                     if (frame.Type == STPFrame.Types.ArduCommand)
                     {
-                        if ((char)frame.Data[0] == ArduinoComands.ArduinoPingResponce)
+						var responseOnFrame = (STPFrame.Types)frame.Data[0];
+
+						if (responseOnFrame == STPFrame.Types.ArduCommand)
                         {
 							Interlocked.Exchange(ref ardPingPendings, 0);
                             logger.LogIfDebug(this, "Arduino ping received");
                         }
-                        else
-                            yield return frame;
-                    }
-                    else if (frame.Type == STPFrame.Types.Relay)
-                    {
+
 
                     }
 					else 

@@ -36,7 +36,7 @@ namespace Interfaces.MiniDisplay
         void Cls();
         void SetFont(Fonts font);
         void Print(byte x, byte y, string text, TextAlingModes align = TextAlingModes.None);
-        void Invert();
+        void Invert(bool mode);
         void SetPixel(byte x, byte y);
         void ClearPixel(byte x, byte y);
         void InvertPixel(byte x, byte y);

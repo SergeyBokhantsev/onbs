@@ -57,10 +57,9 @@ namespace UIModels.MiniDisplay
 
             if (warning && DateTime.Now > warningBlinkTime.AddSeconds(5))
             {
-                g.Invert();
-                g.Update();
+                g.Invert(true);
                 g.Delay(200);
-                g.Invert();
+                g.Invert(false);
                 warningBlinkTime = DateTime.Now;
             }
 

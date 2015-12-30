@@ -32,7 +32,7 @@ namespace UIModels.MiniDisplay
             ShowCaption("INVERT");
             mc.Print(0, 20, "INVERT", TextAlingModes.Center);
             mc.Update();
-            mc.Invert();
+            mc.Invert(true);
             mc.Update();
             Thread.Sleep(1000);
 

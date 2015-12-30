@@ -24,12 +24,13 @@ namespace UIModels
 
         private readonly DriveMiniDisplayModel miniDisplayModel;
 
+		private readonly IElm327Controller elm;
         private readonly OBDProcessor obdProcessor;
 
         public DrivePage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)
         {
-            var elm = hc.GetController<IElm327Controller>();
+            elm = hc.GetController<IElm327Controller>();
             obdProcessor = new OBDProcessor(elm);
 
             miniDisplayModel = new DriveMiniDisplayModel(hc, pageDescriptor.Name);
@@ -59,6 +60,9 @@ namespace UIModels
             var engineTemp = obdProcessor.GetCoolantTemp() ?? int.MinValue;
             miniDisplayModel.EngineTemp = engineTemp;
             SetProperty("eng_temp", engineTemp);
+
+			if (!string.IsNullOrEmpty (elm.Error))
+				elm.Reset();
         }
 
         private void UpdateWeatherForecast()

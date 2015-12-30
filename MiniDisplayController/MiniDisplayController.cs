@@ -73,8 +73,13 @@ namespace Implementation.MiniDisplay
 
                     var delayAfterSend = 0;
 
-                    if (frame.Data[0] == (byte)OLEDCommands.OLED_COMMAND_UPDATE)
-                        delayAfterSend = 25;
+					switch((OLEDCommands)frame.Data [0])
+					{
+						case OLEDCommands.OLED_COMMAND_UPDATE:
+						case OLEDCommands.OLED_COMMAND_INVERT:
+							delayAfterSend = 25;
+							break;
+					}
 
                     OnFrameToSend(frame, delayAfterSend);
                 }
@@ -153,6 +158,9 @@ namespace Implementation.MiniDisplay
             Frames = new Queue<STPFrame>();
 
             this.waitHandle = waitHandle;
+
+			Cls ();
+			Invert (false);
         }
 
         private void CreateFrame(byte[] data)
@@ -219,9 +227,10 @@ namespace Implementation.MiniDisplay
             CreateFrame(new byte[2] { (byte)OLEDCommands.OLED_COMMAND_FONT, (byte)font });
         }
 
-        public void Invert()
+        public void Invert(bool mode)
         {
-            CreateFrame(new byte[1] { (byte)OLEDCommands.OLED_COMMAND_INVERT });
+            CreateFrame(new byte[2] { (byte)OLEDCommands.OLED_COMMAND_INVERT, 
+				mode ? (byte)1 : (byte)0 });
         }
 
         public void SetPixel(byte x, byte y)

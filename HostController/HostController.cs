@@ -343,8 +343,12 @@ namespace HostController
             showLine("Disposing ELM327 Controller");
             elm327Controller.Dispose();
 
-            arduController.RelayService.Schedule(Relay.Master, RelayActions.Disable, 30);
-            arduController.RelayService.Schedule(Relay.OBD, RelayActions.Disable, 5);
+			if (mode == HostControllerShutdownModes.Shutdown) 
+			{
+				arduController.RelayService.Schedule (Relay.Master, RelayActions.Disable, 30);
+			}
+
+			arduController.RelayService.Schedule(Relay.OBD, RelayActions.Disable, 5);
             arduController.RelayService.Schedule(Relay.Relay3, RelayActions.Disable, 5);
             arduController.RelayService.Schedule(Relay.Relay4, RelayActions.Disable, 5);
 
