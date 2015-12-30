@@ -23,7 +23,7 @@ button_processor(&outcom_writer, &manager)
     outcom_writer.write_line("ARDUINO STARTED");
     outcom_writer.close_command();
 	
-	oled.draw_clock();
+	//oled.draw_clock();
 }
 
 AMCController::~AMCController()
@@ -39,6 +39,8 @@ void AMCController::init()
 
 void AMCController::run()
 {
+	manager.tick();
+	
 	frame_sender.send_byte();
 
 	process_incoming();

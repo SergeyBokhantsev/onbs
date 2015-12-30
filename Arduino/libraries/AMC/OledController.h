@@ -52,6 +52,7 @@ public:
 	void draw_state_hold();
 	void draw_state_guard();
 	
+	void messageI(int i);
 	
 	OLED display;
 private:

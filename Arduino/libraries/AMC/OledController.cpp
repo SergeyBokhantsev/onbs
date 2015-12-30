@@ -209,3 +209,12 @@ void OledController::draw_state_guard()
 	display.print((char*)"[GRN] to launch", CENTER, 20);
 	display.update();
 }
+
+void OledController::messageI(int i)
+{
+	display.clrScr();
+	display.invert(false);
+	display.setFont(MediumNumbers);
+	display.printNumI(i, CENTER, 20);
+	display.update();
+}

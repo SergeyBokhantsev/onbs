@@ -3,10 +3,16 @@ using Interfaces.SerialTransportProtocol;
 
 namespace Interfaces
 {
-    public static class ArduinoComands
+    public enum ArduinoComands
     {
-        public const byte Ping = 100;
-        public const byte HoldPower = 101;
+        //Outcoming
+        PingRequest = 100,
+        HoldPower = 102,
+
+        //Incoming
+        PingResponce = 101,
+        ComandResult = 103,
+        ShutdownSignal = 104
     }
 
     public interface IArduinoController : IController, IMetricsProvider

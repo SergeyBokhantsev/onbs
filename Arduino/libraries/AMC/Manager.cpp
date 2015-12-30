@@ -72,12 +72,12 @@ void Manager::tick()
 	update_screen();
 }
 
-bool Manager::before_button_send(int button_id, char state)
+bool Manager::before_button_send(int buttonId, char buttonState)
 {
 	switch (state)
 	{
 		case MANAGER_STATE_ACTIVE:
-			if (button_id == cancel_btn_num && state == BTN_STATE_HOLDED)
+			if (buttonId == cancel_btn_num && buttonState == BTN_STATE_HOLDED)
 			{
 				if (is_raise_shutdown_signal(&shutdown_signal_timestamp))
 				{
@@ -94,7 +94,7 @@ bool Manager::before_button_send(int button_id, char state)
 		
 		case MANAGER_STATE_ON_HOLD:
 			reset_shutdown_signal(&shutdown_signal_timestamp);
-			if (button_id == cancel_btn_num && state == BTN_STATE_PRESSED)
+			if (buttonId == cancel_btn_num && buttonState == BTN_STATE_PRESSED)
 			{
 				set_state(MANAGER_STATE_GUARD);
 			}
@@ -102,7 +102,7 @@ bool Manager::before_button_send(int button_id, char state)
 			
 		case MANAGER_STATE_GUARD:
 			reset_shutdown_signal(&shutdown_signal_timestamp);
-			if (button_id == accept_btn_num && state == BTN_STATE_PRESSED)
+			if (buttonId == accept_btn_num && buttonState == BTN_STATE_PRESSED)
 			{
 				set_state(MANAGER_STATE_WAITING);
 			}

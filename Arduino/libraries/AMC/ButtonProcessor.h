@@ -12,16 +12,16 @@
 #define BTN_PRESSED_FIRST_INTERVAL 800
 #define BTN_PRESSED_SECOND_INTERVAL 300
 
-#define accept_btn_pin 49
-#define cancel_btn_pin 41
-#define f1_btn_pin 47
-#define f2_btn_pin 50
-#define f3_btn_pin 48
-#define f4_btn_pin 45
-#define f5_btn_pin 46
-#define f6_btn_pin 51
-#define f7_btn_pin 53
-#define f8_btn_pin 43
+#define accept_btn_pin 50
+#define cancel_btn_pin 48
+#define f1_btn_pin 53
+#define f2_btn_pin 49
+#define f3_btn_pin 43
+#define f4_btn_pin 46
+#define f5_btn_pin 51
+#define f6_btn_pin 47
+#define f7_btn_pin 45
+#define f8_btn_pin 41
 
 #define accept_btn_num 0
 #define cancel_btn_num 9

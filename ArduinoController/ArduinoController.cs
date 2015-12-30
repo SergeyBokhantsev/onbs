@@ -69,7 +69,7 @@ namespace ArduinoController
 
             hc.CreateTimer(5000, t => 
             {
-                var frameData = new byte[] { ArduinoComands.Ping };
+                var frameData = new byte[] { (byte)ArduinoComands.PingRequest };
                 Send(new STPFrame(frameData, STPFrame.Types.ArduCommand), 0);
 				Interlocked.Increment(ref ardPingPendings);
                 logger.LogIfDebug(this, "Ping command sended to Arduino");
@@ -110,20 +110,57 @@ namespace ArduinoController
                 {
                     if (frame.Type == STPFrame.Types.ArduCommand)
                     {
-						var responseOnFrame = (STPFrame.Types)frame.Data[0];
-
-						if (responseOnFrame == STPFrame.Types.ArduCommand
-						    && frame.Data.Length > 1
-						    && frame.Data[1] == ArduinoComands.Ping)
+                        if (frame.Data.Length > 0)
                         {
-							Interlocked.Exchange(ref ardPingPendings, 0);
-                            logger.LogIfDebug(this, "Arduino ping received");
-                        }
+                            var incomingCommand = (ArduinoComands)frame.Data[0];
+
+                            switch (incomingCommand)
+                            {
+                                case ArduinoComands.ComandResult:
+                                    if (frame.Data.Length == 3)
+                                    {
+                                        var resultForFrameType = (STPFrame.Types)frame.Data[1];
+                                        byte result = frame.Data[2];
+
+                                        switch (resultForFrameType)
+                                        {
+                                            case STPFrame.Types.ArduCommand:
+                                                if (result == (byte)ArduinoComands.PingResponce)
+                                                {
+                                                    Interlocked.Exchange(ref ardPingPendings, 0);
+                                                    logger.LogIfDebug(this, "Arduino ping received");
+                                                }
+                                                else
+                                                {
+                                                    //log - invaalid operation responce
+                                                }
+                                                break;
+
+                                            default:
+                                                //log - 
+                                                break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //log - invalid command result frame
+                                    }
+                                    break;
+
+                                case ArduinoComands.ShutdownSignal:
+                                    //on shutdown;
+                                    break;
+
+                                default:
+                                    //log - unknown command
+                                    break;
+                            }
+                        }                        
 						else
-						{
-                            logger.Log(this, 
-                                string.Format("Error frame responce: type {0}, all bytes: {1}", responseOnFrame, string.Concat(frame.Data.Select(b => string.Concat("'", b.ToString(), ", ")))), 
-                                LogLevels.Error);
+						{//invalid frame
+                            //logger.Log(this, 
+                              //  string.Format("Error frame responce: type {0}, all bytes: {1}", responseOnFrame, string.Concat(frame.Data.Select(b => string.Concat("'", b.ToString(), ", ")))), 
+                                //LogLevels.Error);
 						}
                     }
 					else 
@@ -222,7 +259,7 @@ namespace ArduinoController
 
         public void HoldPower()
         {
-            Send(new STPFrame(new byte[] { ArduinoComands.HoldPower }, STPFrame.Types.ArduCommand), 100);
+            Send(new STPFrame(new byte[] { (byte)ArduinoComands.HoldPower }, STPFrame.Types.ArduCommand), 100);
         }
     }
 }

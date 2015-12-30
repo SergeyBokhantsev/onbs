@@ -1,6 +1,18 @@
 ﻿namespace Interfaces.Input
 {
-    public enum Buttons { Accept = 2, Cancel = 3, F1 = 7, F2 = 0, F3 = 8, F4 = 5, F5 = 6, F6 = 1, F7 = 4, F8 = 9 }
+    public enum Buttons 
+    { 
+        Accept = 0, 
+        Cancel = 9, 
+        F1 = 1, 
+        F2 = 2, 
+        F3 = 3, 
+        F4 = 4, 
+        F5 = 5, 
+        F6 = 6, 
+        F7 = 7, 
+        F8 = 8 
+    }
 
     public enum ButtonStates { Press = 43, Hold = 44, Release = 45 }
 }
