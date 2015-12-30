@@ -136,36 +136,35 @@ namespace ArduinoController
                                                 }
                                                 else
                                                 {
-                                                    //log - invaalid operation responce
+                                                    logger.Log(this, string.Concat("An 'Arduino command failed' responce was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
                                                 }
                                                 break;
 
                                             default:
-                                                //log - 
+                                                logger.Log(this, string.Concat("An 'Incoming command failed' responce was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
                                                 break;
                                         }
                                     }
                                     else
                                     {
-                                        //log - invalid command result frame
+                                        logger.Log(this, string.Concat("Invalid command result frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
                                     }
                                     break;
 
-							case ArduinoComands.ShutdownSignal:
-		syncContext.Post(o => hc.Shutdown (HostControllerShutdownModes.Shutdown), null);
+                                case ArduinoComands.ShutdownSignal:
+                                    logger.Log(this, "Shutdown signal received from arduino", LogLevels.Info);
+                                    syncContext.Post(o => hc.Shutdown(HostControllerShutdownModes.Shutdown), null);
                                     break;
 
                                 default:
-                                    //log - unknown command
+                                    logger.Log(this, string.Concat("Invalid command result frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
                                     break;
                             }
-                        }                        
-						else
-						{//invalid frame
-                            //logger.Log(this, 
-                              //  string.Format("Error frame responce: type {0}, all bytes: {1}", responseOnFrame, string.Concat(frame.Data.Select(b => string.Concat("'", b.ToString(), ", ")))), 
-                                //LogLevels.Error);
-						}
+                        }
+                        else
+                        {
+                            logger.Log(this, string.Concat("Invalid arduino command frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
+                        }
                     }
 					else 
 						yield return frame;

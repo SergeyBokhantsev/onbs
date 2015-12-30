@@ -74,26 +74,36 @@ void Manager::tick()
 
 bool Manager::before_button_send(int buttonId, char buttonState)
 {
+	if (buttonId == cancel_btn_num 
+		&& buttonState == BTN_STATE_HOLDED
+		&& state == MANAGER_STATE_ACTIVE)
+	{
+		if (is_raise_shutdown_signal(&shutdown_signal_timestamp))
+		{
+			outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
+			outcom_writer->write(ARDUCOMMAND_SHUTDOWN_SIGNAL);
+			outcom_writer->close_command();
+		}
+	}
+	else
+	{
+		reset_shutdown_signal(&shutdown_signal_timestamp);
+	}
+	
 	switch (state)
 	{
-		case MANAGER_STATE_ACTIVE:
-			if (buttonId == cancel_btn_num && buttonState == BTN_STATE_HOLDED)
+		case MANAGER_STATE_WAITING:
+			if (buttonId == cancel_btn_num && buttonState == BTN_STATE_PRESSED)
 			{
-				if (is_raise_shutdown_signal(&shutdown_signal_timestamp))
-				{
-					outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
-					outcom_writer->write(ARDUCOMMAND_SHUTDOWN_SIGNAL);
-					outcom_writer->close_command();
-				}
+				set_state(MANAGER_STATE_GUARD);
 			}
-			else
+			else if (buttonId == accept_btn_num && buttonState == BTN_STATE_PRESSED)
 			{
-				reset_shutdown_signal(&shutdown_signal_timestamp);
+				set_state(MANAGER_STATE_ON_HOLD);
 			}
-			return true;
-		
+			return false;
+			
 		case MANAGER_STATE_ON_HOLD:
-			reset_shutdown_signal(&shutdown_signal_timestamp);
 			if (buttonId == cancel_btn_num && buttonState == BTN_STATE_PRESSED)
 			{
 				set_state(MANAGER_STATE_GUARD);
@@ -101,16 +111,11 @@ bool Manager::before_button_send(int buttonId, char buttonState)
 			return false;
 			
 		case MANAGER_STATE_GUARD:
-			reset_shutdown_signal(&shutdown_signal_timestamp);
 			if (buttonId == accept_btn_num && buttonState == BTN_STATE_PRESSED)
 			{
 				set_state(MANAGER_STATE_WAITING);
 			}
 			return false;
-			
-		default:
-			reset_shutdown_signal(&shutdown_signal_timestamp);
-			return true;
 	}
 }
 
@@ -118,6 +123,9 @@ void Manager::set_state(int newState)
 {
 	state = newState;
 	state_timestamp = millis();
+	
+	guard_animation_counter = 0;
+	guard_animation_mode = 0;
 }
 
 void Manager::dispatch_frame(char* frame_array, int frame_len, char frame_type)
@@ -149,6 +157,7 @@ void Manager::dispatch_frame(char* frame_array, int frame_len, char frame_type)
 	{
      outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
      outcom_writer->write(ARDUCOMMAND_COMMAND_RESULT);
+	 outcom_writer->write(frame_type);
      outcom_writer->write((char)result);
      outcom_writer->close_command();
 	}
@@ -194,7 +203,18 @@ void Manager::update_screen()
 			break;
 			
 		case MANAGER_STATE_GUARD:
-			oled->draw_state_guard();
+			if (++guard_animation_counter < 15)
+			{
+				oled->draw_state_guard_icon();
+			}
+			else if (guard_animation_counter < 20)
+			{
+				oled->draw_state_guard_hint();
+			}
+			else
+			{
+				guard_animation_counter = 0;
+			}
 			break;
 	}
 }

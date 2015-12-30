@@ -5,6 +5,7 @@ extern uint8_t MediumNumbers[]; // FONT 1
 extern uint8_t BigNumbers[]; // FONT 2
 
 extern uint8_t clock_64_img[];
+extern uint8_t car_guard_icon[];
 
 OledController::OledController() : display(SDA, SCL)
 {
@@ -16,9 +17,24 @@ OledController::~OledController()
 {
 }
 
-void OledController::draw_clock()
+void OledController::draw_icon(int icon)
 {
-	display.drawBitmap (32, 0, clock_64_img, 64, 64);
+	uint8_t* icon_data;
+	
+	switch (icon)
+	{
+		case OLED_ICON_CLOCK:
+			icon_data = clock_64_img;
+			break;
+			
+		case OLED_ICON_CAR_GUARD:
+			icon_data = car_guard_icon;
+			break;
+	}
+	
+	display.clrScr();
+	display.invert(false);
+	display.drawBitmap (32, 0, icon_data, 64, 64);
 	display.update();
 }
 
@@ -184,9 +200,11 @@ void OledController::draw_state_waiting(int remainingSeconds)
 	display.clrScr();
 	display.invert(false);
 	display.setFont(SmallFont);
-	display.print((char*)"Initializing...", CENTER, 10);
+	display.print((char*)"STARTING", CENTER, 2);
+	display.print((char*)"[RED] to OFF", CENTER, 35);
+	display.print((char*)"[GRN] to HOLD", CENTER, 45);
 	display.setFont(MediumNumbers);
-	display.printNumI(remainingSeconds, CENTER, 20);
+	display.printNumI(remainingSeconds, CENTER, 12);
 	display.update();
 }
 
@@ -195,18 +213,23 @@ void OledController::draw_state_hold()
 	display.clrScr();
 	display.invert(false);
 	display.setFont(SmallFont);
-	display.print((char*)"On HOLD", CENTER, 10);
-	display.print((char*)"[RED] to turn OFF", CENTER, 20);
+	display.print((char*)"HOLDING", CENTER, 10);
+	display.print((char*)"[RED] to OFF", CENTER, 20);
 	display.update();
 }
 
-void OledController::draw_state_guard()
+void OledController::draw_state_guard_icon()
+{
+	draw_icon(OLED_ICON_CAR_GUARD);
+}
+
+void OledController::draw_state_guard_hint()
 {
 	display.clrScr();
 	display.invert(false);
 	display.setFont(SmallFont);
 	display.print((char*)"...", CENTER, 10);
-	display.print((char*)"[GRN] to launch", CENTER, 20);
+	display.print((char*)"[GRN] to START", CENTER, 20);
 	display.update();
 }
 

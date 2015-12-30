@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Linq;
 
 namespace Interfaces.SerialTransportProtocol
 {
@@ -27,10 +28,14 @@ namespace Interfaces.SerialTransportProtocol
 			}
 		}
 
-		public override string ToString ()
-		{
-			return string.Format ("[{0}, {1} bytes]", Type, Data.Length);
-		}
+        public override string ToString()
+        {
+            var bytes = Data != null ?
+                string.Join(",", Data.Select(b => string.Concat("'", b, "'")))
+                : "NULL";
+
+            return string.Format("Type {0}, date lenght {1}, bytes: {2}", Type, Data.Length, bytes);
+        }
 
         public STPFrame(byte[] data, Types type)
         {

@@ -15,7 +15,7 @@
 // RPi env is off, [GREEN] will immediately turn on RPi
 #define MANAGER_STATE_GUARD 3
 
-#define MANAGER_STATE_WAITING_TIMEOUT_SECONDS 120
+#define MANAGER_STATE_WAITING_TIMEOUT_SECONDS 60
 #define MANAGER_STATE_ACTIVE_TIMEOUT_SECONDS 15
 
 #define MANAGER_SHUTDOWN_SIGNAL_TIMEOUT_MS 3000
@@ -61,6 +61,9 @@ class Manager
 	void set_state(int newState);
 	
 	void update_screen();
+	
+	int guard_animation_counter;
+	int guard_animation_mode;
 };
 
 #endif

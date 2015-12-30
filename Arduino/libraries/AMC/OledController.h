@@ -39,6 +39,9 @@
 #define OLED_ERROR_EXECUTING_COMMAND_ARGS_MISMATCH 21
 #define OLED_ERROR_UNKNOWN_COMMAND 22
 
+#define OLED_ICON_CLOCK 0
+#define OLED_ICON_CAR_GUARD 1
+
 class OledController
 {
 public:
@@ -47,10 +50,11 @@ public:
 
 	int process(const char* frame_array, int frame_len);
 	
-	void draw_clock();
+	void draw_icon(int icon);
 	void draw_state_waiting(int remainingSeconds);
 	void draw_state_hold();
-	void draw_state_guard();
+	void draw_state_guard_icon();
+	void draw_state_guard_hint();
 	
 	void messageI(int i);
 	
