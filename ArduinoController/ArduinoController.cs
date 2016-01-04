@@ -168,11 +168,24 @@ namespace ArduinoController
                         break;
 
                     case ArduinoComands.GetTimeResponse:
-                        var handler = GetArduinoTimeHandler;
-                        if (handler != null)
+                        if (frame.Data.Length == 7)
                         {
-                            logger.Log(this, "Get time respone", LogLevels.Info);
-                            handler(DateTime.Now);
+                            var handler = GetArduinoTimeHandler;
+                            logger.Log(this, string.Concat("Get time respone received, ", handler != null ? "handler exist" : "handler doesn't exist"), LogLevels.Info);                            
+                            if (handler != null)
+                            {
+                                var hour = (int)frame.Data[1];
+                                var min = (int)frame.Data[2];
+                                var sec = (int)frame.Data[3];
+                                var day = (int)frame.Data[4];
+                                var month = (int)frame.Data[5];
+                                var year = (int)frame.Data[6] + 2000;
+                                handler(new DateTime(year, month, day, hour, min, sec));
+                            }
+                        }
+                        else
+                        {
+                            logger.Log(this, string.Concat("Get time respone invalid. Raw bytes: ", frame), LogLevels.Warning);
                         }
                         GetArduinoTimeHandler = null;
                         break;
@@ -272,16 +285,19 @@ namespace ArduinoController
 
 		public void StopPing()
 		{
+            logger.Log(this, "Stop pinging Arduino", LogLevels.Info);
 			pingTimer.Dispose ();
 		}
 
         public void HoldPower()
         {
+            logger.Log(this, "Sending HoldPower command to Arduino", LogLevels.Info);
             Send(new STPFrame(new byte[] { (byte)ArduinoComands.HoldPower }, STPFrame.Types.ArduCommand), 100);
         }
 
         public void SetTimeToArduino()
         {
+            logger.Log(this, "Sending current time to Arduino", LogLevels.Info);
             var now = DateTime.Now;
             Send(new STPFrame(new byte[] { (byte)ArduinoComands.SetTime,
                                            (byte)now.Hour,
@@ -295,6 +311,7 @@ namespace ArduinoController
 
         public void GetArduinoTime(Action<DateTime> handler)
         {
+            logger.Log(this, "Sending get time request to Arduino", LogLevels.Info);
             GetArduinoTimeHandler = handler;
             Send(new STPFrame(new byte[] { (byte)ArduinoComands.GetTimeRequest }, STPFrame.Types.ArduCommand), 100);
         }

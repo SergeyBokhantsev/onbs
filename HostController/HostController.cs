@@ -282,7 +282,7 @@ namespace HostController
 
             StartTimers();
 
-            arduController.GetArduinoTime(CheckSystemTimeFromArduino);
+            arduController.GetArduinoTime(t => syncContext.Post(tt => CheckSystemTimeFromArduino((DateTime)tt), t));
         }
 
         void InetKeeperRestartNeeded()
