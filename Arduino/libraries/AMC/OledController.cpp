@@ -7,6 +7,13 @@ extern uint8_t BigNumbers[]; // FONT 2
 extern uint8_t clock_64_img[];
 extern uint8_t car_guard_icon[];
 
+extern uint8_t car_guard_1[];
+extern uint8_t car_guard_2[];
+extern uint8_t car_guard_3[];
+extern uint8_t car_guard_4[];
+extern uint8_t car_guard_5[];
+extern uint8_t car_guard_6[];
+
 OledController::OledController() : display(SDA, SCL)
 {
 	display.begin();
@@ -27,8 +34,23 @@ void OledController::draw_icon(int icon)
 			icon_data = clock_64_img;
 			break;
 			
-		case OLED_ICON_CAR_GUARD:
-			icon_data = car_guard_icon;
+		case OLED_ICON_CAR_GUARD_1:
+			icon_data = car_guard_1;
+			break;
+		case OLED_ICON_CAR_GUARD_2:
+			icon_data = car_guard_2;
+			break;
+		case OLED_ICON_CAR_GUARD_3:
+			icon_data = car_guard_3;
+			break;
+		case OLED_ICON_CAR_GUARD_4:
+			icon_data = car_guard_4;
+			break;
+		case OLED_ICON_CAR_GUARD_5:
+			icon_data = car_guard_5;
+			break;
+		case OLED_ICON_CAR_GUARD_6:
+			icon_data = car_guard_6;
 			break;
 	}
 	
@@ -216,11 +238,6 @@ void OledController::draw_state_hold()
 	display.print((char*)"HOLDING", CENTER, 10);
 	display.print((char*)"[RED] to OFF", CENTER, 20);
 	display.update();
-}
-
-void OledController::draw_state_guard_icon()
-{
-	draw_icon(OLED_ICON_CAR_GUARD);
 }
 
 void OledController::draw_state_guard_hint()

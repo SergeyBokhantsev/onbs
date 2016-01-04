@@ -2,6 +2,9 @@
 #include "ButtonProcessor.h"
 #include "CommFrameProcessor.h"
 
+#include <TimeLib.h>
+//#include <rtc_clock.h>
+
 void reset_shutdown_signal(unsigned long* ts)
 {
 	*ts = 0;
@@ -156,7 +159,7 @@ void Manager::dispatch_frame(char* frame_array, int frame_len, char frame_type)
 	if (result > 0)
 	{
      outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
-     outcom_writer->write(ARDUCOMMAND_COMMAND_RESULT);
+     outcom_writer->write(ARDUCOMMAND_COMMAND_FAILED);
 	 outcom_writer->write(frame_type);
      outcom_writer->write((char)result);
      outcom_writer->close_command();
@@ -171,10 +174,44 @@ int Manager::process_frame(char* frame_array, int frame_len)
 	switch (frame_array[0])
 	{
 		case ARDUCOMMAND_PING_REQUEST:
-			return ARDUCOMMAND_PING_RESPONSE;
+			outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
+			outcom_writer->write(ARDUCOMMAND_PING_RESPONSE);
+			outcom_writer->close_command();
+			return 0;
 			
 		case ARDUCOMMAND_HOLD:
 			set_state(MANAGER_STATE_ON_HOLD);
+			return 0;
+			
+		case ARDUCOMMAND_SET_TIME:
+			if (frame_len == 7)
+			{
+				int hr = (int)frame_array[1];
+				int min = (int)frame_array[2];
+				int sec = (int)frame_array[3];
+				int day = (int)frame_array[4];
+				int mnth = (int)frame_array[5];
+				int yr = (int)frame_array[6];
+				
+				setTime(hr,min,sec,day,mnth,yr); 
+				
+				return 0;
+			}
+			else return MANAGER_ERROR_INVALID_COMMAND;
+			
+		case ARDUCOMMAND_GET_TIME_REQUEST:
+			{
+			time_t t = now(); 
+			outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
+			outcom_writer->write(ARDUCOMMAND_GET_TIME_RESPONSE);
+			outcom_writer->write((char)hour(t));
+			outcom_writer->write((char)minute(t));
+			outcom_writer->write((char)second(t));
+			outcom_writer->write((char)day(t));
+			outcom_writer->write((char)month(t));
+			outcom_writer->write((char)(year(t) - 2000));
+			outcom_writer->close_command();
+			}
 			return 0;
 			
 		default:
@@ -203,13 +240,42 @@ void Manager::update_screen()
 			break;
 			
 		case MANAGER_STATE_GUARD:
-			if (++guard_animation_counter < 15)
+			if (++guard_animation_counter < 1)
 			{
-				oled->draw_state_guard_icon();
+				oled->draw_icon(OLED_ICON_CAR_GUARD_1);
 			}
-			else if (guard_animation_counter < 20)
+			else if (guard_animation_counter < 2)
+			{
+				oled->draw_icon(OLED_ICON_CAR_GUARD_2);
+			}
+			else if (guard_animation_counter < 3)
+			{
+				oled->draw_icon(OLED_ICON_CAR_GUARD_3);
+			}
+			else if (guard_animation_counter < 4)
+			{
+				oled->draw_icon(OLED_ICON_CAR_GUARD_4);
+			}
+			else if (guard_animation_counter < 5)
+			{
+				oled->draw_icon(OLED_ICON_CAR_GUARD_5);
+			}
+			else if (guard_animation_counter < 6)
+			{
+				oled->draw_icon(OLED_ICON_CAR_GUARD_6);
+			}
+			else if (guard_animation_counter < 7)
+			{
+				oled->draw_icon(OLED_ICON_CAR_GUARD_1);
+			}
+			else if (guard_animation_counter < 15)
 			{
 				oled->draw_state_guard_hint();
+			}
+			else if (guard_animation_counter < 35)
+			{
+				oled->display.clrScr();
+				oled->display.update();
 			}
 			else
 			{

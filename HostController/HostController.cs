@@ -282,10 +282,8 @@ namespace HostController
 
             StartTimers();
 
-            //telemetry = new Telemetry.TelemetryServer(Logger);
+            arduController.GetArduinoTime(CheckSystemTimeFromArduino);
         }
-
-        private Telemetry.TelemetryServer telemetry;
 
         void InetKeeperRestartNeeded()
         {
@@ -304,11 +302,20 @@ namespace HostController
             uiController.ShowDialog(dialog);
         }
 
+        private void CheckSystemTimeFromArduino(DateTime time)
+        {
+            if (config.IsSystemTimeValid = new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(time))
+            {
+                DisconnectSystemTimeChecking();
+            }
+        }
+
         private void CheckSystemTimeFromGPS(Interfaces.GPS.GPRMC gprmc)
         {
             if (gprmc.Active && (config.IsSystemTimeValid = new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(gprmc.Time)))
             {
                 DisconnectSystemTimeChecking();
+                arduController.SetTimeToArduino();
             }
         }
 
@@ -318,6 +325,7 @@ namespace HostController
             {
                 config.IsSystemTimeValid = true;
                 DisconnectSystemTimeChecking();
+                arduController.SetTimeToArduino();
             }
         }
 

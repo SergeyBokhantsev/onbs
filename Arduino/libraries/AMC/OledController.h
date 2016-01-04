@@ -40,7 +40,12 @@
 #define OLED_ERROR_UNKNOWN_COMMAND 22
 
 #define OLED_ICON_CLOCK 0
-#define OLED_ICON_CAR_GUARD 1
+#define OLED_ICON_CAR_GUARD_1 1
+#define OLED_ICON_CAR_GUARD_2 2
+#define OLED_ICON_CAR_GUARD_3 3
+#define OLED_ICON_CAR_GUARD_4 4
+#define OLED_ICON_CAR_GUARD_5 5
+#define OLED_ICON_CAR_GUARD_6 6
 
 class OledController
 {
@@ -53,7 +58,6 @@ public:
 	void draw_icon(int icon);
 	void draw_state_waiting(int remainingSeconds);
 	void draw_state_hold();
-	void draw_state_guard_icon();
 	void draw_state_guard_hint();
 	
 	void messageI(int i);

@@ -8,11 +8,14 @@ namespace Interfaces
         //Outcoming
         PingRequest = 100,
         HoldPower = 102,
+        SetTime = 105,
+        GetTimeRequest = 106,
 
         //Incoming
         PingResponce = 101,
-        ComandResult = 103,
-        ShutdownSignal = 104
+        ComandFailed = 103,
+        ShutdownSignal = 104,
+        GetTimeResponse = 107
     }
 
     public interface IArduinoController : IController, IMetricsProvider
