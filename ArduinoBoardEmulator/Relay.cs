@@ -57,34 +57,9 @@ namespace ArduinoBoardEmulator
         {
             switch (frame.Data[0])
             {
-                case Interfaces.Relays.RelayCommands.SCHEDULE_COMMAND:
-                    {
-                        var relName = (Interfaces.Relays.Relay)frame.Data[1];
-                        var act = (Interfaces.Relays.RelayActions)frame.Data[2] > 0;
-                        var delaySec = frame.Data[3];
-
-                        var relay = relays.First(r => r.Name == relName);
-
-                        if (delaySec > 0)
-                        {
-                            relay.RemainingDelay = delaySec;
-                            relay.ScheduledAction = act;
-                        }
-                        else
-                        {
-                            relay.Enabled = act;
-                            relay.RemainingDelay = 0;
-                        }
-                    }
+                case Interfaces.Relays.RelayCommands.TURN:
                     break;
 
-                case Interfaces.Relays.RelayCommands.UNSCHEDULE_COMMAND:
-                    {
-                        var relName = (Interfaces.Relays.Relay)frame.Data[1];
-                        var relay = relays.First(r => r.Name == relName);
-                        relay.RemainingDelay = 0;
-                    }
-                    break;
             }
 
             Update(null, null);

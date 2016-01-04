@@ -64,12 +64,41 @@ namespace ArduinoBoardEmulator
                 switch(frame.Type)
                 {
                     case STPFrame.Types.ArduCommand:
-                        if (frame.Data.Length == 1 && frame.Data.First() == ArduinoComands.ArduinoPingRequest)
+
+                        var arduCommand = (ArduinoComands)frame.Data.First();
+
+                        switch (arduCommand)
                         {
-                            var outFrameData = arduinoCommandCodec.Encode(new STPFrame(new byte[] { (byte)ArduinoComands.ArduinoPingResponce }, STPFrame.Types.ArduCommand));
-                            AddOutcoming(new STPFrame(outFrameData, STPFrame.Types.ArduCommand));
-                            server.OnPing();
+                            case ArduinoComands.PingRequest:
+                                {
+                                    var outFrameData = arduinoCommandCodec.Encode(new STPFrame(new byte[] { (byte)ArduinoComands.PingResponce }, STPFrame.Types.ArduCommand));
+                                    AddOutcoming(new STPFrame(outFrameData, STPFrame.Types.ArduCommand));
+                                    server.OnPing();
+                                }
+                                break;
+
+                            case ArduinoComands.SetTime:
+                                {
+                                    var hour = (int)frame.Data[1];
+                                    var min = (int)frame.Data[2];
+                                    var sec = (int)frame.Data[3];
+                                    var day = (int)frame.Data[4];
+                                    var month = (int)frame.Data[5];
+                                    var year = (int)frame.Data[6] + 2000;
+                                    var time = new DateTime(year, month, day, hour, min, sec);
+                                }
+                                break;
+
+                            case ArduinoComands.GetTimeRequest:
+                                {
+                                    var time = new DateTime(2000,1,1,1,1,1);// DateTime.Now;
+                                    var outFrameData = arduinoCommandCodec.Encode(new STPFrame(new byte[] { (byte)ArduinoComands.GetTimeResponse,
+                                    (byte)time.Hour, (byte)time.Minute, (byte)time.Second, (byte)time.Day, (byte)time.Month, (byte)(time.Year - 2000) }, STPFrame.Types.ArduCommand));
+                                    AddOutcoming(new STPFrame(outFrameData, STPFrame.Types.ArduCommand));
+                                }
+                                break;
                         }
+
                         break;
 
                     case STPFrame.Types.MiniDisplay:
