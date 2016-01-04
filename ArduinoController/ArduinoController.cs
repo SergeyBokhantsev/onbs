@@ -171,6 +171,7 @@ namespace ArduinoController
                         var handler = GetArduinoTimeHandler;
                         if (handler != null)
                         {
+                            logger.Log(this, "Get time respone", LogLevels.Info);
                             handler(DateTime.Now);
                         }
                         GetArduinoTimeHandler = null;
