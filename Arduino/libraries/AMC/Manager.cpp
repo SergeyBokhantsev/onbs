@@ -136,8 +136,6 @@ void Manager::dispatch_frame(char* frame_array, int frame_len, char frame_type)
 {
 	int result = MANAGER_ERROR_UNKNOWN_FRAME_TYPE;
 
-	set_state(MANAGER_STATE_ACTIVE);
-	
 	switch (frame_type)
 	{
 		case GSM_FRAME_TYPE:
@@ -175,6 +173,7 @@ int Manager::process_frame(char* frame_array, int frame_len)
 	switch (frame_array[0])
 	{
 		case ARDUCOMMAND_PING_REQUEST:
+			set_state(MANAGER_STATE_ACTIVE);
 			outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
 			outcom_writer->write(ARDUCOMMAND_PING_RESPONSE);
 			outcom_writer->close_command();

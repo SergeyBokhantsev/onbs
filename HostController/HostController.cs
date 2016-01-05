@@ -260,11 +260,11 @@ namespace HostController
                 this, (pdescr, viewModelName) => UIModels.ModelBase.CreateModel(this, pdescr, viewModelName));
 
             uiController.DialogPending += value =>
-                {
-                    config.IsMessagePending = value;
-                    if (value)
-                        arduController.Beep(100, 50, 2);
-                };
+            {
+                config.IsMessagePending = value;
+                if (value)
+                    arduController.Beep(100, 50, 2);
+            };
 
             uiController.PageChanging += (string descriptorName, string viewName) =>
             {
@@ -415,6 +415,8 @@ namespace HostController
             miniDisplayController.Dispose();
 
             uiController.Shutdown();
+
+            arduController.Beep(800);
 
             switch (mode)
             {
