@@ -288,6 +288,8 @@ namespace HostController
 
             StartTimers();
 
+			//arduController.SetTimeToArduino ();
+
             arduController.GetArduinoTime(t => syncContext.Post(tt => CheckSystemTimeFromArduino((DateTime)tt), t));
         }
 
@@ -312,7 +314,7 @@ namespace HostController
         {
             if (config.IsSystemTimeValid = new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(time))
             {
-                DisconnectSystemTimeChecking();
+                //DisconnectSystemTimeChecking();
             }
         }
 
@@ -416,7 +418,7 @@ namespace HostController
 
             uiController.Shutdown();
 
-            arduController.Beep(800);
+            arduController.Beep(100);
 
             switch (mode)
             {
