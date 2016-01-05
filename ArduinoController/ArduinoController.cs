@@ -315,5 +315,17 @@ namespace ArduinoController
             GetArduinoTimeHandler = handler;
             Send(new STPFrame(new byte[] { (byte)ArduinoComands.GetTimeRequest }, STPFrame.Types.ArduCommand), 100);
         }
+
+        public void Beep(ushort beepMs, ushort pauseMs, byte count)
+        {
+            logger.Log(this, "Sending beep request to Arduino", LogLevels.Info);
+            Send(new STPFrame(new byte[] { (byte)ArduinoComands.Beep,
+            (byte)((beepMs >> 8) & 0xFF),
+            (byte)(beepMs & 0xFF),
+            (byte)((pauseMs >> 8) & 0xFF),
+            (byte)(pauseMs & 0xFF),
+            count
+            }, STPFrame.Types.ArduCommand), 100);
+        }
     }
 }

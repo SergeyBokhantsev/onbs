@@ -10,6 +10,7 @@
 #include "ButtonProcessor.h"
 #include "OledController.h"
 #include "RelayController.h"
+#include "Buzzer.h"
 
 #define COMM_FRAME_MAX_SIZE 512
 
@@ -42,6 +43,8 @@ private:
 	OledController oled;
 
 	RelayController relay;
+	
+	Buzzer buzzer;
 	
 	void process_incoming();
 };

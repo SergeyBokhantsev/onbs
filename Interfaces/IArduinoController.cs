@@ -10,6 +10,7 @@ namespace Interfaces
         HoldPower = 102,
         SetTime = 105,
         GetTimeRequest = 106,
+        Beep = 108,
 
         //Incoming
         PingResponce = 101,

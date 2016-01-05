@@ -1,9 +1,9 @@
 #include "Manager.h"
 #include "ButtonProcessor.h"
 #include "CommFrameProcessor.h"
+#include "Buzzer.h"
 
 #include <TimeLib.h>
-//#include <rtc_clock.h>
 
 void reset_shutdown_signal(unsigned long* ts)
 {
@@ -28,10 +28,11 @@ bool is_raise_shutdown_signal(unsigned long* ts)
 	}
 }
 
-Manager::Manager(CommandWriter* _outcom_writer, RelayController* _relay, OledController* _oled)
+Manager::Manager(CommandWriter* _outcom_writer, RelayController* _relay, OledController* _oled, Buzzer* _buzzer)
 : outcom_writer(_outcom_writer),
 relay(_relay),
 oled(_oled),
+buzzer(_buzzer),
 screen_timestamp(0),
 state_timestamp(0),
 shutdown_signal_timestamp(0)
@@ -214,6 +215,23 @@ int Manager::process_frame(char* frame_array, int frame_len)
 			}
 			return 0;
 			
+		case ARDUCOMMAND_BEEP:
+			if (frame_len == 6)
+			{
+				char beep_lb = frame_array[1];
+				char beep_sb = frame_array[2];
+				int beepTimeMs = (beep_lb << 8) + beep_sb;
+				
+				char pause_lb = frame_array[3];
+				char pause_sb = frame_array[4];
+				int pauseTimeMs = (pause_lb << 8) + pause_sb;
+				
+				int count = (int)frame_array[5];				
+				buzzer->beep(beepTimeMs, pauseTimeMs, count);
+				return 0;
+			}
+			else return MANAGER_ERROR_INVALID_COMMAND;
+			
 		default:
 			return MANAGER_ERROR_UNKNOWN_COMMAND;
 	}
@@ -240,7 +258,7 @@ void Manager::update_screen()
 			break;
 			
 		case MANAGER_STATE_GUARD:
-			if (++guard_animation_counter < 1)
+			if (guard_animation_counter++ < 1)
 			{
 				oled->draw_icon(OLED_ICON_CAR_GUARD_1);
 			}
@@ -264,15 +282,15 @@ void Manager::update_screen()
 			{
 				oled->draw_icon(OLED_ICON_CAR_GUARD_6);
 			}
-			else if (guard_animation_counter < 7)
+			else if (guard_animation_counter < 10)
 			{
 				oled->draw_icon(OLED_ICON_CAR_GUARD_1);
 			}
-			else if (guard_animation_counter < 15)
+			else if (guard_animation_counter < 20)
 			{
 				oled->draw_state_guard_hint();
 			}
-			else if (guard_animation_counter < 35)
+			else if (guard_animation_counter < 40)
 			{
 				oled->display.clrScr();
 				oled->display.update();

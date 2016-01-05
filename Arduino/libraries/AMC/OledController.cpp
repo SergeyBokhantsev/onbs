@@ -5,7 +5,6 @@ extern uint8_t MediumNumbers[]; // FONT 1
 extern uint8_t BigNumbers[]; // FONT 2
 
 extern uint8_t clock_64_img[];
-extern uint8_t car_guard_icon[];
 
 extern uint8_t car_guard_1[];
 extern uint8_t car_guard_2[];
@@ -51,6 +50,10 @@ void OledController::draw_icon(int icon)
 			break;
 		case OLED_ICON_CAR_GUARD_6:
 			icon_data = car_guard_6;
+			break;
+			
+		default:
+			icon_data = clock_64_img;
 			break;
 	}
 	

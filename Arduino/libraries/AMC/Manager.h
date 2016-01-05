@@ -5,6 +5,7 @@
 #include "RelayController.h"
 #include "OledController.h"
 #include "CommandWriter.h"
+#include "Buzzer.h"
 
 // RPi env is up and connected (evaluated by PING signal)
 #define MANAGER_STATE_ACTIVE 0
@@ -26,6 +27,7 @@
 #define ARDUCOMMAND_HOLD 102
 #define ARDUCOMMAND_SET_TIME 105
 #define ARDUCOMMAND_GET_TIME_REQUEST 106
+#define ARDUCOMMAND_BEEP 108
 
 //Outcoming commands
 #define ARDUCOMMAND_PING_RESPONSE 101
@@ -41,7 +43,7 @@
 class Manager
 {
 	public:
-	Manager(CommandWriter* _outcom_writer, RelayController* _relay, OledController* _oled);
+	Manager(CommandWriter* _outcom_writer, RelayController* _relay, OledController* _oled, Buzzer* _buzzer);
 	~Manager();
 	
 	bool before_button_send(int button_id, char state);
@@ -54,6 +56,7 @@ class Manager
 	RelayController* relay;
 	OledController* oled;
 	CommandWriter* outcom_writer;
+	Buzzer* buzzer;
 	
 	int state;
 	unsigned long state_timestamp;

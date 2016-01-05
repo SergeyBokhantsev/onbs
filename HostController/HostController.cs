@@ -259,7 +259,13 @@ namespace HostController
                 map,
                 this, (pdescr, viewModelName) => UIModels.ModelBase.CreateModel(this, pdescr, viewModelName));
 
-            uiController.DialogPending += value => config.IsMessagePending = value;
+            uiController.DialogPending += value =>
+                {
+                    config.IsMessagePending = value;
+                    if (value)
+                        arduController.Beep(100, 50, 2);
+                };
+
             uiController.PageChanging += (string descriptorName, string viewName) =>
             {
                 miniDisplayController.ResetQueue();
