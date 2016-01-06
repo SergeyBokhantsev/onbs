@@ -265,44 +265,44 @@ void Manager::update_screen()
 			break;
 			
 		case MANAGER_STATE_GUARD:
-			if (guard_animation_counter++ < 1)
+			if (guard_animation_counter++ == 1)
 			{
 				oled->draw_icon(OLED_ICON_CAR_GUARD_1);
 			}
-			else if (guard_animation_counter < 2)
+			else if (guard_animation_counter == 2)
 			{
 				oled->draw_icon(OLED_ICON_CAR_GUARD_2);
 			}
-			else if (guard_animation_counter < 3)
+			else if (guard_animation_counter == 3)
 			{
 				oled->draw_icon(OLED_ICON_CAR_GUARD_3);
 			}
-			else if (guard_animation_counter < 4)
+			else if (guard_animation_counter == 4)
 			{
 				oled->draw_icon(OLED_ICON_CAR_GUARD_4);
 			}
-			else if (guard_animation_counter < 5)
+			else if (guard_animation_counter == 5)
 			{
 				oled->draw_icon(OLED_ICON_CAR_GUARD_5);
 			}
-			else if (guard_animation_counter < 6)
+			else if (guard_animation_counter == 6)
 			{
 				oled->draw_icon(OLED_ICON_CAR_GUARD_6);
 			}
-			else if (guard_animation_counter < 10)
+			else if (guard_animation_counter == 7)
 			{
 				oled->draw_icon(OLED_ICON_CAR_GUARD_1);
 			}
-			else if (guard_animation_counter < 20)
+			else if (guard_animation_counter == 13)
 			{
 				oled->draw_state_guard_hint();
 			}
-			else if (guard_animation_counter < 40)
+			else if (guard_animation_counter == 20)
 			{
 				oled->display.clrScr();
 				oled->display.update();
 			}
-			else
+			else if (guard_animation_counter > 50)
 			{
 				guard_animation_counter = 0;
 			}
