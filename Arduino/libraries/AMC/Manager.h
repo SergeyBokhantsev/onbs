@@ -62,6 +62,7 @@ class Manager
 	unsigned long state_timestamp;
 	unsigned long screen_timestamp;
 	unsigned long shutdown_signal_timestamp;
+	int remaining_beep;
 	
 	int process_frame(char* frame_array, int frame_len);
 	void set_state(int newState);

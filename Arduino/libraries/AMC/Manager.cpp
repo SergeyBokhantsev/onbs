@@ -57,7 +57,7 @@ void Manager::tick()
 			break;
 		
 		case MANAGER_STATE_WAITING:
-			relay->turn_relay(RELAY_MASTER, RELAY_ENABLE);
+			relay->turn_relay(RELAY_MASTER, RELAY_ENABLE);			
 			if (millis() > state_timestamp + MANAGER_STATE_WAITING_TIMEOUT_SECONDS * 1000)
 			{
 				set_state(MANAGER_STATE_GUARD);
@@ -250,6 +250,14 @@ void Manager::update_screen()
 		case MANAGER_STATE_WAITING:
 			remainingMs = ((unsigned long)MANAGER_STATE_WAITING_TIMEOUT_SECONDS * 1000) - (millis() - state_timestamp);
 			oled->draw_state_waiting((int)(remainingMs / (unsigned long)1000));
+			if (remainingMs <= 5000)
+			{
+				if ((int)remainingMs/1000 != remaining_beep)
+				{
+					remaining_beep = (int)remainingMs/1000;
+					buzzer->beep(70, 40, 2);
+				}
+			}
 			break;
 			
 		case MANAGER_STATE_ON_HOLD:
