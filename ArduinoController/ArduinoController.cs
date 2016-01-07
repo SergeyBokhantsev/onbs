@@ -126,6 +126,7 @@ namespace ArduinoController
                     }
                     else
                     {
+                        outcomingSignal.Reset();
                         continue;
                     }
                 }
