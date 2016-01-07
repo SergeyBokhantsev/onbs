@@ -33,6 +33,9 @@ namespace ArduinoController
         private readonly List<IFramesAcceptor> acceptors = new List<IFramesAcceptor>();
         private readonly List<IFrameProvider> providers = new List<IFrameProvider>();
 
+        private readonly Queue<Tuple<STPFrame, int>> outcomingQueue = new Queue<Tuple<STPFrame, int>>();
+        private readonly ManualResetEventSlim outcomingSignal = new ManualResetEventSlim(false);
+
         private long decodedFramesCount;
 		private int ardPingPendings;
 
@@ -89,19 +92,51 @@ namespace ArduinoController
             logger.Log(this, string.Format("{0} created.", this.GetType().Name), LogLevels.Info);
 
             port.DataReceived += DataReceived;
+
+            var sendingThread = new Thread(SendingLoop);
+            sendingThread.IsBackground = true;
+            sendingThread.Priority = ThreadPriority.Normal;
+            sendingThread.Name = "Arduino send";
+            sendingThread.Start();
         }
 
         private void Send(STPFrame frame, int delayAfterSend)
         {
-            lock (port)
+            lock (outcomingQueue)
             {
+                outcomingQueue.Enqueue(new Tuple<STPFrame, int>(frame, delayAfterSend));
+            }
+
+            outcomingSignal.Set();
+        }
+
+        private void SendingLoop(object state)
+        {
+            while (true)
+            {
+                outcomingSignal.Wait();
+
+                Tuple<STPFrame, int> item = null;
+
+                lock (outcomingQueue)
+                {
+                    if (outcomingQueue.Any())
+                    {
+                        item = outcomingQueue.Dequeue();
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
                 try
                 {
-                    var serializedFrame = codec.Encode(frame);
+                    var serializedFrame = codec.Encode(item.Item1);
                     port.Write(serializedFrame, 0, serializedFrame.Length);
 
-                    if (delayAfterSend > 0)
-                        Thread.Sleep(delayAfterSend);
+                    if (item.Item2 > 0)
+                        Thread.Sleep(item.Item2);
                 }
                 catch (Exception ex)
                 {
