@@ -34,6 +34,11 @@ namespace HostController
             }
 
             protected abstract void DoExecute();
+
+            public override string ToString()
+            {
+                return SendOrPostCallback.Method.ToString();
+            }
         }
 
         //SEND
@@ -107,42 +112,28 @@ namespace HostController
             ownerThread = Thread.CurrentThread;
             SetSynchronizationContext(this);
 
-            var fullCycleWatch = new Stopwatch();
-            var iddleWatch = new Stopwatch();
+            var itemWatch = new Stopwatch();
 
             while (!disposed)
             {
-                fullCycleWatch.Restart();
-
                 WorkItem workItem;
 
                 while (pumpItems.TryDequeue(out workItem))
                 {
+                    itemWatch.Restart();
                     workItem.Execute();
+                    itemWatch.Stop();
 
                     if (workItem.Exception != null)
                         logger.Log(this, workItem.Exception);
+
+                    if (itemWatch.ElapsedMilliseconds > 300)
+                        logger.Log(this, string.Format("Work item {0} spent {1} milliseconds", workItem, itemWatch.ElapsedMilliseconds), LogLevels.Warning);
                 }
 
-                pumpResetEvent.Reset();
-                iddleWatch.Restart();
                 pumpResetEvent.WaitOne();
 
-                fullCycleWatch.Stop();
-                iddleWatch.Stop();
-
-                var currentLoad = (fullCycleWatch.ElapsedTicks - iddleWatch.ElapsedTicks) / (double)fullCycleWatch.ElapsedTicks;
-                loadSum += currentLoad;
-                loadNum++;
-
-                if (loadNum == loadApproxNum)
-                {
-                    Load = loadSum / loadNum;
-                    loadSum = 0;
-                    loadNum = 0;
-                }
-
-                logger.LogIfDebug(this, string.Format("Current load: {0}", currentLoad));
+                
             }
 
             pumpResetEvent.Dispose();
