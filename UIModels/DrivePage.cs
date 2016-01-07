@@ -48,8 +48,6 @@ namespace UIModels
             if (!Disposed)
             {
                 weatherGuard.ExecuteIfFreeAsync(UpdateWeatherForecast);
-
-                obdGuard.ExecuteIfFreeAsync(UpdateOBD);
             }
 
             base.OnSecondaryTimer(timer);
@@ -63,6 +61,8 @@ namespace UIModels
 
 			if (!string.IsNullOrEmpty (elm.Error))
 				elm.Reset();
+
+            Thread.Sleep(3000);
         }
 
         private void UpdateWeatherForecast()
@@ -110,6 +110,8 @@ namespace UIModels
                 SetProperty("exported_points", string.Format("{0}/{1}", tc.BufferedPoints, tc.SendedPoints));
                 SetProperty("travel_span", tc.TravelTime.TotalMinutes);
                 SetProperty("distance", tc.TravelDistance);
+
+                obdGuard.ExecuteIfFreeAsync(UpdateOBD);
 
                 miniDisplayModel.BufferedPoints = tc.BufferedPoints;
                 miniDisplayModel.SendedPoints = tc.SendedPoints;
