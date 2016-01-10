@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading;
 using Interfaces;
+using System.Linq;
 
 namespace HostController
 {
@@ -13,6 +14,7 @@ namespace HostController
             protected readonly SendOrPostCallback SendOrPostCallback;
             protected readonly object State;
             private readonly string details;
+            private string trace;
 
             public Exception Exception { get; private set; }
 
@@ -21,6 +23,18 @@ namespace HostController
                 SendOrPostCallback = sendOrPostCallback;
                 State = state;
                 this.details = details;
+                CreateTrace();
+            }
+
+            [Conditional("DEBUG")]
+            private void CreateTrace()
+            {
+                var frames = new StackTrace().GetFrames();
+                var lines = from frame in frames.Skip(frames.Length > 3 ? 3 : 0)
+                        let method = frame.GetMethod()
+                        select string.Concat(method.Module.Assembly.GetName().Name, " | ", method.ToString());
+                    
+                trace = string.Join(Environment.NewLine, lines);
             }
 
             public void Execute()
@@ -39,7 +53,7 @@ namespace HostController
 
             public override string ToString()
             {
-                return string.Format("Method: {0}, Arg: {1}, Details: {2}", SendOrPostCallback.Method, State ?? "NULL", details ?? "NULL");
+                return string.Format("Method: {0}, Arg: {1}, Details: {2}, Trace: {3}", SendOrPostCallback.Method, State ?? "NULL", details ?? "NULL", trace ?? "NO TRACE");
             }
         }
 
