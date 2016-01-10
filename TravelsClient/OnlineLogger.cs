@@ -55,35 +55,30 @@ namespace TravelsClient
             Flush();
         }
 
-        public void Upload(bool blocking)
+        private void DoUpload()
         {
-            if (blocking)
-            {
-                uploadLocker.WaitHandle.WaitOne(10000);
-            }
+            if (!config.IsInternetConnected)
+                return;
 
-            uploadLocker.ExecuteIfFree(() =>
+            string body = null;
+
+            lock (buffer)
             {
-                if (!config.IsInternetConnected)
+                if (buffer.Length == 0)
                     return;
 
-                string body = null;
-
-                lock (buffer)
+                if (logSize + buffer.Length > logMaxSize)
                 {
-                    if (buffer.Length == 0)
-                        return;
-
-                    if (logSize + buffer.Length > logMaxSize)
-                    {
-                        logId = -1;
-                        logSize = 0;
-                    }
-
-                    body = buffer.ToString();
-                    buffer.Clear();
+                    logId = -1;
+                    logSize = 0;
                 }
 
+                body = buffer.ToString();
+                buffer.Clear();
+            }
+
+            lock (client)
+            {
                 try
                 {
                     if (logId == -1)
@@ -102,12 +97,24 @@ namespace TravelsClient
                     buffer.Insert(0, body);
                     Log(this, ex);
                 }
-            });
+            }
+        }
+
+        public void Upload(bool blocking)
+        {
+            if (blocking)
+            {
+                DoUpload();
+            }
+            else
+            {
+                uploadLocker.ExecuteIfFreeAsync(DoUpload);
+            }
         }
 
         public void Flush()
         {
-            ThreadPool.QueueUserWorkItem(o => Upload(false));
+            Upload(false);
         }
     }
 }

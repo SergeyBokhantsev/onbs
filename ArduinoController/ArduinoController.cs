@@ -35,6 +35,7 @@ namespace ArduinoController
 
         private readonly Queue<Tuple<STPFrame, int>> outcomingQueue = new Queue<Tuple<STPFrame, int>>();
         private readonly ManualResetEventSlim outcomingSignal = new ManualResetEventSlim(false);
+        private readonly Queue<byte> outcomingDump = new Queue<byte>(1024);
 
         private long decodedFramesCount;
 		private int ardPingPendings;
@@ -135,6 +136,7 @@ namespace ArduinoController
                 {
                     var serializedFrame = codec.Encode(item.Item1);
                     port.Write(serializedFrame, 0, serializedFrame.Length);
+                    Dump(serializedFrame);
 
                     if (item.Item2 > 0)
                         Thread.Sleep(item.Item2);
@@ -145,6 +147,38 @@ namespace ArduinoController
                     logger.Log(this, ex);
                 }
             }
+        }
+
+        [Conditional("DEBUG")]
+        private void Dump(byte[] bytes)
+        {
+            lock (outcomingDump)
+            {
+                foreach (var b in bytes)
+                {
+                    if (outcomingDump.Count == 1024)
+                    {
+                        outcomingDump.Dequeue();
+                    }
+
+                    outcomingDump.Enqueue(b);
+                }
+            }
+        }
+
+        [Conditional("DEBUG")]
+        private void LogDump()
+        {
+            byte[] dump;
+
+            lock (outcomingDump)
+            {
+                dump = outcomingDump.ToArray();
+                outcomingDump.Clear();
+            }
+
+            var dumpStr = string.Concat("Arduino outcoming dump: ", string.Join(", ", dump.Select(b => b.ToString())));
+            logger.Log(this, dumpStr, LogLevels.Warning);
         }
 
         private IEnumerable<STPFrame> ProcessArduinoCommands(IEnumerable<STPFrame> inputFrames)
@@ -186,6 +220,8 @@ namespace ArduinoController
                             byte result = frame.Data[2];
                             logger.Log(this, string.Format("An 'Arduino command failed' responce was received for frame type {0}; result {1}. Raw frame: {2}", 
                                 resultForFrameType, result, frame.ToString()), LogLevels.Warning);
+
+                            LogDump();
                         }
                         else
                         {
