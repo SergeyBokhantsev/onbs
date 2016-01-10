@@ -24,7 +24,7 @@ namespace ArduinoController
         private const string metricIsError = "_is_error";
 
         private readonly IPort port;
-        private readonly SynchronizationContext syncContext;
+        private readonly ONBSSyncContext syncContext;
         private readonly ILogger logger;
 		private readonly IHostController hc;
         private readonly ISTPCodec codec;
@@ -87,7 +87,7 @@ namespace ArduinoController
 				Interlocked.Increment(ref ardPingPendings);
                 logger.LogIfDebug(this, "Ping command sended to Arduino");
                 UpdateMetrics(0);
-            }, true, true);
+            }, true, true, "ping arduino");
 
             logger.Log(this, string.Format("{0} created.", this.GetType().Name), LogLevels.Info);
 
@@ -200,7 +200,7 @@ namespace ArduinoController
 
                     case ArduinoComands.ShutdownSignal:
                         logger.Log(this, "Shutdown signal received from arduino", LogLevels.Info);
-                        syncContext.Post(o => hc.Shutdown(HostControllerShutdownModes.Shutdown), null);
+                        syncContext.Post(o => hc.Shutdown(HostControllerShutdownModes.Shutdown), null, "ArdController.ProcessArduinoCommand -> hc.Shutdown");
                         break;
 
                     case ArduinoComands.GetTimeResponse:
@@ -255,7 +255,7 @@ namespace ArduinoController
 
                     foreach (var acceptor in acceptors)
                     {
-                        syncContext.Post(o => acceptor.AcceptFrames(frames.Where(f => f.Type == acceptor.FrameType)), null);
+                        syncContext.Post(o => acceptor.AcceptFrames(frames.Where(f => f.Type == acceptor.FrameType)), null, string.Concat("ArdController -> AcceptFrames, type ", acceptor.FrameType));
                         logger.LogIfDebug(this, string.Format("Frames were dispatched for {0} acceptor", acceptor.FrameType));
                     }
                 }
@@ -283,7 +283,7 @@ namespace ArduinoController
 				metrics.Add(3, metricPendingPing, ardPingPendings);
                 metrics.Add(4, metricIsError, !IsCommunicationOk);
 
-                syncContext.Post(o => handler(this, metrics), null);
+                syncContext.Post(o => handler(this, metrics), null, "ArdController.UpdateMetrics");
             }
         }
 

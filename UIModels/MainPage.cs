@@ -25,7 +25,7 @@ namespace UIModels
 			SetProperty("time_valid", "1");
 			SetProperty("time", null);
 
-            timer = hc.CreateTimer(1000, TimerTick, true, true);
+            timer = hc.CreateTimer(1000, TimerTick, true, true, "main page timer");
         }
 
         private void TimerTick(IHostTimer t)

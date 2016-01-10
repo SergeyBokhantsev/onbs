@@ -25,8 +25,8 @@ namespace UIModels
 
             gpsController = hc.GetController<IGPSController>();
 
-            primaryTimer = hc.CreateTimer(1000, OnPrimaryTick, true, true);
-            secondaryTimer = hc.CreateTimer(60000, OnSecondaryTimer, true, true);
+            primaryTimer = hc.CreateTimer(1000, OnPrimaryTick, true, true, "common primary timer");
+            secondaryTimer = hc.CreateTimer(60000, OnSecondaryTimer, true, true, "common secondary timer");
         }
 
         protected virtual void OnPrimaryTick(IHostTimer timer)

@@ -163,7 +163,7 @@ namespace UIModels
                         }
                     }
 
-                }, mappedAction);
+                }, mappedAction, string.Concat("ModelBase.MappedAction, action = ", actionArgs.ActionName));
             }
         }
 
@@ -223,7 +223,7 @@ namespace UIModels
         {
             this.hc = hc;
 
-            Shown += () => { if (timeout > 0) hc.CreateTimer(1000, TimerTick, true, false); };
+            Shown += () => { if (timeout > 0) hc.CreateTimer(1000, TimerTick, true, false, "dialog timeout timer"); };
         }
 
         private void TimerTick(IHostTimer timer)
@@ -244,14 +244,14 @@ namespace UIModels
         {
             var handler = Closed;
             if (handler != null)
-                hc.SyncContext.Post(o => handler((DialogResults)o), result);
+                hc.SyncContext.Post(o => handler((DialogResults)o), result, "DialogModelBase.OnClosed");
         }
 
         public void OnShown()
         {
             var handler = Shown;
             if (handler != null)
-                hc.SyncContext.Post(o => handler(), null);
+                hc.SyncContext.Post(o => handler(), null, "DialogModelBase.OnShown");
         }
 
         public Dictionary<DialogResults, string> Buttons

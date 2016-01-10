@@ -6,19 +6,21 @@ using Interfaces;
 
 namespace HostController
 {
-    public class HostSynchronizationContext : SynchronizationContext
+    public class HostSynchronizationContext : ONBSSyncContext
     {
         private abstract class WorkItem
         {
             protected readonly SendOrPostCallback SendOrPostCallback;
             protected readonly object State;
+            private readonly string details;
 
             public Exception Exception { get; private set; }
 
-            protected WorkItem(SendOrPostCallback sendOrPostCallback, object state)
+            protected WorkItem(SendOrPostCallback sendOrPostCallback, object state, string details)
             {
                 SendOrPostCallback = sendOrPostCallback;
                 State = state;
+                this.details = details;
             }
 
             public void Execute()
@@ -37,7 +39,7 @@ namespace HostController
 
             public override string ToString()
             {
-                return SendOrPostCallback.Method.ToString();
+                return string.Format("Method: {0}, Arg: {1}, Details: {2}", SendOrPostCallback.Method, State ?? "NULL", details ?? "NULL");
             }
         }
 
@@ -46,8 +48,8 @@ namespace HostController
         {
             private readonly AutoResetEvent resetEvent;
 
-            public SynchronousWorkItem(SendOrPostCallback sendOrPostCallback, object state, AutoResetEvent resetEvent)
-                : base(sendOrPostCallback, state)
+            public SynchronousWorkItem(SendOrPostCallback sendOrPostCallback, object state, AutoResetEvent resetEvent, string details)
+                : base(sendOrPostCallback, state, details)
             {
                 if (resetEvent == null)
                     throw new ArgumentNullException("resetEvent");
@@ -71,8 +73,8 @@ namespace HostController
         //POST
         private class AsynchronousWorkItem : WorkItem
         {
-            public AsynchronousWorkItem(SendOrPostCallback sendOrPostCallback, object state)
-                : base(sendOrPostCallback, state)
+            public AsynchronousWorkItem(SendOrPostCallback sendOrPostCallback, object state, string details)
+                : base(sendOrPostCallback, state, details)
             {
             }
 
@@ -90,8 +92,6 @@ namespace HostController
         private bool disposed;
         private readonly object locker = new object();
 
-        private double loadSum;
-        private int loadNum;
         private const int loadApproxNum = 10;
 
         public double Load { get; private set; }
@@ -146,7 +146,7 @@ namespace HostController
         {
             using (var resetEvent = new AutoResetEvent(false))
             {
-                var item = new SynchronousWorkItem(action, state, resetEvent);
+                var item = new SynchronousWorkItem(action, state, resetEvent, null);
                 pumpItems.Enqueue(item);
                 pumpResetEvent.Set();
 
@@ -162,7 +162,13 @@ namespace HostController
         /// </summary>
         public override void Post(SendOrPostCallback action, object state)
         {
-            pumpItems.Enqueue(new AsynchronousWorkItem(action, state));
+            pumpItems.Enqueue(new AsynchronousWorkItem(action, state, null));
+            pumpResetEvent.Set();
+        }
+
+        public override void Post(SendOrPostCallback action, object state, string details)
+        {
+            pumpItems.Enqueue(new AsynchronousWorkItem(action, state, details));
             pumpResetEvent.Set();
         }
 

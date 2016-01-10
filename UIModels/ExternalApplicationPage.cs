@@ -39,7 +39,7 @@ namespace UIModels
 
         void RunnerExited(bool unexpected)
         {
-            hc.SyncContext.Post(o => hc.GetController<IUIController>().ShowDefaultPage(), null);
+            hc.SyncContext.Post(o => hc.GetController<IUIController>().ShowDefaultPage(), null, "ExternalApplicationPage.RunnerExited");
         }
 
         public virtual bool Run()

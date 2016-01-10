@@ -81,7 +81,7 @@ namespace TravelController
             if ((client = CreateClient(hc.Config, hc.Logger)) != null)
             {
                 hc.GetController<IGPSController>().GPRMCReseived += GPRMCReseived;
-                this.timer = hc.CreateTimer(preparingRateMs, Operate, true, true);
+                this.timer = hc.CreateTimer(preparingRateMs, Operate, true, true, "travel operational timer");
             }
         }
 

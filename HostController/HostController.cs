@@ -51,7 +51,7 @@ namespace HostController
             get;
             private set;
         }
-        public SynchronizationContext SyncContext
+        public ONBSSyncContext SyncContext
         {
             get
             {
@@ -97,7 +97,7 @@ namespace HostController
 
             timersController = new HostTimersController(syncContext);
 
-            syncContext.Post(o => Initialize(), null);
+            syncContext.Post(o => Initialize(), null, "HostController.Initialize()");
             syncContext.Pump();
         }
 
@@ -284,13 +284,13 @@ namespace HostController
                 gpsCtrl.GPRMCReseived += CheckSystemTimeFromGPS;
 
             // Timer for online log upoad
-			CreateTimer(60000, ht => onlineLogger.Upload(false), true, false);
+			CreateTimer(60000, ht => onlineLogger.Upload(false), true, false, "online logger timer");
 
             StartTimers();
 
 			//arduController.SetTimeToArduino ();
 
-            arduController.GetArduinoTime(t => syncContext.Post(tt => CheckSystemTimeFromArduino((DateTime)tt), t));
+            arduController.GetArduinoTime(t => syncContext.Post(tt => CheckSystemTimeFromArduino((DateTime)tt), t, "CheckSystemTimeFromArduino"));
         }
 
         void InetKeeperRestartNeeded()
@@ -303,7 +303,7 @@ namespace HostController
                 if (dr == DialogResults.Yes)
                 {
                     Logger.Log(this, "Begin restart because of Internet keeper request...", LogLevels.Warning);
-                    SyncContext.Post(o => Shutdown(HostControllerShutdownModes.Restart), null);
+                    SyncContext.Post(o => Shutdown(HostControllerShutdownModes.Restart), null, "Shutdown");
                 }
             };
 
@@ -473,9 +473,9 @@ namespace HostController
             return new ProcessRunner.ProcessRunnerImpl(processConfig, Logger);
         }
 
-        public IHostTimer CreateTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly)
+        public IHostTimer CreateTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly, string name)
         {
-            return timersController.CreateTimer(span, action, isEnabled, firstEventImmidiatelly);
+            return timersController.CreateTimer(span, action, isEnabled, firstEventImmidiatelly, name);
         }
 
         private void StartTimers()

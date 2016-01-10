@@ -82,16 +82,17 @@ namespace HostController
         {
             public HostTimer Timer;
             public DateTime LastExecutionTime;
+            public string Details;
         }
 
         private Thread schedulerThread;
         private readonly List<TimerInfo> timers = new List<TimerInfo>();
-        private readonly SynchronizationContext syncContext;
+        private readonly ONBSSyncContext syncContext;
         private readonly AutoResetEvent schedulerSignal = new AutoResetEvent(false);
 
         private bool disposed;
 
-        public HostTimersController(SynchronizationContext syncContext)
+        public HostTimersController(ONBSSyncContext syncContext)
         {
             if (syncContext == null)
                 throw new ArgumentNullException("syncContext");
@@ -108,13 +109,15 @@ namespace HostController
             schedulerThread.Start();
         }
 
-        public HostTimer CreateTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly)
+        public HostTimer CreateTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly, string details)
         {
             var timer = new HostTimer(schedulerSignal, span, action, isEnabled);
 
             lock(timers)
             {
-                timers.Add(new TimerInfo { Timer = timer, LastExecutionTime = firstEventImmidiatelly ? DateTime.MinValue : DateTime.Now });
+                timers.Add(new TimerInfo { Timer = timer, 
+                                           LastExecutionTime = firstEventImmidiatelly ? DateTime.MinValue : DateTime.Now,
+                                           Details = details });
             }
 
             schedulerSignal.Set();
@@ -146,7 +149,7 @@ namespace HostController
 
                             if (info.LastExecutionTime.AddMilliseconds(info.Timer.Span) <= now)
                             {
-                                syncContext.Post(PostTimerExecution, info.Timer);
+                                syncContext.Post(PostTimerExecution, info.Timer, info.Details);
                                 info.LastExecutionTime = now;
                                 nextExecutionSpan = info.Timer.Span;
                             }

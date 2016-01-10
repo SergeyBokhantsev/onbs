@@ -19,7 +19,7 @@ namespace GPSController
 
         public event MetricsUpdatedEventHandler MetricsUpdated;
 
-        private readonly SynchronizationContext syncContext;
+        private readonly ONBSSyncContext syncContext;
         private readonly ILogger logger;
         private readonly IConfig config;
         private readonly STPCodec codec;
@@ -45,7 +45,7 @@ namespace GPSController
             get { return STPFrame.Types.GPS; }
         }
 
-        public GPSController(IConfig config, SynchronizationContext syncContext, ILogger logger)
+        public GPSController(IConfig config, ONBSSyncContext syncContext, ILogger logger)
         {
             if (config == null)
                 throw new ArgumentNullException("config");
@@ -155,7 +155,7 @@ namespace GPSController
                 metrics.Add(3, "Loc", lastGprmc.Location);
                 metrics.Add(4, "_is_error", is_error);
 
-                syncContext.Post(PostMetrics, metrics);
+                syncContext.Post(PostMetrics, metrics, "GPSController.UpdateMetrics");
             }
         }
 

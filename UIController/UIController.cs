@@ -54,7 +54,7 @@ namespace UIController
                     hostController.GetController<IAutomationController>().MouseMove(mouseLocation++, mouseLocation++);
                     if (mouseLocation > 3)
                         mouseLocation = 0;
-                }, true, false);
+                }, true, false, "periodic mouse mover");
 
             StartUIThread();
             
@@ -106,7 +106,7 @@ namespace UIController
             {
                 logger.Log(this, "Restarting UI Host...", LogLevels.Info);
                 StartUIThread();
-                hostController.SyncContext.Post(o => ShowDefaultPage(), null);
+                hostController.SyncContext.Post(o => ShowDefaultPage(), null, "ShowDefaultPage");
             }
         }
 
@@ -189,7 +189,7 @@ namespace UIController
             lock (dialogs)
             {
                 dialogs.Push(model);
-                hostController.SyncContext.Post(o => ProcessDialogsQueue(), null);
+                hostController.SyncContext.Post(o => ProcessDialogsQueue(), null, "UIController.ShowDialog -> ProcessDialogsQueue");
                 ProcessDialogsQueue();
             }
         }
@@ -246,7 +246,7 @@ namespace UIController
                 var handler = DialogPending;
                 if (handler != null)
                     handler((bool)o);
-            }, pending);
+            }, pending, "UIController.OnDialogPending -> ProcessDialogsQueue");
         }
     }
 }
