@@ -40,7 +40,9 @@ namespace ArduinoController
         private long decodedFramesCount;
 		private int ardPingPendings;
 
-		private IHostTimer pingTimer;
+		private bool pingEnabled = true;
+        private const int pingInterval = 5000;
+        private DateTime pingTimestamp;
 
         public bool IsCommunicationOk
         {
@@ -81,15 +83,6 @@ namespace ArduinoController
             RegisterFrameProvider(relayService);
             RelayService = relayService;
 
-            pingTimer = hc.CreateTimer(5000, t => 
-            {
-                var frameData = new byte[] { (byte)ArduinoComands.PingRequest };
-                Send(new STPFrame(frameData, STPFrame.Types.ArduCommand), 0);
-				Interlocked.Increment(ref ardPingPendings);
-                logger.LogIfDebug(this, "Ping command sended to Arduino");
-                UpdateMetrics(0);
-            }, true, true, "ping arduino");
-
             logger.Log(this, string.Format("{0} created.", this.GetType().Name), LogLevels.Info);
 
             port.DataReceived += DataReceived;
@@ -115,20 +108,31 @@ namespace ArduinoController
         {
             while (true)
             {
-                outcomingSignal.Wait();
-
                 Tuple<STPFrame, int> item = null;
 
-                lock (outcomingQueue)
+                outcomingSignal.Wait(1000);
+
+                if (pingEnabled && pingTimestamp.AddMilliseconds(pingInterval) < DateTime.Now)
                 {
-                    if (outcomingQueue.Any())
+                    var frameData = new byte[] { (byte)ArduinoComands.PingRequest };
+                    item = new Tuple<STPFrame,int>(new STPFrame(frameData, STPFrame.Types.ArduCommand), 0);
+                    Interlocked.Increment(ref ardPingPendings);
+                    logger.LogIfDebug(this, "Ping command sended to Arduino");
+                    pingTimestamp = DateTime.Now;
+                }
+                else
+                {
+                    lock (outcomingQueue)
                     {
-                        item = outcomingQueue.Dequeue();
-                    }
-                    else
-                    {
-                        outcomingSignal.Reset();
-                        continue;
+                        if (outcomingQueue.Any())
+                        {
+                            item = outcomingQueue.Dequeue();
+                        }
+                        else
+                        {
+                            outcomingSignal.Reset();
+                            continue;
+                        }
                     }
                 }
 
@@ -139,7 +143,7 @@ namespace ArduinoController
                     Dump(serializedFrame);
 
                     if (item.Item2 > 0)
-                        Thread.Sleep(item.Item2);
+                        Thread.Sleep(Math.Min(item.Item2, 3000));
                 }
                 catch (Exception ex)
                 {
@@ -357,8 +361,8 @@ namespace ArduinoController
 
 		public void StopPing()
 		{
+            pingEnabled = false;
             logger.Log(this, "Stop pinging Arduino", LogLevels.Info);
-			pingTimer.Dispose ();
 		}
 
         public void HoldPower()

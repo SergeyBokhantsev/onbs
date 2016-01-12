@@ -30,7 +30,7 @@ namespace YandexServicesProvider
 
             try
             {
-                using (var responce = client.Get(new Uri(url)))
+                using (var responce = client.Get(new Uri(url), 2, 3000))
                 {
                     if (responce.Status == System.Net.HttpStatusCode.OK)
                     {

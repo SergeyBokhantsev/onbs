@@ -9,7 +9,7 @@ namespace HttpClient
         private HttpWebResponse webResponse;
 
         public HttpStatusCode Status { get; protected set; }
-
+        public WebExceptionStatus WebExceptionStatus { get; protected set; }
         public string Error { get; protected set; }
 
         public WebHeaderCollection Headers
@@ -27,11 +27,13 @@ namespace HttpClient
 
             this.webResponse = webResponse;
             Status = webResponse.StatusCode;
+            WebExceptionStatus = System.Net.WebExceptionStatus.Success;
             Error = webResponse.StatusDescription;
         }
 
-        public ClientResponse(HttpStatusCode status, string error)
+        public ClientResponse(WebExceptionStatus webExceptionStatus, HttpStatusCode status, string error)
         {
+            WebExceptionStatus = webExceptionStatus;
             Status = status;
             Error = error;
         }

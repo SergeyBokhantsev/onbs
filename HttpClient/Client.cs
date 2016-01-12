@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 
 namespace HttpClient
 {
     public class Client
     {
         public event Action<Exception> ClientException;
+
+        public event Action<HttpWebRequest> BeforeSendRequest;
 
         public ICollection<KeyValuePair<HttpRequestHeader, string>> Headers
         { 
@@ -23,33 +26,47 @@ namespace HttpClient
 
         public ClientResponse Get(Uri uri, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
         {
-            return ExecuteRequest(InsertHeaders(WebRequest.Create(uri) as HttpWebRequest, headers));
+            var request = InsertHeaders(WebRequest.Create(uri) as HttpWebRequest, headers);
+            OnBeforeSendRequest(request);
+            return ExecuteRequest(request);
+        }
+
+        public ClientResponse Get(Uri uri, int retryCount, int retryDelay, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
+        {
+            return ExecuteWithTransientConnectionErrorRetry(() => Get(uri, headers), retryCount, retryDelay);
         }
 
         public ClientResponse Post(Uri uri, string body, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
         {
             var request = InsertHeaders(WebRequest.Create(uri) as HttpWebRequest, headers);
-
             request.Method = "POST";
-
+            OnBeforeSendRequest(request);
             return ExecuteRequest(request, body);
+        }
+
+        public ClientResponse Post(Uri uri, string body, int retryCount, int retryDelay, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
+        {
+            return ExecuteWithTransientConnectionErrorRetry(() => Post(uri, body, headers), retryCount, retryDelay);
         }
 
         public ClientResponse Put(Uri uri, string body, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
         {
             var request = InsertHeaders(WebRequest.Create(uri) as HttpWebRequest, headers);
-
             request.Method = "PUT";
-
+            OnBeforeSendRequest(request);
             return ExecuteRequest(request, body);
+        }
+
+        public ClientResponse Put(Uri uri, string body, int retryCount, int retryDelay, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
+        {
+            return ExecuteWithTransientConnectionErrorRetry(() => Put(uri, body, headers), retryCount, retryDelay);
         }
 
         public ClientResponse Delete(Uri uri, IEnumerable<KeyValuePair<HttpRequestHeader, string>> headers = null)
         {
             var request = InsertHeaders(WebRequest.Create(uri) as HttpWebRequest, headers);
-
             request.Method = "DELETE";
-
+            OnBeforeSendRequest(request);
             return ExecuteRequest(request);
         }
 
@@ -108,17 +125,63 @@ namespace HttpClient
 
                 var httpResponse = ex.Response as HttpWebResponse;
 
-                if (httpResponse != null)
-                    return new ClientResponse(httpResponse.StatusCode, ex.Message);
-                else
-                    return new ClientResponse(0, ex.Message);
+                return new ClientResponse(ex.Status, httpResponse != null ? httpResponse.StatusCode : 0, ex.Message);
             }
             catch (Exception ex)
             {
                 OnException(ex);
 
-                return new ClientResponse(0, ex.Message);
+                return new ClientResponse(WebExceptionStatus.UnknownError, 0, ex.Message);
             }
+        }
+
+        private ClientResponse ExecuteWithTransientConnectionErrorRetry(Func<ClientResponse> func, int retries, int delay)
+        {
+            ClientResponse response = null;
+
+            while (retries-- > 0)
+            {
+                response = func();
+
+                switch (response.WebExceptionStatus)
+                {
+                    case WebExceptionStatus.ConnectFailure:
+                    case WebExceptionStatus.ConnectionClosed:
+                    case WebExceptionStatus.NameResolutionFailure:
+                    case WebExceptionStatus.PipelineFailure:
+                    case WebExceptionStatus.ProxyNameResolutionFailure:
+                    case WebExceptionStatus.ReceiveFailure:
+                    case WebExceptionStatus.SecureChannelFailure:
+                    case WebExceptionStatus.SendFailure:
+                    case WebExceptionStatus.Timeout:
+                        Thread.Sleep(delay);
+                        continue;
+
+                    case WebExceptionStatus.ProtocolError:
+                        switch (response.Status)
+                        {
+                            case HttpStatusCode.GatewayTimeout:
+                            case HttpStatusCode.InternalServerError:
+                            case HttpStatusCode.RequestTimeout:
+                            case HttpStatusCode.ServiceUnavailable:
+                            case HttpStatusCode.BadGateway:
+                                Thread.Sleep(delay);
+                                continue;
+                        }
+                        break;
+                }
+
+                return response;
+            }
+
+            return response;
+        }
+
+        private void OnBeforeSendRequest(HttpWebRequest request)
+        {
+            var handler = BeforeSendRequest;
+            if (handler != null)
+                handler(request);
         }
 
         private void OnException(Exception ex)
