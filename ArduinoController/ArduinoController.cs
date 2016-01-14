@@ -41,7 +41,7 @@ namespace ArduinoController
 		private int ardPingPendings;
 
 		private bool pingEnabled = true;
-        private const int pingInterval = 5000;
+        private const int pingInterval = 3000;
         private DateTime pingTimestamp;
 
         public bool IsCommunicationOk

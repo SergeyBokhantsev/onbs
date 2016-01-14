@@ -53,7 +53,7 @@ namespace HostController
 
             public override string ToString()
             {
-                return string.Format("Method: {0}, Arg: {1}, Details: {2}, Trace: {3}", SendOrPostCallback.Method, State ?? "NULL", details ?? "NULL", trace ?? "NO TRACE");
+                return string.Format("Method: {0}, Arg: {1}, Details: {2},{3} Trace:{3}{4}", SendOrPostCallback.Method, State ?? "NULL", details ?? "NULL", Environment.NewLine, trace ?? "NO TRACE");
             }
         }
 

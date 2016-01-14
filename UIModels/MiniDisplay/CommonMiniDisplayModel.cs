@@ -38,7 +38,7 @@ namespace UIModels.MiniDisplay
 
             g.Cls();
 
-            DrawTick(g);
+           // DrawTick(g);
 
             DrawStatus(g);
 

@@ -13,9 +13,7 @@ namespace UIModels.MiniDisplay
         private enum Modes { AirTemp, Travel, EngineTemp, Last }
 
         private Modes mode;
-        private const int secondsPerMode = 5;
-        private DateTime modeChanged;
-
+        
         public int BufferedPoints { get; set; }
         public int SendedPoints { get; set; }
         public int EngineTemp { get; set; }
@@ -29,15 +27,6 @@ namespace UIModels.MiniDisplay
 
         protected override void DrawClient(Interfaces.MiniDisplay.IMiniDisplayGraphics g)
         {
-            if (DateTime.Now >= modeChanged.AddSeconds(secondsPerMode))
-            {
-                mode = (Modes)((int)mode + 1);
-                if (mode == Modes.Last)
-                    mode = (Modes)0;
-
-                modeChanged = DateTime.Now;
-            }
-
             var caption = string.Empty;
             var value = string.Empty;
 
@@ -62,6 +51,10 @@ namespace UIModels.MiniDisplay
             g.Print(0, 8, caption, TextAlingModes.Center);
             g.SetFont(Fonts.BigNumbers);
             g.Print(0, 20, value, TextAlingModes.Center);
+
+            mode = (Modes)((int)mode + 1);
+            if (mode == Modes.Last)
+                mode = (Modes)0;
         }
     }
 }
