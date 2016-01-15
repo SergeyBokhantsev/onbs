@@ -77,7 +77,8 @@ namespace Implementation.MiniDisplay
 					{
 						case OLEDCommands.OLED_COMMAND_UPDATE:
 						case OLEDCommands.OLED_COMMAND_INVERT:
-							delayAfterSend = 25;
+                        case OLEDCommands.OLED_COMMAND_BRIGHTNESS:
+							delayAfterSend = 100;
 							break;
 					}
 
