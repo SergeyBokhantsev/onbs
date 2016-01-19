@@ -104,6 +104,13 @@ namespace UIModels
             }
         }
 
+        private void UpdateMiniDisplay()
+        {
+            miniDisplayModel.BufferedPoints = tc.BufferedPoints;
+            miniDisplayModel.SendedPoints = tc.SendedPoints;
+            miniDisplayModel.Draw();
+        }
+
         protected override void OnPrimaryTick(IHostTimer timer)
         {
             if (!Disposed)
@@ -113,10 +120,7 @@ namespace UIModels
                 SetProperty("distance", tc.TravelDistance);
 
                 obdGuard.ExecuteIfFreeAsync(UpdateOBD);
-
-                miniDisplayModel.BufferedPoints = tc.BufferedPoints;
-                miniDisplayModel.SendedPoints = tc.SendedPoints;
-                miniDisplayModel.Draw();
+                minidisplayGuard.ExecuteIfFree(UpdateMiniDisplay);
             }
 
             base.OnPrimaryTick(timer);
