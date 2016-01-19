@@ -130,6 +130,13 @@ void Manager::set_state(int newState)
 	
 	guard_animation_counter = 0;
 	guard_animation_mode = 0;
+	
+	switch (state)
+	{
+		case MANAGER_STATE_GUARD:
+			oled->display.setBrightness(0);
+			break;
+	}
 }
 
 void Manager::dispatch_frame(char* frame_array, int frame_len, char frame_type)
