@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Interfaces;
 
 namespace HostController.Lin
@@ -13,7 +14,6 @@ namespace HostController.Lin
         private readonly ILogger logger;
 
         private static readonly object locker = new object();
-        private static bool timeValid;
 
         public SystemTimeCorrector(IConfig config, IProcessRunnerFactory processRunnerFactory, ILogger logger)
         {
@@ -37,19 +37,16 @@ namespace HostController.Lin
 			return Math.Abs((time - DateTime.Now).TotalMilliseconds) < minTimeDifference;
 		}
 
-        public bool IsSystemTimeValid(DateTime validTime)
+        public bool IsSystemTimeValid(DateTime proposedTime)
         {
-            if (timeValid)
+            if (GetTimeValidity(proposedTime))
                 return true;
 
             lock (locker)
             {
-                if (timeValid)
-                    return true;
+                logger.Log(this, string.Format("Checking system time. System time is '{0}', proposed time is '{1}'", DateTime.Now.ToString(), proposedTime.ToString()), LogLevels.Info);
 
-                logger.Log(this, string.Format("Checking system time. System time is '{0}', proposed time is '{1}'", DateTime.Now.ToString(), validTime.ToString()), LogLevels.Info);
-
-                if (!GetTimeValidity(validTime)) 
+                if (!GetTimeValidity(proposedTime))
                 {
                     logger.Log(this, "Updating system time...", LogLevels.Info);
 
@@ -58,16 +55,14 @@ namespace HostController.Lin
                         var processConfig = new ProcessConfig
                         {
                             ExePath = setTimeCommand,
-                            Args = string.Format(setTimeArgs, validTime.ToString(setTimeSetFormat)),
+                            Args = string.Format(setTimeArgs, proposedTime.ToString(setTimeSetFormat)),
                         };
 
                         var pr = processRunnerFactory.Create(processConfig);
                         pr.Run();
                         pr.WaitForExit(5000);
-                        if (GetTimeValidity(validTime))
-                            return IsSystemTimeValid(validTime);
-                        else
-                            return false;
+
+                        return true;
                     }
                     catch (Exception ex)
                     {
@@ -78,7 +73,6 @@ namespace HostController.Lin
                 else
                 {
                     logger.Log(this, "System time is valid.", LogLevels.Info);
-                    timeValid = true;
                     return true;
                 }
             }

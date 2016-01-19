@@ -104,6 +104,23 @@ namespace Implementation.MiniDisplay
             }
         }
 
+        public async Task WaitQueueFlushes()
+        {
+            await Task.Run(() =>
+                {
+                    while (!disposed)
+                    {
+                        lock (graphics.Frames)
+                        {
+                            if (!graphics.Frames.Any())
+                                return;
+                        }
+
+                        Thread.Sleep(500);
+                    }
+                });
+        }
+
         public void Dispose()
         {
             disposed = true;
@@ -157,11 +174,7 @@ namespace Implementation.MiniDisplay
         public MiniDisplayGraphics(ManualResetEventSlim waitHandle)
         {
             Frames = new Queue<STPFrame>();
-
             this.waitHandle = waitHandle;
-
-			Cls ();
-			Invert (false);
         }
 
         private void CreateFrame(byte[] data)

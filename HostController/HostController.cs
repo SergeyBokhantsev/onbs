@@ -237,7 +237,11 @@ namespace HostController
             arduController.RegisterFrameAcceptor(inputController);
 
             miniDisplayController = new MiniDisplayController(Logger);
-			arduController.RegisterFrameProvider (miniDisplayController);
+			arduController.RegisterFrameProvider(miniDisplayController);
+            miniDisplayController.Graphics.Cls();
+            miniDisplayController.Graphics.Invert(false);
+            miniDisplayController.Graphics.Brightness(255);
+            await miniDisplayController.WaitQueueFlushes();
 
             var gpsCtrl = new GPSController.GPSController(Config, SyncContext, Logger);
             gpsCtrl.GPRMCReseived += gprmc => config.IsGPSLock = gprmc.Active;
@@ -281,19 +285,17 @@ namespace HostController
             uiController.ShowDefaultPage();
 
             if (config.Environment == Environments.RPi)
-                gpsCtrl.GPRMCReseived += CheckSystemTimeFromGPS;
+                gpsCtrl.GPRMCReseived += gprmc => CheckSystemTimeFromGPS(gprmc);
 
             // Timer for online log upoad
 			CreateTimer(60000, ht => onlineLogger.Upload(false), true, false, "online logger timer");
 
             StartTimers();
 
-			//arduController.SetTimeToArduino ();
-
             arduController.GetArduinoTime(t => syncContext.Post(tt => CheckSystemTimeFromArduino((DateTime)tt), t, "CheckSystemTimeFromArduino"));
         }
 
-        void InetKeeperRestartNeeded()
+        private void InetKeeperRestartNeeded()
         {
             netKeeper.RestartNeeded -= InetKeeperRestartNeeded;
 
@@ -312,29 +314,39 @@ namespace HostController
 
         private void CheckSystemTimeFromArduino(DateTime time)
         {
-            if (config.IsSystemTimeValid = new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(time))
+            ThreadPool.QueueUserWorkItem(o =>
             {
-                //DisconnectSystemTimeChecking();
-            }
+                if (new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(time))
+                {
+                    config.IsSystemTimeValid = true;
+                }
+            }, null);
         }
 
         private void CheckSystemTimeFromGPS(Interfaces.GPS.GPRMC gprmc)
         {
-            if (gprmc.Active && (config.IsSystemTimeValid = new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(gprmc.Time)))
+            ThreadPool.QueueUserWorkItem(o =>
             {
-                DisconnectSystemTimeChecking();
-                arduController.SetTimeToArduino();
-            }
+                if (new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(gprmc.Time))
+                {
+                    config.IsSystemTimeValid = true;
+                    DisconnectSystemTimeChecking();
+                    arduController.SetTimeToArduino();
+                }
+            }, null);
         }
 
         private void CheckSystemTimeFromInternet(DateTime inetTime)
         {
-            if (new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(inetTime))
+            ThreadPool.QueueUserWorkItem(o =>
             {
-                config.IsSystemTimeValid = true;
-                DisconnectSystemTimeChecking();
-                arduController.SetTimeToArduino();
-            }
+                if (new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(inetTime))
+                {
+                    config.IsSystemTimeValid = true;
+                    DisconnectSystemTimeChecking();
+                    arduController.SetTimeToArduino();
+                }
+            }, null);
         }
 
         private void DisconnectSystemTimeChecking()
