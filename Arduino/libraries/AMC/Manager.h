@@ -34,6 +34,7 @@
 #define ARDUCOMMAND_COMMAND_FAILED 103
 #define ARDUCOMMAND_SHUTDOWN_SIGNAL 104
 #define ARDUCOMMAND_GET_TIME_RESPONSE 107
+#define ARDUCOMMAND_CONFIRMATION 109
 
 #define MANAGER_ERROR_UNKNOWN_FRAME_TYPE 20
 #define MANAGER_ERROR_FRAME_TYPE_DISABLED 21
@@ -49,7 +50,7 @@ class Manager
 	bool before_button_send(int button_id, char state);
 	void tick();
 	
-	void dispatch_frame(char* frame_array, int frame_len, char frame_type);
+	void dispatch_frame(char* frame_array, int frame_len, char frame_type, unsigned short frame_id);
 	
 	
 	private:

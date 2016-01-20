@@ -139,8 +139,14 @@ void Manager::set_state(int newState)
 	}
 }
 
-void Manager::dispatch_frame(char* frame_array, int frame_len, char frame_type)
+void Manager::dispatch_frame(char* frame_array, int frame_len, char frame_type, unsigned short frame_id)
 {
+	outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
+	outcom_writer->write(ARDUCOMMAND_CONFIRMATION);
+	outcom_writer->write((char)((frame_id >> 8) & 0xFF));
+	outcom_writer->write((char)(frame_id & 0xFF));
+	outcom_writer->close_command();
+	
 	int result = MANAGER_ERROR_UNKNOWN_FRAME_TYPE;
 
 	switch (frame_type)

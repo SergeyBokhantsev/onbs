@@ -10,7 +10,6 @@ namespace ArduinoController
 {
     internal class CommunicationQueue : IDisposable
     {
-        private const int confirmationTimeout = 200; //ms
         private const int retryCount = 3;
 
         private readonly Queue<STPFrame> frames = new Queue<STPFrame>();
@@ -24,8 +23,21 @@ namespace ArduinoController
 
         public event Action<STPFrame> SendFrame;
 
-        public CommunicationQueue()
+        private readonly int confirmationTimeout;
+        private int confirmationLosses;
+
+        public bool CommunicationState
         {
+            get
+            {
+                return confirmationLosses < 3;
+            }
+        }
+
+        public CommunicationQueue(int confirmationTimeout)
+        {
+            this.confirmationTimeout = confirmationTimeout;
+
             var t = new Thread(WorkLoop);
             t.Name = "communication queue";
             t.Priority = ThreadPriority.AboveNormal;
@@ -54,6 +66,7 @@ namespace ArduinoController
                     if (currentFrame.Id == frameId)
                     {
                         currentFrame = null;
+                        Interlocked.Exchange(ref confirmationLosses, 0);
                         confirmationSync.Set();
                     }
                 }
@@ -87,7 +100,8 @@ namespace ArduinoController
 
             while (!disposed && retry++ < retryCount)
             {
-                confirmationSync.Wait(200);
+                if (!confirmationSync.Wait(confirmationTimeout))
+                    Interlocked.Increment(ref confirmationLosses);
 
                 lock (currentFrameLocker)
                 {

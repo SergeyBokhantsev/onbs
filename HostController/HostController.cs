@@ -97,7 +97,7 @@ namespace HostController
 
             timersController = new HostTimersController(syncContext);
 
-            syncContext.Post(o => Initialize(), null, "HostController.Initialize()");
+            syncContext.Post(o => TryInitialize(), null, "HostController.TryInitialize()");
             syncContext.Pump();
         }
 
@@ -204,6 +204,19 @@ namespace HostController
             catch (Exception ex)
             {
                 return ex.Message;
+            }
+        }
+
+        private async Task TryInitialize()
+        {
+            try
+            {
+                await Initialize();
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(this, ex);
+                syncContext.Stop();
             }
         }
 

@@ -17,7 +17,7 @@ namespace Interfaces
         ComandFailed = 103,
         ShutdownSignal = 104,
         GetTimeResponse = 107,
-        CommandConfirmation = 108
+        CommandConfirmation = 109
     }
 
     public interface IArduinoController : IController, IMetricsProvider

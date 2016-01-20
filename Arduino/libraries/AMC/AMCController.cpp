@@ -58,9 +58,10 @@ void AMCController::process_incoming()
 	char* frame_array = 0;
 	int frame_len = 0;
 	char frame_type = 0;
+	unsigned short out_frame_id = 0;
 
-	if (frame_receiver.get_frame(&frame_array, &frame_len, &frame_type))
+	if (frame_receiver.get_frame(&frame_array, &frame_len, &frame_type, &out_frame_id))
 	{
-		manager.dispatch_frame(frame_array, frame_len, frame_type);
+		manager.dispatch_frame(frame_array, frame_len, frame_type, out_frame_id);
 	}
 }

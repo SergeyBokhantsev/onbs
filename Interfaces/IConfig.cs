@@ -27,6 +27,7 @@
         public static readonly string Placeholder_Elm327Port = "ELM327PORT";
         public static readonly string Placeholder_UIFullscreen = "FULLSCREEN";
         public static readonly string Placeholder_Vehicle = "VEHICLE";
+        public static readonly string Placeholder_ArduinoConfirmationTimeout = "COMM_CONFIRMATION_TIMEOUT";
         
 
         public static readonly string UIHostAssemblyName = "UIHostAssemblyName";
@@ -47,6 +48,8 @@
         public static readonly string ArduinoPortParity = "ArduinoPortParity";
         public static readonly string ArduinoPortDataBits = "ArduinoPortDataBits";
         public static readonly string ArduinoPortStopBits = "ArduinoPortStopBits";
+
+        public static readonly string ArduinoConfirmationTimeout = "ArduinoConfirmationTimeout";
 
         public static readonly string LogLevel = "LogLevel";
         public static readonly string LoggedClasses = "LoggedClasses";

@@ -19,7 +19,8 @@ namespace HostController.Lin
             {
                 { ConfigNames.Placeholder_Elm327Port, GetElm327Port },
                 { ConfigNames.Placeholder_UIFullscreen, () => "True" },
-                { ConfigNames.Placeholder_Vehicle, () => "AH2392II" }
+                { ConfigNames.Placeholder_Vehicle, () => "AH2392II" },
+                { ConfigNames.Placeholder_ArduinoConfirmationTimeout, () => "200" }
             };
         }
 

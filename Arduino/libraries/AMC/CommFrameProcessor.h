@@ -32,6 +32,19 @@ class CommFrameProcessor
 	protected:
 	char comm_frame_begin[COMM_FRAME_BEGIN_LEN];
 	char comm_frame_end[COMM_FRAME_END_LEN];
+	
+	char calculate_checksum(char* frame_data, int data_len) 
+	{
+		char res = 0;
+		if (data_len > 0)
+		{
+			for (int i=0; i<data_len; ++i)
+			{
+				res ^= frame_data[i];
+			}
+		}
+		return res;
+	}
 };
 
 #endif

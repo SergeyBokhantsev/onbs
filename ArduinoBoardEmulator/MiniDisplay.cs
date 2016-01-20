@@ -60,6 +60,7 @@ namespace ArduinoBoardEmulator
                         var y = frame.Data[3];
                         var textLen = frame.Data.Length - 4;
                         var text = Encoding.ASCII.GetString(frame.Data, 4, textLen);
+                        Console.WriteLine(text);
                         Print(align, x, y, text);
                     }
                     break;

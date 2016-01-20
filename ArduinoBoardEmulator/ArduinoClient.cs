@@ -61,6 +61,9 @@ namespace ArduinoBoardEmulator
         {
             foreach (var frame in frames)
             {
+                var confirmationFrameData = new byte[] { (byte)ArduinoComands.CommandConfirmation, (byte)((frame.Id >> 8) & 0xFF), (byte)(frame.Id & 0xFF) };
+                AddOutcoming(new STPFrame(arduinoCommandCodec.Encode(new STPFrame(confirmationFrameData, STPFrame.Types.ArduCommand)), STPFrame.Types.ArduCommand));
+
                 switch(frame.Type)
                 {
                     case STPFrame.Types.ArduCommand:

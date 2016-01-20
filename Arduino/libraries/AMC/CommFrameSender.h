@@ -3,7 +3,7 @@
 
 #include "CommFrameProcessor.h"
 
-#define FRAME_SEND_TIMEOUT_MS 50
+#define FRAME_SEND_TIMEOUT_MS 10
 
 class CommFrameSender : public CommFrameProcessor
 {

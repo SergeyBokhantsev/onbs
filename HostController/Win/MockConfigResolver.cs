@@ -9,7 +9,8 @@ namespace HostController.Win
         {
             { ConfigNames.Placeholder_Elm327Port, "COM0" },
             { ConfigNames.Placeholder_UIFullscreen, "False" },
-            { ConfigNames.Placeholder_Vehicle, "TEST" }
+            { ConfigNames.Placeholder_Vehicle, "TEST" },
+            { ConfigNames.Placeholder_ArduinoConfirmationTimeout, "2500" }
         };
 
         protected override string GetValue(string placeholder)

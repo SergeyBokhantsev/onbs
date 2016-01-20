@@ -49,7 +49,7 @@ namespace ArduinoController
         {
             get
 			{
-				return ardPingPendings < 2;
+				return ardPingPendings < 2 && outcomingQueue.CommunicationState;
 			}
         }
 
@@ -88,7 +88,7 @@ namespace ArduinoController
 
             port.DataReceived += DataReceived;
 
-            outcomingQueue = new CommunicationQueue();
+            outcomingQueue = new CommunicationQueue(hc.Config.GetInt(ConfigNames.ArduinoConfirmationTimeout));
             outcomingQueue.SendFrame += frame =>
                 {
                     var serializedFrame = codec.Encode(frame);
@@ -216,7 +216,7 @@ namespace ArduinoController
                 switch (incomingCommand)
                 {
                     case ArduinoComands.CommandConfirmation:
-                        if (frame.Data.Length == 2)
+                        if (frame.Data.Length == 3)
                         {
                             int id = (frame.Data[1] << 8) + frame.Data[2];
                             outcomingQueue.ConfirmFrame((ushort)id);
