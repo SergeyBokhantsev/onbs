@@ -61,7 +61,7 @@ namespace Tests
             this.filename = filename;
         }
 
-        public IProcessRunner Create(string appKey)
+        public IProcessRunner Create(string appKey, object[] args)
         {
             return new MockProcessRunnerForNixHelpers(filename);
         }

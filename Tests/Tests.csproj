@@ -60,6 +60,7 @@
     <Compile Include="GPSDTests.cs" />
     <Compile Include="GPSHelpers.cs" />
     <Compile Include="NavitConfigGeneratorTest.cs" />
+    <Compile Include="STPTests.cs" />
     <Compile Include="TravelClientTest\TestTravelClient.cs" />
     <Compile Include="TestProcessRunner.cs" />
     <Compile Include="TravelClientTest\TestGeneralLogging.cs" />
@@ -115,6 +116,10 @@
     <ProjectReference Include="..\ProcessRunner\ProcessRunner.csproj">
       <Project>{34176ec8-ab7f-4e25-9f04-b6c07eb71cfb}</Project>
       <Name>ProcessRunner</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SerialTransportProtocol\SerialTransportProtocol.csproj">
+      <Project>{b1069b60-bc03-4a71-b8d2-c33f0043d96c}</Project>
+      <Name>SerialTransportProtocol</Name>
     </ProjectReference>
     <ProjectReference Include="..\TravelsClient\TravelsClient.csproj">
       <Project>{fbdb1458-ca4b-45d9-9e7e-7b9484959859}</Project>

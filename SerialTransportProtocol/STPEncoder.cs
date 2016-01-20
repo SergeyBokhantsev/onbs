@@ -18,9 +18,18 @@ namespace SerialTransportProtocol
             this.frameEndMark = frameEndMark;
         }
 
+        public static byte CalculateChecksum(byte[] data)
+        {
+            byte res = 0;
+            foreach (var b in data)
+                res ^= b;
+            return res;
+        }
+
         public byte[] Encode(STPFrame frame)
         {
-            var res = new byte[frameBeginMark.Length + 1 + frame.Data.Length + frameEndMark.Length];
+            const int internalDataLen = 4; //frame type(1), frameId(2), checksum(1)
+            var res = new byte[frameBeginMark.Length + internalDataLen + frame.Data.Length + frameEndMark.Length];
             int resLen = 0;
 
             //BEGIN MARK
@@ -29,6 +38,11 @@ namespace SerialTransportProtocol
             //TYPE
             res[resLen] = (byte)frame.Type;
             resLen++;
+            //ID
+            res[resLen++] = (byte)((frame.Id >> 8) & 0xFF);
+            res[resLen++] = (byte)(frame.Id & 0xFF);
+            //CHECKSUM
+            res[resLen++] = CalculateChecksum(frame.Data);
             //DATA
             frame.Data.CopyTo(res, resLen, frame.Data.Length);
             resLen += frame.Data.Length;

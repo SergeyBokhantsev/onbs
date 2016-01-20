@@ -63,5 +63,16 @@ namespace Tests.Mocks
         {
             get { return Environments.Win; }
         }
+
+
+        public bool IsGPSLock
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public bool IsMessagePending
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }

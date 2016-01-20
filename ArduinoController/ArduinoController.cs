@@ -33,9 +33,10 @@ namespace ArduinoController
         private readonly List<IFramesAcceptor> acceptors = new List<IFramesAcceptor>();
         private readonly List<IFrameProvider> providers = new List<IFrameProvider>();
 
-        private readonly Queue<Tuple<STPFrame, int>> outcomingQueue = new Queue<Tuple<STPFrame, int>>();
-        private readonly ManualResetEventSlim outcomingSignal = new ManualResetEventSlim(false);
+        //private readonly Queue<Tuple<STPFrame, int>> outcomingQueue = new Queue<Tuple<STPFrame, int>>();
+        //private readonly ManualResetEventSlim outcomingSignal = new ManualResetEventSlim(false);
         private readonly Queue<byte> outcomingDump = new Queue<byte>(1024);
+        private readonly CommunicationQueue outcomingQueue;
 
         private long decodedFramesCount;
 		private int ardPingPendings;
@@ -87,71 +88,68 @@ namespace ArduinoController
 
             port.DataReceived += DataReceived;
 
-            var sendingThread = new Thread(SendingLoop);
-            sendingThread.IsBackground = true;
-            sendingThread.Priority = ThreadPriority.Normal;
-            sendingThread.Name = "Arduino send";
-            sendingThread.Start();
+            outcomingQueue = new CommunicationQueue();
+            outcomingQueue.SendFrame += frame =>
+                {
+                    var serializedFrame = codec.Encode(frame);
+                    port.Write(serializedFrame, 0, serializedFrame.Length);
+                    Dump(serializedFrame);
+                };
         }
 
         private void Send(STPFrame frame, int delayAfterSend)
         {
-            lock (outcomingQueue)
-            {
-                outcomingQueue.Enqueue(new Tuple<STPFrame, int>(frame, delayAfterSend));
-            }
-
-            outcomingSignal.Set();
+            outcomingQueue.Enqueue(frame);
         }
 
-        private void SendingLoop(object state)
-        {
-            while (true)
-            {
-                Tuple<STPFrame, int> item = null;
+        //private void SendingLoop(object state)
+        //{
+        //    while (true)
+        //    {
+        //        Tuple<STPFrame, int> item = null;
 
-                outcomingSignal.Wait(1000);
+        //        outcomingSignal.Wait(1000);
 
-                if (pingEnabled && pingTimestamp.AddMilliseconds(pingInterval) < DateTime.Now)
-                {
-                    var frameData = new byte[] { (byte)ArduinoComands.PingRequest };
-                    item = new Tuple<STPFrame,int>(new STPFrame(frameData, STPFrame.Types.ArduCommand), 0);
-                    Interlocked.Increment(ref ardPingPendings);
-                    logger.LogIfDebug(this, "Ping command sended to Arduino");
-                    pingTimestamp = DateTime.Now;
-                }
-                else
-                {
-                    lock (outcomingQueue)
-                    {
-                        if (outcomingQueue.Any())
-                        {
-                            item = outcomingQueue.Dequeue();
-                        }
-                        else
-                        {
-                            outcomingSignal.Reset();
-                            continue;
-                        }
-                    }
-                }
+        //        if (pingEnabled && pingTimestamp.AddMilliseconds(pingInterval) < DateTime.Now)
+        //        {
+        //            var frameData = new byte[] { (byte)ArduinoComands.PingRequest };
+        //            item = new Tuple<STPFrame,int>(new STPFrame(frameData, STPFrame.Types.ArduCommand), 0);
+        //            Interlocked.Increment(ref ardPingPendings);
+        //            logger.LogIfDebug(this, "Ping command sended to Arduino");
+        //            pingTimestamp = DateTime.Now;
+        //        }
+        //        else
+        //        {
+        //            lock (outcomingQueue)
+        //            {
+        //                if (outcomingQueue.Any())
+        //                {
+        //                    item = outcomingQueue.Dequeue();
+        //                }
+        //                else
+        //                {
+        //                    outcomingSignal.Reset();
+        //                    continue;
+        //                }
+        //            }
+        //        }
 
-                try
-                {
-                    var serializedFrame = codec.Encode(item.Item1);
-                    port.Write(serializedFrame, 0, serializedFrame.Length);
-                    Dump(serializedFrame);
+        //        try
+        //        {
+        //            var serializedFrame = codec.Encode(item.Item1);
+        //            port.Write(serializedFrame, 0, serializedFrame.Length);
+        //            Dump(serializedFrame);
 
-                    if (item.Item2 > 0)
-                        Thread.Sleep(Math.Min(item.Item2, 3000));
-                }
-                catch (Exception ex)
-                {
-                    logger.Log(this, "Exception sending data to Arduino", LogLevels.Error);
-                    logger.Log(this, ex);
-                }
-            }
-        }
+        //            if (item.Item2 > 0)
+        //                Thread.Sleep(Math.Min(item.Item2, 3000));
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            logger.Log(this, "Exception sending data to Arduino", LogLevels.Error);
+        //            logger.Log(this, ex);
+        //        }
+        //    }
+        //}
 
         [Conditional("DEBUG")]
         private void Dump(byte[] bytes)
@@ -217,6 +215,18 @@ namespace ArduinoController
 
                 switch (incomingCommand)
                 {
+                    case ArduinoComands.CommandConfirmation:
+                        if (frame.Data.Length == 2)
+                        {
+                            int id = (frame.Data[1] << 8) + frame.Data[2];
+                            outcomingQueue.ConfirmFrame((ushort)id);
+                        }
+                        else
+                        {
+                            logger.Log(this, string.Concat("Invalid command confirmation frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
+                        }
+                        break;
+
                     case ArduinoComands.ComandFailed:
                         if (frame.Data.Length == 3)
                         {

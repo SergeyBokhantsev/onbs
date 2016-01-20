@@ -18,8 +18,10 @@ namespace SerialTransportProtocol
         private int bufferLen;
 
         private STPFrame.Types currentFrameType;
+        private ushort currentFrameId;
+        private byte currentFrameChecksum;
 
-        private enum States { LookingForBegin, LookingForType, LookingForEnd };
+        private enum States { LookingForBegin, LookingForType, LookingForId1, LookingForId2, LookingForChecksum, LookingForEnd };
         private States state = States.LookingForBegin;
 
         private int matchCount;
@@ -58,6 +60,21 @@ namespace SerialTransportProtocol
 
                     case States.LookingForType:
                         currentFrameType = (STPFrame.Types)b;
+                        state = States.LookingForId1;
+                        break;
+
+                    case States.LookingForId1:
+                        currentFrameId = (ushort)(b << 8);
+                        state = States.LookingForId2;
+                        break;
+
+                    case States.LookingForId2:
+                        currentFrameId += b;
+                        state = States.LookingForChecksum;
+                        break;
+
+                    case States.LookingForChecksum:
+                        currentFrameChecksum = b;
                         state = States.LookingForEnd;
                         break;
 
@@ -82,10 +99,13 @@ namespace SerialTransportProtocol
                                 var data = new byte[dataLen];
                                 buffer.CopyTo(data, 0, dataLen);
 
-                                if (resultFrames == null)
-                                    resultFrames = new List<STPFrame>();
+                                if (currentFrameChecksum == STPEncoder.CalculateChecksum(data))
+                                {
+                                    if (resultFrames == null)
+                                        resultFrames = new List<STPFrame>();
 
-                                resultFrames.Add(new STPFrame(data, currentFrameType));
+                                    resultFrames.Add(new STPFrame(data, currentFrameType, currentFrameId));
+                                }
 
                                 bufferLen = 0;
                                 state = States.LookingForBegin;

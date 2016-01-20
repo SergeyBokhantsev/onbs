@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OBD", "OBDProcessor\OBD.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NixHelpers", "NixHelpers\NixHelpers.csproj", "{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialTransportProtocol", "SerialTransportProtocol\SerialTransportProtocol.csproj", "{B1069B60-BC03-4A71-B8D2-C33F0043D96C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -138,6 +140,12 @@ Global
 		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Windows|Any CPU.ActiveCfg = Release|Any CPU
 		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}.Windows|Any CPU.Build.0 = Release|Any CPU
+		{B1069B60-BC03-4A71-B8D2-C33F0043D96C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1069B60-BC03-4A71-B8D2-C33F0043D96C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1069B60-BC03-4A71-B8D2-C33F0043D96C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1069B60-BC03-4A71-B8D2-C33F0043D96C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1069B60-BC03-4A71-B8D2-C33F0043D96C}.Windows|Any CPU.ActiveCfg = Windows|Any CPU
+		{B1069B60-BC03-4A71-B8D2-C33F0043D96C}.Windows|Any CPU.Build.0 = Windows|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

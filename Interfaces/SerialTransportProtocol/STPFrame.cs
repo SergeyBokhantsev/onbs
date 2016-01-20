@@ -1,10 +1,13 @@
 ﻿using System.Text;
 using System.Linq;
+using System.Threading;
 
 namespace Interfaces.SerialTransportProtocol
 {
     public class STPFrame
     {
+        private static int index;
+
 		public enum Types
 		{
 			Undefined = 63, // ?
@@ -19,6 +22,8 @@ namespace Interfaces.SerialTransportProtocol
         public readonly Types Type;
 
         public byte[] Data { get; set; }
+
+        public ushort Id { get; private set; }
 
 		public string String
 		{
@@ -41,6 +46,15 @@ namespace Interfaces.SerialTransportProtocol
         {
             Data = data;
             Type = type;
+            var idInt = Interlocked.Increment(ref index);
+            Id = (ushort)(idInt & 0xFFFF);
+        }
+
+        public STPFrame(byte[] data, Types type, ushort id)
+        {
+            Data = data;
+            Type = type;
+            Id = id;
         }
     }
 }
