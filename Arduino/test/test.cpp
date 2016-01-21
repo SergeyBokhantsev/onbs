@@ -1,87 +1,28 @@
-#include "..\libraries\AMC\AMCRingBuffer.h"
-#include "..\libraries\AMC\AMCController.h"
+#include "..\libraries\AMC\OutBuffer.h"
+#include "..\libraries\AMC\CommFrameSender.h"
 
-int test_ringbuffer()
+unsigned long time_now = 0;
+
+unsigned long millis()
 {
-	RB b(0);
-
-	/// 1
-	for (int i = 0; i < RING_BUFFER_SIZE * 4; ++i)
-	{
-		if (b.get_len() != 0)
-			return 1;
-
-		b.add((unsigned char)i);
-
-		if (b.get_len() != 1)
-			return 2;
-
-		if (b.get() != (unsigned char)i)
-			return 3;
-
-		if (b.get_len() != 0)
-			return 4;
-	}
-
-	/// 2
-	for (int i = 0; i < RING_BUFFER_SIZE * 4; ++i)
-	{
-		if (b.get_len() != 0)
-			return 5;
-
-		b.add((unsigned char)i);
-		b.add((unsigned char)(i+1));
-		b.add((unsigned char)(i+2));
-
-		if (b.get_len() != 3)
-			return 6;
-
-		if (b.get() != (unsigned char)i)
-			return 7;
-		if (b.get() != (unsigned char)(i+1))
-			return 8;
-		if (b.get() != (unsigned char)(i+2))
-			return 9;
-
-		if (b.get_len() != 0)
-			return 10;
-	}
-
-	/// 3
-	for (int i = 0; i < RING_BUFFER_SIZE * 4; ++i)
-	{
-		b.add(1);
-	}
-
-	if (b.get_len() != RING_BUFFER_SIZE)
-		return 11;
-
-	for (int i = 0; i < RING_BUFFER_SIZE; ++i)
-	{
-		if (b.get() != 1)
-			return 12;
-	}
-
-	if (b.get_len() != 0)
-			return 13;
-
-	if (b.get() != 0)
-			return 14;
-
-	return 0;
-}
-
-int assert(int res)
-{
-	if (res != 0)
-	{
-		return res;
-	}
+    return time_now++;
 }
 
 void main()
 {
-	assert(test_ringbuffer());
+    OutBuffer* ob = new OutBuffer();
+    UARTClass* out_uart = new UARTClass();
 
-	AMCController c;
+    HardwareSerial* in[1];
+    in[0] = new HardwareSerial();
+
+    char in_types[1];
+    in_types[0] = (char)70;
+
+    CommFrameSender* sender = new CommFrameSender(out_uart, in, in_types, 1);
+
+    while (1)
+    {
+        sender->send_byte();
+    }
 }

@@ -13,7 +13,7 @@ frames_count(0),
 frame_id(0)
 {
 	set_next_buffer();
-	max_frame_size = OUT_BUFFER_SIZE - (COMM_FRAME_BEGIN_LEN + 4 + COMM_FRAME_END_LEN + 2);
+	max_frame_size = OUT_BUFFER_SIZE - (COMM_FRAME_BEGIN_LEN + 4 + COMM_FRAME_END_LEN);
 }
 
 void CommFrameSender::set_next_buffer()
@@ -94,6 +94,7 @@ void CommFrameSender::close_frame(int frameSize)
 	}
 	
 	write_frame();
+    out_buffer.reset();
 }
 
 void CommFrameSender::write_frame()
