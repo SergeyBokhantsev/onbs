@@ -40,7 +40,7 @@ void setup()
 {
   //Timer3.attachInterrupt(time_tick).start(TIMESTAMPDELTA * 1000);
   
-  comm_port.begin(57600, SERIAL_8N1);
+  comm_port.begin(115200, SERIAL_8N1);
   
   if (gps_port_enabled)
   {
