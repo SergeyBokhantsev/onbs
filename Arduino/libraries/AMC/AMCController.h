@@ -12,8 +12,6 @@
 #include "RelayController.h"
 #include "Buzzer.h"
 
-#define COMM_FRAME_MAX_SIZE 512
-
 class AMCController
 {
 public:

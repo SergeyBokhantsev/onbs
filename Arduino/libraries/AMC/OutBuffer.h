@@ -4,7 +4,7 @@
 #include "HardwareSerial.h"
 #include "RingBuffer.h"
 
-#define OUT_BUFFER_SIZE 128
+#define OUT_BUFFER_SIZE 256
 
 class OutBuffer : public HardwareSerial
 {
@@ -20,6 +20,8 @@ class OutBuffer : public HardwareSerial
     void flush(void) { }
     operator bool() { return true; }
 
+	uint8_t* get_buffer() { return &buffer[0]; }
+	
 	private:
 	uint8_t buffer[OUT_BUFFER_SIZE];
 	int head; //point to write to

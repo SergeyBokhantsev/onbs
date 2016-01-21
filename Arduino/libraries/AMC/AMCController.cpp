@@ -8,7 +8,7 @@ outcom_writer(&out_buffer),
 manager(&outcom_writer, &relay, &oled, &buzzer),
 gsmPort(_gsmPort),
 comPort(_comPort),
-frame_sender(_comPort, ports, ports_types, 3, COMM_FRAME_MAX_SIZE),
+frame_sender(_comPort, ports, ports_types, 3),
 frame_receiver(_comPort),
 button_processor(&outcom_writer, &manager)
 {
