@@ -34,7 +34,7 @@ class RelayController
 	RelayController();
 	~RelayController();
 	void init();
-	int process_frame(const char* frame_array, int frame_len);
+	uint8_t process_frame(const uint8_t* frame_array, int frame_len);
 	void turn_relay(int relay, bool action);
 	
 	private:

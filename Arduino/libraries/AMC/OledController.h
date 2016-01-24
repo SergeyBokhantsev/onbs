@@ -53,7 +53,7 @@ public:
 	OledController();
 	~OledController();
 
-	int process(const char* frame_array, int frame_len);
+	uint8_t process(const uint8_t* frame_array, int frame_len);
 	
 	void draw_icon(int icon);
 	void draw_state_waiting(int remainingSeconds);

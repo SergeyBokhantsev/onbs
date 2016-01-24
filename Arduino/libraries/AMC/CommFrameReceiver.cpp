@@ -19,11 +19,11 @@ readingIncomingDataState(LOOKING_FOR_FRAME_BEGIN)
 {
 }
 
-bool CommFrameReceiver::get_frame(char** out_frame_array, int* out_frame_len, char* out_frame_type, unsigned short* out_frame_id)
+bool CommFrameReceiver::get_frame(uint8_t** out_frame_array, int* out_frame_len, uint8_t* out_frame_type, unsigned short* out_frame_id)
 {
 	while(inputPort->available())
 	{
-		char value = (char)inputPort->read();
+		uint8_t value = (uint8_t)inputPort->read();
 		
 		switch (readingIncomingDataState)
 		{

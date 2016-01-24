@@ -2,21 +2,25 @@
 #define commframesender_h
 
 #include "CommFrameProcessor.h"
-#include "OutBuffer.h"
+#include "ArrayToSerialAdapter.h"
 
 #define FRAME_SEND_TIMEOUT_MS 10
+
+#define OUTCOMING_BUFFER_SIZE 128
 
 class CommFrameSender : public CommFrameProcessor
 {
 	public:	
-	CommFrameSender(UARTClass* _out, HardwareSerial** _in, char* _in_types, int _in_count);
+	CommFrameSender(UARTClass* _out, HardwareSerial** _in, uint8_t* _in_types, int _in_count);
 	void send_byte();
 	
 	private:
-	OutBuffer out_buffer;
+	ArrayToSerialAdapter out_buffer;
+	uint8_t out_array[OUTCOMING_BUFFER_SIZE];
+	
 	UARTClass* out;
 	HardwareSerial** in;
-	char* in_types;
+	uint8_t* in_types;
 	int in_count;
 	unsigned short frame_id;
 	int max_frame_size;

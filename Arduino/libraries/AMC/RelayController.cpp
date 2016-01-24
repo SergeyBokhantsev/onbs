@@ -38,7 +38,7 @@ void RelayController::turn_relay(int relay, bool action)
 	descriptors[relay].state = action;
 }
 
-int RelayController::process_frame(const char* frame_array, int frame_len)
+uint8_t RelayController::process_frame(const uint8_t* frame_array, int frame_len)
 {
 	if (frame_len == 0)
 		return RELAY_ERROR_INVALID_FRAME;

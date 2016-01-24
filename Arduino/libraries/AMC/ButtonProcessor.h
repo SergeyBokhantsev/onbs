@@ -2,7 +2,6 @@
 #define buttonprocessor_h
 
 #include "Arduino.h"
-#include "CommandWriter.h"
 #include "Manager.h"
 
 #define BTN_STATE_RELEASED 45
@@ -37,24 +36,24 @@
 class ButtonProcessor
 {
 	public:	
-	ButtonProcessor(CommandWriter* _writer, Manager* _manager);
+	ButtonProcessor(HardwareSerial* _out_buffer, Manager* _manager);
 	void init();
 	void process();
 
 	private:
-	CommandWriter* writer;
+	HardwareSerial* out_buffer;
 	Manager* manager;
 	
 	unsigned long buttons_process_interval;
 	unsigned long buttons_last_processed;
 	const static int buttons_count = 10;
 	byte button_pins[buttons_count];
-	char button_states[buttons_count];
+	uint8_t button_states[buttons_count];
 	unsigned long button_process_times[buttons_count];
 
 	void init_button_pin(int pin);
-	void send_button_state(int button_id, char state);
-	bool check_button(int pin, char* state, unsigned long* last_processed_time);
+	void send_button_state(int button_id, uint8_t state);
+	bool check_button(int pin, uint8_t* state, unsigned long* last_processed_time);
 };
 
 #endif

@@ -1,8 +1,8 @@
 
 #include "CommFrameSender.h"
 
-CommFrameSender::CommFrameSender(UARTClass* _out, HardwareSerial** _in, char* _in_types, int _in_count) : CommFrameProcessor(),
-out_buffer(),
+CommFrameSender::CommFrameSender(UARTClass* _out, HardwareSerial** _in, uint8_t* _in_types, int _in_count) : CommFrameProcessor(),
+out_buffer(out_array, OUTCOMING_BUFFER_SIZE),
 out(_out),
 in(_in),
 in_types(_in_types),
@@ -13,7 +13,7 @@ frames_count(0),
 frame_id(0)
 {
 	set_next_buffer();
-	max_frame_size = OUT_BUFFER_SIZE - (COMM_FRAME_BEGIN_LEN + 4 + COMM_FRAME_END_LEN);
+	max_frame_size = OUTCOMING_BUFFER_SIZE - (COMM_FRAME_BEGIN_LEN + 4 + COMM_FRAME_END_LEN);
 }
 
 void CommFrameSender::set_next_buffer()
@@ -82,15 +82,15 @@ void CommFrameSender::close_frame(int frameSize)
 	int frame_data_offset = COMM_FRAME_BEGIN_LEN + 4;
 	uint8_t* frame_data = (out_buffer.get_buffer()) + frame_data_offset;
 	int frame_data_len = out_buffer.available() - frame_data_offset;
-	char checksum = calculate_checksum((char*)frame_data, frame_data_len);
+	uint8_t checksum = calculate_checksum(frame_data, frame_data_len);
 	
 	int frame_checksum_offset = COMM_FRAME_BEGIN_LEN + 3; 
 	uint8_t* frame_checksum = (out_buffer.get_buffer()) + frame_checksum_offset;
-	*frame_checksum = (uint8_t)checksum;
+	*frame_checksum = checksum;
 	
 	for (int i=0; i<COMM_FRAME_END_LEN; ++i)
 	{
-		out_buffer.write((uint8_t)comm_frame_end[i]);
+		out_buffer.write(comm_frame_end[i]);
 	}
 	
 	write_frame();

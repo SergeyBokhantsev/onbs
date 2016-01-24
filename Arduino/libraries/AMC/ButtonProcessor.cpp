@@ -2,8 +2,8 @@
 #include "ButtonProcessor.h"
 #include "CommFrameProcessor.h"
 
-ButtonProcessor::ButtonProcessor(CommandWriter* _writer, Manager* _manager) :
-writer(_writer),
+ButtonProcessor::ButtonProcessor(HardwareSerial* _out_buffer, Manager* _manager) :
+out_buffer(_out_buffer),
 manager(_manager),
 buttons_last_processed(0)
 {
@@ -62,15 +62,15 @@ void ButtonProcessor::init_button_pin(int pin)
   }
 }
 
-void ButtonProcessor::send_button_state(int button_id, char state)
+void ButtonProcessor::send_button_state(int button_id, uint8_t state)
 {
-	writer->open_command((char)BUTTON_FRAME_TYPE);
-	writer->write((char)button_id);
-	writer->write(state);
-	writer->close_command();
+	out_buffer->write((uint8_t)'{');
+	out_buffer->write(button_id);
+	out_buffer->write(state);
+	out_buffer->write((uint8_t)'}');
 }
 
-bool ButtonProcessor::check_button(int pin, char* state, unsigned long* last_processed_time)
+bool ButtonProcessor::check_button(int pin, uint8_t* state, unsigned long* last_processed_time)
 {
   if (pin <= 0)
     return false;

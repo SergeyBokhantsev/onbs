@@ -17,10 +17,10 @@ namespace SerialTransportProtocol
         private const int tempBufferSize = 1024 * 5;
         private readonly byte[] tempBufer = new byte[tempBufferSize];
 
-        public STPCodec(byte[] frameBeginMark, byte[] frameEndMark, STPFrame.Types frameType = STPFrame.Types.Undefined)
+        public STPCodec(byte[] frameBeginMark, byte[] frameEndMark, bool simpleFrameMode = false)
         {
-            this.decoder = new STPDecoder(frameBeginMark, frameEndMark, frameType);
-            this.encoder = new STPEncoder(frameBeginMark, frameEndMark);
+            this.decoder = new STPDecoder(frameBeginMark, frameEndMark, simpleFrameMode);
+            this.encoder = new STPEncoder(frameBeginMark, frameEndMark, simpleFrameMode);
         }
 
         // System.Text.StringBuilder dump = new System.Text.StringBuilder();

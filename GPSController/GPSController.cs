@@ -63,7 +63,7 @@ namespace GPSController
             codec = new STPCodec(
                 new byte[] { (byte)'$' },
                 new byte[] { 13, 10 },
-                STPFrame.Types.GPS);
+                true);
 
             lastGprmc = new GPRMC();
 
@@ -103,9 +103,9 @@ namespace GPSController
 			logger.LogIfDebug (this, sb.ToString ());
 		}
 
-        public void AcceptFrames(IEnumerable<STPFrame> frames)
+        public void AcceptFrames(IEnumerable<STPFrame> transportFrames)
         {
-            if (!shutdown && frames != null && frames.Any())
+            if (!shutdown && transportFrames != null && transportFrames.Any())
             {
                 Interlocked.Increment(ref gpsFramesCount);
 
@@ -113,7 +113,7 @@ namespace GPSController
 
                 var concatenatedNmea = new StringBuilder();
 
-                var nmeaSentences = codec.Decode(frames);
+                var nmeaSentences = codec.Decode(transportFrames);
 
                 if (nmeaSentences != null && nmeaSentences.Any())
                 {

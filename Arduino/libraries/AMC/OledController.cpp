@@ -75,7 +75,7 @@ int get_x_aligned(int x, int mode)
 		return x;
 }
 
-int OledController::process(const char* frame_array, int frame_len)
+uint8_t OledController::process(const uint8_t* frame_array, int frame_len)
 {
 	int command = (int)frame_array[0];
 	

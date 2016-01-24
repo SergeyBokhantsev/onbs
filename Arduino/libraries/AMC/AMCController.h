@@ -3,7 +3,7 @@
 
 #include "Arduino.h"
 #include "Manager.h"
-#include "OutBuffer.h"
+#include "ArrayToSerialAdapter.h"
 #include "CommFrameSender.h"
 #include "CommFrameReceiver.h"
 #include "CommandWriter.h"
@@ -11,6 +11,9 @@
 #include "OledController.h"
 #include "RelayController.h"
 #include "Buzzer.h"
+
+#define ARDUINO_OUT_BUFFER_SIZE 2048
+#define BUTTONS_OUT_BUFFER_SIZE 128
 
 class AMCController
 {
@@ -24,16 +27,19 @@ private:
 	HardwareSerial* gsmPort;
 	HardwareSerial* comPort;
 
-	HardwareSerial* ports[3];
-	char ports_types[3];
+	HardwareSerial* ports[4];
+	uint8_t ports_types[4];
 
 	CommFrameSender frame_sender;
 
 	CommFrameReceiver frame_receiver;
 
-	OutBuffer out_buffer;
-	CommandWriter outcom_writer;
+	ArrayToSerialAdapter arduino_out_port;
+	uint8_t arduino_out_buffer[ARDUINO_OUT_BUFFER_SIZE];
 
+	ArrayToSerialAdapter buttons_out_port;
+	uint8_t buttons_out_buffer[BUTTONS_OUT_BUFFER_SIZE];
+	
 	ButtonProcessor button_processor;
 
 	Manager manager;

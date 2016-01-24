@@ -28,7 +28,6 @@ namespace ArduinoController
         private readonly ILogger logger;
 		private readonly IHostController hc;
         private readonly ISTPCodec codec;
-		private readonly ISTPCodec arduinoCommandCodec;
 
         private readonly List<IFramesAcceptor> acceptors = new List<IFramesAcceptor>();
         private readonly List<IFrameProvider> providers = new List<IFrameProvider>();
@@ -38,6 +37,7 @@ namespace ArduinoController
         private readonly Queue<byte> outcomingDump = new Queue<byte>(1024);
         private readonly CommunicationQueue outcomingQueue;
 
+        private readonly ArduinoFrameReceiver arduFrameReceiver;
         private long decodedFramesCount;
 		private int ardPingPendings;
 
@@ -74,17 +74,16 @@ namespace ArduinoController
 
             var frameBeginMarker = Encoding.UTF8.GetBytes(":<:");
             var frameEndMarker = Encoding.UTF8.GetBytes(":>:");
-            codec = new STPCodec(frameBeginMarker, frameEndMarker);
-
-			var arduFrameBeginMarker = Encoding.UTF8.GetBytes("ac{");
-			var arduFrameEndMarker = Encoding.UTF8.GetBytes("}");
-			arduinoCommandCodec = new STPCodec(arduFrameBeginMarker, arduFrameEndMarker);
+            codec = new STPCodec(frameBeginMarker, frameEndMarker);			
 
             var relayService = new RelayService(hc.Logger);
             RegisterFrameProvider(relayService);
             RelayService = relayService;
 
             logger.Log(this, string.Format("{0} created.", this.GetType().Name), LogLevels.Info);
+
+            arduFrameReceiver = new ArduinoFrameReceiver(this, hc.Logger);
+            RegisterFrameAcceptor(arduFrameReceiver);
 
             port.DataReceived += DataReceived;
 
@@ -95,6 +94,94 @@ namespace ArduinoController
                     port.Write(serializedFrame, 0, serializedFrame.Length);
                     Dump(serializedFrame);
                 };
+
+            var pingTimer = hc.CreateTimer(5000, t =>  
+            {
+                if (pingEnabled)
+                {
+                    var frameData = new byte[] { (byte)ArduinoComands.PingRequest };
+                    Send(new STPFrame(frameData, STPFrame.Types.ArduCommand), 0);
+                }
+            }, true, true, "Arduino ping");
+        }
+        internal void ProcessArduinoCommand(STPFrame frame)
+        {
+            if (frame.Data.Length == 0)
+            {
+                logger.Log(this, string.Concat("Invalid arduino command frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
+            }
+            else
+            {
+                var incomingCommand = (ArduinoComands)frame.Data[0];
+
+                switch (incomingCommand)
+                {
+                    case ArduinoComands.CommandConfirmation:
+                        if (frame.Data.Length == 3)
+                        {
+                            int id = (frame.Data[1] << 8) + frame.Data[2];
+                            outcomingQueue.ConfirmFrame((ushort)id);
+                        }
+                        else
+                        {
+                            logger.Log(this, string.Concat("Invalid command confirmation frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
+                        }
+                        break;
+
+                    case ArduinoComands.ComandFailed:
+                        if (frame.Data.Length == 3)
+                        {
+                            var resultForFrameType = (STPFrame.Types)frame.Data[1];
+                            byte result = frame.Data[2];
+                            logger.Log(this, string.Format("An 'Arduino command failed' responce was received for frame type {0}; result {1}. Raw frame: {2}",
+                                resultForFrameType, result, frame.ToString()), LogLevels.Warning);
+
+                            LogDump();
+                        }
+                        else
+                        {
+                            logger.Log(this, string.Concat("Invalid command result frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
+                        }
+                        break;
+
+                    case ArduinoComands.PingResponce:
+                        Interlocked.Exchange(ref ardPingPendings, 0);
+                        logger.LogIfDebug(this, "Arduino ping received");
+                        break;
+
+                    case ArduinoComands.ShutdownSignal:
+                        logger.Log(this, "Shutdown signal received from arduino", LogLevels.Info);
+                        syncContext.Post(o => hc.Shutdown(HostControllerShutdownModes.Shutdown), null, "ArdController.ProcessArduinoCommand -> hc.Shutdown");
+                        break;
+
+                    case ArduinoComands.GetTimeResponse:
+                        if (frame.Data.Length == 7)
+                        {
+                            var handler = GetArduinoTimeHandler;
+                            logger.Log(this, string.Concat("Get time respone received, ", handler != null ? "handler exist" : "handler doesn't exist"), LogLevels.Info);
+                            if (handler != null)
+                            {
+                                var hour = (int)frame.Data[1];
+                                var min = (int)frame.Data[2];
+                                var sec = (int)frame.Data[3];
+                                var day = (int)frame.Data[4];
+                                var month = (int)frame.Data[5];
+                                var year = (int)frame.Data[6] + 2000;
+                                handler(new DateTime(year, month, day, hour, min, sec));
+                            }
+                        }
+                        else
+                        {
+                            logger.Log(this, string.Concat("Get time respone invalid. Raw bytes: ", frame), LogLevels.Warning);
+                        }
+                        GetArduinoTimeHandler = null;
+                        break;
+
+                    default:
+                        logger.Log(this, string.Concat("Unexpected command frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
+                        break;
+                }
+            }
         }
 
         private void Send(STPFrame frame, int delayAfterSend)
@@ -183,106 +270,6 @@ namespace ArduinoController
             logger.Log(this, dumpStr, LogLevels.Warning);
         }
 
-        private IEnumerable<STPFrame> ProcessArduinoCommands(IEnumerable<STPFrame> inputFrames)
-        {
-            var convertedFrames = arduinoCommandCodec.Decode(inputFrames);
-            if (convertedFrames != null)
-            {
-                foreach (var frame in convertedFrames)
-                {
-                    if (frame.Type == STPFrame.Types.ArduCommand)
-                    {
-                        ProcessArduinoCommand(frame);
-                    }
-					else 
-						yield return frame;
-                }
-            }
-
-            yield break;
-        }
-
-        private void ProcessArduinoCommand(STPFrame frame)
-        {
-
-            if (frame.Data.Length == 0)
-            {
-                logger.Log(this, string.Concat("Invalid arduino command frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
-            }
-            else
-            {
-                var incomingCommand = (ArduinoComands)frame.Data[0];
-
-                switch (incomingCommand)
-                {
-                    case ArduinoComands.CommandConfirmation:
-                        if (frame.Data.Length == 3)
-                        {
-                            int id = (frame.Data[1] << 8) + frame.Data[2];
-                            outcomingQueue.ConfirmFrame((ushort)id);
-                        }
-                        else
-                        {
-                            logger.Log(this, string.Concat("Invalid command confirmation frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
-                        }
-                        break;
-
-                    case ArduinoComands.ComandFailed:
-                        if (frame.Data.Length == 3)
-                        {
-                            var resultForFrameType = (STPFrame.Types)frame.Data[1];
-                            byte result = frame.Data[2];
-                            logger.Log(this, string.Format("An 'Arduino command failed' responce was received for frame type {0}; result {1}. Raw frame: {2}", 
-                                resultForFrameType, result, frame.ToString()), LogLevels.Warning);
-
-                            LogDump();
-                        }
-                        else
-                        {
-                            logger.Log(this, string.Concat("Invalid command result frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
-                        }
-                        break;
-
-                    case ArduinoComands.PingResponce:
-                        Interlocked.Exchange(ref ardPingPendings, 0);
-                        logger.LogIfDebug(this, "Arduino ping received");
-                        break;
-
-                    case ArduinoComands.ShutdownSignal:
-                        logger.Log(this, "Shutdown signal received from arduino", LogLevels.Info);
-                        syncContext.Post(o => hc.Shutdown(HostControllerShutdownModes.Shutdown), null, "ArdController.ProcessArduinoCommand -> hc.Shutdown");
-                        break;
-
-                    case ArduinoComands.GetTimeResponse:
-                        if (frame.Data.Length == 7)
-                        {
-                            var handler = GetArduinoTimeHandler;
-                            logger.Log(this, string.Concat("Get time respone received, ", handler != null ? "handler exist" : "handler doesn't exist"), LogLevels.Info);                            
-                            if (handler != null)
-                            {
-                                var hour = (int)frame.Data[1];
-                                var min = (int)frame.Data[2];
-                                var sec = (int)frame.Data[3];
-                                var day = (int)frame.Data[4];
-                                var month = (int)frame.Data[5];
-                                var year = (int)frame.Data[6] + 2000;
-                                handler(new DateTime(year, month, day, hour, min, sec));
-                            }
-                        }
-                        else
-                        {
-                            logger.Log(this, string.Concat("Get time respone invalid. Raw bytes: ", frame), LogLevels.Warning);
-                        }
-                        GetArduinoTimeHandler = null;
-                        break;
-
-                    default:
-                        logger.Log(this, string.Concat("Unexpected command frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
-                        break;
-                }
-            }
-        }
-
         private void DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             logger.LogIfDebug(this, "DataReceived event");
@@ -297,11 +284,6 @@ namespace ArduinoController
                 if (frames != null && frames.Any())
                 {
 					decodedFramesCount += frames.Count;
-
-                    //Converting ArduCommands
-                    var arduinoFrames = ProcessArduinoCommands(frames.Where(f => f.Type == STPFrame.Types.ArduCommand));
-                    if (arduinoFrames != null)
-                        frames.AddRange(arduinoFrames);
 
                     foreach (var acceptor in acceptors)
                     {

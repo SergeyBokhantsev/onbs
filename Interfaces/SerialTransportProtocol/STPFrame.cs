@@ -42,6 +42,13 @@ namespace Interfaces.SerialTransportProtocol
             return string.Format("Type {0}, date lenght {1}, bytes: {2}", Type, Data.Length, bytes);
         }
 
+        public STPFrame(byte[] data)
+        {
+            Data = data;
+            Type = Types.Undefined;
+            Id = 0;
+        }
+
         public STPFrame(byte[] data, Types type)
         {
             Data = data;

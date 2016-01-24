@@ -28,8 +28,8 @@ bool is_raise_shutdown_signal(unsigned long* ts)
 	}
 }
 
-Manager::Manager(CommandWriter* _outcom_writer, RelayController* _relay, OledController* _oled, Buzzer* _buzzer)
-: outcom_writer(_outcom_writer),
+Manager::Manager(HardwareSerial* _arduino_out_port, RelayController* _relay, OledController* _oled, Buzzer* _buzzer)
+: command_writer(_arduino_out_port),
 relay(_relay),
 oled(_oled),
 buzzer(_buzzer),
@@ -84,9 +84,7 @@ bool Manager::before_button_send(int buttonId, char buttonState)
 	{
 		if (is_raise_shutdown_signal(&shutdown_signal_timestamp))
 		{
-			outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
-			outcom_writer->write(ARDUCOMMAND_SHUTDOWN_SIGNAL);
-			outcom_writer->close_command();
+			command_writer.send_command(ARDUCOMMAND_SHUTDOWN_SIGNAL);
 		}
 	}
 	else
@@ -139,15 +137,11 @@ void Manager::set_state(int newState)
 	}
 }
 
-void Manager::dispatch_frame(char* frame_array, int frame_len, char frame_type, unsigned short frame_id)
+void Manager::dispatch_frame(uint8_t* frame_array, int frame_len, uint8_t frame_type, unsigned short frame_id)
 {
-	outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
-	outcom_writer->write(ARDUCOMMAND_CONFIRMATION);
-	outcom_writer->write((char)((frame_id >> 8) & 0xFF));
-	outcom_writer->write((char)(frame_id & 0xFF));
-	outcom_writer->close_command();
+	command_writer.send_command(ARDUCOMMAND_CONFIRMATION, (uint8_t)((frame_id >> 8) & 0xFF), (uint8_t)(frame_id & 0xFF));
 	
-	int result = MANAGER_ERROR_UNKNOWN_FRAME_TYPE;
+	uint8_t result = MANAGER_ERROR_UNKNOWN_FRAME_TYPE;
 
 	switch (frame_type)
 	{
@@ -170,15 +164,11 @@ void Manager::dispatch_frame(char* frame_array, int frame_len, char frame_type, 
 
 	if (result > 0)
 	{
-     outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
-     outcom_writer->write(ARDUCOMMAND_COMMAND_FAILED);
-	 outcom_writer->write(frame_type);
-     outcom_writer->write((char)result);
-     outcom_writer->close_command();
+		command_writer.send_command(ARDUCOMMAND_COMMAND_FAILED, frame_type, result);
 	}
 }
 
-int Manager::process_frame(char* frame_array, int frame_len)
+uint8_t Manager::process_frame(uint8_t* frame_array, int frame_len)
 {
 	if (frame_len == 0)
 		return MANAGER_ERROR_INVALID_COMMAND;
@@ -187,9 +177,7 @@ int Manager::process_frame(char* frame_array, int frame_len)
 	{
 		case ARDUCOMMAND_PING_REQUEST:
 			set_state(MANAGER_STATE_ACTIVE);
-			outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
-			outcom_writer->write(ARDUCOMMAND_PING_RESPONSE);
-			outcom_writer->close_command();
+			command_writer.send_command(ARDUCOMMAND_PING_RESPONSE);
 			return 0;
 			
 		case ARDUCOMMAND_HOLD:
@@ -215,15 +203,13 @@ int Manager::process_frame(char* frame_array, int frame_len)
 		case ARDUCOMMAND_GET_TIME_REQUEST:
 			{
 			time_t t = now(); 
-			outcom_writer->open_command(ARDUINO_COMMAND_FRAME_TYPE);
-			outcom_writer->write(ARDUCOMMAND_GET_TIME_RESPONSE);
-			outcom_writer->write((char)hour(t));
-			outcom_writer->write((char)minute(t));
-			outcom_writer->write((char)second(t));
-			outcom_writer->write((char)day(t));
-			outcom_writer->write((char)month(t));
-			outcom_writer->write((char)(year(t) - 2000));
-			outcom_writer->close_command();
+			command_writer.send_command(ARDUCOMMAND_GET_TIME_RESPONSE, 
+			(uint8_t)hour(t), 
+			(uint8_t)minute(t),
+			(uint8_t)second(t),
+			(uint8_t)day(t),
+			(uint8_t)month(t),
+			(uint8_t)(year(t) - 2000));
 			}
 			return 0;
 			

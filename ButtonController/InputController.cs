@@ -1,6 +1,7 @@
 ﻿using Interfaces;
 using Interfaces.Input;
 using Interfaces.SerialTransportProtocol;
+using SerialTransportProtocol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace InputController
         public event ButtonPressedEventHandler ButtonPressed;
 
         private readonly ILogger logger;
+        private readonly STPCodec codec;
 
         public STPFrame.Types FrameType
         {
@@ -27,23 +29,29 @@ namespace InputController
         public InputController(ILogger logger)
         {
             this.logger = logger;
+
+            codec = new STPCodec(new byte[] { (byte)'{' }, new byte[] { (byte)'}' }, true);
         }
 
-        public void AcceptFrames(IEnumerable<STPFrame> frames)
+        public void AcceptFrames(IEnumerable<STPFrame> transportFrames)
         {
-            foreach (var frame in frames)
+            var buttonFrames = codec.Decode(transportFrames);
+            if (buttonFrames != null)
             {
-                try
+                foreach (var frame in buttonFrames)
                 {
-                    logger.LogIfDebug(this, "Button frame received");
-                    var button = (Buttons)frame.Data[0];
-                    var state = (ButtonStates)frame.Data[1];
-                    logger.LogIfDebug(this, string.Format("Button parsed: {0}, {1}", button, state));
-                    OnButtonPressed(button, state);
-                }
-                catch (Exception ex)
-                {
-                    logger.Log(this, ex);
+                    try
+                    {
+                        logger.LogIfDebug(this, "Button frame received");
+                        var button = (Buttons)frame.Data[0];
+                        var state = (ButtonStates)frame.Data[1];
+                        logger.LogIfDebug(this, string.Format("Button parsed: {0}, {1}", button, state));
+                        OnButtonPressed(button, state);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Log(this, ex);
+                    }
                 }
             }
         }

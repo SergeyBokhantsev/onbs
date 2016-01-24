@@ -38,9 +38,9 @@ namespace ArduinoBoardEmulator
             var frameEndMarker = Encoding.UTF8.GetBytes(":>:");
             codec = new STPCodec(frameBeginMarker, frameEndMarker);
 
-            var arduFrameBeginMarker = Encoding.UTF8.GetBytes("ac{");
+            var arduFrameBeginMarker = Encoding.UTF8.GetBytes("{");
             var arduFrameEndMarker = Encoding.UTF8.GetBytes("}");
-            arduinoCommandCodec = new STPCodec(arduFrameBeginMarker, arduFrameEndMarker);
+            arduinoCommandCodec = new STPCodec(arduFrameBeginMarker, arduFrameEndMarker, true);
         }
 
         void gps_NMEA(byte[] data)
@@ -62,7 +62,7 @@ namespace ArduinoBoardEmulator
             foreach (var frame in frames)
             {
                 var confirmationFrameData = new byte[] { (byte)ArduinoComands.CommandConfirmation, (byte)((frame.Id >> 8) & 0xFF), (byte)(frame.Id & 0xFF) };
-                AddOutcoming(new STPFrame(arduinoCommandCodec.Encode(new STPFrame(confirmationFrameData, STPFrame.Types.ArduCommand)), STPFrame.Types.ArduCommand));
+                AddOutcoming(new STPFrame(arduinoCommandCodec.Encode(new STPFrame(confirmationFrameData)), STPFrame.Types.ArduCommand));
 
                 switch(frame.Type)
                 {
@@ -74,7 +74,7 @@ namespace ArduinoBoardEmulator
                         {
                             case ArduinoComands.PingRequest:
                                 {
-                                    var outFrameData = arduinoCommandCodec.Encode(new STPFrame(new byte[] { (byte)ArduinoComands.PingResponce }, STPFrame.Types.ArduCommand));
+                                    var outFrameData = arduinoCommandCodec.Encode(new STPFrame(new byte[] { (byte)ArduinoComands.PingResponce }));
                                     AddOutcoming(new STPFrame(outFrameData, STPFrame.Types.ArduCommand));
                                     server.OnPing();
                                 }

@@ -4,27 +4,24 @@ AMCController::AMCController(HardwareSerial* _gsmPort, HardwareSerial* _gpsPort,
 buzzer(),
 oled(),
 relay(),
-outcom_writer(&out_buffer),
-manager(&outcom_writer, &relay, &oled, &buzzer),
+arduino_out_port(arduino_out_buffer, ARDUINO_OUT_BUFFER_SIZE),
+buttons_out_port(buttons_out_buffer, BUTTONS_OUT_BUFFER_SIZE),
+manager(&arduino_out_port, &relay, &oled, &buzzer),
 gsmPort(_gsmPort),
 comPort(_comPort),
-frame_sender(_comPort, ports, ports_types, 3),
+frame_sender(_comPort, ports, ports_types, 4),
 frame_receiver(_comPort),
-button_processor(&outcom_writer, &manager)
+button_processor(&buttons_out_port, &manager)
 {
 	ports[0] = _gsmPort;
 	ports[1] = _gpsPort;
-	ports[2] = &out_buffer;
+	ports[2] = &arduino_out_port;
+	ports[3] = &buttons_out_port;
 
 	ports_types[0] = GSM_FRAME_TYPE;
 	ports_types[1] = GPS_PART_FRAME_TYPE;
 	ports_types[2] = ARDUINO_COMMAND_FRAME_TYPE;
-
-	outcom_writer.open_command(ARDUINO_COMMAND_FRAME_TYPE);
-    outcom_writer.write_line("ARDUINO STARTED");
-    outcom_writer.close_command();
-	
-	//oled.draw_clock();
+	ports_types[3] = BUTTON_FRAME_TYPE;
 }
 
 AMCController::~AMCController()
@@ -55,9 +52,9 @@ void AMCController::run()
 
 void AMCController::process_incoming()
 {
-	char* frame_array = 0;
+	uint8_t* frame_array = 0;
 	int frame_len = 0;
-	char frame_type = 0;
+	uint8_t frame_type = 0;
 	unsigned short out_frame_id = 0;
 
 	if (frame_receiver.get_frame(&frame_array, &frame_len, &frame_type, &out_frame_id))

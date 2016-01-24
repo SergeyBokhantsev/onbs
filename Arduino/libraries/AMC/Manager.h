@@ -2,6 +2,7 @@
 #define manager_h
 
 #include "Arduino.h"
+#include "ArduinoCommands.h"
 #include "RelayController.h"
 #include "OledController.h"
 #include "CommandWriter.h"
@@ -22,20 +23,6 @@
 #define MANAGER_SHUTDOWN_SIGNAL_TIMEOUT_MS 3000
 #define MANAGER_SCREEN_UPDATE_MS 200
 
-//Incoming commands
-#define ARDUCOMMAND_PING_REQUEST 100
-#define ARDUCOMMAND_HOLD 102
-#define ARDUCOMMAND_SET_TIME 105
-#define ARDUCOMMAND_GET_TIME_REQUEST 106
-#define ARDUCOMMAND_BEEP 108
-
-//Outcoming commands
-#define ARDUCOMMAND_PING_RESPONSE 101
-#define ARDUCOMMAND_COMMAND_FAILED 103
-#define ARDUCOMMAND_SHUTDOWN_SIGNAL 104
-#define ARDUCOMMAND_GET_TIME_RESPONSE 107
-#define ARDUCOMMAND_CONFIRMATION 109
-
 #define MANAGER_ERROR_UNKNOWN_FRAME_TYPE 20
 #define MANAGER_ERROR_FRAME_TYPE_DISABLED 21
 #define MANAGER_ERROR_UNKNOWN_COMMAND 22
@@ -44,19 +31,19 @@
 class Manager
 {
 	public:
-	Manager(CommandWriter* _outcom_writer, RelayController* _relay, OledController* _oled, Buzzer* _buzzer);
+	Manager(HardwareSerial* _arduino_out_port, RelayController* _relay, OledController* _oled, Buzzer* _buzzer);
 	~Manager();
 	
 	bool before_button_send(int button_id, char state);
 	void tick();
 	
-	void dispatch_frame(char* frame_array, int frame_len, char frame_type, unsigned short frame_id);
+	void dispatch_frame(uint8_t* frame_array, int frame_len, uint8_t frame_type, unsigned short frame_id);
 	
 	
 	private:
 	RelayController* relay;
 	OledController* oled;
-	CommandWriter* outcom_writer;
+	CommandWriter command_writer;
 	Buzzer* buzzer;
 	
 	int state;
@@ -65,7 +52,7 @@ class Manager
 	unsigned long shutdown_signal_timestamp;
 	int remaining_beep;
 	
-	int process_frame(char* frame_array, int frame_len);
+	uint8_t process_frame(uint8_t* frame_array, int frame_len);
 	void set_state(int newState);
 	
 	void update_screen();

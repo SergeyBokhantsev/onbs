@@ -30,12 +30,12 @@ class CommFrameProcessor
 	}
 	
 	protected:
-	char comm_frame_begin[COMM_FRAME_BEGIN_LEN];
-	char comm_frame_end[COMM_FRAME_END_LEN];
+	uint8_t comm_frame_begin[COMM_FRAME_BEGIN_LEN];
+	uint8_t comm_frame_end[COMM_FRAME_END_LEN];
 	
-	char calculate_checksum(char* frame_data, int data_len) 
+	uint8_t calculate_checksum(uint8_t* frame_data, int data_len) 
 	{
-		char res = 0;
+		uint8_t res = 0;
 		if (data_len > 0)
 		{
 			for (int i=0; i<data_len; ++i)

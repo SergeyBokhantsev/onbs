@@ -121,7 +121,7 @@ namespace ArduinoBoardEmulator
             {
                 var origColor = lPing.Background;
                 lPing.Background = Brushes.Blue;
-                await Task.Delay(1000);
+                await Task.Delay(300);
                 lPing.Background = origColor;
             });
         }

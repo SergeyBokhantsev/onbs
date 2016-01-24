@@ -63,7 +63,7 @@ namespace ArduinoBoardEmulator
             {
                 if (client != null)
                 {
-                    client.AddOutcoming(new STPFrame(new byte[] { (byte)num, 43 }, STPFrame.Types.Button));
+                    client.AddOutcoming(new STPFrame(new byte[] { (byte)'{', (byte)num, 43, (byte)'}', }, STPFrame.Types.Button));
                 }
             }
         }

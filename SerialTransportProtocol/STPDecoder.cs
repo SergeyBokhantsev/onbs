@@ -11,7 +11,7 @@ namespace SerialTransportProtocol
     {
         private readonly byte[] frameBeginMark;
         private readonly byte[] frameEndMark;
-        private readonly STPFrame.Types frameType;
+        private readonly bool simpleFrameMode;
 
         private const int bufferSize = 1024 * 5;
         private readonly byte[] buffer = new byte[bufferSize];
@@ -26,9 +26,9 @@ namespace SerialTransportProtocol
 
         private int matchCount;
 
-        public STPDecoder(byte[] frameBeginMark, byte[] frameEndMark, STPFrame.Types frameType)
+        public STPDecoder(byte[] frameBeginMark, byte[] frameEndMark, bool simpleFrameMode)
         {
-            this.frameType = currentFrameType = frameType;
+            this.simpleFrameMode = simpleFrameMode;
             this.frameBeginMark = frameBeginMark;
             this.frameEndMark = frameEndMark;
         }
@@ -54,7 +54,9 @@ namespace SerialTransportProtocol
 
                         if (matchCount == frameBeginMark.Length)
                         {
-                            state = frameType == STPFrame.Types.Undefined ? States.LookingForType : States.LookingForEnd;
+                            currentFrameType = STPFrame.Types.Undefined;
+                            currentFrameId = 0;
+                            state = simpleFrameMode ? States.LookingForEnd : States.LookingForType;
                         }
                         break;
 
@@ -99,7 +101,7 @@ namespace SerialTransportProtocol
                                 var data = new byte[dataLen];
                                 buffer.CopyTo(data, 0, dataLen);
 
-                                if (currentFrameChecksum == STPEncoder.CalculateChecksum(data))
+                                if (simpleFrameMode || currentFrameChecksum == STPEncoder.CalculateChecksum(data))
                                 {
                                     if (resultFrames == null)
                                         resultFrames = new List<STPFrame>();
