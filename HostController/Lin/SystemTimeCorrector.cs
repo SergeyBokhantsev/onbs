@@ -39,8 +39,11 @@ namespace HostController.Lin
 
         public bool IsSystemTimeValid(DateTime proposedTime)
         {
-            if (GetTimeValidity(proposedTime))
-                return true;
+            if (proposedTime.Year < 2016)
+            {
+                logger.Log(this, string.Format("Proposed time '{0}' is invalid, ignoring.", proposedTime), LogLevels.Info);
+                return false;
+            }
 
             lock (locker)
             {

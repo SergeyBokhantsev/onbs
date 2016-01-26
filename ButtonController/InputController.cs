@@ -30,7 +30,7 @@ namespace InputController
         {
             this.logger = logger;
 
-            codec = new STPCodec(new byte[] { (byte)'{' }, new byte[] { (byte)'}' }, true);
+            codec = new STPCodec(Encoding.ASCII.GetBytes("[<]"), Encoding.ASCII.GetBytes("[>]"), true);
         }
 
         public void AcceptFrames(IEnumerable<STPFrame> transportFrames)

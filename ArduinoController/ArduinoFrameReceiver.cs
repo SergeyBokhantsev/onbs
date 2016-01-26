@@ -25,8 +25,8 @@ namespace ArduinoController
             this.arduController = arduController;
             this.logger = logger;
 
-            var arduFrameBeginMarker = Encoding.UTF8.GetBytes("{");
-            var arduFrameEndMarker = Encoding.UTF8.GetBytes("}");
+            var arduFrameBeginMarker = Encoding.ASCII.GetBytes("<-!");
+            var arduFrameEndMarker = Encoding.ASCII.GetBytes("!->");
             arduinoCommandCodec = new STPCodec(arduFrameBeginMarker, arduFrameEndMarker, true);
         }
 

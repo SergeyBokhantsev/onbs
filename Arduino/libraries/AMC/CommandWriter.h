@@ -3,8 +3,8 @@
 
 #include "Arduino.h"
 
-#define FRAME_BEGIN_LEN 1
-#define FRAME_END_LEN 1
+#define FRAME_BEGIN_LEN 3
+#define FRAME_END_LEN 3
 
 class CommandWriter
 {

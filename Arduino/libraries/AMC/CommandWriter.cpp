@@ -4,8 +4,15 @@
 CommandWriter::CommandWriter(HardwareSerial* _buffer) : 
 buffer(_buffer)
 {
-	comm_frame_begin[0] = '{';
-	comm_frame_end[0] = '}';
+	// "<-!"
+	comm_frame_begin[0] = '<';
+	comm_frame_begin[0] = '-';
+	comm_frame_begin[0] = '!';
+	
+	// "!->"
+	comm_frame_end[0] = '!';
+	comm_frame_end[0] = '-';
+	comm_frame_end[0] = '>';
 }
 
 void CommandWriter::send_command(uint8_t command)

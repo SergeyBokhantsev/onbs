@@ -25,6 +25,8 @@ namespace Interfaces.SerialTransportProtocol
 
         public ushort Id { get; private set; }
 
+        public ManualResetEventSlim WaitHandler { get; set; }
+
 		public string String
 		{
 			get 

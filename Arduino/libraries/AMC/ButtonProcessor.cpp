@@ -64,10 +64,14 @@ void ButtonProcessor::init_button_pin(int pin)
 
 void ButtonProcessor::send_button_state(int button_id, uint8_t state)
 {
-	out_buffer->write((uint8_t)'{');
+	out_buffer->write((uint8_t)'[');
+	out_buffer->write((uint8_t)'<');
+	out_buffer->write((uint8_t)']');
 	out_buffer->write(button_id);
 	out_buffer->write(state);
-	out_buffer->write((uint8_t)'}');
+	out_buffer->write((uint8_t)'[');
+	out_buffer->write((uint8_t)'>');
+	out_buffer->write((uint8_t)']');
 }
 
 bool ButtonProcessor::check_button(int pin, uint8_t* state, unsigned long* last_processed_time)

@@ -34,12 +34,12 @@ namespace ArduinoBoardEmulator
 
             gps.NMEA += gps_NMEA;
             
-            var frameBeginMarker = Encoding.UTF8.GetBytes(":<:");
-            var frameEndMarker = Encoding.UTF8.GetBytes(":>:");
+            var frameBeginMarker = Encoding.ASCII.GetBytes(":<:");
+            var frameEndMarker = Encoding.ASCII.GetBytes(":>:");
             codec = new STPCodec(frameBeginMarker, frameEndMarker);
 
-            var arduFrameBeginMarker = Encoding.UTF8.GetBytes("{");
-            var arduFrameEndMarker = Encoding.UTF8.GetBytes("}");
+            var arduFrameBeginMarker = Encoding.ASCII.GetBytes("<-!");
+            var arduFrameEndMarker = Encoding.ASCII.GetBytes("!->");
             arduinoCommandCodec = new STPCodec(arduFrameBeginMarker, arduFrameEndMarker, true);
         }
 

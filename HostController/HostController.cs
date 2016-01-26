@@ -23,6 +23,8 @@ namespace HostController
         private GPSD.Net.GPSD gpsd;
         private InternetConnectionKeeper netKeeper;
 
+        private readonly InterlockedGuard systemTimeCorrectorGuard = new InterlockedGuard();
+
         private Configuration config;
         private UIController.UIController uiController;
         private IInputController inputController;
@@ -327,39 +329,54 @@ namespace HostController
 
         private void CheckSystemTimeFromArduino(DateTime time)
         {
-            ThreadPool.QueueUserWorkItem(o =>
+            Logger.Log(this, string.Concat("CheckSystemTimeFromArduino handler called with proposed time ", time), LogLevels.Info);
+
+            systemTimeCorrectorGuard.ExecuteIfFreeAsync(() =>
             {
+                Logger.Log(this, "Executing CheckSystemTimeFromArduino handler async...", LogLevels.Info);
+
                 if (new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(time))
                 {
                     config.IsSystemTimeValid = true;
                 }
-            }, null);
+            },
+            ex => Logger.Log(this, ex));
         }
 
         private void CheckSystemTimeFromGPS(Interfaces.GPS.GPRMC gprmc)
         {
-            ThreadPool.QueueUserWorkItem(o =>
+            Logger.Log(this, string.Concat("CheckSystemTimeFromGPS handler called with proposed time ", gprmc.Time), LogLevels.Info);
+
+            systemTimeCorrectorGuard.ExecuteIfFreeAsync(() =>
             {
+                Logger.Log(this, "Executing CheckSystemTimeFromGPS handler async...", LogLevels.Info);
+
                 if (new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(gprmc.Time))
                 {
                     config.IsSystemTimeValid = true;
                     DisconnectSystemTimeChecking();
                     arduController.SetTimeToArduino();
                 }
-            }, null);
+            },
+            ex => Logger.Log(this, ex));
         }
 
         private void CheckSystemTimeFromInternet(DateTime inetTime)
         {
-            ThreadPool.QueueUserWorkItem(o =>
+            Logger.Log(this, string.Concat("CheckSystemTimeFromInternet handler called with proposed time ", inetTime), LogLevels.Info);
+
+            systemTimeCorrectorGuard.ExecuteIfFreeAsync(() =>
             {
+                Logger.Log(this, "Executing CheckSystemTimeFromInternet handler async...", LogLevels.Info);
+
                 if (new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(inetTime))
                 {
                     config.IsSystemTimeValid = true;
                     DisconnectSystemTimeChecking();
                     arduController.SetTimeToArduino();
                 }
-            }, null);
+            },
+            ex => Logger.Log(this, ex));
         }
 
         private void DisconnectSystemTimeChecking()
@@ -371,7 +388,7 @@ namespace HostController
 
         public void Shutdown(HostControllerShutdownModes mode)
         {
-			arduController.StopPing ();
+			arduController.StopPing();
 
             var shutdownModel = uiController.ShowPage("ShutdownProgress", null) as UIModels.ShutdownProgressModel;
 
@@ -443,7 +460,7 @@ namespace HostController
 
             uiController.Shutdown();
 
-            arduController.Beep(100);
+            var beeped = arduController.Beep(100).Wait(20000);
 
             switch (mode)
             {
