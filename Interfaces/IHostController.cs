@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Interfaces
 {
@@ -12,7 +13,7 @@ namespace Interfaces
         IConfig Config { get; }
         IProcessRunnerFactory ProcessRunnerFactory { get; }
         T GetController<T>() where T : class, IController;
-        void Shutdown(HostControllerShutdownModes mode);
+        Task Shutdown(HostControllerShutdownModes mode);
         IHostTimer CreateTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly, string name);
     }
 

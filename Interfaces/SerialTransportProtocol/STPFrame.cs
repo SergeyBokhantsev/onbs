@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using System;
 
 namespace Interfaces.SerialTransportProtocol
 {
@@ -25,13 +27,19 @@ namespace Interfaces.SerialTransportProtocol
 
         public ushort Id { get; private set; }
 
-        public ManualResetEventSlim WaitHandler { get; set; }
+		public bool Delivered { get; set; }
 
 		public string String
 		{
 			get 
 			{
-				return Encoding.Default.GetString (Data);
+				return string.Concat (Data.Select (b => 
+				{
+					if (b > 31 && b < 127)
+						return ((char)b).ToString();
+					else
+						return ".";
+				}));
 			}
 		}
 
@@ -65,5 +73,22 @@ namespace Interfaces.SerialTransportProtocol
             Type = type;
             Id = id;
         }
+
+		public async Task<bool> WaitDeliveryAsync(int timeout)
+		{
+			return await Task.Run (() => 
+			{
+				var startTime = DateTime.Now;
+				while((DateTime.Now - startTime).TotalMilliseconds < timeout)
+				{
+					if (Delivered)
+						return true;
+					else
+						Thread.Sleep(50);
+				}
+
+				return false;
+			});
+		}
     }
 }

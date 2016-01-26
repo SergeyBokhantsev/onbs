@@ -386,7 +386,7 @@ namespace HostController
             Logger.Log(this, "SystemTimeCorrector has been disconnected.", LogLevels.Info);
         }
 
-        public void Shutdown(HostControllerShutdownModes mode)
+        public async Task Shutdown(HostControllerShutdownModes mode)
         {
 			arduController.StopPing();
 
@@ -460,7 +460,7 @@ namespace HostController
 
             uiController.Shutdown();
 
-            var beeped = arduController.Beep(100).Wait(20000);
+			var beeped = await arduController.Beep (100);
 
             switch (mode)
             {

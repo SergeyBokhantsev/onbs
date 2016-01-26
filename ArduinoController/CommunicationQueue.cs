@@ -65,9 +65,7 @@ namespace ArduinoController
                 {
                     if (currentFrame.Id == frameId)
                     {
-                        var waitHandler = currentFrame.WaitHandler;
-                        if (waitHandler != null)
-                            waitHandler.Set();
+						currentFrame.Delivered = true;
 
                         currentFrame = null;
                         Interlocked.Exchange(ref confirmationLosses, 0);
