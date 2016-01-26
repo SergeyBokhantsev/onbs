@@ -383,7 +383,7 @@ namespace TravelController
 
                 var lastKnownGprmc = logFilter.LastKnownLocation;
 
-                if (lastKnownGprmc.Active)
+                if (lastKnownGprmc != null && lastKnownGprmc.Active)
                 {
                     lock (bufferedPoints)
                     {
