@@ -424,12 +424,6 @@ namespace HostController
             showLine("Disabling GPS Controller");
             gpsController.Shutdown();
 
-            showLine("Stopping timers");
-            StopTimers();
-
-            showLine("Stopping SyncContext");
-            syncContext.Stop();
-
             if (mode != HostControllerShutdownModes.UnhandledException)
             {
                 try
@@ -461,6 +455,12 @@ namespace HostController
             uiController.Shutdown();
 
 			var beeped = await arduController.Beep (100);
+
+            showLine("Stopping timers");
+            StopTimers();
+
+            showLine("Stopping SyncContext");
+            syncContext.Stop();
 
             switch (mode)
             {

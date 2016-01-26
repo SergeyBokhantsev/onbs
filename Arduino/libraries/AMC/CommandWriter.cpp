@@ -6,13 +6,13 @@ buffer(_buffer)
 {
 	// "<-!"
 	comm_frame_begin[0] = '<';
-	comm_frame_begin[0] = '-';
-	comm_frame_begin[0] = '!';
+	comm_frame_begin[1] = '-';
+	comm_frame_begin[2] = '!';
 	
 	// "!->"
 	comm_frame_end[0] = '!';
-	comm_frame_end[0] = '-';
-	comm_frame_end[0] = '>';
+	comm_frame_end[1] = '-';
+	comm_frame_end[2] = '>';
 }
 
 void CommandWriter::send_command(uint8_t command)
