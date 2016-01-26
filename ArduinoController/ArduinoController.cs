@@ -100,7 +100,7 @@ namespace ArduinoController
                 if (pingEnabled)
                 {
                     var frameData = new byte[] { (byte)ArduinoComands.PingRequest };
-                    Send(new STPFrame(frameData, STPFrame.Types.ArduCommand), 0);
+                    Send(new STPFrame(frameData, STPFrame.Types.ArduCommand));
                 }
             }, true, true, "Arduino ping");
         }
@@ -184,7 +184,7 @@ namespace ArduinoController
             }
         }
 
-        private void Send(STPFrame frame, int delayAfterSend)
+        private void Send(STPFrame frame)
         {
             outcomingQueue.Enqueue(frame);
         }
@@ -357,10 +357,12 @@ namespace ArduinoController
             logger.Log(this, "Stop pinging Arduino", LogLevels.Info);
 		}
 
-        public void HoldPower()
+        public Task<bool> HoldPower()
         {
             logger.Log(this, "Sending HoldPower command to Arduino", LogLevels.Info);
-            Send(new STPFrame(new byte[] { (byte)ArduinoComands.HoldPower }, STPFrame.Types.ArduCommand), 100);
+            var frame = new STPFrame(new byte[] { (byte)ArduinoComands.HoldPower }, STPFrame.Types.ArduCommand);
+            Send(frame);
+            return frame.WaitDeliveryAsync(5000);
         }
 
         public void SetTimeToArduino()
@@ -374,14 +376,14 @@ namespace ArduinoController
                                            (byte)now.Day,
                                            (byte)now.Month,
                                            (byte)(now.Year - 2000)}
-                              , STPFrame.Types.ArduCommand), 100);
+                              , STPFrame.Types.ArduCommand));
         }
 
         public void GetArduinoTime(Action<DateTime> handler)
         {
             logger.Log(this, "Sending get time request to Arduino", LogLevels.Info);
             GetArduinoTimeHandler = handler;
-            Send(new STPFrame(new byte[] { (byte)ArduinoComands.GetTimeRequest }, STPFrame.Types.ArduCommand), 100);
+            Send(new STPFrame(new byte[] { (byte)ArduinoComands.GetTimeRequest }, STPFrame.Types.ArduCommand));
         }
 
         public Task<bool> Beep(ushort beepMs, ushort pauseMs = 0, byte count = 1)
@@ -394,7 +396,7 @@ namespace ArduinoController
             (byte)(pauseMs & 0xFF),
             count
             }, STPFrame.Types.ArduCommand);
-            Send(frame, 100);
+            Send(frame);
             return frame.WaitDeliveryAsync(5000);
         }
     }

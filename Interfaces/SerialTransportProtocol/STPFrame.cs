@@ -76,6 +76,9 @@ namespace Interfaces.SerialTransportProtocol
 
 		public async Task<bool> WaitDeliveryAsync(int timeout)
 		{
+            if (Delivered)
+                return await Task.FromResult(true);
+
 			return await Task.Run (() => 
 			{
 				var startTime = DateTime.Now;

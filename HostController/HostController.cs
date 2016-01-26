@@ -409,7 +409,7 @@ namespace HostController
 
 			if (mode == HostControllerShutdownModes.Exit) 
 			{
-                arduController.HoldPower();
+                await arduController.HoldPower();
 			}
 
             showLine("Disposing Travel Controller");

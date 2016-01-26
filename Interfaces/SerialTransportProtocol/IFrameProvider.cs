@@ -2,7 +2,7 @@
 
 namespace Interfaces.SerialTransportProtocol
 {
-    public delegate void FrameToSendDelegate(STPFrame frame, int delayAfterSend);
+    public delegate void FrameToSendDelegate(STPFrame frame);
 
     public interface IFrameProvider
     {

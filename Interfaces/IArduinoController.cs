@@ -28,6 +28,5 @@ namespace Interfaces
         void UnregisterFrameAcceptor(IFramesAcceptor acceptor);
         void RegisterFrameProvider(IFrameProvider provider);
         void UnregisterFrameProvider(IFrameProvider provider);
-        void HoldPower();
     }
 }

@@ -34,7 +34,7 @@ namespace ArduinoController
         {
             var handler = FrameToSend;
             if (handler != null)
-                handler(frame, 20);
+                handler(frame);
         }
 
         public void Enable(Relay relay)

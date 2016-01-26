@@ -71,28 +71,17 @@ namespace Implementation.MiniDisplay
                         continue;
                     }
 
-                    var delayAfterSend = 0;
-
-					switch((OLEDCommands)frame.Data [0])
-					{
-						case OLEDCommands.OLED_COMMAND_UPDATE:
-						case OLEDCommands.OLED_COMMAND_INVERT:
-                        case OLEDCommands.OLED_COMMAND_BRIGHTNESS:
-							delayAfterSend = 100;
-							break;
-					}
-
-                    OnFrameToSend(frame, delayAfterSend);
+                    OnFrameToSend(frame);
                 }
             }
         }
 
-        private void OnFrameToSend(STPFrame frame, int delayAfterSend)
+        private void OnFrameToSend(STPFrame frame)
         {
             var handler = FrameToSend;
             if (handler != null)
             {
-                handler(frame, delayAfterSend);
+                handler(frame);
             }
         }
 
