@@ -376,19 +376,44 @@ namespace TravelController
 
         public void Dispose()
         {
-            disposed = true;
-            timer.Dispose();
-
-            if (bufferedPoints.Count > 0 && state.Value == States.Ready && hc.Config.IsSystemTimeValid && hc.Config.IsInternetConnected)
+            if (!disposed)
             {
-                hc.Logger.Log(this, "Trying to send buffered points...", LogLevels.Info);
+                disposed = true;
+                timer.Dispose();
 
-                bool result = Task.Run(async () => { await ExportPoints(); }).Wait(30000);
+                var lastKnownGprmc = logFilter.LastKnownLocation;
 
-                if (result)
-                    hc.Logger.Log(this, "Buffered points were successfully sended.", LogLevels.Info);
-                else
-                    hc.Logger.Log(this, "Buffered points were not sended in 30 seconds.", LogLevels.Warning);
+                if (lastKnownGprmc.Active)
+                {
+                    lock (bufferedPoints)
+                    {
+                        if (!bufferedPoints.Any()
+                             || bufferedPoints.Last().Lat != lastKnownGprmc.Location.Lat.Degrees
+                             || bufferedPoints.Last().Lon != lastKnownGprmc.Location.Lon.Degrees)
+                        {
+                            bufferedPoints.Add(new TravelPoint
+                            {
+                                Type = TravelPointTypes.AutoTrackPoint,
+                                Lat = lastKnownGprmc.Location.Lat.Degrees,
+                                Lon = lastKnownGprmc.Location.Lon.Degrees,
+                                Speed = lastKnownGprmc.Speed,
+                                Time = lastKnownGprmc.Time.ToUniversalTime()
+                            });
+                        }
+                    }
+                }
+
+                if (bufferedPoints.Count > 0 && state.Value == States.Ready && hc.Config.IsSystemTimeValid && hc.Config.IsInternetConnected)
+                {
+                    hc.Logger.Log(this, "Trying to send buffered points...", LogLevels.Info);
+
+                    bool result = Task.Run(async () => { await ExportPoints(); }).Wait(30000);
+
+                    if (result)
+                        hc.Logger.Log(this, "Buffered points were successfully sended.", LogLevels.Info);
+                    else
+                        hc.Logger.Log(this, "Buffered points were not sended in 30 seconds.", LogLevels.Warning);
+                }
             }
         }
     }

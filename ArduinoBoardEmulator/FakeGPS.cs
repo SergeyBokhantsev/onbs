@@ -40,7 +40,7 @@ namespace ArduinoBoardEmulator
 
         public FakeGPS()
         {
-           // (new Thread(Send) { IsBackground = true }).Start();
+            (new Thread(Send) { IsBackground = true }).Start();
         }
 
         private void Send(object state)

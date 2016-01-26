@@ -7,7 +7,13 @@ namespace Interfaces.GPS
         private readonly double distanceToSpeedRatio;
         private readonly int deadZoneMeters;
         private readonly int deadZoneSpeed;
-        private GPRMC lastGprmc;
+        private GPRMC lastAcceptedGprmc;
+        private GPRMC lastComedGprmc;
+
+        public GPRMC LastKnownLocation
+        {
+            get { return lastComedGprmc; }
+        }
 
         public GPSLogFilter(double distanceToSpeedRatio, int deadZoneMeters, int deadZoneSpeed)
         {
@@ -18,12 +24,14 @@ namespace Interfaces.GPS
 
         public bool Match(GPRMC gprmc)
         {
-            if (lastGprmc != null)
+            lastComedGprmc = gprmc;
+
+            if (lastAcceptedGprmc != null)
             {
                 if (gprmc.Speed < deadZoneSpeed)
                     return false;
 
-                var distance = Math.Abs(Helpers.GetDistance(lastGprmc.Location, gprmc.Location));
+                var distance = Math.Abs(Helpers.GetDistance(lastAcceptedGprmc.Location, gprmc.Location));
 
                 if (distance < deadZoneMeters)
                     return false;
@@ -32,7 +40,7 @@ namespace Interfaces.GPS
 
                 if (distance >= stepDistance)
                 {
-                    lastGprmc = gprmc;
+                    lastAcceptedGprmc = gprmc;
                     return true;
                 }
                 else
@@ -40,7 +48,7 @@ namespace Interfaces.GPS
             }
             else
             {
-                lastGprmc = gprmc;
+                lastAcceptedGprmc = gprmc;
                 return true;
             }
         }
