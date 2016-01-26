@@ -345,6 +345,9 @@ namespace HostController
 
         private void CheckSystemTimeFromGPS(Interfaces.GPS.GPRMC gprmc)
         {
+			if (!gprmc.Active)
+				return;
+
             Logger.Log(this, string.Concat("CheckSystemTimeFromGPS handler called with proposed time ", gprmc.Time), LogLevels.Info);
 
             systemTimeCorrectorGuard.ExecuteIfFreeAsync(() =>
@@ -454,7 +457,7 @@ namespace HostController
 
             uiController.Shutdown();
 
-			var beeped = await arduController.Beep (100);
+			await arduController.Beep (100);
 
             showLine("Stopping timers");
             StopTimers();
