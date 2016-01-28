@@ -43,6 +43,8 @@ namespace UIModels
             this.weather = new WeatherProvider(hc.Logger, hc.Config.DataFolder);
             this.geocoder = new GeocodingProvider(hc.Logger);
 
+			SetProperty("oil_temp_icon", Path.Combine(hc.Config.DataFolder, "icons", "OilTemp.png"));
+
             gpsController.GPRMCReseived += GPRMCReseived;
         }
 
@@ -89,7 +91,6 @@ namespace UIModels
                 SetProperty("air_temp", string.Format("{0}°, {1}", f.fact.First().temperature.Value, f.fact.First().weather_type));
 
                 SetProperty("weather_icon", weather.GetWeatherIcon(f.fact.First().imagev3.First().Value));
-                SetProperty("oil_temp_icon", Path.Combine(hc.Config.DataFolder, "icons", "OilTemp.png"));
             }
             else
             {
