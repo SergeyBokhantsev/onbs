@@ -12,7 +12,7 @@ namespace GtkLauncher
 		{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-				app.ShowPage(GetMultilineView());
+			app.ShowPage(GetDrivePage());
 
 				app.Run(false);
 
@@ -120,7 +120,11 @@ namespace GtkLauncher
 				page.SetProperty("exported_points", string.Concat(speed, "/", speed));
 				page.SetProperty("heading", "Украина, Киев, Тростянецкая улица, " + speed.ToString());
 				page.SetProperty("air_temp", "Ясно, переменная облачность, дождь, гроза");
-				page.SetProperty("weather_icon", @"D:\onbs\HostController\Data\weather\bkn_sn_d.png");
+
+					page.SetProperty("weather_icon", @"C:\Users\serg\Documents\GitHub\onbs4\HostController\Data\weather\bkn_sn_d.png");
+					page.SetProperty("oil_temp_icon", @"C:\Users\serg\Documents\GitHub\onbs4\HostController\Data\icons\oiltemp.png");
+
+					page.SetProperty("cpu_info", "800 Mhz / 30 C");
 			}), 
 				null, 500, 200);
 

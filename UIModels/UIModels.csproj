@@ -86,6 +86,10 @@
       <Project>{34252C77-00D2-4E38-B432-274B6D6A0032}</Project>
       <Name>NavitConfigGenerator</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NixHelpers\NixHelpers.csproj">
+      <Project>{a822c3f5-f40f-4ded-b568-caeb1cf6a401}</Project>
+      <Name>NixHelpers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OBDProcessor\OBD.csproj">
       <Project>{eae855e8-89e1-4f2f-8947-39187b7c9f51}</Project>
       <Name>OBD</Name>

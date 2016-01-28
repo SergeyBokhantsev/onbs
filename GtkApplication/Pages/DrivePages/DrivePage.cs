@@ -18,10 +18,12 @@ namespace GtkApplication
 		private const string m_LAT = "<span {0} {1} size='14000'>Lat: {2}</span>";
 		private const string m_LON = "<span {0} {1} size='14000'>Lon: {2}</span>";
 
+		private const string m_CPUINFO = "<span {0} {1} size='10000'>CPU: {2}</span>";
+
 		private const string m_EXPORTED_POINTS = "<span {0} {1} size='14000'>Track: {2}</span>";
 		private const string m_HEADING = "<span {0} {1} size='20000'>{2}</span>";
 		private const string m_AIR_TEMP = "<span {0} {1} size='14000'>{2}</span>";
-		private const string m_ENG_TEMP = "<span {0} {1} size='14000'>Eng. t: {2}</span>";
+		private const string m_ENG_TEMP = "<span {0} {1} size='14000'>{2}</span>";
 
 		public DrivePage (IPageModel model, Style style, ILogger logger)
 		{
@@ -68,7 +70,13 @@ namespace GtkApplication
                 label_eng_temp.Markup = CB.CreateMarkup(m_ENG_TEMP, CB.m_FG_GRAY_DARK, CB.m_BG_EMPTY, eng_temp > int.MinValue ? string.Concat(eng_temp, "° C") : "NA")
 				, "eng_temp");
 
+			binder.BindCustomAction<string>(info =>
+				label_cpu_info.Markup = CB.CreateMarkup(m_CPUINFO, CB.m_FG_GRAY_DARK, CB.m_BG_EMPTY, info)
+				, "cpu_info");
+
 			binder.BindCustomAction<string>(icon_path => image_weather_icon.File = icon_path, "weather_icon");
+
+			binder.BindCustomAction<string>(icon_path => image_oil_temp.File = icon_path, "oil_temp_icon");
 
 			binder.UpdateBindings ();
 		}

@@ -26,11 +26,15 @@ namespace GtkApplication
 		
 		private global::Gtk.Label label_heading;
 		
+		private global::Gtk.Table table1;
+		
+		private global::Gtk.Label label_cpu_info;
+		
 		private global::Gtk.Label label_exported_points;
 		
-		private global::Gtk.Label label_lon;
-		
 		private global::Gtk.Label label_lat;
+		
+		private global::Gtk.Label label_lon;
 		
 		private global::Gtk.HSeparator hseparator4;
 		
@@ -47,6 +51,10 @@ namespace GtkApplication
 		private global::Gtk.Label label_travel_span;
 		
 		private global::Gtk.Label label_distance;
+		
+		private global::Gtk.HBox hbox2;
+		
+		private global::Gtk.Image image_oil_temp;
 		
 		private global::Gtk.Label label_eng_temp;
 		
@@ -158,65 +166,87 @@ namespace GtkApplication
 			w8.Expand = false;
 			w8.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
+			this.table1 = new global::Gtk.Table (((uint)(3)), ((uint)(2)), true);
+			this.table1.Name = "table1";
+			this.table1.RowSpacing = ((uint)(6));
+			this.table1.ColumnSpacing = ((uint)(50));
+			// Container child table1.Gtk.Table+TableChild
+			this.label_cpu_info = new global::Gtk.Label ();
+			this.label_cpu_info.Name = "label_cpu_info";
+			this.label_cpu_info.Xalign = 0.1F;
+			this.label_cpu_info.Yalign = 0.73F;
+			this.label_cpu_info.LabelProp = "<span foreground=\'#d6d6d6\' size=\'14000\'></span>";
+			this.label_cpu_info.UseMarkup = true;
+			this.table1.Add (this.label_cpu_info);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1 [this.label_cpu_info]));
+			w9.LeftAttach = ((uint)(1));
+			w9.RightAttach = ((uint)(2));
+			w9.XOptions = ((global::Gtk.AttachOptions)(4));
+			w9.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.label_exported_points = new global::Gtk.Label ();
 			this.label_exported_points.Name = "label_exported_points";
 			this.label_exported_points.Xalign = 0.1F;
 			this.label_exported_points.Yalign = 0.73F;
 			this.label_exported_points.LabelProp = "<span foreground=\'#d6d6d6\' size=\'14000\'>Lon: --</span>";
 			this.label_exported_points.UseMarkup = true;
-			this.vbox3.Add (this.label_exported_points);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.label_exported_points]));
-			w9.PackType = ((global::Gtk.PackType)(1));
-			w9.Position = 3;
-			w9.Expand = false;
-			w9.Fill = false;
-			// Container child vbox3.Gtk.Box+BoxChild
-			this.label_lon = new global::Gtk.Label ();
-			this.label_lon.Name = "label_lon";
-			this.label_lon.Xalign = 0.1F;
-			this.label_lon.Yalign = 0.73F;
-			this.label_lon.LabelProp = "<span foreground=\'#d6d6d6\' size=\'14000\'>Lon: --</span>";
-			this.label_lon.UseMarkup = true;
-			this.vbox3.Add (this.label_lon);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.label_lon]));
-			w10.PackType = ((global::Gtk.PackType)(1));
-			w10.Position = 4;
-			w10.Expand = false;
-			w10.Fill = false;
-			// Container child vbox3.Gtk.Box+BoxChild
+			this.table1.Add (this.label_exported_points);
+			global::Gtk.Table.TableChild w10 = ((global::Gtk.Table.TableChild)(this.table1 [this.label_exported_points]));
+			w10.TopAttach = ((uint)(2));
+			w10.BottomAttach = ((uint)(3));
+			w10.XOptions = ((global::Gtk.AttachOptions)(4));
+			w10.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
 			this.label_lat = new global::Gtk.Label ();
 			this.label_lat.Name = "label_lat";
 			this.label_lat.Xalign = 0.1F;
 			this.label_lat.Yalign = 0.73F;
 			this.label_lat.LabelProp = "<span foreground=\'#d6d6d6\' size=\'14000\'>Lat: --</span>";
 			this.label_lat.UseMarkup = true;
-			this.vbox3.Add (this.label_lat);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.label_lat]));
-			w11.PackType = ((global::Gtk.PackType)(1));
-			w11.Position = 5;
-			w11.Expand = false;
-			w11.Fill = false;
+			this.table1.Add (this.label_lat);
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1 [this.label_lat]));
+			w11.XOptions = ((global::Gtk.AttachOptions)(4));
+			w11.YOptions = ((global::Gtk.AttachOptions)(4));
+			// Container child table1.Gtk.Table+TableChild
+			this.label_lon = new global::Gtk.Label ();
+			this.label_lon.Name = "label_lon";
+			this.label_lon.Xalign = 0.1F;
+			this.label_lon.Yalign = 0.73F;
+			this.label_lon.LabelProp = "<span foreground=\'#d6d6d6\' size=\'14000\'>Lon: --</span>";
+			this.label_lon.UseMarkup = true;
+			this.table1.Add (this.label_lon);
+			global::Gtk.Table.TableChild w12 = ((global::Gtk.Table.TableChild)(this.table1 [this.label_lon]));
+			w12.TopAttach = ((uint)(1));
+			w12.BottomAttach = ((uint)(2));
+			w12.XOptions = ((global::Gtk.AttachOptions)(4));
+			w12.YOptions = ((global::Gtk.AttachOptions)(4));
+			this.vbox3.Add (this.table1);
+			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.table1]));
+			w13.PackType = ((global::Gtk.PackType)(1));
+			w13.Position = 3;
+			w13.Expand = false;
+			w13.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
 			this.hseparator4 = new global::Gtk.HSeparator ();
 			this.hseparator4.WidthRequest = 50;
 			this.hseparator4.Name = "hseparator4";
 			this.vbox3.Add (this.hseparator4);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hseparator4]));
-			w12.PackType = ((global::Gtk.PackType)(1));
-			w12.Position = 6;
-			w12.Expand = false;
-			w12.Fill = false;
+			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hseparator4]));
+			w14.PackType = ((global::Gtk.PackType)(1));
+			w14.Position = 4;
+			w14.Expand = false;
+			w14.Fill = false;
 			this.hbox4.Add (this.vbox3);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.vbox3]));
-			w13.Position = 0;
+			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.vbox3]));
+			w15.Position = 0;
 			// Container child hbox4.Gtk.Box+BoxChild
 			this.image1 = new global::Gtk.Image ();
 			this.image1.Name = "image1";
 			this.hbox4.Add (this.image1);
-			global::Gtk.Box.BoxChild w14 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.image1]));
-			w14.Position = 1;
-			w14.Expand = false;
-			w14.Fill = false;
+			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.image1]));
+			w16.Position = 1;
+			w16.Expand = false;
+			w16.Fill = false;
 			// Container child hbox4.Gtk.Box+BoxChild
 			this.vbox2 = new global::Gtk.VBox ();
 			this.vbox2.WidthRequest = 260;
@@ -231,10 +261,10 @@ namespace GtkApplication
 			this.label_speed.UseMarkup = true;
 			this.label_speed.Justify = ((global::Gtk.Justification)(2));
 			this.vbox2.Add (this.label_speed);
-			global::Gtk.Box.BoxChild w15 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.label_speed]));
-			w15.Position = 0;
-			w15.Expand = false;
-			w15.Fill = false;
+			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.label_speed]));
+			w17.Position = 0;
+			w17.Expand = false;
+			w17.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.label12 = new global::Gtk.Label ();
 			this.label12.HeightRequest = 35;
@@ -243,18 +273,18 @@ namespace GtkApplication
 			this.label12.LabelProp = "<span foreground=\'#FFFFFF\' size=\'20000\'>km/h</span>";
 			this.label12.UseMarkup = true;
 			this.vbox2.Add (this.label12);
-			global::Gtk.Box.BoxChild w16 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.label12]));
-			w16.Position = 1;
-			w16.Expand = false;
-			w16.Fill = false;
+			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.label12]));
+			w18.Position = 1;
+			w18.Expand = false;
+			w18.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.hseparator5 = new global::Gtk.HSeparator ();
 			this.hseparator5.Name = "hseparator5";
 			this.vbox2.Add (this.hseparator5);
-			global::Gtk.Box.BoxChild w17 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hseparator5]));
-			w17.Position = 2;
-			w17.Expand = false;
-			w17.Fill = false;
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hseparator5]));
+			w19.Position = 2;
+			w19.Expand = false;
+			w19.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.label_travel_span = new global::Gtk.Label ();
 			this.label_travel_span.HeightRequest = 35;
@@ -263,10 +293,10 @@ namespace GtkApplication
 			this.label_travel_span.LabelProp = "<span foreground=\'#D6D6D6\' size=\'20000\'>0 min</span>";
 			this.label_travel_span.UseMarkup = true;
 			this.vbox2.Add (this.label_travel_span);
-			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.label_travel_span]));
-			w18.Position = 3;
-			w18.Expand = false;
-			w18.Fill = false;
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.label_travel_span]));
+			w20.Position = 3;
+			w20.Expand = false;
+			w20.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.label_distance = new global::Gtk.Label ();
 			this.label_distance.HeightRequest = 35;
@@ -275,38 +305,54 @@ namespace GtkApplication
 			this.label_distance.LabelProp = "<span foreground=\'#AAAAAA\' size=\'20000\'>0 km</span>";
 			this.label_distance.UseMarkup = true;
 			this.vbox2.Add (this.label_distance);
-			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.label_distance]));
-			w19.Position = 4;
-			w19.Expand = false;
-			w19.Fill = false;
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.label_distance]));
+			w21.Position = 4;
+			w21.Expand = false;
+			w21.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
+			this.hbox2 = new global::Gtk.HBox ();
+			this.hbox2.Name = "hbox2";
+			this.hbox2.Homogeneous = true;
+			this.hbox2.Spacing = 6;
+			// Container child hbox2.Gtk.Box+BoxChild
+			this.image_oil_temp = new global::Gtk.Image ();
+			this.image_oil_temp.WidthRequest = 32;
+			this.image_oil_temp.Name = "image_oil_temp";
+			this.image_oil_temp.Xalign = 1F;
+			this.hbox2.Add (this.image_oil_temp);
+			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.hbox2 [this.image_oil_temp]));
+			w22.Position = 0;
+			// Container child hbox2.Gtk.Box+BoxChild
 			this.label_eng_temp = new global::Gtk.Label ();
 			this.label_eng_temp.HeightRequest = 50;
 			this.label_eng_temp.Name = "label_eng_temp";
-			this.label_eng_temp.Yalign = 1F;
-			this.label_eng_temp.LabelProp = "<span size=\'20000\'></span>";
+			this.label_eng_temp.Xalign = 0F;
+			this.label_eng_temp.LabelProp = "<span size=\'14000\'>0 C</span>";
 			this.label_eng_temp.UseMarkup = true;
-			this.vbox2.Add (this.label_eng_temp);
-			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.label_eng_temp]));
-			w20.Position = 5;
-			w20.Expand = false;
-			w20.Fill = false;
+			this.hbox2.Add (this.label_eng_temp);
+			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.hbox2 [this.label_eng_temp]));
+			w23.Position = 1;
+			this.vbox2.Add (this.hbox2);
+			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hbox2]));
+			w24.Position = 5;
+			w24.Expand = false;
+			w24.Fill = false;
 			this.hbox4.Add (this.vbox2);
-			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.vbox2]));
-			w21.PackType = ((global::Gtk.PackType)(1));
-			w21.Position = 2;
-			w21.Fill = false;
+			global::Gtk.Box.BoxChild w25 = ((global::Gtk.Box.BoxChild)(this.hbox4 [this.vbox2]));
+			w25.PackType = ((global::Gtk.PackType)(1));
+			w25.Position = 2;
+			w25.Fill = false;
 			this.vbox1.Add (this.hbox4);
-			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox4]));
-			w22.Position = 2;
+			global::Gtk.Box.BoxChild w26 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox4]));
+			w26.Position = 2;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hseparator1 = new global::Gtk.HSeparator ();
 			this.hseparator1.Name = "hseparator1";
 			this.vbox1.Add (this.hseparator1);
-			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hseparator1]));
-			w23.Position = 3;
-			w23.Expand = false;
-			w23.Fill = false;
+			global::Gtk.Box.BoxChild w27 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hseparator1]));
+			w27.Position = 3;
+			w27.Expand = false;
+			w27.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox5 = new global::Gtk.HBox ();
 			this.hbox5.HeightRequest = 40;
@@ -314,10 +360,10 @@ namespace GtkApplication
 			this.hbox5.Homogeneous = true;
 			this.hbox5.Spacing = 6;
 			this.vbox1.Add (this.hbox5);
-			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox5]));
-			w24.PackType = ((global::Gtk.PackType)(1));
-			w24.Position = 4;
-			w24.Expand = false;
+			global::Gtk.Box.BoxChild w28 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox5]));
+			w28.PackType = ((global::Gtk.PackType)(1));
+			w28.Position = 4;
+			w28.Expand = false;
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();

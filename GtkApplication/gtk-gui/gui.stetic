@@ -849,48 +849,109 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Label" id="label_exported_points">
+                  <widget class="Gtk.Table" id="table1">
                     <property name="MemberName" />
-                    <property name="Xalign">0.1</property>
-                    <property name="Yalign">0.73</property>
-                    <property name="LabelProp">&lt;span foreground='#d6d6d6' size='14000'&gt;Lon: --&lt;/span&gt;</property>
-                    <property name="UseMarkup">True</property>
+                    <property name="NRows">3</property>
+                    <property name="NColumns">2</property>
+                    <property name="Homogeneous">True</property>
+                    <property name="RowSpacing">6</property>
+                    <property name="ColumnSpacing">50</property>
+                    <child>
+                      <placeholder />
+                    </child>
+                    <child>
+                      <placeholder />
+                    </child>
+                    <child>
+                      <widget class="Gtk.Label" id="label_cpu_info">
+                        <property name="MemberName" />
+                        <property name="Xalign">0.1</property>
+                        <property name="Yalign">0.73</property>
+                        <property name="LabelProp">&lt;span foreground='#d6d6d6' size='14000'&gt;&lt;/span&gt;</property>
+                        <property name="UseMarkup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="LeftAttach">1</property>
+                        <property name="RightAttach">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Label" id="label_exported_points">
+                        <property name="MemberName" />
+                        <property name="Xalign">0.1</property>
+                        <property name="Yalign">0.73</property>
+                        <property name="LabelProp">&lt;span foreground='#d6d6d6' size='14000'&gt;Lon: --&lt;/span&gt;</property>
+                        <property name="UseMarkup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="TopAttach">2</property>
+                        <property name="BottomAttach">3</property>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Label" id="label_lat">
+                        <property name="MemberName" />
+                        <property name="Xalign">0.1</property>
+                        <property name="Yalign">0.73</property>
+                        <property name="LabelProp">&lt;span foreground='#d6d6d6' size='14000'&gt;Lat: --&lt;/span&gt;</property>
+                        <property name="UseMarkup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Label" id="label_lon">
+                        <property name="MemberName" />
+                        <property name="Xalign">0.1</property>
+                        <property name="Yalign">0.73</property>
+                        <property name="LabelProp">&lt;span foreground='#d6d6d6' size='14000'&gt;Lon: --&lt;/span&gt;</property>
+                        <property name="UseMarkup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="TopAttach">1</property>
+                        <property name="BottomAttach">2</property>
+                        <property name="AutoSize">True</property>
+                        <property name="XOptions">Fill</property>
+                        <property name="YOptions">Fill</property>
+                        <property name="XExpand">False</property>
+                        <property name="XFill">True</property>
+                        <property name="XShrink">False</property>
+                        <property name="YExpand">False</property>
+                        <property name="YFill">True</property>
+                        <property name="YShrink">False</property>
+                      </packing>
+                    </child>
                   </widget>
                   <packing>
                     <property name="PackType">End</property>
                     <property name="Position">3</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gtk.Label" id="label_lon">
-                    <property name="MemberName" />
-                    <property name="Xalign">0.1</property>
-                    <property name="Yalign">0.73</property>
-                    <property name="LabelProp">&lt;span foreground='#d6d6d6' size='14000'&gt;Lon: --&lt;/span&gt;</property>
-                    <property name="UseMarkup">True</property>
-                  </widget>
-                  <packing>
-                    <property name="PackType">End</property>
-                    <property name="Position">4</property>
-                    <property name="AutoSize">True</property>
-                    <property name="Expand">False</property>
-                    <property name="Fill">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <widget class="Gtk.Label" id="label_lat">
-                    <property name="MemberName" />
-                    <property name="Xalign">0.1</property>
-                    <property name="Yalign">0.73</property>
-                    <property name="LabelProp">&lt;span foreground='#d6d6d6' size='14000'&gt;Lat: --&lt;/span&gt;</property>
-                    <property name="UseMarkup">True</property>
-                  </widget>
-                  <packing>
-                    <property name="PackType">End</property>
-                    <property name="Position">5</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>
@@ -903,7 +964,7 @@
                   </widget>
                   <packing>
                     <property name="PackType">End</property>
-                    <property name="Position">6</property>
+                    <property name="Position">4</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>
@@ -1004,12 +1065,34 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Label" id="label_eng_temp">
+                  <widget class="Gtk.HBox" id="hbox2">
                     <property name="MemberName" />
-                    <property name="HeightRequest">50</property>
-                    <property name="Yalign">1</property>
-                    <property name="LabelProp">&lt;span size='20000'&gt;&lt;/span&gt;</property>
-                    <property name="UseMarkup">True</property>
+                    <property name="Homogeneous">True</property>
+                    <property name="Spacing">6</property>
+                    <child>
+                      <widget class="Gtk.Image" id="image_oil_temp">
+                        <property name="MemberName" />
+                        <property name="WidthRequest">32</property>
+                        <property name="Xalign">1</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">0</property>
+                        <property name="AutoSize">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="Gtk.Label" id="label_eng_temp">
+                        <property name="MemberName" />
+                        <property name="HeightRequest">50</property>
+                        <property name="Xalign">0</property>
+                        <property name="LabelProp">&lt;span size='14000'&gt;0 C&lt;/span&gt;</property>
+                        <property name="UseMarkup">True</property>
+                      </widget>
+                      <packing>
+                        <property name="Position">1</property>
+                        <property name="AutoSize">False</property>
+                      </packing>
+                    </child>
                   </widget>
                   <packing>
                     <property name="Position">5</property>

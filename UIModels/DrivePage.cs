@@ -8,6 +8,7 @@ using System.Linq;
 using UIModels.MiniDisplay;
 using YandexServicesProvider;
 using System.Threading;
+using System.IO;
 
 namespace UIModels
 {
@@ -22,6 +23,7 @@ namespace UIModels
         private readonly IOperationGuard geocoderGuard = new TimedGuard(new TimeSpan(0, 0, 3));
         private readonly IOperationGuard obdGuard = new InterlockedGuard();
         private readonly IOperationGuard minidisplayGuard = new TimedGuard(new TimeSpan(0, 0, 4));
+        private readonly IOperationGuard cpuInfoGuard = new TimedGuard(new TimeSpan(0, 0, 10));
 
         private readonly DriveMiniDisplayModel miniDisplayModel;
 
@@ -87,6 +89,7 @@ namespace UIModels
                 SetProperty("air_temp", string.Format("{0}°, {1}", f.fact.First().temperature.Value, f.fact.First().weather_type));
 
                 SetProperty("weather_icon", weather.GetWeatherIcon(f.fact.First().imagev3.First().Value));
+                SetProperty("oil_temp_icon", Path.Combine(hc.Config.DataFolder, "icons", "OilTemp.png"));
             }
             else
             {
@@ -121,9 +124,26 @@ namespace UIModels
 
                 obdGuard.ExecuteIfFreeAsync(UpdateOBD);
                 minidisplayGuard.ExecuteIfFree(UpdateMiniDisplay);
+                cpuInfoGuard.ExecuteIfFreeAsync(UpdateCpuInfo, ex => SetProperty("cpu_info", "Error"));
             }
 
             base.OnPrimaryTick(timer);
+        }
+
+        private void UpdateCpuInfo()
+        {
+            if (!Disposed)
+            {
+                var cpuSpeed = NixHelpers.CPUInfo.GetCPUSpeed(hc.ProcessRunnerFactory);
+                var cpuTemp = NixHelpers.CPUInfo.GetCPUTemp(hc.ProcessRunnerFactory);
+
+                string info = string.Format("{0} Mhz ({1}°)", 
+                    cpuSpeed.HasValue ? cpuSpeed.Value.ToString() : "-",
+                    cpuTemp.HasValue ? cpuTemp.Value.ToString("0.0") : "-");
+
+                if (!Disposed)
+                    SetProperty("cpu_info", info);
+            }
         }
 
         protected override void OnDisposing(object sender, EventArgs e)
