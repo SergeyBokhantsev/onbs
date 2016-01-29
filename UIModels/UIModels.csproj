@@ -56,6 +56,8 @@
     <Compile Include="ConfigPages\NavitCommonConfigPage.cs" />
     <Compile Include="ConfigPages\NavitOSDConfigPage.cs" />
     <Compile Include="ConfigPages\ShutdownPage.cs" />
+    <Compile Include="DashCamCatalogModel.cs" />
+    <Compile Include="DashPlayerModel.cs" />
     <Compile Include="Dialogs\YesNoDialog.cs" />
     <Compile Include="DrivePage.cs" />
     <Compile Include="ExternalApplicationPage.cs" />

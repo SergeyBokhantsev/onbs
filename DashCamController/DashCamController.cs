@@ -55,6 +55,9 @@ namespace DashCamController
 
         public void StartRecording()
         {
+            if (recordEnabled)
+                return;
+
             recordEnabled = true;
             DoRecord();
         }
@@ -62,7 +65,18 @@ namespace DashCamController
         public void Stop()
         {
             recordEnabled = false;
-            cameraProcess.Exit();
+
+            if (cameraProcess != null && !cameraProcess.HasExited)
+            {
+                cameraProcess.Exit();
+                cameraProcess.WaitForExit(5000);
+            }
+        }
+
+        public FileInfo[] GetVideoFilesInfo()
+        {
+            var files = Directory.GetFiles(@"C:\Users\serg\Documents\GitHub\onbs4");//recordingFolder, string.Concat(fileNamePattern, "*", fileExtension));
+            return files.Select(f => new FileInfo(f)).OrderBy(fi => fi.CreationTime).ToArray();
         }
 
         private void DoRecord()
@@ -70,24 +84,31 @@ namespace DashCamController
             if (!recordEnabled)
                 return;
 
-            if (cameraProcess != null && !cameraProcess.HasExited)
+            try
             {
-                cameraProcess.Exit();
-				return;
+                if (cameraProcess != null && !cameraProcess.HasExited)
+                {
+                    cameraProcess.Exit();
+                    return;
+                }
+
+                var processConfig = new ProcessConfig
+                {
+                    ExePath = recordingExe,
+                    Args = string.Format(recordingArg, recordingLenSec * 1000, GetFileName()),
+                    Silent = true,
+                    WaitForUI = false,
+                    AliveMonitoringInterval = 200
+                };
+
+                cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);
+                cameraProcess.Exited += b => DoRecord();
+                cameraProcess.Run();
             }
-
-            var processConfig = new ProcessConfig
+            catch (Exception ex)
             {
-                 ExePath = recordingExe,
-                 Args = string.Format(recordingArg, recordingLenSec * 1000, GetFileName()),
-                 Silent = true,
-                 WaitForUI = false,
-                 AliveMonitoringInterval = 200
-            };
-
-            cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);
-            cameraProcess.Exited += b => DoRecord();
-            cameraProcess.Run();
+                hc.Logger.Log(this, ex);
+            }
         }
 
         private object GetFileName()

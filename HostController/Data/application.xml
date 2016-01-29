@@ -14,6 +14,7 @@
       <Accept name="Drive1" caption="NEXT"/>
       <F1 name="CommonConfig" caption="CFG"/>
       <F2 name="SystemInfoCatalog" caption="SYS"/>
+      <F3 name="DashCamCatalog" caption="REG"/>
       <F8 name="Shutdown" caption="PWR"/>
     </page>
     <page name="NavApp" model="NavigationAppPage" default_view="ExternalApplicationPage">
@@ -63,6 +64,22 @@
     </page>
     <page name="Main" model="MainPage" default_view="MainPage">
       <Cancel name="Drive1" caption="Drive"/>
+    </page>
+    <page name="DashCamCatalog" model="DashCamCatalogModel" default_view="CommonVertcalStackPage">
+      <Cancel name="Drive2" caption="Return"/>
+      <Accept action="More" caption="Next"/>
+      <F1 action="0" caption="---"/>
+      <F2 action="1" caption="---"/>
+      <F3 action="2" caption="---"/>
+      <F4 action="3" caption="---"/>
+      <F5 action="4" caption="---"/>
+      <F6 action="5" caption="---"/>
+      <F7 action="6" caption="---"/>
+      <F8 action="7" caption="---"/>
+    </page>
+    <page name="DashPlayer" model="DashPlayerModel" default_view="ExternalApplicationPage">
+      <Cancel name="DashCamCatalog"/>
+      <Accept action="Retry"/>
     </page>
     <page name="Shutdown" model="ShutdownPage" default_view="CommonVertcalStackPage">
       <Cancel name="Drive1" caption="Return"/>

@@ -123,6 +123,8 @@ namespace HostController
                 return elm327Controller as T;
             if (typeof(T) == typeof(IMiniDisplayController))
                 return miniDisplayController as T;
+            if (typeof(T) == typeof(IDashCamController))
+                return dashCamController as T;
 
             throw new NotImplementedException(typeof(T).ToString());
         }

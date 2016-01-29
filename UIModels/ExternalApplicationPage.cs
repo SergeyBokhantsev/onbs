@@ -21,7 +21,7 @@ namespace UIModels
 
             if (Runner != null)
             {
-                Runner.Exited += RunnerExited;
+                //Runner.Exited += RunnerExited;
 
                 this.Disposing += (s, e) => Runner.Exit();
 
@@ -37,10 +37,10 @@ namespace UIModels
             SetProperty("button_exit_label", "Close and back");
         }
 
-        void RunnerExited(bool unexpected)
-        {
-            hc.SyncContext.Post(o => hc.GetController<IUIController>().ShowDefaultPage(), null, "ExternalApplicationPage.RunnerExited");
-        }
+        //void RunnerExited(bool unexpected)
+        //{
+           // hc.SyncContext.Post(o => hc.GetController<IUIController>().ShowDefaultPage(), null, "ExternalApplicationPage.RunnerExited");
+        //}
 
         public virtual bool Run()
         {
@@ -62,29 +62,29 @@ namespace UIModels
             }
         }
 
-        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
-        {
-            switch (name)
-            {
-                case "Exit":
-                    ExitRunner();
-                    break;
+        //protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
+        //{
+        //    switch (name)
+        //    {
+        //        case "Exit":
+        //            ExitRunner();
+        //            break;
 
-                default:
-                    base.DoAction(name, actionArgs);
-                    break;
-            }
-        }
+        //        default:
+        //            base.DoAction(name, actionArgs);
+        //            break;
+        //    }
+        //}
 
-        private void ExitRunner()
-        {
-            if (Runner != null)
-            {
-                Runner.Exit();
-                Runner = null;
-            }
-            else
-                RunnerExited(false);
-        }
+        //private void ExitRunner()
+        //{
+        //    if (Runner != null)
+        //    {
+        //        Runner.Exit();
+        //        Runner = null;
+        //    }
+        //    else
+        //        RunnerExited(false);
+        //}
     }
 }
