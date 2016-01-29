@@ -95,24 +95,49 @@ namespace DashCamController
             if (!Directory.Exists(recordingFolder))
                 Directory.CreateDirectory(recordingFolder);
 
-            var files = Directory.GetFiles(recordingFolder, string.Concat(fileNamePattern, "*", fileExtension)).OrderByDescending(f => f).ToArray();
+			var files = Directory.GetFiles (recordingFolder, string.Concat (fileNamePattern, "*", fileExtension));
+
+			int oldest, newest;
+
+			FindExtremumIndexes (files, out oldest, out newest);
 
             if (files.Length >= recordingFilesNumberQuota)
             {
-                ThreadPool.QueueUserWorkItem(name => File.Delete((string)name), files.Last());
+                ThreadPool.QueueUserWorkItem(name => File.Delete((string)name),
+				 CreateFileName(oldest));
             }
 
-			var lastFileIndex = 0;
-
-			if (files.Length > 0) 
-			{
-				var lastFileName = files.First();
-				var lastFileIndexStr = Path.GetFileNameWithoutExtension (lastFileName).Substring (fileNamePattern.Length);//, lastFileName.Length - (fileNamePattern.Length + fileExtension.Length));
-				lastFileIndex = int.Parse (lastFileIndexStr);
-			}
-
-            return Path.Combine(recordingFolder, string.Concat(fileNamePattern, ++lastFileIndex, fileExtension));
+			return CreateFileName(newest+1);
         }
 
+		private string CreateFileName(int index)
+		{
+			return Path.Combine(recordingFolder, string.Concat(fileNamePattern, index, fileExtension));
+		}
+
+		private void FindExtremumIndexes(string[] files, out int oldest, out int newest)
+		{
+			oldest = int.MaxValue;
+			newest = int.MinValue;
+
+			foreach (var file in files) 
+			{
+				int temp;
+				var fileIndexStr = Path.GetFileNameWithoutExtension(file)
+					.Substring (fileNamePattern.Length);
+				if (int.TryParse (fileIndexStr, out temp)) 
+				{
+					if (temp < oldest)
+						oldest = temp;
+					if (temp > newest)
+						newest = temp;
+				}
+			}
+
+			if (oldest == int.MaxValue)
+				oldest = -1;
+			if (newest == int.MinValue)
+				newest = 0;
+		}
     }
 }
