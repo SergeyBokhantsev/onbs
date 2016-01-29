@@ -70,10 +70,10 @@ namespace DashCamController
             if (!recordEnabled)
                 return;
 
-            if (cameraProcess != null)
+            if (cameraProcess != null && !cameraProcess.HasExited)
             {
                 cameraProcess.Exit();
-                cameraProcess.WaitForExit(3000);
+				return;
             }
 
             var processConfig = new ProcessConfig
@@ -101,9 +101,14 @@ namespace DashCamController
                 File.Delete(files.Last());
             }
 
-            var lastFileName = files.Last();
-            var lastFileIndexStr = lastFileName.Substring(fileNamePattern.Length, lastFileName.Length - (fileNamePattern.Length + fileExtension.Length));
-            var lastFileIndex = int.Parse(lastFileIndexStr);
+			var lastFileIndex = 0;
+
+			if (files.Length > 0) 
+			{
+				var lastFileName = files.First();
+				var lastFileIndexStr = Path.GetFileNameWithoutExtension (lastFileName).Substring (fileNamePattern.Length);//, lastFileName.Length - (fileNamePattern.Length + fileExtension.Length));
+				lastFileIndex = int.Parse (lastFileIndexStr);
+			}
 
             return Path.Combine(recordingFolder, string.Concat(fileNamePattern, ++lastFileIndex, fileExtension));
         }
