@@ -55,6 +55,15 @@
         public static readonly string LoggedClasses = "LoggedClasses";
         public static readonly string LogFolder = "LogFolder";
 
+        public static readonly string DashCamRecorderExe = "DashCamRecorderExe";
+        public static readonly string DashCamRecorderArg = "DashCamRecorderArg";
+        public static readonly string DashCamRecorderFolder = "DashCamRecorderFolder";
+        public static readonly string DashCamRecorderFilesNumberQuota = "DashCamRecorderFilesNumberQuota";
+        public static readonly string DashCamRecorderSplitIntervalSec = "DashCamRecorderSplitIntervalSec";
+
+        public static readonly string DashCamPlayerExe = "DashCamPlayerExe";
+        public static readonly string DashCamPlayerArg = "DashCamPlayerArg";
+
         public static readonly string SystemTimeLocalZone = "SystemTimeLocalZone";
         public static readonly string SystemTimeMinDifference = "SystemTimeMinDifference";
         public static readonly string SystemTimeSetCommand = "SystemTimeSetCommand";

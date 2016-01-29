@@ -62,6 +62,7 @@
     <Compile Include="IChart.cs" />
     <Compile Include="IConfig.cs" />
     <Compile Include="IController.cs" />
+    <Compile Include="IDashCamController.cs" />
     <Compile Include="IHostTimer.cs" />
     <Compile Include="IElm327Controller.cs" />
     <Compile Include="IGPSController.cs" />

@@ -104,6 +104,7 @@ namespace TravelsClient
         {
             if (blocking)
             {
+                uploadLocker.WaitHandle.WaitOne(10000);
                 DoUpload();
             }
             else

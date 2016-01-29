@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GtkApplication", "GtkApplication\GtkApplication.csproj", "{C0FFA4A5-8B59-4386-9C03-B36AEACAA6E2}"
 EndProject
@@ -76,6 +76,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telemetry", "Telemetry\Telemetry.csproj", "{5A0EC45F-9757-45AC-80B0-4C854986AAF9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniDisplayController", "MiniDisplayController\MiniDisplayController.csproj", "{7F57B7A8-6743-4975-8491-900B4CC09DDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashCamController", "DashCamController\DashCamController.csproj", "{311A5749-DB14-4366-A32C-1045FCD2D0A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -397,6 +399,16 @@ Global
 		{7F57B7A8-6743-4975-8491-900B4CC09DDC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7F57B7A8-6743-4975-8491-900B4CC09DDC}.Release|x86.ActiveCfg = Release|Any CPU
 		{7F57B7A8-6743-4975-8491-900B4CC09DDC}.Release|x86.Build.0 = Release|Any CPU
+		{311A5749-DB14-4366-A32C-1045FCD2D0A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{311A5749-DB14-4366-A32C-1045FCD2D0A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{311A5749-DB14-4366-A32C-1045FCD2D0A6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{311A5749-DB14-4366-A32C-1045FCD2D0A6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{311A5749-DB14-4366-A32C-1045FCD2D0A6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{311A5749-DB14-4366-A32C-1045FCD2D0A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{311A5749-DB14-4366-A32C-1045FCD2D0A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{311A5749-DB14-4366-A32C-1045FCD2D0A6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{311A5749-DB14-4366-A32C-1045FCD2D0A6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{311A5749-DB14-4366-A32C-1045FCD2D0A6}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -424,6 +436,7 @@ Global
 		{A822C3F5-F40F-4DED-B568-CAEB1CF6A401} = {74505182-02D1-42B6-9FCD-0B935F35E348}
 		{5A0EC45F-9757-45AC-80B0-4C854986AAF9} = {74505182-02D1-42B6-9FCD-0B935F35E348}
 		{7F57B7A8-6743-4975-8491-900B4CC09DDC} = {08194974-F3C8-4166-97C8-6B5DF021468C}
+		{311A5749-DB14-4366-A32C-1045FCD2D0A6} = {08194974-F3C8-4166-97C8-6B5DF021468C}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = HostController\HostController.csproj

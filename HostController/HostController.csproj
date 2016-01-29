@@ -114,6 +114,10 @@
       <Project>{0E653FDA-F0DA-44CB-A932-4B37487EA731}</Project>
       <Name>InputController</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DashCamController\DashCamController.csproj">
+      <Project>{311a5749-db14-4366-a32c-1045fcd2d0a6}</Project>
+      <Name>DashCamController</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Elm327Controller\Elm327Controller.csproj">
       <Project>{ED21248D-2AF6-4B71-90C8-2CE86A5603E2}</Project>
       <Name>Elm327Controller</Name>

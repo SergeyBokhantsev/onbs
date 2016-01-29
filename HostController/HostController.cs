@@ -34,6 +34,7 @@ namespace HostController
         private TravelController.TravelController travelController;
         private Elm327Controller.Elm327Controller elm327Controller;
         private MiniDisplayController miniDisplayController;
+        private DashCamController.DashCamController dashCamController;
 
         private HostSynchronizationContext syncContext;
         private HostTimersController timersController;
@@ -180,7 +181,7 @@ namespace HostController
                     var exceptionFileName = WriteUnhandledException(exception);
                     Logger.Log(this, exception);
                     Logger.Log(this, string.Format("Unhandled exception occured, terminating application. Exception details logged to '{0}'", exceptionFileName), LogLevels.Fatal);
-                    Shutdown(HostControllerShutdownModes.UnhandledException);
+                    Shutdown(HostControllerShutdownModes.UnhandledException).Wait();
                 };
         }
 
@@ -302,6 +303,9 @@ namespace HostController
             if (config.Environment == Environments.RPi)
                 gpsCtrl.GPRMCReseived += gprmc => CheckSystemTimeFromGPS(gprmc);
 
+            dashCamController = new DashCamController.DashCamController(this);
+            dashCamController.StartRecording();
+
             // Timer for online log upoad
 			CreateTimer(60000, ht => onlineLogger.Upload(false), true, false, "online logger timer");
 
@@ -320,7 +324,7 @@ namespace HostController
                 if (dr == DialogResults.Yes)
                 {
                     Logger.Log(this, "Begin restart because of Internet keeper request...", LogLevels.Warning);
-                    SyncContext.Post(o => Shutdown(HostControllerShutdownModes.Restart), null, "Shutdown");
+                    SyncContext.Post(async o => await Shutdown(HostControllerShutdownModes.Restart), null, "Shutdown");
                 }
             };
 
@@ -392,6 +396,8 @@ namespace HostController
         public async Task Shutdown(HostControllerShutdownModes mode)
         {
 			arduController.StopPing();
+
+            dashCamController.Stop();
 
             var shutdownModel = uiController.ShowPage("ShutdownProgress", null) as UIModels.ShutdownProgressModel;
 
