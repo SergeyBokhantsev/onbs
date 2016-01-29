@@ -27,6 +27,12 @@
         /// No info messages to log
         /// </summary>
         public bool Silent { get; set; }
+        public int AliveMonitoringInterval { get; set; }
+
+        public ProcessConfig()
+        {
+            AliveMonitoringInterval = 1000;
+        }
     }
 
     public interface IProcessRunnerFactory

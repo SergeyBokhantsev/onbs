@@ -81,7 +81,8 @@ namespace DashCamController
                  ExePath = recordingExe,
                  Args = string.Format(recordingArg, recordingLenSec * 1000, GetFileName()),
                  Silent = true,
-                 WaitForUI = false
+                 WaitForUI = false,
+                 AliveMonitoringInterval = 200
             };
 
             cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);
@@ -98,7 +99,7 @@ namespace DashCamController
 
             if (files.Length >= recordingFilesNumberQuota)
             {
-                File.Delete(files.Last());
+                ThreadPool.QueueUserWorkItem(name => File.Delete((string)name), files.Last());
             }
 
 			var lastFileIndex = 0;

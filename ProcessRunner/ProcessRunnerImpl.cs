@@ -107,7 +107,7 @@ namespace ProcessRunner
 
                 while (!proc.HasExited)
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(config.AliveMonitoringInterval);
                 }
 
                 if (!config.Silent)
