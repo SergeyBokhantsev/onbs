@@ -60,10 +60,10 @@ namespace DashCamController
             return files.Select(f => new FileInfo(f)).OrderBy(fi =>
                 {
                     int ind;
-                    if (int.TryParse(fi.Name, out ind))
-                        return ind;
+                    if (int.TryParse(Path.GetFileNameWithoutExtension(fi.Name), out ind))
+                        return int.MaxValue - ind;
                     else
-                        return int.MaxValue;
+						return int.MinValue;
                 }).ToArray();
         }
 
@@ -123,9 +123,9 @@ namespace DashCamController
 
 			int oldest, newest;
 
-			FindExtremumIndexes (files, out oldest, out newest);
+			var allFilesCount = FindExtremumIndexes (files, out oldest, out newest);
 
-            if (files.Length >= recordingFilesNumberQuota)
+            if (allFilesCount >= recordingFilesNumberQuota)
             {
                 ThreadPool.QueueUserWorkItem(name => File.Delete((string)name),
 				 CreateFileName(oldest));
@@ -139,10 +139,11 @@ namespace DashCamController
 			return Path.Combine(recordingFolder, string.Concat(index, fileExtension));
 		}
 
-		private void FindExtremumIndexes(string[] files, out int oldest, out int newest)
+		private int FindExtremumIndexes(string[] files, out int oldest, out int newest)
 		{
 			oldest = int.MaxValue;
 			newest = int.MinValue;
+			var allFilesCount = 0;
 
 			foreach (var file in files) 
 			{
@@ -150,6 +151,8 @@ namespace DashCamController
                 var fileIndexStr = Path.GetFileNameWithoutExtension(file);
 				if (int.TryParse (fileIndexStr, out temp)) 
 				{
+					allFilesCount++;
+
 					if (temp < oldest)
 						oldest = temp;
 					if (temp > newest)
@@ -161,6 +164,8 @@ namespace DashCamController
 				oldest = -1;
 			if (newest == int.MinValue)
 				newest = 0;
+
+			return allFilesCount;
 		}
 
         public void Dispose()
