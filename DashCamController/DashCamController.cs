@@ -13,7 +13,6 @@ namespace DashCamController
     public class DashCamController : IDashCamController, IDisposable
     {
         private const string fileExtension = ".h264";
-        private const string fileNamePattern = "video_";
 
         private readonly IHostController hc;
         private readonly string recordingExe;
@@ -57,8 +56,15 @@ namespace DashCamController
 
         public FileInfo[] GetVideoFilesInfo()
         {
-            var files = Directory.GetFiles(recordingFolder, string.Concat(fileNamePattern, "*", fileExtension));
-            return files.Select(f => new FileInfo(f)).OrderBy(fi => fi.CreationTime).Reverse().ToArray();
+            var files = Directory.GetFiles(recordingFolder, string.Concat("*", fileExtension));
+            return files.Select(f => new FileInfo(f)).OrderBy(fi =>
+                {
+                    int ind;
+                    if (int.TryParse(fi.Name, out ind))
+                        return ind;
+                    else
+                        return int.MaxValue;
+                }).ToArray();
         }
 
         private void MonitorLoop()
@@ -71,7 +77,12 @@ namespace DashCamController
                 {
                     if (cameraProcess == null || cameraProcess.HasExited)
                         DoRecord();
-                }                
+                }
+                else
+                {
+                    if (cameraProcess != null && !cameraProcess.HasExited)
+                        cameraProcess.Exit();
+                }
             }
         }
 
@@ -108,7 +119,7 @@ namespace DashCamController
             if (!Directory.Exists(recordingFolder))
                 Directory.CreateDirectory(recordingFolder);
 
-			var files = Directory.GetFiles (recordingFolder, string.Concat (fileNamePattern, "*", fileExtension));
+			var files = Directory.GetFiles (recordingFolder, string.Concat ("*", fileExtension));
 
 			int oldest, newest;
 
@@ -125,7 +136,7 @@ namespace DashCamController
 
 		private string CreateFileName(int index)
 		{
-			return Path.Combine(recordingFolder, string.Concat(fileNamePattern, index, fileExtension));
+			return Path.Combine(recordingFolder, string.Concat(index, fileExtension));
 		}
 
 		private void FindExtremumIndexes(string[] files, out int oldest, out int newest)
@@ -136,8 +147,7 @@ namespace DashCamController
 			foreach (var file in files) 
 			{
 				int temp;
-				var fileIndexStr = Path.GetFileNameWithoutExtension(file)
-					.Substring (fileNamePattern.Length);
+                var fileIndexStr = Path.GetFileNameWithoutExtension(file);
 				if (int.TryParse (fileIndexStr, out temp)) 
 				{
 					if (temp < oldest)
