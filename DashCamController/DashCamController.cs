@@ -68,15 +68,15 @@ namespace DashCamController
 
             if (cameraProcess != null && !cameraProcess.HasExited)
             {
-                cameraProcess.Exit();
-                cameraProcess.WaitForExit(5000);
+				ThreadPool.QueueUserWorkItem(o => cameraProcess.Exit());
+                //cameraProcess.WaitForExit(5000);
             }
         }
 
         public FileInfo[] GetVideoFilesInfo()
         {
-            var files = Directory.GetFiles(@"C:\Users\serg\Documents\GitHub\onbs4");//recordingFolder, string.Concat(fileNamePattern, "*", fileExtension));
-            return files.Select(f => new FileInfo(f)).OrderBy(fi => fi.CreationTime).ToArray();
+            var files = Directory.GetFiles(recordingFolder, string.Concat(fileNamePattern, "*", fileExtension));
+            return files.Select(f => new FileInfo(f)).OrderBy(fi => fi.CreationTime).Reverse().ToArray();
         }
 
         private void DoRecord()

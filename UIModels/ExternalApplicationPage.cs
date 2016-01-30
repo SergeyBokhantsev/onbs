@@ -21,7 +21,7 @@ namespace UIModels
 
             if (Runner != null)
             {
-                //Runner.Exited += RunnerExited;
+                Runner.Exited += RunnerExited;
 
                 this.Disposing += (s, e) => Runner.Exit();
 
@@ -37,10 +37,12 @@ namespace UIModels
             SetProperty("button_exit_label", "Close and back");
         }
 
-        //void RunnerExited(bool unexpected)
-        //{
-           // hc.SyncContext.Post(o => hc.GetController<IUIController>().ShowDefaultPage(), null, "ExternalApplicationPage.RunnerExited");
-        //}
+        void RunnerExited(bool unexpected)
+        {
+			if (unexpected)
+				Action(new PageModelActionEventArgs(ModelNames.ButtonCancel, 
+				                                    Interfaces.Input.ButtonStates.Press));
+        }
 
         public virtual bool Run()
         {
