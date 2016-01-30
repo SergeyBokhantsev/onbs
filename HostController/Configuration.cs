@@ -128,11 +128,21 @@ namespace HostController
         public void Set<T>(string name, T value)
         {
             cfg.AppSettings.Settings[name].Value = value.ToString();
+            OnChanged(name);
+        }
+
+        private void OnChanged(string name)
+        {
+            var handler = Changed;
+            if (handler != null)
+                handler(name);
         }
 
         public void Save()
         {
             cfg.Save(ConfigurationSaveMode.Full);
         }
+
+        public event Action<string> Changed;
     }
 }

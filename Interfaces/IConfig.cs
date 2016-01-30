@@ -1,4 +1,5 @@
-﻿namespace Interfaces
+﻿using System;
+namespace Interfaces
 {
     public enum Environments { Win, RPi };
 
@@ -14,6 +15,8 @@
 
     public interface IConfig : ISessionConfig
     {
+        event Action<string> Changed;
+
         string GetString(string name);
         int GetInt(string name);
         double GetDouble(string name);
@@ -55,6 +58,8 @@
         public static readonly string LoggedClasses = "LoggedClasses";
         public static readonly string LogFolder = "LogFolder";
 
+        public static readonly string DashCamRecorderEnabled = "DashCamRecorderEnabled";
+        public static readonly string DashCamRecorderPreviewEnabled = "DashCamRecorderPreviewEnabled";
         public static readonly string DashCamRecorderExe = "DashCamRecorderExe";
         public static readonly string DashCamRecorderArg = "DashCamRecorderArg";
         public static readonly string DashCamRecorderFolder = "DashCamRecorderFolder";

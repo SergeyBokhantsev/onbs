@@ -22,14 +22,22 @@ namespace UIModels
         {
             SetProperty(ModelNames.PageTitle, "Dash camera files");
 
-            var dcc = hc.GetController<IDashCamController>();
-            dcc.Stop();
+            hc.Config.Set(ConfigNames.DashCamRecorderEnabled, false);
 
-            fileInfo = dcc.GetVideoFilesInfo();
+            fileInfo = hc.GetController<IDashCamController>().GetVideoFilesInfo();
 
             FillList();
 
-            this.Disposing += DashCamCatalogModel_Disposing;
+            Disposing += DashCamCatalogModel_Disposing;
+        }
+
+        private async void DashCamCatalogModel_Disposing(object sender, EventArgs e)
+        {
+            var dr = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Resume recording", "Do you want to resume video recording?", "Resume", "No", hc, 10000, DialogResults.No));
+            if (dr == DialogResults.Yes)
+            {
+                hc.Config.Set(ConfigNames.DashCamRecorderEnabled, true);
+            }
         }
 
         private void FillList()
@@ -70,8 +78,8 @@ namespace UIModels
                     var index = skip + int.Parse(name);
                     if (fileInfo.Length > index)
                     {
+                        Disposing -= DashCamCatalogModel_Disposing;
                         SelectedFile = fileInfo[index];
-                        this.Disposing -= DashCamCatalogModel_Disposing;
                         var playerModel = hc.GetController<IUIController>().ShowPage("DashPlayer", null) as DashPlayerModel;
                         playerModel.Run();
                     }
@@ -80,16 +88,6 @@ namespace UIModels
                 default:
                     base.DoAction(name, actionArgs);
                     break;
-            }
-        }
-
-        async void DashCamCatalogModel_Disposing(object sender, EventArgs e)
-        {
-            var dr = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Resume recording", "Do you want to resume video recording?", "Resume", "No", hc, 10000, DialogResults.No));
-
-            if (dr == DialogResults.Yes)
-            {
-                hc.GetController<IDashCamController>().StartRecording();
             }
         }
     }

@@ -9,8 +9,6 @@ namespace Interfaces
 {
     public interface IDashCamController : IController
     {
-        void StartRecording();
-        void Stop();
         FileInfo[] GetVideoFilesInfo();
     }
 }

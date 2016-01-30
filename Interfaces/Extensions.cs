@@ -4,10 +4,11 @@ namespace Interfaces
 {
     public static class Extensions
     {
-        public static void InvertBoolSetting(this IConfig cfg, string name)
+        public static bool InvertBoolSetting(this IConfig cfg, string name)
         {
-            var value = cfg.GetBool(name);
-            cfg.Set(name, !value);
+            var value = !cfg.GetBool(name);
+            cfg.Set(name, value);
+            return value;
         }
 
         public static void ExecuteIfFreeAsync(this IOperationGuard guard, Action action, Action<Exception> exceptionHandler = null)

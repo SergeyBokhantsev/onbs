@@ -306,7 +306,6 @@ namespace HostController
                 gpsCtrl.GPRMCReseived += gprmc => CheckSystemTimeFromGPS(gprmc);
 
             dashCamController = new DashCamController.DashCamController(this);
-            dashCamController.StartRecording();
 
             // Timer for online log upoad
 			CreateTimer(60000, ht => onlineLogger.Upload(false), true, false, "online logger timer");
@@ -399,7 +398,7 @@ namespace HostController
         {
 			arduController.StopPing();
 
-            dashCamController.Stop();
+            dashCamController.Dispose();
 
             var shutdownModel = uiController.ShowPage("ShutdownProgress", null) as UIModels.ShutdownProgressModel;
 

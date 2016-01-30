@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DashCamController
 {
-    public class DashCamController : IDashCamController
+    public class DashCamController : IDashCamController, IDisposable
     {
         private const string fileExtension = ".h264";
         private const string fileNamePattern = "video_";
@@ -22,8 +22,11 @@ namespace DashCamController
         private readonly string recordingFolder;
         private readonly int recordingFilesNumberQuota;
 
+        private readonly AutoResetEvent monitorEvent = new AutoResetEvent(true);
+
         private IProcessRunner cameraProcess;
-        private bool recordEnabled;
+
+        private bool disposed;
 
         public DashCamController(IHostController hc)
         {
@@ -38,39 +41,18 @@ namespace DashCamController
             recordingFolder = hc.Config.GetString(ConfigNames.DashCamRecorderFolder);
             recordingFilesNumberQuota = hc.Config.GetInt(ConfigNames.DashCamRecorderFilesNumberQuota);
 
-            //var thread = new Thread(WorkingLoop);
-            //thread.Priority = ThreadPriority.AboveNormal;
-            //thread.IsBackground = true;
-            //thread.Name = "DashCam";
-            //thread.Start();
+            hc.Config.Changed += Config_Changed;
+
+            var monitorThread = new Thread(MonitorLoop);
+            monitorThread.Name = "DashCamMonitor";
+            monitorThread.IsBackground = true;
+            monitorThread.Start();
         }
 
-        //private void WorkingLoop()
-        //{
-        //    while(true)
-        //    {
-        //        if (cameraProcess == null || cameraProcess.Exited)
-        //    }
-        //}
-
-        public void StartRecording()
+        void Config_Changed(string name)
         {
-            if (recordEnabled)
-                return;
-
-            recordEnabled = true;
-            DoRecord();
-        }
-
-        public void Stop()
-        {
-            recordEnabled = false;
-
-            if (cameraProcess != null && !cameraProcess.HasExited)
-            {
-				ThreadPool.QueueUserWorkItem(o => cameraProcess.Exit());
-                //cameraProcess.WaitForExit(5000);
-            }
+            if (name == ConfigNames.DashCamRecorderEnabled)
+                monitorEvent.Set();
         }
 
         public FileInfo[] GetVideoFilesInfo()
@@ -79,19 +61,32 @@ namespace DashCamController
             return files.Select(f => new FileInfo(f)).OrderBy(fi => fi.CreationTime).Reverse().ToArray();
         }
 
+        private void MonitorLoop()
+        {
+            while (!disposed)
+            {
+                monitorEvent.WaitOne();
+
+                if (hc.Config.GetBool(ConfigNames.DashCamRecorderEnabled))
+                {
+                    if (cameraProcess == null || cameraProcess.HasExited)
+                        DoRecord();
+                }
+                else
+                {
+                    if (cameraProcess != null && !cameraProcess.HasExited)
+                        cameraProcess.Exit();
+                }
+            }
+        }
+
         private void DoRecord()
         {
-            if (!recordEnabled)
+            if (disposed)
                 return;
 
             try
             {
-                if (cameraProcess != null && !cameraProcess.HasExited)
-                {
-                    cameraProcess.Exit();
-                    return;
-                }
-
                 var processConfig = new ProcessConfig
                 {
                     ExePath = recordingExe,
@@ -102,12 +97,14 @@ namespace DashCamController
                 };
 
                 cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);
-                cameraProcess.Exited += b => DoRecord();
+                cameraProcess.Exited += b => monitorEvent.Set();
                 cameraProcess.Run();
             }
             catch (Exception ex)
             {
                 hc.Logger.Log(this, ex);
+                Thread.Sleep(5000);
+                monitorEvent.Set();
             }
         }
 
@@ -160,5 +157,14 @@ namespace DashCamController
 			if (newest == int.MinValue)
 				newest = 0;
 		}
+
+        public void Dispose()
+        {
+            if (!disposed)
+            {
+                disposed = true;
+                hc.Config.Changed -= Config_Changed;
+            }
+        }
     }
 }
