@@ -22,7 +22,9 @@ namespace UIModels
             {
                  ExePath = hc.Config.GetString(ConfigNames.DashCamPlayerExe),
                  Args = string.Format(hc.Config.GetString(ConfigNames.DashCamPlayerArg), DashCamCatalogModel.SelectedFile.FullName),
-                 WaitForUI = true
+                 WaitForUI = false,
+				 RedirectStandardInput = false,
+				 RedirectStandardOutput = false
             };
 
             return hc.ProcessRunnerFactory.Create(config);

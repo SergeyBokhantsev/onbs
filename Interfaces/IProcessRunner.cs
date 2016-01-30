@@ -27,11 +27,16 @@
         /// No info messages to log
         /// </summary>
         public bool Silent { get; set; }
-        public int AliveMonitoringInterval { get; set; }
+        
+		public int AliveMonitoringInterval { get; set; }
+		public bool RedirectStandardOutput { get; set; }
+		public bool RedirectStandardInput { get; set; }
 
         public ProcessConfig()
         {
             AliveMonitoringInterval = 1000;
+			RedirectStandardOutput = true;
+			RedirectStandardInput = true;
         }
     }
 

@@ -71,12 +71,7 @@ namespace DashCamController
                 {
                     if (cameraProcess == null || cameraProcess.HasExited)
                         DoRecord();
-                }
-                else
-                {
-                    if (cameraProcess != null && !cameraProcess.HasExited)
-                        cameraProcess.Exit();
-                }
+                }                
             }
         }
 
@@ -164,6 +159,9 @@ namespace DashCamController
             {
                 disposed = true;
                 hc.Config.Changed -= Config_Changed;
+
+				if (cameraProcess != null && !cameraProcess.HasExited)
+					cameraProcess.Exit();
             }
         }
     }
