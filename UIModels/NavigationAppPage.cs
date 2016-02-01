@@ -1,6 +1,7 @@
 ﻿using Interfaces;
 using Interfaces.UI;
 using System;
+using System.IO;
 
 namespace UIModels
 {
@@ -21,8 +22,8 @@ namespace UIModels
             {
                 var config = hc.Config;
 
-                var templatePath = config.GetString(ConfigNames.NavitConfigTemplatePath);
-                var outFile = config.GetString(ConfigNames.NavitConfigPath);
+				var templatePath = Path.Combine(hc.Config.DataFolder, config.GetString(ConfigNames.NavitConfigTemplatePath));
+				var outFile = Path.Combine(hc.Config.DataFolder, config.GetString(ConfigNames.NavitConfigPath));
 
                 var navitConfig = new NavitConfigGenerator.NavitConfiguration();
 
@@ -49,7 +50,9 @@ namespace UIModels
                 {
                     ExePath = config.GetString(ConfigNames.NavitExe),
                     Args = string.Format(config.GetString(ConfigNames.NavitArgs), outFile),
-                    WaitForUI = true
+                    WaitForUI = true,
+					RedirectStandardOutput = false,
+					RedirectStandardInput = false
                 };
 
                 return hc.ProcessRunnerFactory.Create(processConfig);

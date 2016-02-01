@@ -56,6 +56,9 @@ namespace DashCamController
 
         public FileInfo[] GetVideoFilesInfo()
         {
+			if (!Directory.Exists (recordingFolder))
+				return new FileInfo[0];
+
             var files = Directory.GetFiles(recordingFolder, string.Concat("*", fileExtension));
             return files.Select(f => new FileInfo(f)).OrderBy(fi =>
                 {

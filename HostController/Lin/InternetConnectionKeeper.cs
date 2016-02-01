@@ -196,8 +196,8 @@ namespace HostController.Lin
         {
             try
             {
-                if (!Directory.Exists(checkFolder))
-                    return false;
+                //if (!Directory.Exists(checkFolder))
+                   // return false;
 
                 var request = WebRequest.Create(config.GetString(ConfigNames.InetKeeperCheckUrl)) as HttpWebRequest;
 

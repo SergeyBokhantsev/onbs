@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System;
 
 namespace NixHelpers
 {
@@ -29,7 +30,7 @@ namespace NixHelpers
             var devicesMap = new Dictionary<string, List<string>>(6);
 
             var regUSB = new Regex(@"^\[.+\] (usb \d-\d.\d):(.+)");
-            
+
             foreach (var line in dmesg.Split('\n'))
             {
                 var match = regUSB.Match(line);
