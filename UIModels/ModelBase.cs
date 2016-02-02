@@ -90,7 +90,7 @@ namespace UIModels
             }
         }
 
-        public static IPageModel CreateModel(IHostController hc, MappedPage pageDescriptor, string viewName)
+        public static IPageModel CreateModel(IHostController hc, MappedPage pageDescriptor, string viewName, object modelArgument)
         {
             try
             {
@@ -99,15 +99,31 @@ namespace UIModels
                     var type = Assembly.GetExecutingAssembly().GetType(string.Concat("UIModels.", pageDescriptor.ModelTypeName));
                     if (type != null)
                     {
-                        var constructor = type.GetConstructor(new[] { typeof(string), typeof(IHostController), typeof(MappedPage) });
+                        if (viewName == null)
+                        {
+                            viewName = pageDescriptor.DefaultViewName;
+                        }
+
+                        IPageModel model = null;
+
+                        var constructor = type.GetConstructor(new[] { typeof(string), typeof(IHostController), typeof(MappedPage), typeof(object) });
                         if (constructor != null)
                         {
-                            if (viewName == null)
-                            {
-                                viewName = pageDescriptor.DefaultViewName;
-                            }
+                            model = constructor.Invoke(new object[] { viewName, hc, pageDescriptor, modelArgument }) as IPageModel;
+                        }
+                        else
+                        {
+                            hc.Logger.LogIfDebug(typeof(ModelBase), string.Format("No extended constructor found for model '{0}'. Trying to use default...", pageDescriptor.ModelTypeName));
+                            constructor = type.GetConstructor(new[] { typeof(string), typeof(IHostController), typeof(MappedPage) });
 
-                            var model = constructor.Invoke(new object[] { viewName, hc, pageDescriptor }) as IPageModel;
+                            if (constructor != null)
+                            {
+                                model = constructor.Invoke(new object[] { viewName, hc, pageDescriptor }) as IPageModel;                               
+                            }
+                        }
+
+                        if (model != null)
+                        {
                             ApplicationMap.SetCaptions(model, pageDescriptor);
                             return model;
                         }
@@ -146,7 +162,7 @@ namespace UIModels
                     {
                         if (actionArgs.State == ButtonStates.Press)
                         {
-                            hc.GetController<IUIController>().ShowPage(pageAction.PageName, pageAction.ViewName);
+                            hc.GetController<IUIController>().ShowPage(pageAction.PageName, pageAction.ViewName, null);
                         }
                     }
                     else

@@ -10,5 +10,8 @@ namespace Interfaces
     public interface IDashCamController : IController
     {
         FileInfo[] GetVideoFilesInfo();
+
+        bool IsProtected(FileInfo fileInfo);
+        void ProtectDeletion(FileInfo fileInfo);
     }
 }

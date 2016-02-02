@@ -66,8 +66,8 @@ namespace Interfaces
         public static readonly string DashCamRecorderFilesNumberQuota = "DashCamRecorderFilesNumberQuota";
         public static readonly string DashCamRecorderSplitIntervalSec = "DashCamRecorderSplitIntervalSec";
 
-        public static readonly string DashCamPlayerExe = "DashCamPlayerExe";
-        public static readonly string DashCamPlayerArg = "DashCamPlayerArg";
+        public static readonly string DashCamQuickPlay_h264Exe = "DashCamQuickPlay_h264Exe";
+        public static readonly string DashCamQuickPlay_h264Arg = "DashCamQuickPlay_h264Arg";
 
         public static readonly string SystemTimeLocalZone = "SystemTimeLocalZone";
         public static readonly string SystemTimeMinDifference = "SystemTimeMinDifference";

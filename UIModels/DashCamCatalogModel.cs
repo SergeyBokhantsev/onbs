@@ -15,8 +15,6 @@ namespace UIModels
         private readonly FileInfo[] fileInfo;
         private static int skip;
 
-        internal static FileInfo SelectedFile;
-
         public DashCamCatalogModel(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)
         {
@@ -79,9 +77,7 @@ namespace UIModels
                     if (fileInfo.Length > index)
                     {
                         Disposing -= DashCamCatalogModel_Disposing;
-                        SelectedFile = fileInfo[index];
-                        var playerModel = hc.GetController<IUIController>().ShowPage("DashPlayer", null) as DashPlayerModel;
-                        playerModel.Run();
+                        hc.GetController<IUIController>().ShowPage("DashFileOptions", null, fileInfo[index]);
                     }
                     break;
 

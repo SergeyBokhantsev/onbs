@@ -12,7 +12,7 @@ namespace GtkLauncher
 		{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-			app.ShowPage(GetDrivePage());
+			app.ShowPage(GetFileOptionsPage());
 
 				app.Run(false);
 
@@ -334,6 +334,23 @@ namespace GtkLauncher
 			), null, 200, 200);
 
 			page.SetProperty ("timer", timer);
+
+			return page;
+		}
+
+		private static IPageModel GetFileOptionsPage()
+		{
+			var page = new EmptyPageModel ("FileOptionsPage");
+
+			page.SetProperty ("file_name", "Myvideo1");
+			page.SetProperty ("file_props", "Created: 1111, Size: 333");
+
+			page.SetProperty (ModelNames.ButtonF1Label, "Quick preview");
+			page.SetProperty (ModelNames.ButtonF2Label, "Protect deletion");
+			page.SetProperty (ModelNames.ButtonF3Label, "View normally");
+			page.SetProperty (ModelNames.ButtonF4Label, "Copy to external storage");
+			page.SetProperty (ModelNames.ButtonF5Label, "Remove");
+			page.SetProperty (ModelNames.ButtonCancelLabel, "Return to files list");
 
 			return page;
 		}

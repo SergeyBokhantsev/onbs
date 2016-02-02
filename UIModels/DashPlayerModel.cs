@@ -11,23 +11,9 @@ namespace UIModels
 {
     public class DashPlayerModel : ExternalApplicationPage
     {
-        public DashPlayerModel(string viewName, IHostController hc, MappedPage pageDescriptor)
-            : base(viewName, hc, pageDescriptor, CreateProcessRunner(hc))
+        public DashPlayerModel(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
+            : base(viewName, hc, pageDescriptor, arg as IProcessRunner)
         {
-        }
-
-        private static IProcessRunner CreateProcessRunner(IHostController hc)
-        {
-            var config = new ProcessConfig
-            {
-                 ExePath = hc.Config.GetString(ConfigNames.DashCamPlayerExe),
-                 Args = string.Format(hc.Config.GetString(ConfigNames.DashCamPlayerArg), DashCamCatalogModel.SelectedFile.FullName),
-                 WaitForUI = false,
-				 RedirectStandardInput = false,
-				 RedirectStandardOutput = false
-            };
-
-            return hc.ProcessRunnerFactory.Create(config);
         }
     }
 }

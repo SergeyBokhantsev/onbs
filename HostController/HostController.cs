@@ -279,7 +279,7 @@ namespace HostController
                 Config.GetString(ConfigNames.UIHostAssemblyName), 
                 Config.GetString(ConfigNames.UIHostClass), 
                 map,
-                this, (pdescr, viewModelName) => UIModels.ModelBase.CreateModel(this, pdescr, viewModelName));
+                this, (pdescr, viewModelName, modelArgument) => UIModels.ModelBase.CreateModel(this, pdescr, viewModelName, modelArgument));
 
             uiController.DialogPending += value =>
             {
@@ -400,7 +400,7 @@ namespace HostController
 
             dashCamController.Dispose();
 
-            var shutdownModel = uiController.ShowPage("ShutdownProgress", null) as UIModels.ShutdownProgressModel;
+            var shutdownModel = uiController.ShowPage("ShutdownProgress", null, null) as UIModels.ShutdownProgressModel;
 
             Action<string> showLine = line => { if (shutdownModel != null) { shutdownModel.AddLine(line); } };
 

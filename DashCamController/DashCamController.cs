@@ -56,6 +56,8 @@ namespace DashCamController
 
         public FileInfo[] GetVideoFilesInfo()
         {
+            return Directory.GetFiles(@"D:\onbs3").Select(f => new FileInfo(f)).ToArray();
+
 			if (!Directory.Exists (recordingFolder))
 				return new FileInfo[0];
 
@@ -181,6 +183,16 @@ namespace DashCamController
 				if (cameraProcess != null && !cameraProcess.HasExited)
 					cameraProcess.Exit();
             }
+        }
+
+        public bool IsProtected(FileInfo fileInfo)
+        {
+            return false;
+        }
+
+        public void ProtectDeletion(FileInfo fileInfo)
+        {
+            throw new NotImplementedException();
         }
     }
 }

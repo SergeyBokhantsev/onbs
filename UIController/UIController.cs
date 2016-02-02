@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace UIController
 {
-    public delegate IPageModel PageConstructorDelegate(MappedPage pageDescriptor, string viewModelName);
+    public delegate IPageModel PageConstructorDelegate(MappedPage pageDescriptor, string viewModelName, object modelArgument);
 
     public class UIController : IUIController
     {
@@ -112,16 +112,16 @@ namespace UIController
 
         public void ShowDefaultPage()
         {
-            ShowPage(map.DefaultPageName, map.DefaultPageViewName);
+            ShowPage(map.DefaultPageName, map.DefaultPageViewName, null);
         }
 
-        private IPageModel CreateModel(string descriptorName, string viewName = null)
+        private IPageModel CreateModel(string descriptorName, object arg, string viewName = null)
         {
             var pageDescriptor = map.GetPage(descriptorName);
-            return pageConstructor(pageDescriptor, viewName);
+            return pageConstructor(pageDescriptor, viewName, arg);
         }
 
-        public IPageModel ShowPage(string descriptorName, string viewName)
+        public IPageModel ShowPage(string descriptorName, string viewName, object arg)
         {
             AssertThread();
             AssertHost();
@@ -135,11 +135,11 @@ namespace UIController
 
             try
             {
-                model = CreateModel(descriptorName, viewName);
+                model = CreateModel(descriptorName, arg, viewName);
             }
             catch (Exception ex)
             {
-                model = CreateModel("UnexpectedError");
+                model = CreateModel("UnexpectedError", arg);
                 dynamic unexpectedErrorModel = model;
                 unexpectedErrorModel.AddLine(string.Concat("Cannot create model for descriptor: ", descriptorName));
                 unexpectedErrorModel.AddLine(string.Concat("Exception: ", ex.Message));

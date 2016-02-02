@@ -25,6 +25,16 @@ namespace GtkApplication
 			}
 		}
 
+		public int HeightRequest
+		{
+			get {
+				return label.HeightRequest;
+			}
+			set {
+				label.HeightRequest = value;
+			}
+		}
+
 		public FlatButton(EventBox box, LookAndFeel scheme)
 			:this(box, scheme, TextAligment.CenterMiddle)
 		{

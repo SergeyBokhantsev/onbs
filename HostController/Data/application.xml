@@ -83,9 +83,16 @@
       <F7 action="6" caption="---"/>
       <F8 action="7" caption="---"/>
     </page>
+    <page name="DashFileOptions" model="DashFileOptionsModel" default_view="FileOptionsPage">
+      <Cancel name="DashCamCatalog" caption="Return to catalog"/>
+      <F1 action="QuickView" caption="Quick view"/>
+      <F2 action="ProtectDeletion" caption="Protect deletion"/>
+      <F3 action="ViewNormal" caption="View normally"/>
+      <F4 action="CopyExternal" caption="Copy to External storage"/>
+      <F5 action="Remove" caption="Remove this video"/>
+    </page>
     <page name="DashPlayer" model="DashPlayerModel" default_view="ExternalApplicationPage">
-      <Cancel name="DashCamCatalog"/>
-      <Accept action="Retry"/>
+      <Cancel name="DashFileOptions"/>
     </page>
     <page name="Shutdown" model="ShutdownPage" default_view="CommonVertcalStackPage">
       <Cancel name="Drive1" caption="Return"/>
