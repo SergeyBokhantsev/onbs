@@ -12,16 +12,13 @@ namespace DashCamController
 {
     public class DashCamController : IDashCamController, IDisposable
     {
-        private const string fileExtension = ".h264";
-
         private readonly IHostController hc;
         private readonly string recordingExe;
         private readonly string recordingArg;
         private readonly int recordingLenSec;
-        private readonly string recordingFolder;
-        private readonly int recordingFilesNumberQuota;
 
         private readonly AutoResetEvent monitorEvent = new AutoResetEvent(true);
+        private readonly FileManager fileManager;
 
         private IProcessRunner cameraProcess;
 
@@ -34,11 +31,12 @@ namespace DashCamController
 
             this.hc = hc;
 
+            fileManager = new FileManager(hc.Config.GetString(ConfigNames.DashCamRecorderFolder),
+                                            hc.Config.GetInt(ConfigNames.DashCamRecorderFilesNumberQuota));
+
             recordingExe = hc.Config.GetString(ConfigNames.DashCamRecorderExe);
             recordingArg = hc.Config.GetString(ConfigNames.DashCamRecorderArg);
             recordingLenSec = hc.Config.GetInt(ConfigNames.DashCamRecorderSplitIntervalSec);
-            recordingFolder = hc.Config.GetString(ConfigNames.DashCamRecorderFolder);
-            recordingFilesNumberQuota = hc.Config.GetInt(ConfigNames.DashCamRecorderFilesNumberQuota);
 
             hc.Config.Changed += Config_Changed;
 
@@ -56,20 +54,7 @@ namespace DashCamController
 
         public FileInfo[] GetVideoFilesInfo()
         {
-            return Directory.GetFiles(@"D:\onbs3").Select(f => new FileInfo(f)).ToArray();
-
-			if (!Directory.Exists (recordingFolder))
-				return new FileInfo[0];
-
-            var files = Directory.GetFiles(recordingFolder, string.Concat("*", fileExtension));
-            return files.Select(f => new FileInfo(f)).OrderBy(fi =>
-                {
-                    int ind;
-                    if (int.TryParse(Path.GetFileNameWithoutExtension(fi.Name), out ind))
-                        return int.MaxValue - ind;
-                    else
-						return int.MinValue;
-                }).ToArray();
+            return fileManager.GetVideoFilesInfo();
         }
 
         private void MonitorLoop()
@@ -101,7 +86,7 @@ namespace DashCamController
                 var processConfig = new ProcessConfig
                 {
                     ExePath = recordingExe,
-                    Args = string.Format(recordingArg, recordingLenSec * 1000, GetFileName()),
+                    Args = string.Format(recordingArg, recordingLenSec * 1000, fileManager.GetNextFileName()),
                     Silent = true,
                     WaitForUI = false,
                     AliveMonitoringInterval = 200
@@ -119,60 +104,6 @@ namespace DashCamController
             }
         }
 
-        private object GetFileName()
-        {
-            if (!Directory.Exists(recordingFolder))
-                Directory.CreateDirectory(recordingFolder);
-
-			var files = Directory.GetFiles (recordingFolder, string.Concat ("*", fileExtension));
-
-			int oldest, newest;
-
-			var allFilesCount = FindExtremumIndexes (files, out oldest, out newest);
-
-            if (allFilesCount >= recordingFilesNumberQuota)
-            {
-                ThreadPool.QueueUserWorkItem(name => File.Delete((string)name),
-				 CreateFileName(oldest));
-            }
-
-			return CreateFileName(newest+1);
-        }
-
-		private string CreateFileName(int index)
-		{
-			return Path.Combine(recordingFolder, string.Concat(index, fileExtension));
-		}
-
-		private int FindExtremumIndexes(string[] files, out int oldest, out int newest)
-		{
-			oldest = int.MaxValue;
-			newest = int.MinValue;
-			var allFilesCount = 0;
-
-			foreach (var file in files) 
-			{
-				int temp;
-                var fileIndexStr = Path.GetFileNameWithoutExtension(file);
-				if (int.TryParse (fileIndexStr, out temp)) 
-				{
-					allFilesCount++;
-
-					if (temp < oldest)
-						oldest = temp;
-					if (temp > newest)
-						newest = temp;
-				}
-			}
-
-			if (oldest == int.MaxValue)
-				oldest = -1;
-			if (newest == int.MinValue)
-				newest = 0;
-
-			return allFilesCount;
-		}
-
         public void Dispose()
         {
             if (!disposed)
@@ -187,12 +118,47 @@ namespace DashCamController
 
         public bool IsProtected(FileInfo fileInfo)
         {
-            return false;
+            return fileManager.IsProtected(fileInfo);
         }
 
-        public void ProtectDeletion(FileInfo fileInfo)
+        public FileInfo ProtectDeletion(FileInfo fileInfo)
         {
-            throw new NotImplementedException();
+            return fileManager.ProtectDeletion(fileInfo);
+        }
+
+        public FileInfo GetMP4File(FileInfo fileInfo)
+        {
+            var coFiles = fileManager.GetWithCoFiles(fileInfo.FullName);
+            var coFile = coFiles.FirstOrDefault(f => Path.GetExtension(f).Equals(".mp4", StringComparison.InvariantCultureIgnoreCase));
+
+            if (coFile != null)
+                return new FileInfo(coFile);
+            else
+                return ConvertToMP4(fileInfo.FullName);
+        }
+
+        private FileInfo ConvertToMP4(string fileName)
+        {
+            var mp4FilePath = Path.Combine(Path.GetDirectoryName(fileName), string.Concat(Path.GetFileNameWithoutExtension(fileName), ".mp4"));
+
+            var config = new ProcessConfig
+            {
+                ExePath = hc.Config.GetString(ConfigNames.DashCamConvertToMP4Exe),
+                Args = string.Format(hc.Config.GetString(ConfigNames.DashCamConvertToMP4Arg), fileName, mp4FilePath),
+                WaitForUI = false,
+                RedirectStandardInput = false,
+                RedirectStandardOutput = false
+            };
+
+            var pr = hc.ProcessRunnerFactory.Create(config);
+            pr.Run();
+            pr.WaitForExit(120000);
+            return new FileInfo(mp4FilePath);
+        }
+
+        public void Cleanup(FileInfo fileInfo)
+        {
+            fileManager.Cleanup(fileInfo.FullName);
         }
     }
 }

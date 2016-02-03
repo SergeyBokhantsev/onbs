@@ -9,9 +9,19 @@ namespace Interfaces
 {
     public interface IDashCamController : IController
     {
+        /// <summary>
+        /// Returns only files with .h264 extension
+        /// </summary>
         FileInfo[] GetVideoFilesInfo();
 
+        FileInfo GetMP4File(FileInfo fileInfo);
+
+        /// <summary>
+        /// Removes all files by fileName.* pattern
+        /// </summary>
+        void Cleanup(FileInfo fileInfo);
+
         bool IsProtected(FileInfo fileInfo);
-        void ProtectDeletion(FileInfo fileInfo);
+        FileInfo ProtectDeletion(FileInfo fileInfo);
     }
 }

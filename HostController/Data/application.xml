@@ -91,6 +91,9 @@
       <F4 action="CopyExternal" caption="Copy to External storage"/>
       <F5 action="Remove" caption="Remove this video"/>
     </page>
+    <page name="DashConvertToMP4" model="DashConvertToMP4Model" default_view="ExternalApplicationPage">
+      <Cancel name="DashFileOptions"/>
+    </page>
     <page name="DashPlayer" model="DashPlayerModel" default_view="ExternalApplicationPage">
       <Cancel name="DashFileOptions"/>
     </page>

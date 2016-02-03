@@ -34,6 +34,10 @@ namespace Tests.Mocks
         public void Set<T>(string name, T value)
         {
             Properties[name] = value;
+
+            var handler = Changed;
+            if (handler != null)
+                handler(name);
         }
 
         public void Save()
@@ -74,5 +78,7 @@ namespace Tests.Mocks
         {
             get { throw new NotImplementedException(); }
         }
+
+        public event Action<string> Changed;
     }
 }
