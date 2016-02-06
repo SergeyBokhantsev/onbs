@@ -23,5 +23,7 @@ namespace Interfaces
 
         bool IsProtected(FileInfo fileInfo);
         FileInfo ProtectDeletion(FileInfo fileInfo);
+
+        string Copy(FileInfo fileInfo, string destinationPath);
     }
 }

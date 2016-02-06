@@ -160,5 +160,20 @@ namespace DashCamController
         {
             fileManager.Cleanup(fileInfo.FullName);
         }
+
+        public string Copy(FileInfo fileInfo, string destinationPath)
+        {
+            var destionationFilePath = Path.Combine(destinationPath, fileInfo.Name);
+            int index = 1;
+
+            while (File.Exists(destionationFilePath))
+            {
+                destionationFilePath = Path.Combine(destinationPath, string.Format("{0} ({1}){2}", Path.GetFileNameWithoutExtension(fileInfo.Name), index++, Path.GetExtension(fileInfo.Name)));
+            }
+
+            fileInfo.CopyTo(destionationFilePath);
+
+            return destionationFilePath;
+        }
     }
 }

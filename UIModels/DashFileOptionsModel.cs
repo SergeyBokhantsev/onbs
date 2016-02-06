@@ -42,28 +42,30 @@ namespace UIModels
                     break;
 
                 case "ProtectDeletion":
-                    Exception error = null;
-                    try
                     {
-                        fileInfo = await Task.Run(() => hc.GetController<IDashCamController>().ProtectDeletion(fileInfo));
-                    }
-                    catch(Exception ex)
-                    {
-                        hc.Logger.Log(this, ex);
-                        error = ex;
-                    }
+                        Exception error = null;
+                        try
+                        {
+                            fileInfo = await Task.Run(() => hc.GetController<IDashCamController>().ProtectDeletion(fileInfo));
+                        }
+                        catch (Exception ex)
+                        {
+                            hc.Logger.Log(this, ex);
+                            error = ex;
+                        }
 
-                    if (error != null)
-                        await hc.GetController<IUIController>().ShowDialogAsync(new OkDialog("Error", error.Message, "Close", hc, 5000));
+                        if (error != null)
+                            await hc.GetController<IUIController>().ShowDialogAsync(new OkDialog("Error", error.Message, "Close", hc, 5000));
+                    }
 
                     UpdateInfo();
                     break;
 
                 case "ViewNormal":
                     {
-                        inProgress = true;
+                        SetInprogress(true);
                         var mp4FileInfo = await Task.Run(() => hc.GetController<IDashCamController>().GetMP4File(fileInfo));
-                        inProgress = false;
+                        SetInprogress(false);
                         if (!Disposed)
                         {
                             var playerPage = hc.GetController<IUIController>().ShowPage("DashPlayer", null, CreatePlayerProcessRunner(mp4FileInfo.FullName)) as ExternalApplicationPage;
@@ -74,17 +76,40 @@ namespace UIModels
 
                 case "CopyExternal":
                     {
+                        Exception error = null;
+                        string destFilePath = null;
+
                         try
                         {
-                            inProgress = true;
+                            var externalDrive = hc.Config.GetString(ConfigNames.DashCamExternalStorageDrive);
+                            if (!Directory.GetLogicalDrives().Any(d => d.Equals(externalDrive, StringComparison.InvariantCultureIgnoreCase)))
+                            {
+                                await hc.GetController<IUIController>().ShowDialogAsync(new OkDialog("Error", string.Format("Unable to save. No '{0}' drive exist.", externalDrive), "Close", hc, 5000));
+                                return;
+                            }
+
+                            SetInprogress(true);
                             var mp4FileInfo = await Task.Run(() => hc.GetController<IDashCamController>().GetMP4File(fileInfo));
-                            // TODO File.Copy()
-                            inProgress = false;
+                            if (!Disposed)
+                            {
+                                SetInprogress(true, "Copying to the storage...");
+                                destFilePath = await Task.Run(() => hc.GetController<IDashCamController>().Copy(mp4FileInfo, externalDrive));
+                            }
                         }
                         catch (Exception ex)
                         {
                             hc.Logger.Log(this, ex);
+                            error = ex;
                         }
+                        finally
+                        {
+                            SetInprogress(false);
+                        }
+
+                        if (error != null)
+                            await hc.GetController<IUIController>().ShowDialogAsync(new OkDialog("Error", error.Message, "Close", hc, 5000));
+                        else
+                            await hc.GetController<IUIController>().ShowDialogAsync(new OkDialog("Error", string.Concat("Copied successfully to ", destFilePath), "Ok", hc, 5000));
                     }
                     break;
 
@@ -103,10 +128,20 @@ namespace UIModels
             }
         }
 
+        private void SetInprogress(bool value, string message = null)
+        {
+            inProgress = value;
+
+            if (inProgress)
+                SetProperty("file_props", message ?? "Convertation in progress...");
+            else
+                UpdateInfo();
+        }
+
         private void UpdateInfo()
         {
             SetProperty("file_name", string.Concat(fileInfo.Name, hc.GetController<IDashCamController>().IsProtected(fileInfo) ? " (PROTECTED)" : null));
-            SetProperty("file_props", ((double)fileInfo.Length / 1000000d).ToString("0 Mb"));
+            SetProperty("file_props", string.Concat(((double)fileInfo.Length / 1000000d).ToString("0 Mb"), " Created: ", fileInfo.CreationTime));
         }
 
         private IProcessRunner CreatePlayerProcessRunner(string filePath)

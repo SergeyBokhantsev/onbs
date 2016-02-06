@@ -72,6 +72,8 @@ namespace Interfaces
         public static readonly string DashCamConvertToMP4Exe = "DashCamConvertToMP4Exe";
         public static readonly string DashCamConvertToMP4Arg = "DashCamConvertToMP4Arg";
 
+        public static readonly string DashCamExternalStorageDrive = "DashCamExternalStorageDrive";
+
         public static readonly string SystemTimeLocalZone = "SystemTimeLocalZone";
         public static readonly string SystemTimeMinDifference = "SystemTimeMinDifference";
         public static readonly string SystemTimeSetCommand = "SystemTimeSetCommand";
