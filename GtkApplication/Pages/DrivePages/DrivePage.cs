@@ -5,6 +5,7 @@ using System.Diagnostics;
 using GtkApplication.Pages;
 using Interfaces.GPS;
 using CB = GtkApplication.CommonBindings;
+using GtkApplication.Controls;
 
 namespace GtkApplication
 {
@@ -32,7 +33,9 @@ namespace GtkApplication
 			var binder = new ModelBinder (model, logger);
 
 			CommonBindings.CreateStatusbar (binder, hbox1, style);
-			CommonBindings.CreateTaskbarButtons (binder, hbox5, style);
+
+			//CommonBindings.CreateTaskbarButtons (binder, hbox5, style);
+            var carousel = new HorizontalCarousel(binder, hbox5, style, model.GetProperty<string>("items_source_prop_name"));
 
             binder.BindCustomAction<object>(speed =>
 				label_speed.Markup = 

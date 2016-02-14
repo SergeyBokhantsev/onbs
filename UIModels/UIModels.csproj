@@ -56,10 +56,10 @@
     <Compile Include="ConfigPages\NavitCommonConfigPage.cs" />
     <Compile Include="ConfigPages\NavitOSDConfigPage.cs" />
     <Compile Include="ConfigPages\ShutdownPage.cs" />
-    <Compile Include="DashCamCatalogModel.cs" />
-    <Compile Include="DashFileOptionsModel.cs" />
-    <Compile Include="DashMenuModel.cs" />
-    <Compile Include="DashPlayerModel.cs" />
+    <Compile Include="DashCam\DashCamCatalogModel.cs" />
+    <Compile Include="DashCam\DashFileOptionsModel.cs" />
+    <Compile Include="DashCam\DashMenuModel.cs" />
+    <Compile Include="DashCam\DashPlayerModel.cs" />
     <Compile Include="Dialogs\OkDialog.cs" />
     <Compile Include="Dialogs\YesNoDialog.cs" />
     <Compile Include="DrivePage.cs" />
@@ -70,6 +70,7 @@
     <Compile Include="MiniDisplay\DriveMiniDisplayModel.cs" />
     <Compile Include="ModelBase.cs" />
     <Compile Include="MultipurposeModels\MultilineModel.cs" />
+    <Compile Include="MultipurposeModels\RotaryListModel.cs" />
     <Compile Include="NavigationAppPage.cs" />
     <Compile Include="OBDPages.cs" />
     <Compile Include="MultipurposeModels\PagesSelectorPage.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="ShutdownProgressModel.cs" />
     <Compile Include="SystemInfoModels\ExecuteToolModel.cs" />
     <Compile Include="SystemInfoModels\LsUsbModel.cs" />
+    <Compile Include="TestListModel.cs" />
     <Compile Include="TrafficPage.cs" />
     <Compile Include="UnexpectedErrorModel.cs" />
     <Compile Include="WeatherPage.cs" />

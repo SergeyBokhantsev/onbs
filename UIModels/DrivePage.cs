@@ -9,6 +9,8 @@ using UIModels.MiniDisplay;
 using YandexServicesProvider;
 using System.Threading;
 using System.IO;
+using UIModels.MultipurposeModels;
+using System.Collections.Generic;
 
 namespace UIModels
 {
@@ -45,7 +47,7 @@ namespace UIModels
 
 			SetProperty("oil_temp_icon", Path.Combine(hc.Config.DataFolder, "icons", "OilTemp.png"));
 
-            gpsController.GPRMCReseived += GPRMCReseived;
+            gpsController.GPRMCReseived += GPRMCReseived;         
         }
 
         protected override void OnSecondaryTimer(IHostTimer timer)
@@ -56,6 +58,12 @@ namespace UIModels
             }
 
             base.OnSecondaryTimer(timer);
+        }
+
+        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
+        {
+
+            base.DoAction(name, actionArgs);
         }
 
         private void UpdateOBD()

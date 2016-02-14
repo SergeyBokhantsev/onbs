@@ -11,18 +11,11 @@ buttons_last_processed(0)
 
 void ButtonProcessor::init()
 {
-	buttons_process_interval = 50;
-  
   button_pins[accept_btn_num] = accept_btn_pin;
   button_pins[cancel_btn_num] = cancel_btn_pin;
   button_pins[f1_btn_num] = f1_btn_pin;
   button_pins[f2_btn_num] = f2_btn_pin;
-  button_pins[f3_btn_num] = f3_btn_pin;
-  button_pins[f4_btn_num] = f4_btn_pin;
-  button_pins[f5_btn_num] = f5_btn_pin;
-  button_pins[f6_btn_num] = f6_btn_pin;
-  button_pins[f7_btn_num] = f7_btn_pin;
-  button_pins[f8_btn_num] = f8_btn_pin;
+  button_pins[rotary_select_num] = rotary_select_pin;
   
   for (int i=0; i<buttons_count; ++i)
   {
@@ -36,7 +29,7 @@ void ButtonProcessor::process()
 {
   unsigned long now = millis();
 
-	if (now >= buttons_last_processed + buttons_process_interval)
+	if (now >= buttons_last_processed + BTN_PROCESS_INTERVAL)
 	  {
 	    for (int i=0; i<buttons_count; ++i)
 	    {

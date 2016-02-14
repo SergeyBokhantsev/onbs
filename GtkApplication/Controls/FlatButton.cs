@@ -13,8 +13,6 @@ namespace GtkApplication
 		private readonly Label label;
 		private readonly LookAndFeel scheme;
 
-		private bool clicking;
-
 		public string Text
 		{
 			get {
@@ -35,6 +33,26 @@ namespace GtkApplication
 			}
 		}
 
+        public int WidthRequest
+        {
+            get
+            {
+                return label.WidthRequest;
+            }
+            set
+            {
+                label.WidthRequest = value;
+            }
+        }
+
+        public bool Focused
+        {
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
 		public FlatButton(EventBox box, LookAndFeel scheme)
 			:this(box, scheme, TextAligment.CenterMiddle)
 		{
@@ -47,6 +65,7 @@ namespace GtkApplication
 
 			label = new Label ();
 			label.SetAlignment(labelAligment.X, labelAligment.Y);
+            label.Visible = true;
 
 			box.Add (label);
 
@@ -60,21 +79,11 @@ namespace GtkApplication
 
 	    void ButtonPressEvent (object o, ButtonPressEventArgs args)
 		{
-			if (clicking)
-				return;
-
-			clicking = true;
-
-			//SetBg (scheme.ClickColor);
-
-			if (Clicked != null)
-				Clicked ();
-
-			//await Task.Delay(50);
-
-			SetBg (scheme.ClickColor);
-
-			clicking = false;
+            if (args.Event.Type == EventType.ButtonPress)
+            {
+                if (Clicked != null)
+                    Clicked();
+            }
 		}
 
 		private void SetBg(Color color)

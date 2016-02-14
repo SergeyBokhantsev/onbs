@@ -61,6 +61,7 @@ namespace TcpServer
             if (Active)
             {
                 stream.Write(buffer, offset, count);
+                stream.Flush();
             }
         }
 

@@ -10,21 +10,15 @@ namespace GtkApplication
 		
 		private global::Gtk.Label label_caption;
 		
-		private global::Gtk.EventBox eventbox_f1_button;
+		private global::Gtk.HBox hbox2;
 		
-		private global::Gtk.EventBox eventbox_f2_button;
+		private global::Gtk.VBox vbox1;
 		
-		private global::Gtk.EventBox eventbox_f3_button;
+		private global::Gtk.VBox vbox2;
 		
-		private global::Gtk.EventBox eventbox_f4_button;
+		private global::Gtk.EventBox eventbox_bUp;
 		
-		private global::Gtk.EventBox eventbox_f5_button;
-		
-		private global::Gtk.EventBox eventbox_f6_button;
-		
-		private global::Gtk.EventBox eventbox_f7_button;
-		
-		private global::Gtk.EventBox eventbox_f8_button;
+		private global::Gtk.EventBox eventbox_bDown;
 		
 		private global::Gtk.HBox hbox1;
 		
@@ -57,53 +51,39 @@ namespace GtkApplication
 			w2.Expand = false;
 			w2.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
-			this.eventbox_f1_button = new global::Gtk.EventBox ();
-			this.eventbox_f1_button.Name = "eventbox_f1_button";
-			this.vbox3.Add (this.eventbox_f1_button);
-			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.eventbox_f1_button]));
-			w3.Position = 1;
-			// Container child vbox3.Gtk.Box+BoxChild
-			this.eventbox_f2_button = new global::Gtk.EventBox ();
-			this.eventbox_f2_button.Name = "eventbox_f2_button";
-			this.vbox3.Add (this.eventbox_f2_button);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.eventbox_f2_button]));
-			w4.Position = 2;
-			// Container child vbox3.Gtk.Box+BoxChild
-			this.eventbox_f3_button = new global::Gtk.EventBox ();
-			this.eventbox_f3_button.Name = "eventbox_f3_button";
-			this.vbox3.Add (this.eventbox_f3_button);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.eventbox_f3_button]));
-			w5.Position = 3;
-			// Container child vbox3.Gtk.Box+BoxChild
-			this.eventbox_f4_button = new global::Gtk.EventBox ();
-			this.eventbox_f4_button.Name = "eventbox_f4_button";
-			this.vbox3.Add (this.eventbox_f4_button);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.eventbox_f4_button]));
-			w6.Position = 4;
-			// Container child vbox3.Gtk.Box+BoxChild
-			this.eventbox_f5_button = new global::Gtk.EventBox ();
-			this.eventbox_f5_button.Name = "eventbox_f5_button";
-			this.vbox3.Add (this.eventbox_f5_button);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.eventbox_f5_button]));
-			w7.Position = 5;
-			// Container child vbox3.Gtk.Box+BoxChild
-			this.eventbox_f6_button = new global::Gtk.EventBox ();
-			this.eventbox_f6_button.Name = "eventbox_f6_button";
-			this.vbox3.Add (this.eventbox_f6_button);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.eventbox_f6_button]));
-			w8.Position = 6;
-			// Container child vbox3.Gtk.Box+BoxChild
-			this.eventbox_f7_button = new global::Gtk.EventBox ();
-			this.eventbox_f7_button.Name = "eventbox_f7_button";
-			this.vbox3.Add (this.eventbox_f7_button);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.eventbox_f7_button]));
-			w9.Position = 7;
-			// Container child vbox3.Gtk.Box+BoxChild
-			this.eventbox_f8_button = new global::Gtk.EventBox ();
-			this.eventbox_f8_button.Name = "eventbox_f8_button";
-			this.vbox3.Add (this.eventbox_f8_button);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.eventbox_f8_button]));
-			w10.Position = 8;
+			this.hbox2 = new global::Gtk.HBox ();
+			this.hbox2.Name = "hbox2";
+			this.hbox2.Spacing = 6;
+			// Container child hbox2.Gtk.Box+BoxChild
+			this.vbox1 = new global::Gtk.VBox ();
+			this.vbox1.Name = "vbox1";
+			this.vbox1.Spacing = 6;
+			this.hbox2.Add (this.vbox1);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox2 [this.vbox1]));
+			w3.Position = 0;
+			// Container child hbox2.Gtk.Box+BoxChild
+			this.vbox2 = new global::Gtk.VBox ();
+			this.vbox2.Name = "vbox2";
+			this.vbox2.Spacing = 6;
+			// Container child vbox2.Gtk.Box+BoxChild
+			this.eventbox_bUp = new global::Gtk.EventBox ();
+			this.eventbox_bUp.Name = "eventbox_bUp";
+			this.vbox2.Add (this.eventbox_bUp);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.eventbox_bUp]));
+			w4.Position = 0;
+			// Container child vbox2.Gtk.Box+BoxChild
+			this.eventbox_bDown = new global::Gtk.EventBox ();
+			this.eventbox_bDown.Name = "eventbox_bDown";
+			this.vbox2.Add (this.eventbox_bDown);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.eventbox_bDown]));
+			w5.Position = 1;
+			this.hbox2.Add (this.vbox2);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox2 [this.vbox2]));
+			w6.Position = 1;
+			w6.Expand = false;
+			this.vbox3.Add (this.hbox2);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox2]));
+			w7.Position = 1;
 			// Container child vbox3.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox ();
 			this.hbox1.Name = "hbox1";
@@ -112,17 +92,20 @@ namespace GtkApplication
 			this.eventbox_exit_button = new global::Gtk.EventBox ();
 			this.eventbox_exit_button.Name = "eventbox_exit_button";
 			this.hbox1.Add (this.eventbox_exit_button);
-			global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.eventbox_exit_button]));
-			w11.Position = 0;
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.eventbox_exit_button]));
+			w8.Position = 0;
 			// Container child hbox1.Gtk.Box+BoxChild
 			this.eventbox_next_button = new global::Gtk.EventBox ();
 			this.eventbox_next_button.Name = "eventbox_next_button";
 			this.hbox1.Add (this.eventbox_next_button);
-			global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.eventbox_next_button]));
-			w12.Position = 1;
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.eventbox_next_button]));
+			w9.Position = 1;
 			this.vbox3.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w13 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox1]));
-			w13.Position = 9;
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox3 [this.hbox1]));
+			w10.PackType = ((global::Gtk.PackType)(1));
+			w10.Position = 2;
+			w10.Expand = false;
+			w10.Fill = false;
 			this.Add (this.vbox3);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();

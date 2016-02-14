@@ -11,7 +11,8 @@ gsmPort(_gsmPort),
 comPort(_comPort),
 frame_sender(_comPort, ports, ports_types, 4),
 frame_receiver(_comPort),
-button_processor(&buttons_out_port, &manager)
+button_processor(&buttons_out_port, &manager),
+rotary_encoder(&button_processor)
 {
 	ports[0] = _gsmPort;
 	ports[1] = _gpsPort;
@@ -33,6 +34,8 @@ void AMCController::init()
 	buzzer.init();
 	
 	button_processor.init();
+	
+	rotary_encoder.init();
 	
 	relay.init();	
 }

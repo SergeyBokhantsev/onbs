@@ -8,6 +8,7 @@
 #include "CommFrameReceiver.h"
 #include "CommandWriter.h"
 #include "ButtonProcessor.h"
+#include "RotaryEncoder.h"
 #include "OledController.h"
 #include "RelayController.h"
 #include "Buzzer.h"
@@ -41,7 +42,8 @@ private:
 	uint8_t buttons_out_buffer[BUTTONS_OUT_BUFFER_SIZE];
 	
 	ButtonProcessor button_processor;
-
+	RotaryEncoder rotary_encoder;
+	
 	Manager manager;
 	
 	OledController oled;

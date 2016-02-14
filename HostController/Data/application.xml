@@ -2,20 +2,20 @@
 <app>
   <default name="Drive1"/>
   <pages>
+    <page name="Test" model="TestListModel" default_view="CommonVertcalStackPage">
+      <Cancel name="Drive1"/>
+    </page>
     <page name="Drive1" model="DrivePage" default_view="DrivePage">
       <Accept name="Drive2" caption="NEXT"/>
-      <F1 name="NavApp" caption="NAV"/>
-      <F2 name="WebCam" caption="CAM"/>
-      <F3 name="Weather" caption="WTHR"/>
-      <F4 name="Traffic" caption="TRAF"/>
-      <F5 name="OBDMenu" caption="ENG"/>
-    </page>
-    <page name="Drive2" model="DrivePage" default_view="DrivePage">
-      <Accept name="Drive1" caption="NEXT"/>
-      <F1 name="CommonConfig" caption="CFG"/>
-      <F2 name="SystemInfoCatalog" caption="SYS"/>
-      <F3 name="DashCamMenu" caption="REG"/>
-      <F8 name="Shutdown" caption="PWR"/>
+      <RotaryItem_1 name="NavApp" caption="NAV"/>
+      <RotaryItem_2 name="WebCam" caption="CAM"/>
+      <RotaryItem_3 name="Weather" caption="WTHR"/>
+      <RotaryItem_4 name="Traffic" caption="TRAF"/>
+      <RotaryItem_5 name="OBDMenu" caption="ENG"/>
+      <RotaryItem_6 name="DashCamMenu" caption="REG"/>
+      <RotaryItem_7 name="CommonConfig" caption="CFG"/>
+      <RotaryItem_8 name="Shutdown" caption="PWR"/>
+      <RotaryItem_9 name="SystemInfoCatalog" caption="SYS"/>
     </page>
     <page name="NavApp" model="NavigationAppPage" default_view="ExternalApplicationPage">
       <Cancel name="Drive1"/>
@@ -67,21 +67,9 @@
     </page>
     <page name="DashCamMenu" model="DashMenuModel" default_view="CommonVertcalStackPage">
       <Cancel name="Drive2"/>
-      <F1 name="DashCamCatalog" caption="Show videos"/>
-      <F2 action="ToggleDashcamEnable" caption="Dash Cam enabled: "/>
-      <F3 action="ToggleDashcamPreview" caption="Dash Cam preview enabled: "/>
     </page>
     <page name="DashCamCatalog" model="DashCamCatalogModel" default_view="CommonVertcalStackPage">
       <Cancel name="DashCamMenu" caption="Return"/>
-      <Accept action="More" caption="Next"/>
-      <F1 action="0" caption="---"/>
-      <F2 action="1" caption="---"/>
-      <F3 action="2" caption="---"/>
-      <F4 action="3" caption="---"/>
-      <F5 action="4" caption="---"/>
-      <F6 action="5" caption="---"/>
-      <F7 action="6" caption="---"/>
-      <F8 action="7" caption="---"/>
     </page>
     <page name="DashFileOptions" model="DashFileOptionsModel" default_view="FileOptionsPage">
       <Cancel name="DashCamCatalog" caption="Return to catalog"/>

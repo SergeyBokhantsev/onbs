@@ -7,12 +7,12 @@
             <StackPanel Orientation="Horizontal">
                 <Button Content="F1" Padding="30" FontSize="30" Click="Button_Click"/>
                 <Button Content="F2" Padding="30" FontSize="30" Click="Button_Click"/>
-                <Button Content="F3" Padding="30" FontSize="30" Click="Button_Click"/>
-                <Button Content="F4" Padding="30" FontSize="30" Click="Button_Click"/>
+                <Button Content="Next" Padding="30" FontSize="30" Click="Button_Click"/>
+                <Button Content="Prev" Padding="30" FontSize="30" Click="Button_Click"/>
                 <Button Content="Cancel" Padding="10" FontSize="30" Click="Button_Click"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Button Content="F5" Padding="30" FontSize="30" Click="Button_Click"/>
+                <Button Content="Select" Padding="30" FontSize="30" Click="Button_Click"/>
                 <Button Content="F6" Padding="30" FontSize="30" Click="Button_Click"/>
                 <Button Content="F7" Padding="30" FontSize="30" Click="Button_Click"/>
                 <Button Content="F8" Padding="30" FontSize="30" Click="Button_Click"/>

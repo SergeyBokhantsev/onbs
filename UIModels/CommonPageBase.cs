@@ -2,11 +2,13 @@
 using Interfaces.GPS;
 using Interfaces.UI;
 using System;
+using System.Linq;
 using System.Collections.Generic;
+using UIModels.MultipurposeModels;
 
 namespace UIModels
 {
-    public abstract class CommonPageBase : ModelBase
+    public abstract class CommonPageBase : RotaryListModel<MappedActionBase>
     {
         protected readonly static Dictionary<string, object> crossPageProperties = new Dictionary<string, object>();
 
@@ -15,8 +17,10 @@ namespace UIModels
 
         protected readonly IGPSController gpsController;
 
+        private readonly List<ListItem<MappedActionBase>> rotaryItems = new List<ListItem<MappedActionBase>>(10);
+
         protected CommonPageBase(string viewName, IHostController hc, MappedPage pageDescriptor)
-            :base(viewName, hc, pageDescriptor)
+            :base(viewName, hc, pageDescriptor, "list", 6)
         {
             this.Disposing += OnDisposing;
 
@@ -25,8 +29,24 @@ namespace UIModels
 
             gpsController = hc.GetController<IGPSController>();
 
-            primaryTimer = hc.CreateTimer(1000, OnPrimaryTick, true, true, "common primary timer");
-            secondaryTimer = hc.CreateTimer(60000, OnSecondaryTimer, true, true, "common secondary timer");
+            primaryTimer = hc.CreateTimer(1000, OnPrimaryTick, false, true, "common primary timer");
+            secondaryTimer = hc.CreateTimer(60000, OnSecondaryTimer, false, true, "common secondary timer");
+
+            foreach (var mappedAction in pageDescriptor.ButtonsMap)
+            {
+                if (mappedAction.ButtonActionName.StartsWith("RotaryItem_"))
+                {
+                    ListItem<MappedActionBase>.PrepareItem(hc.SyncContext, ref rotaryItems, mappedAction, (s, e) => Action(new PageModelActionEventArgs(mappedAction.ButtonActionName, Interfaces.Input.ButtonStates.Press)), mappedAction.Caption);
+                }
+            }
+
+            SetProperty(ModelNames.ButtonPrevLabel, "<<");
+            SetProperty(ModelNames.ButtonNextLabel, ">>");
+        }
+
+        protected override IList<ListItem<MappedActionBase>> QueryItems(int skip, int take)
+        {
+            return rotaryItems.Skip(skip).Take(take).ToList();
         }
 
         protected virtual void OnPrimaryTick(IHostTimer timer)

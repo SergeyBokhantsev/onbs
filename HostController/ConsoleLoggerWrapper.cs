@@ -18,7 +18,8 @@ namespace HostController
 
         public void Log(object caller, string message, LogLevels level)
         {
-            WriteToConsole(string.Concat(DateTime.Now, " | ", level, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message));
+            if (caller != null && caller is UIModels.ModelBase)
+                WriteToConsole(string.Concat(DateTime.Now, " | ", level, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message));
 
             foreach (var logger in loggers)
             {

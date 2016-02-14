@@ -12,6 +12,8 @@ namespace UIModels
     {
         public event PageModelPropertyChangedHandler PropertyChanged;
 
+        //public event PageModelFocusChangedHandler FocusChanged;
+
         public event EventHandler Disposing;
 
         private readonly Dictionary<string, object> properties = new Dictionary<string, object>();
@@ -65,6 +67,14 @@ namespace UIModels
                     return default(T);
 
                 return (T)properties[name];
+            }
+        }
+
+        protected object GetPropertyFast(string name)
+        {
+            lock (properties)
+            {
+                return properties[name];
             }
         }
 
@@ -124,6 +134,12 @@ namespace UIModels
 
                         if (model != null)
                         {
+                            var initializableModel = model as ModelBase;
+                            if (initializableModel != null)
+                            {
+                                initializableModel.Initialize();
+                            }
+
                             ApplicationMap.SetCaptions(model, pageDescriptor);
                             return model;
                         }
@@ -144,6 +160,10 @@ namespace UIModels
                 hc.Logger.Log(typeof(ModelBase), string.Format("Exception constructing page model for mapped page '{0}'. Exception was: {1}", pageDescriptor != null ? pageDescriptor.Name : "No pageDescriptor", ex.Message), LogLevels.Error);
                 throw;
             }
+        }
+
+        protected virtual void Initialize()
+        {            
         }
 
         public void Action(PageModelActionEventArgs actionArgs)
@@ -180,6 +200,10 @@ namespace UIModels
                     }
 
                 }, mappedAction, string.Concat("ModelBase.MappedAction, action = ", actionArgs.ActionName));
+            }
+            else
+            {
+                hc.SyncContext.Post(o => DoAction(ModelNames.UnmappedAction, actionArgs), null, string.Concat("ModelBase.UnmappedAction, action = ", actionArgs.ActionName));
             }
         }
 
