@@ -35,15 +35,20 @@ void ButtonProcessor::process()
 	    {
 	      if (check_button(button_pins[i], button_states+i, button_process_times+i))
 		  {
-			  if (manager->before_button_send(i, button_states[i]))
-			  {
-				send_button_state(i, button_states[i]);
-			  }
+			  on_button(i, button_states[i]);
 		  }
 	    }
 	    
 	    buttons_last_processed = now;
 	  }
+}
+
+void ButtonProcessor::on_button(int button_id, uint8_t state)
+{
+	if (manager->before_button_send(button_id, state))
+	 {
+		send_button_state(button_id, state);
+	}
 }
 
 void ButtonProcessor::init_button_pin(int pin)

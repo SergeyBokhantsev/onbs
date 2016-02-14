@@ -15,12 +15,12 @@
 
 #define accept_btn_pin 50
 #define cancel_btn_pin 48
-#define f1_btn_pin 53
+#define f1_btn_pin 47
 #define f2_btn_pin 49
 #define rotary_select_pin 43
 
-#define ROTARY_PIN_SIGNAL 0
-#define ROTARY_PIN_VALUE 0
+#define ROTARY_PIN_SIGNAL 53
+#define ROTARY_PIN_VALUE 51
 
 #define accept_btn_num 0
 #define cancel_btn_num 9
@@ -37,7 +37,7 @@ class ButtonProcessor
 	ButtonProcessor(HardwareSerial* _out_buffer, Manager* _manager);
 	void init();
 	void process();
-	void send_button_state(int button_id, uint8_t state);
+	void on_button(int button_id, uint8_t state);
 
 	private:
 	HardwareSerial* out_buffer;
@@ -51,6 +51,7 @@ class ButtonProcessor
 
 	void init_button_pin(int pin);	
 	bool check_button(int pin, uint8_t* state, unsigned long* last_processed_time);
+	void send_button_state(int button_id, uint8_t state);
 };
 
 #endif

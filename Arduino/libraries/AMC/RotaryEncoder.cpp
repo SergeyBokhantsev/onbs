@@ -20,6 +20,8 @@ void RotaryEncoder::init()
 
 void RotaryEncoder::process()
 {
+	//btn_processor->send_button_state(rotary_prev_num, BTN_STATE_PRESSED);
+	
 	if (ROTARY_PIN_SIGNAL == 0 || ROTARY_PIN_VALUE == 0)
 		return;
 	  
@@ -27,7 +29,7 @@ void RotaryEncoder::process()
 
 	if (now >= last_processed + ROTARY_PROCESS_INTERVAL)
 	{
-		last_processed = now;
+		//last_processed = now;
 	    int signal = digitalRead(ROTARY_PIN_SIGNAL);
 	    
 		if (signal == LOW && previous_signal == HIGH)
@@ -44,8 +46,8 @@ void RotaryEncoder::generate_event()
 {
 	int value = digitalRead(ROTARY_PIN_VALUE);
 	
-	if (value = LOW)
-		btn_processor->send_button_state(rotary_prev_num, BTN_STATE_PRESSED);
+	if (value == LOW)
+		btn_processor->on_button(rotary_prev_num, BTN_STATE_PRESSED);
 	else
-		btn_processor->send_button_state(rotary_next_num, BTN_STATE_PRESSED);
+		btn_processor->on_button(rotary_next_num, BTN_STATE_PRESSED);
 }

@@ -51,6 +51,8 @@ void AMCController::run()
 	process_incoming();
 
 	button_processor.process();
+	
+	rotary_encoder.process();
 }
 
 void AMCController::process_incoming()

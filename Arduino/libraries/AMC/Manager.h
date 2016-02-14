@@ -46,6 +46,8 @@ class Manager
 	CommandWriter command_writer;
 	Buzzer* buzzer;
 	
+	int temp;
+	
 	int state;
 	unsigned long state_timestamp;
 	unsigned long screen_timestamp;

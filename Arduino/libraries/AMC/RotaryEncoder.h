@@ -4,8 +4,8 @@
 #include "Arduino.h"
 #include "ButtonProcessor.h"
 
-#define ROTARY_PROCESS_INTERVAL 20
-#define ROTARY_AFTER_EVENT_DELAY 100
+#define ROTARY_PROCESS_INTERVAL 5
+#define ROTARY_AFTER_EVENT_DELAY 50
 
 class RotaryEncoder
 {
