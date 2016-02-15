@@ -66,7 +66,7 @@
       <Cancel name="Drive1" caption="Drive"/>
     </page>
     <page name="DashCamMenu" model="DashMenuModel" default_view="CommonVertcalStackPage">
-      <Cancel name="Drive2"/>
+      <Cancel name="Drive1"/>
     </page>
     <page name="DashCamCatalog" model="DashCamCatalogModel" default_view="CommonVertcalStackPage">
       <Cancel name="DashCamMenu" caption="Return"/>
@@ -91,11 +91,10 @@
       <F2 action="Restart" caption="Restart system"/>
       <F3 action="Shutdown" caption="Shutdown"/>
     </page>
-    <page name="CommonConfig" model="CommonConfigPage" default_view="CommonVertcalStackPage">
-      <Cancel action="SaveAndReturn" caption="Return to Main Menu"/>
-      <Accept name="ConfigGPS" caption="Go to GPS Config"/>
-      <F1 action="ChangeLogLevel"/>
-      <F2 name="ConfigGPS" caption="GPS and Navigation"/>
+    <page name="CommonConfig" model="ConfigPageBase" default_view="CommonVertcalStackPage">
+      <Cancel action="SaveAndReturn:Drive1" caption="Return to Drive"/>
+      <ConfigItem_1 action="Behavior:CycleEnum;Type:Interfaces.LogLevels, Interfaces;SettingName:LogLevel" caption="Log level: "/>
+      <ConfigItem_2 name="ConfigGPS" caption="GPS and Navigation"/>
     </page>
     <page name="ConfigGPS" model="ConfigGPSPage" default_view="CommonVertcalStackPage">
       <Accept name="NavitCommonConfig" caption="Go to Navit Config"/>

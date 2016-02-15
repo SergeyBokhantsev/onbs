@@ -7,7 +7,7 @@ using YandexServicesProvider;
 
 namespace UIModels
 {
-    public class WeatherPage : CommonPageBase
+    public class WeatherPage : DrivePageBase
     {
         private readonly WeatherProvider weather;
         private bool weatherProviderBusy;

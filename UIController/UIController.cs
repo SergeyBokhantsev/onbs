@@ -118,6 +118,10 @@ namespace UIController
         private IPageModel CreateModel(string descriptorName, object arg, string viewName = null)
         {
             var pageDescriptor = map.GetPage(descriptorName);
+
+            if (pageDescriptor == null)
+                throw new Exception(string.Format("Page descriptor '{0}' not found", descriptorName));
+
             return pageConstructor(pageDescriptor, viewName, arg);
         }
 

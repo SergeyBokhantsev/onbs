@@ -14,8 +14,10 @@ using System.Collections.Generic;
 
 namespace UIModels
 {
-    public class DrivePage : CommonPageBase
+    public class DrivePage : DrivePageBase
     {
+        private static int focusedItemIndex;
+
         private readonly ITravelController tc;
 
         private readonly WeatherProvider weather;
@@ -33,7 +35,7 @@ namespace UIModels
         private readonly OBDProcessor obdProcessor;
 
         public DrivePage(string viewName, IHostController hc, MappedPage pageDescriptor)
-            : base(viewName, hc, pageDescriptor)
+            : base(viewName, hc, pageDescriptor, focusedItemIndex)
         {
             elm = hc.GetController<IElm327Controller>();
             obdProcessor = new OBDProcessor(elm);
@@ -157,6 +159,8 @@ namespace UIModels
 
         protected override void OnDisposing(object sender, EventArgs e)
         {
+            focusedItemIndex = SelectedIndexAbsolute;
+
             weatherGuard.Dispose();
             geocoderGuard.Dispose();
 

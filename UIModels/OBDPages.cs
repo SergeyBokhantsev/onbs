@@ -28,7 +28,7 @@ namespace UIModels
         }
     }
 
-    public abstract class OBDChartPage : CommonPageBase
+    public abstract class OBDChartPage : DrivePageBase
     {
         private readonly IElm327Controller elm;
         private readonly OBDChart[] primary;
@@ -221,7 +221,7 @@ namespace UIModels
         }
     }
 
-    public class OBD_DTCPage : CommonPageBase
+    public class OBD_DTCPage : DrivePageBase
     {
         private readonly OBDProcessor obd;
 

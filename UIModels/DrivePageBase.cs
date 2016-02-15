@@ -8,7 +8,7 @@ using UIModels.MultipurposeModels;
 
 namespace UIModels
 {
-    public abstract class CommonPageBase : RotaryListModel<MappedActionBase>
+    public abstract class DrivePageBase : RotaryListModel<MappedActionBase>
     {
         protected readonly static Dictionary<string, object> crossPageProperties = new Dictionary<string, object>();
 
@@ -19,8 +19,8 @@ namespace UIModels
 
         private readonly List<ListItem<MappedActionBase>> rotaryItems = new List<ListItem<MappedActionBase>>(10);
 
-        protected CommonPageBase(string viewName, IHostController hc, MappedPage pageDescriptor)
-            :base(viewName, hc, pageDescriptor, "list", 6)
+        protected DrivePageBase(string viewName, IHostController hc, MappedPage pageDescriptor, int focusedIndex = 0)
+            :base(viewName, hc, pageDescriptor, "list", 6, focusedIndex)
         {
             this.Disposing += OnDisposing;
 

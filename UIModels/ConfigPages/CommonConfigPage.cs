@@ -1,10 +1,11 @@
 ﻿using Interfaces;
 using Interfaces.UI;
 using System;
+using UIModels.MultipurposeModels;
 
 namespace UIModels
 {
-    class CommonConfigPage : ModelBase
+    class CommonConfigPage : ConfigPageBase
     {
         private const string SaveAndReturn = "SaveAndReturn";
         private const string ChangeLogLevel = "ChangeLogLevel";

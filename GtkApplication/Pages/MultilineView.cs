@@ -26,6 +26,8 @@ namespace GtkApplication
 
 			binder.BindLabelMarkup (label_title, ModelNames.PageTitle, o => string.Format("<span foreground='#d6d6d6' size='12000'>{0}</span>", o));
 
+            binder.BindCustomAction<object>(o => textview_log.Buffer.Clear(), "clear");
+
 			binder.BindCustomAction<System.Collections.Concurrent.ConcurrentQueue<string>>(queue => {
 				if (queue != null)
 				{
@@ -39,8 +41,6 @@ namespace GtkApplication
 					textview_log.ScrollToIter(textview_log.Buffer.EndIter, 0, true, 0, 0);
 				}
 			}, "lines_queue");
-
-            binder.BindCustomAction<object>(o => textview_log.Buffer.Clear(), "clear");
 
 			binder.UpdateBindings ();
 		}

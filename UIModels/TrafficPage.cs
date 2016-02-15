@@ -6,7 +6,7 @@ using System.IO;
 
 namespace UIModels
 {
-    public class TrafficPage : CommonPageBase
+    public class TrafficPage : DrivePageBase
     {
         private readonly StaticMapProvider provider;
 

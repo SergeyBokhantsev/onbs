@@ -50,9 +50,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommonPageBase.cs" />
+    <Compile Include="DrivePageBase.cs" />
     <Compile Include="ConfigPages\CommonConfigPage.cs" />
     <Compile Include="ConfigPages\ConfigGPSPage.cs" />
+    <Compile Include="ConfigPages\ConfigPageBase.cs" />
     <Compile Include="ConfigPages\NavitCommonConfigPage.cs" />
     <Compile Include="ConfigPages\NavitOSDConfigPage.cs" />
     <Compile Include="ConfigPages\ShutdownPage.cs" />
