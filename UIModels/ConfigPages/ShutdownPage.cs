@@ -1,19 +1,30 @@
-﻿using Interfaces;
+﻿using System.Collections.Generic;
+using Interfaces;
 using Interfaces.UI;
+using UIModels.MultipurposeModels;
+using System.Linq;
 
 namespace UIModels
 {
-    public class ShutdownPage : ModelBase
+    public class ShutdownPage : RotaryListModel<string>
     {
+        private readonly List<ListItem<string>> items;
+
         public ShutdownPage(string viewName, IHostController hc, MappedPage pageDescriptor)
-            : base(viewName, hc, pageDescriptor)
+            : base(viewName, hc, pageDescriptor, "list", 10)
         {
             SetProperty(ModelNames.PageTitle, "System power management");
+
+            ListItem<string>.PrepareItem(hc.SyncContext, ref items, "Quit", OnClick, "Quit application");
+            ListItem<string>.PrepareItem(hc.SyncContext, ref items, "Restart", OnClick, "Restart system");
+            ListItem<string>.PrepareItem(hc.SyncContext, ref items, "Shutdown", OnClick, "Shutdown");
         }
 
-        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
+        private void OnClick(object sender, System.EventArgs e)
         {
-            switch (name)
+            var action = ((ListItem<string>)sender).Value;
+
+            switch (action)
             {
                 case "Quit":
                     hc.Shutdown(HostControllerShutdownModes.Exit);
@@ -26,11 +37,15 @@ namespace UIModels
                 case "Shutdown":
                     hc.Shutdown(HostControllerShutdownModes.Shutdown);
                     break;
-
-                default:
-                    base.DoAction(name, actionArgs);
-                    break;
             }
+        }
+
+        protected override IList<ListItem<string>> QueryItems(int skip, int take)
+        {
+            if (skip == 0)
+                return items;
+            else
+                return null;
         }
     }
 }

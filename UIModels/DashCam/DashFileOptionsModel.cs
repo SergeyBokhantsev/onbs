@@ -7,16 +7,19 @@ using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.UI;
 using UIModels.Dialogs;
+using UIModels.MultipurposeModels;
 
 namespace UIModels
 {
-    public class DashFileOptionsModel : ModelBase
+    public class DashFileOptionsModel : RotaryListModel<string>
     {
         private static FileInfo fileInfo;
         private bool inProgress;
 
+        private readonly List<ListItem<string>> items;
+
         public DashFileOptionsModel(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
-            : base(viewName, hc, pageDescriptor)
+            : base(viewName, hc, pageDescriptor, "list", 10)
         {
             var fi = arg as FileInfo;
             if (fi != null)
@@ -24,15 +27,21 @@ namespace UIModels
 
             Ensure.ArgumentIsNotNull(fileInfo);
 
+            ListItem<string>.PrepareItem(hc.SyncContext, ref items, "QuickView", OnClick, "Quick view");
+            ListItem<string>.PrepareItem(hc.SyncContext, ref items, "ProtectDeletion", OnClick, "Protect deletion");
+            ListItem<string>.PrepareItem(hc.SyncContext, ref items, "ViewNormal", OnClick, "View normally");
+            ListItem<string>.PrepareItem(hc.SyncContext, ref items, "CopyExternal", OnClick, "Copy to External storage");
+            ListItem<string>.PrepareItem(hc.SyncContext, ref items, "Remove", OnClick, "Remove this video");
+
             UpdateInfo();
         }
 
-        protected override async void DoAction(string name, PageModelActionEventArgs actionArgs)
+        private async void OnClick(object sender, EventArgs e)
         {
             if (inProgress)
                 return;
 
-            switch (name)
+            switch (((ListItem<string>)sender).Value)
             {
                 case "QuickView":
                     {
@@ -121,10 +130,6 @@ namespace UIModels
                         hc.SyncContext.Post((o) => Action(new PageModelActionEventArgs(ModelNames.ButtonCancel, Interfaces.Input.ButtonStates.Press)), null);
                     }
                     break;
-
-                default:
-                    base.DoAction(name, actionArgs);
-                    break;
             }
         }
 
@@ -156,6 +161,14 @@ namespace UIModels
             };
 
             return hc.ProcessRunnerFactory.Create(config);
+        }
+
+        protected override IList<RotaryListModel<string>.ListItem<string>> QueryItems(int skip, int take)
+        {
+            if (skip == 0)
+                return items;
+            else
+                return null;
         }
     }
 }

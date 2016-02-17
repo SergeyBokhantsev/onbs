@@ -17,13 +17,16 @@ namespace UIModels
         protected readonly string captionPrefix;
         protected readonly Type type;
 
-        public string Caption { get; protected set; }
+        public abstract string Caption { get; }
         public abstract void Select();
 
         protected ConfigItem(IConfig config, Dictionary<string, string> props, string captionPrefix)
         {
             this.config = config;
-            type = Type.GetType(props["Type"]);
+
+            if (props.ContainsKey("Type"))
+                type = Type.GetType(props["Type"]);
+
             settingName = props["SettingName"];
             this.captionPrefix = captionPrefix;
         }
@@ -46,6 +49,12 @@ namespace UIModels
                     case "CycleEnum":
                         return new CycleEnumConfigItem(config, properties, captionPrefix);
 
+                    case "Boolean":
+                        return new BooleanConfigItem(config, properties, captionPrefix);
+
+                    case "CycleString":
+                        return new CycleStringConfigItem(config, properties, captionPrefix);
+
                     default:
                         throw new NotImplementedException(action);
                 }
@@ -57,18 +66,104 @@ namespace UIModels
         }
     }
 
-    public class CycleEnumConfigItem : ConfigItem
+    public class CycleStringConfigItem : ConfigItem
     {
-        public CycleEnumConfigItem(IConfig config, Dictionary<string, string> properties, string captionPrefix)
-            :base(config, properties, captionPrefix)
+        private readonly string[] allValues;
+        private int index;
+
+        public override string Caption
         {
-            var v = config.GetString(settingName);
-            Caption = string.Concat(captionPrefix, v);
+            get
+            {
+                return string.Concat(captionPrefix, config.GetString(settingName));
+            }
+        }
+
+        public CycleStringConfigItem(IConfig config, Dictionary<string, string> properties, string captionPrefix)
+            : base(config, properties, captionPrefix)
+        {
+            allValues = properties["Values"].Split(',');
+            index = Array.IndexOf(allValues, config.GetString(settingName));
+
+            if (index < 0)
+            {
+                index = 0;
+                config.Set(settingName, allValues[index]);
+            }
         }
 
         public override void Select()
         {
-            Caption = Guid.NewGuid().ToString();
+            index++;
+            if (index == allValues.Length)
+                index = 0;
+
+            config.Set(settingName, allValues[index]);
+        }
+    }
+
+    public class BooleanConfigItem : ConfigItem
+    {
+        public override string Caption
+        {
+            get
+            {
+                return string.Concat(captionPrefix, config.GetBool(settingName) ? "Yes" : "No");
+            }
+        }
+
+        public BooleanConfigItem(IConfig config, Dictionary<string, string> properties, string captionPrefix)
+            :base(config, properties, captionPrefix)
+        {
+        }
+
+        public override void Select()
+        {
+            config.InvertBoolSetting(settingName);
+        }
+    }
+
+    public class CycleEnumConfigItem : ConfigItem
+    {
+        private readonly string[] allValues;
+
+        private int index;
+
+        public override string Caption
+        {
+            get
+            {
+                return string.Concat(captionPrefix, allValues[index]);
+            }
+        }
+
+        public CycleEnumConfigItem(IConfig config, Dictionary<string, string> properties, string captionPrefix)
+            :base(config, properties, captionPrefix)
+        {
+            var values = Enum.GetValues(type);
+            allValues = new string[values.Length];
+
+            for(int i=0; i<values.Length; ++i)
+            {
+                allValues[i] = values.GetValue(i).ToString();
+            }
+
+            index = Array.IndexOf(allValues, config.GetString(settingName));
+
+            if (index == -1)
+            {
+                index = 0;
+                config.Set(ConfigNames.LogLevel, allValues[index]);
+            }
+        }
+
+        public override void Select()
+        {
+            index++;
+            if (index == allValues.Length)
+                index = 0;
+
+            config.Set(ConfigNames.LogLevel, allValues[index]);
         }
     }
 
@@ -89,6 +184,17 @@ namespace UIModels
                     {
                         var configItem = ConfigItem.Create(hc.Config, customAction.CustomActionName, customAction.Caption);
                         ListItem<ConfigItem>.PrepareItem(hc.SyncContext, ref rotaryItems, configItem, OnItemClick, configItem.Caption);
+                    }
+                    else
+                    {
+                        var mappedPageAction = mappedAction as MappedPageAction;
+
+                        if (mappedPageAction != null)
+                        {
+                            ListItem<ConfigItem>.PrepareItem(hc.SyncContext, ref rotaryItems, null, (s, e) => Action(new PageModelActionEventArgs(mappedAction.ButtonActionName, Interfaces.Input.ButtonStates.Press)), mappedAction.Caption);
+                        }
+                        else
+                            throw new Exception("Unknown action");
                     }
                 }
             }

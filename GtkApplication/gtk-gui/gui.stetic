@@ -2410,77 +2410,23 @@
           </packing>
         </child>
         <child>
-          <widget class="Gtk.EventBox" id="eventbox_f1">
+          <widget class="Gtk.VBox" id="vbox2">
             <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <placeholder />
+            </child>
+            <child>
+              <placeholder />
+            </child>
             <child>
               <placeholder />
             </child>
           </widget>
           <packing>
             <property name="Position">2</property>
-            <property name="AutoSize">False</property>
-            <property name="Expand">False</property>
-            <property name="Padding">5</property>
+            <property name="AutoSize">True</property>
           </packing>
-        </child>
-        <child>
-          <widget class="Gtk.EventBox" id="eventbox_f2">
-            <property name="MemberName" />
-            <child>
-              <placeholder />
-            </child>
-          </widget>
-          <packing>
-            <property name="Position">3</property>
-            <property name="AutoSize">False</property>
-            <property name="Expand">False</property>
-            <property name="Padding">5</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.EventBox" id="eventbox_f3">
-            <property name="MemberName" />
-            <child>
-              <placeholder />
-            </child>
-          </widget>
-          <packing>
-            <property name="Position">4</property>
-            <property name="AutoSize">False</property>
-            <property name="Expand">False</property>
-            <property name="Padding">5</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.EventBox" id="eventbox_f4">
-            <property name="MemberName" />
-            <child>
-              <placeholder />
-            </child>
-          </widget>
-          <packing>
-            <property name="Position">5</property>
-            <property name="AutoSize">False</property>
-            <property name="Expand">False</property>
-            <property name="Padding">5</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="Gtk.EventBox" id="eventbox_f5">
-            <property name="MemberName" />
-            <child>
-              <placeholder />
-            </child>
-          </widget>
-          <packing>
-            <property name="Position">6</property>
-            <property name="AutoSize">False</property>
-            <property name="Expand">False</property>
-            <property name="Padding">5</property>
-          </packing>
-        </child>
-        <child>
-          <placeholder />
         </child>
         <child>
           <widget class="Gtk.EventBox" id="eventbox_cancel">
@@ -2491,7 +2437,7 @@
           </widget>
           <packing>
             <property name="PackType">End</property>
-            <property name="Position">8</property>
+            <property name="Position">3</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
             <property name="Padding">5</property>

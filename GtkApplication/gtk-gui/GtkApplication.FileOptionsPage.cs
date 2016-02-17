@@ -14,15 +14,7 @@ namespace GtkApplication
 		
 		private global::Gtk.Label label_file_props;
 		
-		private global::Gtk.EventBox eventbox_f1;
-		
-		private global::Gtk.EventBox eventbox_f2;
-		
-		private global::Gtk.EventBox eventbox_f3;
-		
-		private global::Gtk.EventBox eventbox_f4;
-		
-		private global::Gtk.EventBox eventbox_f5;
+		private global::Gtk.VBox vbox2;
 		
 		private global::Gtk.EventBox eventbox_cancel;
 
@@ -65,54 +57,21 @@ namespace GtkApplication
 			w4.Expand = false;
 			w4.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.eventbox_f1 = new global::Gtk.EventBox ();
-			this.eventbox_f1.Name = "eventbox_f1";
-			this.vbox1.Add (this.eventbox_f1);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox_f1]));
+			this.vbox2 = new global::Gtk.VBox ();
+			this.vbox2.Name = "vbox2";
+			this.vbox2.Spacing = 6;
+			this.vbox1.Add (this.vbox2);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.vbox2]));
 			w5.Position = 2;
-			w5.Expand = false;
-			w5.Padding = ((uint)(5));
-			// Container child vbox1.Gtk.Box+BoxChild
-			this.eventbox_f2 = new global::Gtk.EventBox ();
-			this.eventbox_f2.Name = "eventbox_f2";
-			this.vbox1.Add (this.eventbox_f2);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox_f2]));
-			w6.Position = 3;
-			w6.Expand = false;
-			w6.Padding = ((uint)(5));
-			// Container child vbox1.Gtk.Box+BoxChild
-			this.eventbox_f3 = new global::Gtk.EventBox ();
-			this.eventbox_f3.Name = "eventbox_f3";
-			this.vbox1.Add (this.eventbox_f3);
-			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox_f3]));
-			w7.Position = 4;
-			w7.Expand = false;
-			w7.Padding = ((uint)(5));
-			// Container child vbox1.Gtk.Box+BoxChild
-			this.eventbox_f4 = new global::Gtk.EventBox ();
-			this.eventbox_f4.Name = "eventbox_f4";
-			this.vbox1.Add (this.eventbox_f4);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox_f4]));
-			w8.Position = 5;
-			w8.Expand = false;
-			w8.Padding = ((uint)(5));
-			// Container child vbox1.Gtk.Box+BoxChild
-			this.eventbox_f5 = new global::Gtk.EventBox ();
-			this.eventbox_f5.Name = "eventbox_f5";
-			this.vbox1.Add (this.eventbox_f5);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox_f5]));
-			w9.Position = 6;
-			w9.Expand = false;
-			w9.Padding = ((uint)(5));
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.eventbox_cancel = new global::Gtk.EventBox ();
 			this.eventbox_cancel.Name = "eventbox_cancel";
 			this.vbox1.Add (this.eventbox_cancel);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox_cancel]));
-			w10.PackType = ((global::Gtk.PackType)(1));
-			w10.Position = 8;
-			w10.Expand = false;
-			w10.Padding = ((uint)(5));
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox_cancel]));
+			w6.PackType = ((global::Gtk.PackType)(1));
+			w6.Position = 3;
+			w6.Expand = false;
+			w6.Padding = ((uint)(5));
 			this.Add (this.vbox1);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
