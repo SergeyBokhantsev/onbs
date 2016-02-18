@@ -197,7 +197,7 @@ namespace UIModels.MultipurposeModels
 
         protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
         {
-            if (name == ModelNames.UnmappedAction)
+			if (name == ModelNames.UnmappedAction && actionArgs.State == Interfaces.Input.ButtonStates.Press)
             {
                 switch (actionArgs.ActionName)
                 {

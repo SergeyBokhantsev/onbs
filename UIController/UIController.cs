@@ -65,7 +65,7 @@ namespace UIController
         {
             lock (dialogs)
             {
-                if (currentDialog != null)
+				if (currentDialog != null && state == ButtonStates.Press)
                 {
                     currentDialog.HardwareButtonClick(button);
                     return;

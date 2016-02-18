@@ -29,8 +29,8 @@ namespace UIModels
 
             gpsController = hc.GetController<IGPSController>();
 
-            primaryTimer = hc.CreateTimer(1000, OnPrimaryTick, false, true, "common primary timer");
-            secondaryTimer = hc.CreateTimer(60000, OnSecondaryTimer, false, true, "common secondary timer");
+            primaryTimer = hc.CreateTimer(1000, OnPrimaryTick, true, true, "common primary timer");
+            secondaryTimer = hc.CreateTimer(60000, OnSecondaryTimer, true, true, "common secondary timer");
 
             foreach (var mappedAction in pageDescriptor.ButtonsMap)
             {

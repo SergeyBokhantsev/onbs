@@ -9,14 +9,13 @@
 
         Next = 11,
         Prev = 10,
-        Select = 12,
-
-        F3 = 3, 
-        F4 = 4, 
-        F5 = 5, 
-        F6 = 6, 
-        F7 = 7, 
-        F8 = 8 
+        Select = 3,
+		F3 = 4,
+		F4 = 5,
+		F5 = 6,
+		F6 = 7,
+		F7 = 8,
+		F88 = 12
     }
 
     public enum ButtonStates { Press = 43, Hold = 44, Release = 45 }
