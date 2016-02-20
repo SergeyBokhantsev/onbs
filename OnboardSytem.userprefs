@@ -1,9 +1,10 @@
 ﻿<Properties StartupItem="HostController/HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/App.config">
+  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/Data/navit_template.xml">
     <Files>
-      <File FileName="HostController/App.config" Line="12" Column="24" />
-      <File FileName="UIModels/DrivePageBase.cs" Line="21" Column="3" />
+      <File FileName="HostController/App.config" Line="93" Column="27" />
+      <File FileName="UIModels/DrivePageBase.cs" Line="1" Column="1" />
+      <File FileName="HostController/Data/navit_template.xml" Line="158" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
