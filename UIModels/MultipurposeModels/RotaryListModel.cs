@@ -208,6 +208,7 @@ namespace UIModels.MultipurposeModels
                         FocusPrev();
                         break;
                     case ModelNames.ButtonSelect:
+                    case ModelNames.ButtonAccept:
                         SelectItem();
                         break;
                 }

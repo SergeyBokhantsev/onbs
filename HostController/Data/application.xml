@@ -6,7 +6,8 @@
       <Cancel name="Drive1"/>
     </page>
     <page name="Drive1" model="DrivePage" default_view="DrivePage">
-      <Accept name="Drive2" caption="NEXT"/>
+      <Cancel name="Shutdown"/>
+      <F1 name="NavApp"/>
       <RotaryItem_1 name="NavApp" caption="NAV"/>
       <RotaryItem_2 name="WebCam" caption="CAM"/>
       <RotaryItem_3 name="Weather" caption="WTHR"/>
