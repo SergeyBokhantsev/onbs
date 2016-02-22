@@ -20,10 +20,8 @@
     </page>
     <page name="NavApp" model="NavigationAppPage" default_view="ExternalApplicationPage">
       <Cancel name="Drive1"/>
-      <F1 action="+"/>
-      <F2 action="-"/>
-      <Prev action="a"/>
-      <Next action="d"/>      
+      <Prev action="WheelDown"/>
+      <Next action="WheelUp"/>      
     </page>
     <page name="WebCam" model="WebCamPage" default_view="ExternalApplicationPage">
       <Cancel name="Drive1"/>

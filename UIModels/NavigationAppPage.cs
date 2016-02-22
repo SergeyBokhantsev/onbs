@@ -69,6 +69,14 @@ namespace UIModels
         {
             switch(name)
             { 
+			case "WheelUp":
+				automation.MouseClick (AutomationMouseClickTypes.WheelUp);
+				break;
+
+			case "WheelDown":
+				automation.MouseClick (AutomationMouseClickTypes.WheelDown);
+				break;
+
                 case "+":
                     automation.Key(AutomationKeys.Control, AutomationKeys.plus);
                     break;

@@ -11,5 +11,6 @@ namespace AutomationController
     {
         void Key(params AutomationKeys[] key);
         void MouseMove(int x, int y);
+		void MouseClick(AutomationMouseClickTypes type);
     }
 }

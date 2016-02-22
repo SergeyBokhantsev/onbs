@@ -39,5 +39,10 @@ namespace AutomationController
         {
             tool.MouseMove(x, y);
         }
+
+		public void MouseClick(AutomationMouseClickTypes type)
+		{
+			tool.MouseClick(type);
+		}
     }
 }

@@ -43,6 +43,13 @@ namespace AutomationController.ToolAdapters
             var config = new ProcessConfig { ExePath = automationTool, Args = args, WaitForUI = waitForUI, Silent = true };
             processRunnerFactory.Create(config).Run();
         }
+
+		public void MouseClick(AutomationMouseClickTypes type)
+		{
+			var args = string.Format("click {0}", (int)type);
+			var config = new ProcessConfig { ExePath = automationTool, Args = args, WaitForUI = waitForUI, Silent = true };
+			processRunnerFactory.Create(config).Run();
+		}
     }
 }
 

@@ -168,7 +168,7 @@ Waypoint</text></img>
 		<osd enabled="no" type="button" x="0" y="-96" command="zoom_out()" src="zoom_out.png"/> 
 
 		<!-- Vehicle with GPS enabled for gpsd on unix -->
-		<vehicle name="Local GPS" profilename="car" enabled="yes" active="{gps_active}" source="gpsd://localhost" gpsd_query="w+xj">
+		<vehicle name="Local GPS" profilename="car" enabled="yes" active="{gps_active}" source="gpsd://localhost:2947" gpsd_query="w+xj">
 			<!-- Vehicle with GPS enabled for direct communication on windows. Remove the line above if you use this. -->
 			<!-- <vehicle name="Local GPS" profilename="car" follow="1" enabled="yes" active="1" 
 				source="serial:COM4 baud=4800 parity=N data=8 stop=1" > -->

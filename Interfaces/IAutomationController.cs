@@ -19,9 +19,19 @@
 		Alt = 0x0703,
     };
 
+	public enum AutomationMouseClickTypes
+	{
+		Button1 = 1,
+		Button2 = 2,
+		Button3 = 3,
+		WheelUp = 4,
+		WheelDown = 5
+	}
+
     public interface IAutomationController : IController
     {
         void Key(params AutomationKeys[] key);
         void MouseMove(int x, int y);
+		void MouseClick(AutomationMouseClickTypes type);
     }
 }
