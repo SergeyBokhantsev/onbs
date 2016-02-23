@@ -14,19 +14,15 @@ namespace UIModels
 {
     public class DashCopyExternalModel : RotaryListModel<string>
     {
-        private FileInfo fileInfo;
-        private bool inProgress;
-        private bool cancelRequest;
+        private readonly FileInfo fileInfo;
+        private CancellationTokenSource cts;
 
         private readonly List<ListItem<string>> items;
 
         public DashCopyExternalModel(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
             : base(viewName, hc, pageDescriptor, "list", 10)
         {
-            var fi = arg as FileInfo;
-            if (fi != null)
-                fileInfo = fi;
-
+            fileInfo = arg as FileInfo;
             Ensure.ArgumentIsNotNull(fileInfo);
 
             var drives = Directory.GetLogicalDrives();
@@ -44,9 +40,9 @@ namespace UIModels
         {
             if (name == "Cancel")
             {
-                if (inProgress)
+                if (cts != null)
                 {
-                    cancelRequest = true;
+                    cts.Cancel();
                 }
                 else
                 {
@@ -66,12 +62,14 @@ namespace UIModels
 
             try
             {
-                cancelRequest = false;
-                inProgress = true;
+                cts = new CancellationTokenSource();
 
                 var drivePath = ((ListItem<string>)sender).Value;
 
-                destinationFilePath = Path.Combine(drivePath, fileInfo.Name);
+                UpdateInfo("Converting to MP4 file...");
+                var mp4FileInfo = await Task.Run(() => hc.GetController<IDashCamController>().GetMP4File(fileInfo));
+                
+                destinationFilePath = Path.Combine(drivePath, mp4FileInfo.Name);
 
                 if (File.Exists(destinationFilePath))
                 {
@@ -79,35 +77,16 @@ namespace UIModels
                     await Task.Delay(1000);
                 }
 
-                await Task.Run(() =>
-                {
-                    long overalCopied = 0;
-                    DateTime updateTime = DateTime.MinValue;
-                    byte[] buffer = new byte[4096];
-                    using (var stream = fileInfo.OpenRead())
-                    {
-                        using (var outStream = File.Create(destinationFilePath, buffer.Length, FileOptions.WriteThrough))
-                        {
-                            int readed = 1;
+                Action<int> progressAction = percent => UpdateInfo(string.Concat("Copied: ", percent, "%"));
 
-                            while (readed > 0 && !cancelRequest)
-                            {
-                                readed = stream.Read(buffer, 0, buffer.Length);
-                                outStream.Write(buffer, 0, readed);
-                                overalCopied += readed;
+                await Task.Run(() => hc.GetController<IDashCamController>().Copy(mp4FileInfo, destinationFilePath, cts.Token, progressAction));
 
-                                if (DateTime.Now > updateTime)
-                                {
-                                    var percent = (int)(((double)overalCopied / ((double)fileInfo.Length + 1)) * 100);
-                                    UpdateInfo(string.Concat("Copied: ", percent));
-                                    updateTime = DateTime.Now.AddMilliseconds(500);
-                                }                                
-                            }
-
-                            UpdateInfo();
-                        }
-                    }
-                });
+                progressAction(100);
+            }
+            catch (OperationCanceledException ex)
+            {
+                hc.Logger.Log(this, ex);
+                error = ex;
             }
             catch (Exception ex)
             {
@@ -116,10 +95,10 @@ namespace UIModels
             }
             finally
             {
-                inProgress = false;
+                cts = null;
             }
 
-            if (cancelRequest)
+            if (error is OperationCanceledException)
             {
                 await hc.GetController<IUIController>().ShowDialogAsync(new OkDialog("File not copied", "Operation was cancelled", "Close", hc, 60000));
             }

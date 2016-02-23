@@ -161,19 +161,34 @@ namespace DashCamController
             fileManager.Cleanup(fileInfo.FullName);
         }
 
-        public string Copy(FileInfo fileInfo, string destinationPath)
+        public void Copy(FileInfo fileInfo, string destinationPath, CancellationToken ct, Action<int> progressAction = null)
         {
-            var destionationFilePath = Path.Combine(destinationPath, fileInfo.Name);
-            int index = 1;
-
-            while (File.Exists(destionationFilePath))
+            long overalCopied = 0;
+            DateTime updateTime = DateTime.MinValue;
+            byte[] buffer = new byte[4096];
+            using (var stream = fileInfo.OpenRead())
             {
-                destionationFilePath = Path.Combine(destinationPath, string.Format("{0} ({1}){2}", Path.GetFileNameWithoutExtension(fileInfo.Name), index++, Path.GetExtension(fileInfo.Name)));
+                using (var outStream = File.Create(destinationPath, buffer.Length, FileOptions.WriteThrough))
+                {
+                    int readed = 1;
+
+                    while (readed > 0)
+                    {
+                        ct.ThrowIfCancellationRequested();
+
+                        readed = stream.Read(buffer, 0, buffer.Length);
+                        outStream.Write(buffer, 0, readed);
+                        overalCopied += readed;
+
+                        if (progressAction != null && DateTime.Now > updateTime)
+                        {
+                            var percent = (int)(((double)overalCopied / ((double)fileInfo.Length + 1)) * 100);
+                            progressAction(percent);
+                            updateTime = DateTime.Now.AddMilliseconds(500);
+                        }
+                    }
+                }
             }
-
-            fileInfo.CopyTo(destionationFilePath);
-
-            return destionationFilePath;
         }
     }
 }
