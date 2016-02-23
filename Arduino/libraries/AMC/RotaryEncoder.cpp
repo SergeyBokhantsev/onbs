@@ -27,19 +27,18 @@ void RotaryEncoder::process()
 	  
 	unsigned long now = millis();
 
+	int signal = digitalRead(ROTARY_PIN_SIGNAL);
+	
 	if (now >= last_processed + ROTARY_PROCESS_INTERVAL)
 	{
-		//last_processed = now;
-	    int signal = digitalRead(ROTARY_PIN_SIGNAL);
-	    
 		if (signal == LOW && previous_signal == HIGH)
 		{
 			generate_event();
 			last_processed = now + ROTARY_AFTER_EVENT_DELAY;
 		}
-		
-		previous_signal = signal;
 	}
+	
+	previous_signal = signal;
 }
 
 void RotaryEncoder::generate_event()

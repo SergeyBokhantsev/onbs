@@ -70,6 +70,9 @@
     <page name="DashFileOptions" model="DashFileOptionsModel" default_view="FileOptionsPage">
       <Cancel name="DashCamCatalog" caption="Return to catalog"/>
     </page>
+    <page name="DashCopyExternal" model="DashCopyExternalModel" default_view="FileOptionsPage">
+      <Cancel action="Cancel"/>
+    </page>
     <page name="DashConvertToMP4" model="DashConvertToMP4Model" default_view="ExternalApplicationPage">
       <Cancel name="DashFileOptions"/>
     </page>

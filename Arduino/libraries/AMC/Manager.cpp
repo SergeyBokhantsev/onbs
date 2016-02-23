@@ -113,14 +113,6 @@ bool Manager::before_button_send(int buttonId, char buttonState)
 			return false;
 			
 		case MANAGER_STATE_GUARD:
-		
-			if (buttonId == 10)
-				temp--;
-			else
-				temp++;
-			
-			oled->messageI(temp);
-		
 			if (buttonId == accept_btn_num && buttonState == BTN_STATE_PRESSED)
 			{
 				set_state(MANAGER_STATE_WAITING);

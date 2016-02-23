@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DashCam\DashCopyExternalModel.cs" />
     <Compile Include="DrivePageBase.cs" />
     <Compile Include="ConfigPages\ConfigPageBase.cs" />
     <Compile Include="ConfigPages\ShutdownPage.cs" />

@@ -5,7 +5,7 @@
 #include "ButtonProcessor.h"
 
 #define ROTARY_PROCESS_INTERVAL 5
-#define ROTARY_AFTER_EVENT_DELAY 50
+#define ROTARY_AFTER_EVENT_DELAY 5
 
 class RotaryEncoder
 {
