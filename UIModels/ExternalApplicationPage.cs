@@ -6,10 +6,10 @@ namespace UIModels
 {
     public abstract class ExternalApplicationPage : ModelBase
     {
-        private IProcessRunner Runner
+        protected IProcessRunner Runner
         {
             get;
-            set;
+            private set;
         }
 
         protected ExternalApplicationPage(string viewName, IHostController hc, MappedPage pageDescriptor, IProcessRunner runner)

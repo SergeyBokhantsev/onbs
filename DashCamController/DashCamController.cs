@@ -43,6 +43,7 @@ namespace DashCamController
             var monitorThread = new Thread(MonitorLoop);
             monitorThread.Name = "DashCamMonitor";
             monitorThread.IsBackground = true;
+            monitorThread.Priority = ThreadPriority.AboveNormal;
             monitorThread.Start();
         }
 

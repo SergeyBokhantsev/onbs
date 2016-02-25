@@ -14,6 +14,7 @@ namespace UIModels
         public DashPlayerModel(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
             : base(viewName, hc, pageDescriptor, arg as IProcessRunner)
         {
+            this.Disposing += (s, e) => Runner.Exit();
         }
     }
 }
