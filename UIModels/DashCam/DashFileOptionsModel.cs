@@ -123,7 +123,7 @@ namespace UIModels
                 ExePath = hc.Config.GetString(ConfigNames.DashCamPlayerExe),
                 Args = string.Format(hc.Config.GetString(ConfigNames.DashCamPlayerArg), filePath),
                 WaitForUI = false,
-                RedirectStandardInput = false,
+                RedirectStandardInput = true,
                 RedirectStandardOutput = false
             };
 

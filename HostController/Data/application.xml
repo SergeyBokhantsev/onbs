@@ -77,7 +77,7 @@
       <Cancel name="DashFileOptions"/>
     </page>
     <page name="DashPlayer" model="DashPlayerModel" default_view="ExternalApplicationPage">
-      <Cancel name="DashFileOptions"/>
+      <Cancel action="Exit"/>
     </page>
     <page name="Shutdown" model="ShutdownPage" default_view="CommonVertcalStackPage">
       <Cancel name="Drive1" caption="Return"/>
