@@ -23,7 +23,7 @@ namespace UIModels
 			switch (name)
 			{
 			case "Exit":
-				if (onExiting) {
+				if (onExiting || Runner.HasExited) {
 					hc.GetController<IUIController> ()
 						.ShowPage ("DashFileOptions", null, null);
 				} else {
