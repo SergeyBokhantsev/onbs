@@ -54,7 +54,7 @@ namespace UIModels
 
         protected virtual void DoAction(string name, PageModelActionEventArgs actionArgs)
         {
-            hc.Logger.Log(this, string.Format("No '{0}' action exists to execute for button {1}, state {2}.", name, actionArgs.ActionName, actionArgs.State), LogLevels.Warning);
+			hc.Logger.Log(this, string.Format("No '{0}' action exists to execute for button {1}, state {2}.", name, actionArgs.ActionName, actionArgs.State), LogLevels.Debug);
         }
 
         public T GetProperty<T>(string name)
