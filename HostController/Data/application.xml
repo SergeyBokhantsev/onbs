@@ -64,6 +64,23 @@
     <page name="DashCamMenu" model="DashMenuModel" default_view="CommonVertcalStackPage">
       <Cancel name="Drive1"/>
     </page>
+    <page name="DashCamConfig" model="ConfigPageBase" default_view="CommonVertcalStackPage">
+      <Cancel action="SaveAndReturn:DashCamMenu" caption="Back"/>
+      <ConfigItem_1 action="Behavior:IntRange;Min:0;Max:255;Step:20;SettingName:DashCamRecorderOpacity" caption="Preview opacity: "/>
+      <ConfigItem_2 action="Behavior:IntRange;Min:-100;Max:100;Step:5;SettingName:DashCamRecorderSharpness" caption="Sharpness: "/>
+      <ConfigItem_3 action="Behavior:IntRange;Min:-100;Max:100;Step:5;SettingName:DashCamRecorderContrast" caption="Contrast: "/>
+      <ConfigItem_4 action="Behavior:IntRange;Min:0;Max:100;Step:5;SettingName:DashCamRecorderBrightness" caption="Brightness: "/>
+      <ConfigItem_5 action="Behavior:IntRange;Min:-100;Max:100;Step:5;SettingName:DashCamRecorderSaturation" caption="Saturation: "/>
+      <ConfigItem_6 action="Behavior:IntRange;Min:100;Max:800;Step:100;SettingName:DashCamRecorderISO" caption="ISO: "/> 
+      <ConfigItem_7 action="Behavior:IntRange;Min:-10;Max:10;Step:1;SettingName:DashCamRecorderEV" caption="EV: "/>
+      <ConfigItem_8 action="Behavior:CycleString;Values:auto,night,backlight,spotlight,sports,snow,beach,verylong,fixedfps,antishake,fireworks;SettingName:DashCamRecorderExposure" caption="Exposure: "/>
+      <ConfigItem_9 action="Behavior:CycleString;Values:off,auto,sun,cloud,shade,tungsten,fluorescent,incandescent,flash,horizon;SettingName:DashCamRecorderAWB" caption="White balance: "/>
+      <ConfigItem_10 action="Behavior:CycleString;Values:none,negative,solarise,posterise,whiteboard,blackboard,sketch,denoise,emboss,oilpaint,hatch,gpen,pastel,watercolour,film,blur,saturation;SettingName:DashCamRecorderEffect" caption="Apply effect: "/>
+      <ConfigItem_11 action="Behavior:CycleString;Values:average,spot,backlit,matrix;SettingName:DashCamRecorderMetering" caption="Metering mode: "/>
+      <ConfigItem_12 action="Behavior:CycleString;Values:0,90,180,270;SettingName:DashCamRecorderRotation" caption="Image rotation: "/>
+      <ConfigItem_13 action="Behavior:CycleString;Values:off,low,medium,high;SettingName:DashCamRecorderDRC" caption="Dynamic Range compression: "/>
+      
+    </page>
     <page name="DashCamCatalog" model="DashCamCatalogModel" default_view="CommonVertcalStackPage">
       <Cancel name="DashCamMenu" caption="Return"/>
     </page>

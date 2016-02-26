@@ -87,7 +87,23 @@ namespace DashCamController
                 var processConfig = new ProcessConfig
                 {
                     ExePath = recordingExe,
-                    Args = string.Format(recordingArg, recordingLenSec * 1000, fileManager.GetNextFileName()),
+                    Args = string.Format(recordingArg, 
+                    recordingLenSec * 1000, //0
+                    hc.Config.GetString("DashCamRecorderOpacity"), //1
+                    hc.Config.GetString("DashCamRecorderSharpness"), //2
+                    hc.Config.GetString("DashCamRecorderContrast"), //3
+                    hc.Config.GetString("DashCamRecorderBrightness"), //4
+                    hc.Config.GetString("DashCamRecorderSaturation"), //5
+                    hc.Config.GetString("DashCamRecorderISO"), //6
+                    hc.Config.GetString("DashCamRecorderEV"), //7
+                    hc.Config.GetString("DashCamRecorderExposure"), //8
+                    hc.Config.GetString("DashCamRecorderAWB"), //9
+                    hc.Config.GetString("DashCamRecorderEffect"), //10
+                    hc.Config.GetString("DashCamRecorderMetering"), //11
+                    hc.Config.GetString("DashCamRecorderRotation"), //12
+                    hc.Config.GetString("DashCamRecorderDRC"), //13
+                    hc.Config.GetString("DashCamRecorderAnnotate"), //14
+                    fileManager.GetNextFileName()), // 15
                     Silent = true,
                     WaitForUI = false,
                     AliveMonitoringInterval = 200

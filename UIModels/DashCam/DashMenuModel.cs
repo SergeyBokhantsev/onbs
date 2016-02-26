@@ -19,6 +19,7 @@ namespace UIModels
             ListItem<object>.PrepareItem(hc.SyncContext, ref menuItems, null, ClickHandler, "Video catalog");
             ListItem<object>.PrepareItem(hc.SyncContext, ref menuItems, null, ClickHandler, "");
             ListItem<object>.PrepareItem(hc.SyncContext, ref menuItems, null, ClickHandler, "");
+            ListItem<object>.PrepareItem(hc.SyncContext, ref menuItems, null, ClickHandler, "Settings");
 
             UpdateLabels();
         }
@@ -43,6 +44,10 @@ namespace UIModels
             {
                 hc.Config.InvertBoolSetting(ConfigNames.DashCamRecorderPreviewEnabled);
                 UpdateLabels();
+            }
+            else if (sender == menuItems[3])
+            {
+                hc.GetController<IUIController>().ShowPage("DashCamConfig", null, null);
             }
         }
 
