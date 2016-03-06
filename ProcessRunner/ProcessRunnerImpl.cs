@@ -168,6 +168,15 @@ namespace ProcessRunner
             }
         }
 
+		public void SendToStandardInput(char c)
+		{
+			if (!proc.HasExited)
+			{
+				proc.StandardInput.Write(c);
+				proc.StandardInput.Flush();
+			}
+		}
+
         public string GetFromStandardOutput()
         {
             StringBuilder res = new StringBuilder();

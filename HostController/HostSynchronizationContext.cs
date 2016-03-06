@@ -141,7 +141,7 @@ namespace HostController
                     if (workItem.Exception != null)
                         logger.Log(this, workItem.Exception);
 
-                    if (itemWatch.ElapsedMilliseconds > 300)
+                    if (itemWatch.ElapsedMilliseconds > 1000)
                         logger.Log(this, string.Format("Work item {0} spent {1} milliseconds", workItem, itemWatch.ElapsedMilliseconds), LogLevels.Warning);
                 }
 

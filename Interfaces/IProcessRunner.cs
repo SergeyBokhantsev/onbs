@@ -13,6 +13,7 @@
         bool HasExited { get; }
         void Run();
         void SendToStandardInput(string message);
+		void SendToStandardInput(char c);
         string GetFromStandardOutput();
         bool WaitForExit(int timeoutMilliseconds);
         void Exit();

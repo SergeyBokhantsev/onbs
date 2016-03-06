@@ -43,6 +43,7 @@ namespace DashCamController
             var monitorThread = new Thread(MonitorLoop);
             monitorThread.Name = "DashCamMonitor";
             monitorThread.IsBackground = true;
+            monitorThread.Priority = ThreadPriority.AboveNormal;
             monitorThread.Start();
         }
 
@@ -86,7 +87,23 @@ namespace DashCamController
                 var processConfig = new ProcessConfig
                 {
                     ExePath = recordingExe,
-                    Args = string.Format(recordingArg, recordingLenSec * 1000, fileManager.GetNextFileName()),
+                    Args = string.Format(recordingArg, 
+                    recordingLenSec * 1000, //0
+                    hc.Config.GetString("DashCamRecorderOpacity"), //1
+                    hc.Config.GetString("DashCamRecorderSharpness"), //2
+                    hc.Config.GetString("DashCamRecorderContrast"), //3
+                    hc.Config.GetString("DashCamRecorderBrightness"), //4
+                    hc.Config.GetString("DashCamRecorderSaturation"), //5
+                    hc.Config.GetString("DashCamRecorderISO"), //6
+                    hc.Config.GetString("DashCamRecorderEV"), //7
+                    hc.Config.GetString("DashCamRecorderExposure"), //8
+                    hc.Config.GetString("DashCamRecorderAWB"), //9
+                    hc.Config.GetString("DashCamRecorderEffect"), //10
+                    hc.Config.GetString("DashCamRecorderMetering"), //11
+                    hc.Config.GetString("DashCamRecorderRotation"), //12
+                    hc.Config.GetString("DashCamRecorderDRC"), //13
+                    hc.Config.GetString("DashCamRecorderAnnotate"), //14
+                    fileManager.GetNextFileName()), // 15
                     Silent = true,
                     WaitForUI = false,
                     AliveMonitoringInterval = 200
@@ -161,19 +178,34 @@ namespace DashCamController
             fileManager.Cleanup(fileInfo.FullName);
         }
 
-        public string Copy(FileInfo fileInfo, string destinationPath)
+        public void Copy(FileInfo fileInfo, string destinationPath, CancellationToken ct, Action<int> progressAction = null)
         {
-            var destionationFilePath = Path.Combine(destinationPath, fileInfo.Name);
-            int index = 1;
-
-            while (File.Exists(destionationFilePath))
+            long overalCopied = 0;
+            DateTime updateTime = DateTime.MinValue;
+            byte[] buffer = new byte[4096];
+            using (var stream = fileInfo.OpenRead())
             {
-                destionationFilePath = Path.Combine(destinationPath, string.Format("{0} ({1}){2}", Path.GetFileNameWithoutExtension(fileInfo.Name), index++, Path.GetExtension(fileInfo.Name)));
+                using (var outStream = File.Create(destinationPath, buffer.Length, FileOptions.WriteThrough))
+                {
+                    int readed = 1;
+
+                    while (readed > 0)
+                    {
+                        ct.ThrowIfCancellationRequested();
+
+                        readed = stream.Read(buffer, 0, buffer.Length);
+                        outStream.Write(buffer, 0, readed);
+                        overalCopied += readed;
+
+                        if (progressAction != null && DateTime.Now > updateTime)
+                        {
+                            var percent = (int)(((double)overalCopied / ((double)fileInfo.Length + 1)) * 100);
+                            progressAction(percent);
+                            updateTime = DateTime.Now.AddMilliseconds(500);
+                        }
+                    }
+                }
             }
-
-            fileInfo.CopyTo(destionationFilePath);
-
-            return destionationFilePath;
         }
     }
 }

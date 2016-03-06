@@ -86,41 +86,6 @@ namespace UIModels
                 case "CopyExternal":
                     {
                         hc.GetController<IUIController>().ShowPage("DashCopyExternal", null, fileInfo);
-
-                        //Exception error = null;
-                        //string destFilePath = null;
-
-                        //try
-                        //{
-                        //    var externalDrive = hc.Config.GetString(ConfigNames.DashCamExternalStorageDrive);
-                        //    if (!Directory.GetLogicalDrives().Any(d => d.Equals(externalDrive, StringComparison.InvariantCultureIgnoreCase)))
-                        //    {
-                        //        await hc.GetController<IUIController>().ShowDialogAsync(new OkDialog("Error", string.Format("Unable to save. No '{0}' drive exist.", externalDrive), "Close", hc, 5000));
-                        //        return;
-                        //    }
-
-                        //    SetInprogress(true);
-                        //    var mp4FileInfo = await Task.Run(() => hc.GetController<IDashCamController>().GetMP4File(fileInfo));
-                        //    if (!Disposed)
-                        //    {
-                        //        SetInprogress(true, "Copying to the storage...");
-                        //        destFilePath = await Task.Run(() => hc.GetController<IDashCamController>().Copy(mp4FileInfo, externalDrive));
-                        //    }
-                        //}
-                        //catch (Exception ex)
-                        //{
-                        //    hc.Logger.Log(this, ex);
-                        //    error = ex;
-                        //}
-                        //finally
-                        //{
-                        //    SetInprogress(false);
-                        //}
-
-                        //if (error != null)
-                        //    await hc.GetController<IUIController>().ShowDialogAsync(new OkDialog("Error", error.Message, "Close", hc, 5000));
-                        //else
-                        //    await hc.GetController<IUIController>().ShowDialogAsync(new OkDialog("Error", string.Concat("Copied successfully to ", destFilePath), "Ok", hc, 5000));
                     }
                     break;
 
@@ -158,7 +123,7 @@ namespace UIModels
                 ExePath = hc.Config.GetString(ConfigNames.DashCamPlayerExe),
                 Args = string.Format(hc.Config.GetString(ConfigNames.DashCamPlayerArg), filePath),
                 WaitForUI = false,
-                RedirectStandardInput = false,
+                RedirectStandardInput = true,
                 RedirectStandardOutput = false
             };
 

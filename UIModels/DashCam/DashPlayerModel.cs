@@ -11,9 +11,31 @@ namespace UIModels
 {
     public class DashPlayerModel : ExternalApplicationPage
     {
+		private bool onExiting;
+
         public DashPlayerModel(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
             : base(viewName, hc, pageDescriptor, arg as IProcessRunner)
         {
         }
+
+		protected override void DoAction (string name, PageModelActionEventArgs actionArgs)
+		{
+			switch (name)
+			{
+			case "Exit":
+				if (onExiting || Runner.HasExited) {
+					hc.GetController<IUIController> ()
+						.ShowPage ("DashFileOptions", null, null);
+				} else {
+					Runner.SendToStandardInput ((char)27);
+					onExiting = true;
+				}
+				break;
+
+			default:
+				base.DoAction (name, actionArgs);
+				break;
+			}
+		}
     }
 }

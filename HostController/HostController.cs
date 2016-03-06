@@ -303,7 +303,7 @@ namespace HostController
             uiController.ShowDefaultPage();
 
             if (config.Environment == Environments.RPi)
-                gpsCtrl.GPRMCReseived += gprmc => CheckSystemTimeFromGPS(gprmc);
+                gpsCtrl.GPRMCReseived += CheckSystemTimeFromGPS;
 
             dashCamController = new DashCamController.DashCamController(this);
 
@@ -511,7 +511,8 @@ namespace HostController
             {
                 ExePath = Config.GetString(string.Concat(appKey, "_exe")),
                 Args = args,
-                WaitForUI = Config.GetBool(string.Concat(appKey, "_wait_UI"))
+                WaitForUI = Config.GetBool(string.Concat(appKey, "_wait_UI")),
+				Silent = true
             };
 
             return Create(processConfig);

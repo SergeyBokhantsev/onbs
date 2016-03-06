@@ -285,11 +285,14 @@ namespace ArduinoController
                 {
 					decodedFramesCount += frames.Count;
 
-                    foreach (var acceptor in acceptors)
-                    {
-                        syncContext.Post(o => acceptor.AcceptFrames(frames.Where(f => f.Type == acceptor.FrameType)), null, string.Concat("ArdController -> AcceptFrames, type ", acceptor.FrameType));
-                        logger.LogIfDebug(this, string.Format("Frames were dispatched for {0} acceptor", acceptor.FrameType));
-                    }
+					lock (acceptors)
+					{
+	                    foreach (var acceptor in acceptors)
+	                    {
+	                        syncContext.Post(o => acceptor.AcceptFrames(frames.Where(f => f.Type == acceptor.FrameType)), null, string.Concat("ArdController -> AcceptFrames, type ", acceptor.FrameType));
+	                        logger.LogIfDebug(this, string.Format("Frames were dispatched for {0} acceptor", acceptor.FrameType));
+	                    }
+					}
                 }
             }
             catch (Exception ex)
