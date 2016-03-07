@@ -39,7 +39,7 @@
 		<!-- The following line let you select which graphical user interface you'd like to use.
 		Options include internal (optimized for touch screen devices), gtk (useful for desktop computers).
 		If you don't like the internal gui, set enabled=yes for the following tag and enabled=no for the gui internal tag -->
-		<gui type="gtk" enabled="yes" menubar="{menubar}" toolbar="{toolbar}" fullscreen="1" statusbar="{statusbar}"/>
+		<gui type="gtk" enabled="no" menubar="{menubar}" toolbar="{toolbar}" fullscreen="1" statusbar="{statusbar}"/>
 		<!--
 			In case of the internal GUI, you can even influence the size of the text and of the icons in the toolbar and the viewport.
 			Here's an example for a freerunner: -->
@@ -47,7 +47,7 @@
 		<!-- The action that appears on map click is configurable with the attribute "on_map_click".
 		     To get the prvious behaviour of showing the map point menu use on_map_click='menu("#Map Point")'
 	        -->
-		<gui type="internal" enabled="no" fullscreen="1">
+		<gui type="internal" enabled="yes" fullscreen="1">
 			<![CDATA[
 			<html>
 				<a name='Main Menu'><text>Main menu</text>
@@ -168,7 +168,7 @@ Waypoint</text></img>
 		<osd enabled="no" type="button" x="0" y="-96" command="zoom_out()" src="zoom_out.png"/> 
 
 		<!-- Vehicle with GPS enabled for gpsd on unix -->
-		<vehicle name="Local GPS" profilename="car" enabled="yes" active="{gps_active}" source="gpsd://localhost:2947" gpsd_query="w+xj">
+		<vehicle name="Local GPS" profilename="car" enabled="yes" active="{gps_active}" follow="1" source="gpsd://localhost:2947" gpsd_query="w+xj">
 			<!-- Vehicle with GPS enabled for direct communication on windows. Remove the line above if you use this. -->
 			<!-- <vehicle name="Local GPS" profilename="car" follow="1" enabled="yes" active="1" 
 				source="serial:COM4 baud=4800 parity=N data=8 stop=1" > -->
