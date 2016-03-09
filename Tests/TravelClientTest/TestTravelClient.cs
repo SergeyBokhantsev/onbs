@@ -283,5 +283,35 @@ namespace Tests.TravelClientTest
             //Cleanup
             DeleteTravel(client, travel);
         }
+
+        [TestMethod]
+        public void AddTravelPoints_RandomTimePoints()
+        {
+            //INIT
+            var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, vehicleId, new Mocks.Logger());
+            var name = Guid.NewGuid().ToString();
+            var travel = CreateTravel(client, name);
+
+            Assert.AreEqual(travel.StartTime, travel.EndTime);
+
+            //ACT
+            Thread.Sleep(1000);
+            var tps = new List<TravelPoint>();
+            var rnd = new Random();
+            for (int i = 0; i < 50; ++i)
+            {
+                var tp = new TravelPoint { Description = "asd", Lat = 50, Lon = 30, Speed = 0, Type = TravelPointTypes.ManualTrackPoint, Time = DateTime.Now.AddMinutes(rnd.Next(20)-10) };
+                tps.Add(tp);
+            }
+            var result = client.AddTravelPoint(tps, travel);
+
+            travel = client.GetTravel(travel.ID).Travel;
+
+            //ASSERT
+            Assert.AreNotEqual(travel.StartTime, travel.EndTime);
+
+            //Cleanup
+            DeleteTravel(client, travel);
+        }
     }
 }

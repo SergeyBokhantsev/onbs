@@ -8,6 +8,7 @@ using Interfaces.GPS;
 using TravelsClient;
 using System.Threading;
 using UIModels.Dialogs;
+using System.IO;
 
 namespace TravelController
 {
@@ -34,6 +35,7 @@ namespace TravelController
         private volatile int metricsBufferedPoints;
         private volatile int metricsSendedPoints;
         private bool metricsError = true;
+        private volatile int exportErrorCount;
 
         private double travelDistance;
         private GPRMC firstGprmc;
@@ -283,6 +285,7 @@ namespace TravelController
                     metricsSendedPoints += pointsToExport.Count;
                     hc.Logger.LogIfDebug(this, "Point(s) were exported succesfully");
                     metricsError = false;
+                    exportErrorCount = 0;
                 }
                 else
                 {
@@ -290,16 +293,59 @@ namespace TravelController
                     {
                         bufferedPoints.AddRange(pointsToExport);
                         metricsBufferedPoints = bufferedPoints.Count;
+                        DumpPoints();
                     }
+
                     hc.Logger.Log(this, string.Concat("Attempt to add Travel points was failed: ", result.Error), LogLevels.Warning);
 
                     metricsError = false;
+
+                    exportErrorCount++;
+                    if (exportErrorCount > 2)
+                    {
+                        lock (bufferedPoints)
+                        {
+                            hc.Logger.Log(this, string.Format("Clearing following {0} points because of repeating failings...", bufferedPoints.Count), LogLevels.Warning);
+                            bufferedPoints.Clear();
+                        }
+                    }
                 }
 
                 UpdateMetrics();
             }
 
             state.Value = States.Ready;            
+        }
+
+        private void DumpPoints()
+        {
+            StringBuilder body = new StringBuilder();
+
+            lock (bufferedPoints)
+            {
+                foreach (var tp in bufferedPoints)
+                {
+                    var lat = string.Concat("LAT=", tp.Lat);
+                    var lon = string.Concat("LON=", tp.Lon);
+                    var speed = string.Concat("SPEED=", tp.Speed);
+                    var type = string.Concat("TYPE=", (int)tp.Type);
+                    var time = string.Concat("TIME=", tp.Time.ToFileTimeUtc());
+                    var descr = string.Concat("DESCR=", tp.Description);
+
+                    body.Append(string.Join(";", lat, lon, speed, type, time, descr));
+                    body.Append("|");
+                }
+            }
+
+            if (body.Length > 0)
+            {
+                body.Remove(body.Length - 1, 1);
+
+                var dumpFilePath = Path.Combine(hc.Config.DataFolder, Guid.NewGuid().ToString() + ".txt");
+                File.WriteAllText(dumpFilePath, body.ToString());
+
+                hc.Logger.Log(this, string.Concat("TPoints dumped to ", dumpFilePath), LogLevels.Info);
+            }
         }
 
         private void GPRMCReseived(GPRMC gprmc)
