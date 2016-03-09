@@ -82,7 +82,8 @@ namespace WebApp.Controllers
                                         break;
 
                                     case "time":
-                                        tp.Time = DateTime.Parse(value);
+                                        var ftUtc= long.Parse(value);
+                                        tp.Time = DateTime.FromFileTimeUtc(ftUtc);
                                         if (tp.Time > maxTime)
                                             maxTime = tp.Time;
                                         break;

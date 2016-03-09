@@ -237,13 +237,43 @@ namespace Tests.TravelClientTest
             //ACT
             Thread.Sleep(1000);
             var tps = new List<TravelPoint>();
-            for (int i = 0; i < 10; ++i)
+            for (int i = 0; i < 100; ++i)
             {
                 var tp = new TravelPoint { Description = Guid.NewGuid().ToString(), Lat = 50, Lon = 30, Speed = 15.57, Type = TravelPointTypes.ManualTrackPoint, Time = DateTime.Now };
                 Thread.Sleep(100);
                 tps.Add(tp);
             }
             client.AddTravelPoint(tps, travel);
+
+            travel = client.GetTravel(travel.ID).Travel;
+
+            //ASSERT
+            Assert.AreNotEqual(travel.StartTime, travel.EndTime);
+
+            //Cleanup
+            DeleteTravel(client, travel);
+        }
+
+        [TestMethod]
+        public void AddTravelPoints_EqualPoints()
+        {
+            //INIT
+            var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, vehicleId, new Mocks.Logger());
+            var name = Guid.NewGuid().ToString();
+            var travel = CreateTravel(client, name);
+
+            Assert.AreEqual(travel.StartTime, travel.EndTime);
+
+            //ACT
+            Thread.Sleep(1000);
+            var tps = new List<TravelPoint>();
+            var time = DateTime.Now;
+            for (int i = 0; i < 100; ++i)
+            {
+                var tp = new TravelPoint { Description = "asd", Lat = 50, Lon = 30, Speed = 15.57, Type = TravelPointTypes.ManualTrackPoint, Time = time };
+                tps.Add(tp);
+            }
+            var result = client.AddTravelPoint(tps, travel);
 
             travel = client.GetTravel(travel.ID).Travel;
 

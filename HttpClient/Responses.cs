@@ -31,10 +31,11 @@ namespace HttpClient
             Error = webResponse.StatusDescription;
         }
 
-        public ClientResponse(WebExceptionStatus webExceptionStatus, HttpStatusCode status, string error)
+        public ClientResponse(HttpWebResponse webResponse, WebExceptionStatus webExceptionStatus, string error)
         {
+            this.webResponse = webResponse;
             WebExceptionStatus = webExceptionStatus;
-            Status = status;
+            Status = webResponse != null ? webResponse.StatusCode : 0;
             Error = error;
         }
 

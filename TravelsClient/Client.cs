@@ -24,7 +24,28 @@ namespace TravelsClient
         protected void CreateErrorText(ClientResponse response, string error)
         {
             error = error ?? "Unknown error";
-            var responseMessage = response != null ? response.Error : "No response";
+            var responseMessage = "No response";
+
+            if (response != null)
+            {
+                try
+                {
+                    var stream = response.GetStream();
+                    if (stream != null)
+                    {
+                        using (var reader = new StreamReader(stream))
+                        {
+                            var content = reader.ReadToEnd();
+                            responseMessage = string.Concat(response.Error, ", Response content: ", content);
+                        }                    
+                    }
+                }
+                catch (Exception ex)
+                {
+                    responseMessage = string.Concat(response.Error, ", Response content was not readed: ", ex.Message);
+                }
+            }
+
             Error = string.Format("{0}. Http response was: {1}", error, responseMessage);
         }
     }
@@ -104,7 +125,7 @@ namespace TravelsClient
         private const string CLOSE_TRAVEL_GENERIC_ERROR_MESSAGE = "Error while closing travel.";
         private const string RENAME_TRAVEL_GENERIC_ERROR_MESSAGE = "Error while renaming travel.";
         private const string DELETE_TRAVEL_GENERIC_ERROR_MESSAGE = "Error while deleting travel.";
-        private const string ADD_TRAVEL_POINT_GENERIC_ERROR_MESSAGE = "Error while adding travel point(s).";
+        private const string ADD_TRAVEL_POINT_GENERIC_ERROR_MESSAGE = "Error while adding travel point(s)";
 
         private const string ARG_ID = "id";
         private const string ARG_KEY = "key";
@@ -296,7 +317,7 @@ namespace TravelsClient
                     var lon = string.Concat(ARG_LON, "=", tp.Lon);
                     var speed = string.Concat(ARG_SPEED, "=", tp.Speed);
                     var type = string.Concat(ARG_TYPE, "=", (int)tp.Type);
-                    var time = string.Concat(ARG_TIME, "=", tp.Time.ToUniversalTime());
+                    var time = string.Concat(ARG_TIME, "=", tp.Time.ToFileTimeUtc());
                     var descr = string.Concat(ARG_DESCRIPTION, "=", tp.Description);
 
                     body.Append(string.Join(";", lat, lon, speed, type, time, descr));

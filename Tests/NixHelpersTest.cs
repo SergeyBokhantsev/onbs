@@ -52,6 +52,12 @@ namespace Tests
             public void Exit()
             {
             }
+
+
+            public void SendToStandardInput(char c)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         private readonly string filename;

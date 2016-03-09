@@ -125,13 +125,13 @@ namespace HttpClient
 
                 var httpResponse = ex.Response as HttpWebResponse;
 
-                return new ClientResponse(ex.Status, httpResponse != null ? httpResponse.StatusCode : 0, ex.Message);
+                return new ClientResponse(httpResponse, ex.Status, ex.Message);
             }
             catch (Exception ex)
             {
                 OnException(ex);
 
-                return new ClientResponse(WebExceptionStatus.UnknownError, 0, ex.Message);
+                return new ClientResponse(null, WebExceptionStatus.UnknownError, ex.Message);
             }
         }
 
@@ -154,6 +154,7 @@ namespace HttpClient
                     case WebExceptionStatus.SecureChannelFailure:
                     case WebExceptionStatus.SendFailure:
                     case WebExceptionStatus.Timeout:
+                        OnException(new Exception(string.Concat("Repeating transient error event. WebExceptionStatus was: ", response.WebExceptionStatus)));
                         Thread.Sleep(delay);
                         continue;
 
@@ -165,6 +166,7 @@ namespace HttpClient
                             case HttpStatusCode.RequestTimeout:
                             case HttpStatusCode.ServiceUnavailable:
                             case HttpStatusCode.BadGateway:
+                                OnException(new Exception(string.Concat("Repeating transient error event. HttpStatus was: ", response.Status)));
                                 Thread.Sleep(delay);
                                 continue;
                         }

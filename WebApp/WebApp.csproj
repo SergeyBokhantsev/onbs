@@ -134,7 +134,6 @@
     <Compile Include="Controllers\GeneralLogController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LogsController.cs" />
-    <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Controllers\ONBSApiControllerBase.cs" />
     <Compile Include="Controllers\TravelPointsController.cs" />
     <Compile Include="Controllers\TravelsController.cs" />
@@ -145,7 +144,6 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Extensions.cs" />
     <Compile Include="Models\LogEntry.cs" />
-    <Compile Include="Models\Message.cs" />
     <Compile Include="Models\ONBSContext.cs" />
     <Compile Include="Models\LinkItem.cs" />
     <Compile Include="Models\TravelPoint.cs" />
