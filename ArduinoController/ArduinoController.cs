@@ -167,7 +167,7 @@ namespace ArduinoController
                                 var day = (int)frame.Data[4];
                                 var month = (int)frame.Data[5];
                                 var year = (int)frame.Data[6] + 2000;
-                                handler(new DateTime(year, month, day, hour, min, sec));
+                                handler(new DateTime(year, month, day, hour, min, sec, DateTimeKind.Local));
                             }
                         }
                         else

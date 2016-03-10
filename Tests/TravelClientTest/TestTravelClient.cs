@@ -270,11 +270,13 @@ namespace Tests.TravelClientTest
             var tps = new List<TravelPoint>();
             for (int i = 0; i < 1; ++i)
             {
-                var tp = new TravelPoint { Description = Guid.NewGuid().ToString(), Lat = 50, Lon = 30, Speed = 15.57, Type = TravelPointTypes.ManualTrackPoint, Time = DateTime.Now };
+                var tp = new TravelPoint { Description = Guid.NewGuid().ToString(), Lat = 50, Lon = 30, Speed = 15.57, Type = TravelPointTypes.ManualTrackPoint, Time = DateTime.Now.AddMinutes(3) };
                 Thread.Sleep(100);
                 tps.Add(tp);
             }
             client.AddTravelPoint(tps, travel);
+
+            Thread.Sleep(3000); //To allow web app to commit changes
 
             travel = client.GetTravel(travel.ID).Travel;
 
