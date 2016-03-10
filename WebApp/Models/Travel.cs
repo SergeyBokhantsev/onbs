@@ -24,7 +24,16 @@ namespace WebApp.Models
         {
             this.Name = name;
             this.Vehicle = vehicle;
-            this.StartTime = this.EndTime = DateTime.Now;
+            this.StartTime = this.EndTime = DateTime.Now.ToUniversalTime();
+        }
+
+        internal void AssumeUTC()
+        {
+            if (StartTime.Kind == DateTimeKind.Unspecified)
+                StartTime = new DateTime(StartTime.Ticks, DateTimeKind.Utc);
+
+            if (EndTime.Kind == DateTimeKind.Unspecified)
+                EndTime = new DateTime(EndTime.Ticks, DateTimeKind.Utc);
         }
     }
 }

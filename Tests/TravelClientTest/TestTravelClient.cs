@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TravelsClient;
@@ -249,6 +250,36 @@ namespace Tests.TravelClientTest
 
             //ASSERT
             Assert.AreNotEqual(travel.StartTime, travel.EndTime);
+
+            //Cleanup
+            DeleteTravel(client, travel);
+        }
+
+        [TestMethod]
+        public void AddTravelPoints_CheckEndTime()
+        {
+            //INIT
+            var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, vehicleId, new Mocks.Logger());
+            var name = Guid.NewGuid().ToString();
+            var travel = CreateTravel(client, name);
+
+            Assert.AreEqual(travel.StartTime, travel.EndTime);
+
+            //ACT
+            Thread.Sleep(1000);
+            var tps = new List<TravelPoint>();
+            for (int i = 0; i < 1; ++i)
+            {
+                var tp = new TravelPoint { Description = Guid.NewGuid().ToString(), Lat = 50, Lon = 30, Speed = 15.57, Type = TravelPointTypes.ManualTrackPoint, Time = DateTime.Now };
+                Thread.Sleep(100);
+                tps.Add(tp);
+            }
+            client.AddTravelPoint(tps, travel);
+
+            travel = client.GetTravel(travel.ID).Travel;
+
+            //ASSERT
+            Assert.AreEqual(tps.First().Time.ToUniversalTime().ToString(), travel.EndTime.ToUniversalTime().ToString());
 
             //Cleanup
             DeleteTravel(client, travel);

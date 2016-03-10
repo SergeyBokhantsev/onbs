@@ -28,6 +28,8 @@ namespace WebApp.Models
             if (travel == null)
                 throw new TravelNotFoundException(id);
 
+            travel.AssumeUTC();
+
             return travel;
         }
 
