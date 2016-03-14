@@ -8,6 +8,7 @@ namespace TravelsClient
 {
     public enum TravelPointTypes { AutoTrackPoint = 0, ManualTrackPoint = 1 }
 
+    [Serializable]
     public class TravelPoint
     {
         public int ID { get; set; }

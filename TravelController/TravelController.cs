@@ -9,18 +9,21 @@ using TravelsClient;
 using System.Threading;
 using UIModels.Dialogs;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace TravelController
 {
     public class TravelController : ITravelController, IDisposable
     {
+        private const string storedPointsFileName = "StoredTravelPoints.bin";
+
         public event MetricsUpdatedEventHandler MetricsUpdated;
 
         private enum States { NotStarted, FindingOpenedTravel, ToOpenNewTravel, CreatingNewTravel, ExportingPoints, Ready }
 
         private readonly IHostController hc;
         private readonly Client client;
-        private readonly List<TravelPoint> bufferedPoints = new List<TravelPoint>();
+        private readonly List<TravelPoint> bufferedPoints;
         private readonly GPSLogFilter logFilter;
         private readonly IHostTimer timer;
 
@@ -54,7 +57,7 @@ namespace TravelController
         }
         public TimeSpan TravelTime
         {
-            get 
+            get
             {
                 if (firstGprmc == null || previousGprmc == null)
                     return TimeSpan.FromMinutes(0);
@@ -74,7 +77,9 @@ namespace TravelController
 
             this.hc = hc;
 
-            logFilter = new GPSLogFilter(hc.Config.GetDouble(ConfigNames.TravelServiceGPSFilterDistanceToSpeedRatio), 
+            bufferedPoints = LoadPointsLocally() ?? new List<TravelPoint>();
+
+            logFilter = new GPSLogFilter(hc.Config.GetDouble(ConfigNames.TravelServiceGPSFilterDistanceToSpeedRatio),
                                          hc.Config.GetInt(ConfigNames.TravelServiceGPSFilterDeadZoneMeters),
                                          hc.Config.GetInt(ConfigNames.TravelServiceGPSFilterDeadZoneSpeed));
 
@@ -105,29 +110,38 @@ namespace TravelController
                     }
                     else
                     {
-                        var minutesGapToOpenNewTravel = hc.Config.GetInt(ConfigNames.TravelServiceMinutesGapToOpenNewTravel);
-
-                        if (result.Travel.EndTime.AddMinutes(minutesGapToOpenNewTravel) > DateTime.Now)
+                        if (bufferedPoints.Count > 0)
                         {
                             this.travel = result.Travel;
                             state.Value = States.Ready;
-                            hc.Logger.Log(this, string.Format("Continuing travel Id={0} because existing travel time match", result.Travel.ID), LogLevels.Info);
+                            hc.Logger.Log(this, string.Format("Continuing travel Id={0} because some not pushed points exists", result.Travel.ID), LogLevels.Info);
                         }
                         else
                         {
-                            var dRes = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Travel exist", "Start new travel or continue last one?", "(Y)Start new", "(N)Continue", hc, 60000, Interfaces.UI.DialogResults.Yes));
+                            var minutesGapToOpenNewTravel = hc.Config.GetInt(ConfigNames.TravelServiceMinutesGapToOpenNewTravel);
 
-                            if (dRes == Interfaces.UI.DialogResults.No)
+                            if (result.Travel.EndTime.AddMinutes(minutesGapToOpenNewTravel) > DateTime.Now)
                             {
                                 this.travel = result.Travel;
                                 state.Value = States.Ready;
-                                hc.Logger.Log(this, string.Format("Continuing travel Id={0} because of user confirmation", result.Travel.ID), LogLevels.Info);
+                                hc.Logger.Log(this, string.Format("Continuing travel Id={0} because existing travel time match", result.Travel.ID), LogLevels.Info);
                             }
                             else
                             {
-                                this.travel = null;
-                                state.Value = States.ToOpenNewTravel;
-                                hc.Logger.Log(this, string.Format("Found travel Id={0} but user had declined it. New travel will be created.", result.Travel.ID), LogLevels.Info);
+                                var dRes = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Travel exist", "Start new travel or continue last one?", "(Y)Start new", "(N)Continue", hc, 60000, Interfaces.UI.DialogResults.Yes));
+
+                                if (dRes == Interfaces.UI.DialogResults.No)
+                                {
+                                    this.travel = result.Travel;
+                                    state.Value = States.Ready;
+                                    hc.Logger.Log(this, string.Format("Continuing travel Id={0} because of user confirmation", result.Travel.ID), LogLevels.Info);
+                                }
+                                else
+                                {
+                                    this.travel = null;
+                                    state.Value = States.ToOpenNewTravel;
+                                    hc.Logger.Log(this, string.Format("Found travel Id={0} but user had declined it. New travel will be created.", result.Travel.ID), LogLevels.Info);
+                                }
                             }
                         }
                     }
@@ -194,8 +208,6 @@ namespace TravelController
             {
                 hc.Logger.LogIfDebug(this, string.Format("Skipping Operation because of precondition failed: SystemTimeIsValid = {0} and InternetIsConnected = {1}",
                                                                      hc.Config.IsSystemTimeValid, hc.Config.IsInternetConnected));
-                state.Value = States.NotStarted;
-                travel = null;
                 metricsError = true;
             }
             else
@@ -249,7 +261,7 @@ namespace TravelController
             var metrics = new Metrics("Travel Controller", 5);
             metrics.Add(0, "", travel != null ? travel.Name : "NO TRAVEL");
             metrics.Add(1, "State", state.Value);
-			metrics.Add(2, "Sended points", metricsSendedPoints);
+            metrics.Add(2, "Sended points", metricsSendedPoints);
             metrics.Add(3, "Buffered points", metricsBufferedPoints);
             metrics.Add(4, "_is_error", metricsError);
 
@@ -314,7 +326,7 @@ namespace TravelController
                 UpdateMetrics();
             }
 
-            state.Value = States.Ready;            
+            state.Value = States.Ready;
         }
 
         private void DumpPoints()
@@ -450,18 +462,70 @@ namespace TravelController
                     }
                 }
 
-                if (bufferedPoints.Count > 0 && state.Value == States.Ready && hc.Config.IsSystemTimeValid && hc.Config.IsInternetConnected)
+                if (bufferedPoints.Count > 0)
                 {
-                    hc.Logger.Log(this, "Trying to send buffered points...", LogLevels.Info);
+                    var toSavePointsLocally = state.Value != States.Ready || !hc.Config.IsSystemTimeValid || !hc.Config.IsInternetConnected;
 
-                    bool result = Task.Run(async () => { await ExportPoints(); }).Wait(30000);
+                    if (!toSavePointsLocally)
+                    {
+                        hc.Logger.Log(this, "Trying to send buffered points...", LogLevels.Info);
 
-                    if (result)
-                        hc.Logger.Log(this, "Buffered points were successfully sended.", LogLevels.Info);
-                    else
-                        hc.Logger.Log(this, "Buffered points were not sended in 30 seconds.", LogLevels.Warning);
+                        bool result = Task.Run(async () => { await ExportPoints(); }).Wait(30000);
+
+                        if (result)
+                            hc.Logger.Log(this, "Buffered points were successfully sended.", LogLevels.Info);
+                        else
+                        {
+                            hc.Logger.Log(this, "Buffered points were not sended in 30 seconds.", LogLevels.Warning);
+                            toSavePointsLocally = true;
+                        }
+                    }
+
+                    if (toSavePointsLocally)
+                    {
+                        hc.Logger.Log(this, "Saving buffered point to a file.", LogLevels.Info);
+                        SavePointsLocally();
+                    }
                 }
             }
+        }
+
+        private void SavePointsLocally()
+        {
+            var filePath = Path.Combine(hc.Config.DataFolder, storedPointsFileName);
+
+            lock (bufferedPoints)
+            {
+                using (var fs = File.Open(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    var serializer = new BinaryFormatter();
+                    serializer.Serialize(fs, bufferedPoints);
+                }
+            }
+
+            hc.Logger.Log(this, string.Concat("Buffered points were successfully saved to ", filePath), LogLevels.Info);
+        }
+
+        private List<TravelPoint> LoadPointsLocally()
+        {
+            List<TravelPoint> res = null;
+
+            var filePath = Path.Combine(hc.Config.DataFolder, storedPointsFileName);
+            
+            if (File.Exists(filePath))
+            {
+                using (var fs = File.OpenRead(filePath))
+                {
+                    var serializer = new BinaryFormatter();
+                    res = serializer.Deserialize(fs) as List<TravelPoint>;
+                }
+
+                File.Delete(filePath);
+            }
+
+            hc.Logger.Log(this, string.Concat("Buffered points were successfully loaded from ", filePath), LogLevels.Info);
+
+            return res;
         }
     }
 }
