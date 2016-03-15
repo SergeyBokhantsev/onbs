@@ -24,6 +24,7 @@ namespace TravelController
         private readonly IHostController hc;
         private readonly Client client;
         private readonly List<TravelPoint> bufferedPoints;
+        private bool locallyStoredPointsExist;
         private readonly GPSLogFilter logFilter;
         private readonly IHostTimer timer;
 
@@ -110,7 +111,7 @@ namespace TravelController
                     }
                     else
                     {
-                        if (bufferedPoints.Count > 0)
+                        if (locallyStoredPointsExist)
                         {
                             this.travel = result.Travel;
                             state.Value = States.Ready;
@@ -521,9 +522,10 @@ namespace TravelController
                 }
 
                 File.Delete(filePath);
-            }
 
-            hc.Logger.Log(this, string.Concat("Buffered points were successfully loaded from ", filePath), LogLevels.Info);
+                locallyStoredPointsExist = true;
+                hc.Logger.Log(this, string.Concat("Buffered points were successfully loaded from ", filePath), LogLevels.Info);
+            }
 
             return res;
         }
