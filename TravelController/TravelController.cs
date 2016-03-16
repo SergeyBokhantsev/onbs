@@ -24,7 +24,7 @@ namespace TravelController
         private readonly IHostController hc;
         private readonly Client client;
         private readonly List<TravelPoint> bufferedPoints;
-        private bool locallyStoredPointsExist;
+        private bool locallyStoredPointsLoaded;
         private readonly GPSLogFilter logFilter;
         private readonly IHostTimer timer;
 
@@ -111,7 +111,7 @@ namespace TravelController
                     }
                     else
                     {
-                        if (locallyStoredPointsExist)
+                        if (locallyStoredPointsLoaded)
                         {
                             this.travel = result.Travel;
                             state.Value = States.Ready;
@@ -497,14 +497,21 @@ namespace TravelController
 
             lock (bufferedPoints)
             {
-                using (var fs = File.Open(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                if (bufferedPoints.Count > 0)
                 {
-                    var serializer = new BinaryFormatter();
-                    serializer.Serialize(fs, bufferedPoints);
+                    using (var fs = File.Open(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                    {
+                        var serializer = new BinaryFormatter();
+                        serializer.Serialize(fs, bufferedPoints);
+                    }
+
+                    hc.Logger.Log(this, string.Concat("Buffered points were successfully saved to ", filePath), LogLevels.Info);
+                }
+                else
+                {
+                    hc.Logger.Log(this, "No points to save...", LogLevels.Info);
                 }
             }
-
-            hc.Logger.Log(this, string.Concat("Buffered points were successfully saved to ", filePath), LogLevels.Info);
         }
 
         private List<TravelPoint> LoadPointsLocally()
@@ -523,7 +530,7 @@ namespace TravelController
 
                 File.Delete(filePath);
 
-                locallyStoredPointsExist = true;
+                locallyStoredPointsLoaded = true;
                 hc.Logger.Log(this, string.Concat("Buffered points were successfully loaded from ", filePath), LogLevels.Info);
             }
 

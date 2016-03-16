@@ -83,6 +83,8 @@ namespace Interfaces
         public static readonly string SystemShutdownArg = "SystemShutdownArg";
         public static readonly string SystemRestartCommand = "SystemRestartCommand";
         public static readonly string SystemRestartArg = "SystemRestartArg";
+        public static readonly string SystemUpdateCommand = "SystemUpdateCommand";
+        public static readonly string SystemUpdateArg = "SystemUpdateArg";
 
         public static readonly string NavitExe = "navit_exe";
         public static readonly string NavitArgs = "navit_args";

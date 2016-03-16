@@ -474,6 +474,18 @@ namespace HostController
 
             switch (mode)
             {
+                case HostControllerShutdownModes.Update:
+                    {
+                        var processConfig = new ProcessConfig
+                        {
+                            ExePath = Config.GetString(ConfigNames.SystemUpdateCommand),
+                            Args = string.Format(Config.GetString(ConfigNames.SystemUpdateArg), Config.DataFolder)
+                        };
+
+                        ProcessRunnerFactory.Create(processConfig).Run();
+                    }
+                    break;
+
                 case HostControllerShutdownModes.Restart:
                     {
                         var processConfig = new ProcessConfig
