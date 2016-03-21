@@ -11,7 +11,7 @@ namespace UIModels.MiniDisplay
     internal abstract class CommonMiniDisplayModel
     {
         private readonly IMiniDisplayController mdc;
-        private readonly IConfig config;
+        protected readonly IConfig config;
         private readonly string pageName;
 
         private bool tick;

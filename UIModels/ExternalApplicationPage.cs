@@ -58,6 +58,7 @@ namespace UIModels
             }
             catch (Exception ex)
             {
+                hc.Logger.Log(this, ex);
                 SetProperty("is_error", "1");
                 SetProperty("label_launch_info", string.Format("Error launching {0}...{1}{2}", Runner.Name, Environment.NewLine, ex.Message));
                 return false;

@@ -42,6 +42,7 @@ namespace Interfaces
         public static readonly string GPSLocation = "GPSLocation";
 
         public static readonly string GPSDEnabled = "GPSDEnabled";
+        public static readonly string GPSDPaused = "GPSDPaused";
 
         public static readonly string Elm327Port = "Elm327Port";
 
