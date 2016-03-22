@@ -288,6 +288,30 @@ namespace HostController
                     arduController.Beep(100, 50, 2);
             };
 
+            uiController.DialogShown += dialog =>
+            {
+                config.IsMessageShown = null != dialog;
+
+                if (null != dialog)
+                {
+                    miniDisplayController.ResetQueue();
+                    miniDisplayController.Graphics.Delay(500);
+                    miniDisplayController.Graphics.Cls();
+                    miniDisplayController.Graphics.SetFont(Fonts.Small);
+                    var caption = string.IsNullOrWhiteSpace(dialog.Caption) ? "NO CAPTION" : dialog.Caption.Substring(0, 10);
+                    miniDisplayController.Graphics.Print(0, 10, caption, TextAlingModes.Center);
+
+                    int buttonCount = 0;
+                    foreach (var btn in dialog.Buttons)
+                    {
+                        miniDisplayController.Graphics.Print(0, (byte)(20 + buttonCount * 10), btn.Value, TextAlingModes.Center);
+                        buttonCount++;
+                    }
+
+                    miniDisplayController.Graphics.Update();
+                }
+            };
+
             uiController.PageChanging += (string descriptorName, string viewName) =>
             {
                 miniDisplayController.ResetQueue();

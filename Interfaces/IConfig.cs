@@ -10,6 +10,7 @@ namespace Interfaces
         bool IsInternetConnected { get; }
         bool IsGPSLock { get; }
         bool IsMessagePending { get; }
+        bool IsMessageShown { get; }
         string DataFolder { get; }
     }
 

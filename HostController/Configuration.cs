@@ -88,6 +88,12 @@ namespace HostController
             get { return dataFolder ?? (dataFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Data")); }
         }
 
+        public bool IsMessageShown
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         public Configuration(ConfigValuesResolver valuesResolver)
