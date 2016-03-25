@@ -17,12 +17,17 @@ namespace DashCamController
         private readonly string recordingArg;
         private readonly int recordingLenSec;
 
+        private readonly string pictureExe;
+        private readonly string pictureArg;
+
         private readonly AutoResetEvent monitorEvent = new AutoResetEvent(true);
         private readonly FileManager fileManager;
 
         private IProcessRunner cameraProcess;
 
         private bool disposed;
+
+        private readonly List<ScheduleTakePictureCallback> pictureCallbacks = new List<ScheduleTakePictureCallback>();
 
         public DashCamController(IHostController hc)
         {
@@ -37,6 +42,9 @@ namespace DashCamController
             recordingExe = hc.Config.GetString(ConfigNames.DashCamRecorderExe);
             recordingArg = hc.Config.GetString(ConfigNames.DashCamRecorderArg);
             recordingLenSec = hc.Config.GetInt(ConfigNames.DashCamRecorderSplitIntervalSec);
+
+            pictureExe = hc.Config.GetString(ConfigNames.DashCamPictureExe);
+            pictureArg = hc.Config.GetString(ConfigNames.DashCamPictureArg);
 
             hc.Config.Changed += Config_Changed;
 
@@ -64,16 +72,91 @@ namespace DashCamController
             {
                 monitorEvent.WaitOne();
 
+                if (cameraProcess == null || cameraProcess.HasExited)
+                {
+                    DoPicture();
+                }
+
                 if (hc.Config.GetBool(ConfigNames.DashCamRecorderEnabled))
                 {
                     if (cameraProcess == null || cameraProcess.HasExited)
+                    {
                         DoRecord();
+                    }
                 }
                 else
                 {
                     if (cameraProcess != null && !cameraProcess.HasExited)
+                    {
                         cameraProcess.Exit();
+                    }
                 }
+            }
+        }
+
+        public void ScheduleTakePicture(ScheduleTakePictureCallback callback)
+        {
+            lock (pictureCallbacks)
+            {
+                pictureCallbacks.Add(callback);
+            }
+
+            monitorEvent.Set();
+        }
+
+        private void DoPicture()
+        {
+            MemoryStream ms = null;
+
+            ScheduleTakePictureCallback[] callbacks = null;
+
+            lock (pictureCallbacks)
+            {
+                callbacks = pictureCallbacks.ToArray();
+                pictureCallbacks.Clear();
+            }
+
+            if (callbacks.Length == 0)
+                return;
+
+            try
+            {
+                var processConfig = new ProcessConfig
+                {
+                    ExePath = pictureExe,
+                    Args = pictureArg,                    
+                    WaitForUI = false,
+                    RedirectStandardOutput = true
+                };
+
+                cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);
+                cameraProcess.Run();
+
+                bool result = cameraProcess.WaitForExit(5000, out ms);
+
+                if (!result)
+                {
+                    hc.Logger.Log(this, "Timeout while taking picture", LogLevels.Warning);
+                    ms = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                hc.Logger.Log(this, ex);
+            }
+
+            foreach (var c in callbacks)
+            {
+                hc.SyncContext.Post(o =>
+                {
+                    var stream = o as MemoryStream;
+
+                    if (stream != null)
+                        stream.Seek(0, SeekOrigin.Begin);
+
+                    c(stream);
+
+                }, ms, "Take picture callback");
             }
         }
 

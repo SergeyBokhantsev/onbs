@@ -56,7 +56,7 @@ namespace ProcessRunner
         public void Run()
         {
             if (proc != null)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Process was already run");
 
             try
             {
@@ -177,37 +177,84 @@ namespace ProcessRunner
 			}
 		}
 
-        public string GetFromStandardOutput()
+        //public string GetFromStandardOutput()
+        //{
+        //    StringBuilder res = new StringBuilder();
+        //    var buffer = new char[1024];
+        //    int readed;
+
+        //    do
+        //    {
+        //        readed = proc.StandardOutput.Read(buffer, 0, buffer.Length);
+        //        res.Append(buffer, 0, readed);
+        //    }
+        //    while (readed == buffer.Length);
+
+        //    return res.ToString();
+        //}
+
+        public bool WaitForExit(int timeoutMilliseconds, out MemoryStream output)
         {
-            StringBuilder res = new StringBuilder();
+            if (proc == null)
+                throw new InvalidOperationException("Process was not run");
+
+            output = new MemoryStream();
             var buffer = new char[1024];
-            int readed;
+
+            const int checkSpanMs = 100;
+            int waitingMs = 0;
 
             do
             {
-                readed = proc.StandardOutput.Read(buffer, 0, buffer.Length);
-                res.Append(buffer, 0, readed);
-            }
-            while (readed == buffer.Length);
+                var task = proc.StandardOutput.ReadBlockAsync(buffer, 0, buffer.Length);
 
-            return res.ToString();
+                while (!task.IsCompleted)
+                {
+                    Thread.Sleep(checkSpanMs);
+                    waitingMs += checkSpanMs;
+
+                    if (waitingMs > timeoutMilliseconds)
+                    {
+                        output.Seek(0, SeekOrigin.Begin);
+                        return false;
+                    }
+                }
+
+                if (task.Result > 0)
+                {
+                    for (int i = 0; i < task.Result; ++i)
+                    {
+                        output.WriteByte((byte)buffer[i]);
+                    }
+                }
+            }
+            while (!proc.StandardOutput.EndOfStream);
+
+            output.Seek(0, SeekOrigin.Begin);
+
+            return true;
         }
 
         public bool WaitForExit(int timeoutMilliseconds)
         {
-            const int checkSpanMs = 500;
-            int waitingMs = 0;
+            if (proc == null)
+                throw new InvalidOperationException("Process was not run");
 
-            while (waitingMs < timeoutMilliseconds)
-            {
-                if (proc == null || proc.HasExited)
-                    return true;
+            return proc.WaitForExit(timeoutMilliseconds);
 
-                Thread.Sleep(checkSpanMs);
-                waitingMs += checkSpanMs;
-            }
+            //const int checkSpanMs = 500;
+            //int waitingMs = 0;
 
-            return false;
+            //while (waitingMs < timeoutMilliseconds)
+            //{
+            //    if (proc == null || proc.HasExited)
+            //        return true;
+
+            //    Thread.Sleep(checkSpanMs);
+            //    waitingMs += checkSpanMs;
+            //}
+
+            //return false;
         }
     }
 }

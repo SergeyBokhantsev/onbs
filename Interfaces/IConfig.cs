@@ -64,6 +64,8 @@ namespace Interfaces
         public static readonly string DashCamRecorderPreviewEnabled = "DashCamRecorderPreviewEnabled";
         public static readonly string DashCamRecorderExe = "DashCamRecorderExe";
         public static readonly string DashCamRecorderArg = "DashCamRecorderArg";
+        public static readonly string DashCamPictureExe = "DashCamPictureExe";
+        public static readonly string DashCamPictureArg = "DashCamPictureArg";
         public static readonly string DashCamRecorderFolder = "DashCamRecorderFolder";
         public static readonly string DashCamRecorderFilesNumberQuota = "DashCamRecorderFilesNumberQuota";
         public static readonly string DashCamRecorderSplitIntervalSec = "DashCamRecorderSplitIntervalSec";

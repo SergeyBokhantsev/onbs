@@ -8,8 +8,12 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
+    public delegate void ScheduleTakePictureCallback(MemoryStream ms);
+
     public interface IDashCamController : IController
     {
+        void ScheduleTakePicture(ScheduleTakePictureCallback callback);
+
         /// <summary>
         /// Returns only files with .h264 extension
         /// </summary>

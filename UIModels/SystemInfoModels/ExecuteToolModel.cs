@@ -1,6 +1,7 @@
 ﻿using Interfaces;
 using Interfaces.UI;
 using System;
+using System.IO;
 
 namespace UIModels
 {
@@ -19,8 +20,10 @@ namespace UIModels
                     {
                         var pr = hc.ProcessRunnerFactory.Create(toolName);
                         pr.Run();
-                        pr.WaitForExit(5000);
-                        var output = pr.GetFromStandardOutput();
+
+                        MemoryStream outputStream;
+                        pr.WaitForExit(5000, out outputStream);
+                        var output = outputStream.GetString();
 
                         hc.Logger.Log(this, output, LogLevels.Info);
 
