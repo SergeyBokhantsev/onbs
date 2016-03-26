@@ -119,6 +119,8 @@ bool Manager::before_button_send(int buttonId, char buttonState)
 			}
 			return false;
 	}
+	
+	return true;
 }
 
 void Manager::set_state(int newState)
