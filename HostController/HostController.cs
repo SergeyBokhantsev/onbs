@@ -461,7 +461,8 @@ namespace HostController
 			arduController.RelayService.Disable(Relay.Relay3);
 			arduController.RelayService.Disable(Relay.Relay4);
 
-			if (mode == HostControllerShutdownModes.Exit) 
+			if (mode == HostControllerShutdownModes.Exit
+				|| mode == HostControllerShutdownModes.Update) 
 			{
                 await arduController.HoldPower();
 			}
@@ -541,7 +542,14 @@ namespace HostController
                             Args = Config.GetString(ConfigNames.SystemRestartArg) 
                         };
 
-                        ProcessRunnerFactory.Create(processConfig).Run();
+						try
+						{
+	                        ProcessRunnerFactory.Create(processConfig).Run();
+						}
+						catch (Exception ex)
+						{
+						Logger.Log (this, ex);
+						}
                     }
                     break;
 

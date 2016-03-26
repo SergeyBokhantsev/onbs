@@ -8,13 +8,20 @@
       <File FileName="ArduinoController/CommunicationQueue.cs" Line="1" Column="1" />
       <File FileName="SerialTransportProtocol/STPCodec.cs" Line="1" Column="1" />
       <File FileName="SerialTransportProtocol/STPDecoder.cs" Line="1" Column="1" />
-      <File FileName="GPSController/GPSController.cs" Line="82" Column="6" />
+      <File FileName="GPSController/GPSController.cs" Line="92" Column="10" />
       <File FileName="Interfaces/GPS/Primitives.cs" Line="1" Column="1" />
-      <File FileName="HostController/HostController.cs" Line="228" Column="28" />
+      <File FileName="HostController/HostController.cs" Line="422" Column="6" />
+      <File FileName="HostController/Lin/InternetConnectionKeeper.cs" Line="67" Column="1" />
+      <File FileName="HostController/Lin/SystemTimeCorrector.cs" Line="64" Column="7" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/home/pi/onbs/HostController/HostController.cs" line="422" column="1" />
+      <Breakpoint file="/home/pi/onbs/HostController/HostController.cs" line="371" column="1" />
+      <Breakpoint file="/home/pi/onbs/HostController/Lin/SystemTimeCorrector.cs" line="38" column="1" />
+      <Breakpoint file="/home/pi/onbs/HostController/HostController.cs" line="397" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
     <Watch file="HostController/Lin/SerialArduPort.cs" line="128" offsetX="496" offsetY="2794" expression="port" liveUpdate="False" />

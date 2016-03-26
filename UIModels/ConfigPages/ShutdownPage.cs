@@ -21,7 +21,7 @@ namespace UIModels
             ListItem<string>.PrepareItem(hc.SyncContext, ref items, "Shutdown", OnClick, "Shutdown");
         }
 
-        private void OnClick(object sender, System.EventArgs e)
+        private async void OnClick(object sender, System.EventArgs e)
         {
             var action = ((ListItem<string>)sender).Value;
 
@@ -31,8 +31,14 @@ namespace UIModels
                     hc.Shutdown(HostControllerShutdownModes.Exit);
                     break;
 
-                case "Update":
-                    hc.Shutdown(HostControllerShutdownModes.Update);
+			case "Update":
+
+				var dr = await hc.GetController<IUIController> ().ShowDialogAsync (
+					         new Dialogs.YesNoDialog ("Updating", "Pull latest sources and compile?", "Update", "Cancel", hc, 10000, DialogResults.No));
+
+				if (dr == DialogResults.Yes) {
+					hc.Shutdown (HostControllerShutdownModes.Update);
+				}
                     break;
 
                 case "Restart":
