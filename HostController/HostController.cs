@@ -41,6 +41,8 @@ namespace HostController
 
         private TravelsClient.OnlineLogger onlineLogger;
 
+		private int appliedTimeProviderPriority;
+
         public IConfig Config
         {
             get
@@ -358,18 +360,22 @@ namespace HostController
 
         private void CheckSystemTimeFromArduino(DateTime time)
         {
-			DisconnectSystemTimeChecking();
-			return;
-
             Logger.Log(this, string.Concat("CheckSystemTimeFromArduino handler called with proposed time ", time), LogLevels.Info);
 
             systemTimeCorrectorGuard.ExecuteIfFreeAsync(() =>
             {
                 Logger.Log(this, "Executing CheckSystemTimeFromArduino handler async...", LogLevels.Info);
 
+				if (appliedTimeProviderPriority > 1)
+				{
+					Logger.Log(this, "Time already settet by more priority provider, ignoring.", LogLevels.Info);
+					return;
+				}
+
                 if (new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(time))
                 {
                     config.IsSystemTimeValid = true;
+					appliedTimeProviderPriority = 1;
                 }
             },
             ex => Logger.Log(this, ex));
@@ -377,9 +383,6 @@ namespace HostController
 
         private void CheckSystemTimeFromGPS(Interfaces.GPS.GPRMC gprmc)
         {
-			DisconnectSystemTimeChecking();
-			return;
-
 			if (!gprmc.Active)
 				return;
 
@@ -389,11 +392,18 @@ namespace HostController
             {
                 Logger.Log(this, "Executing CheckSystemTimeFromGPS handler async...", LogLevels.Info);
 
+				if (appliedTimeProviderPriority > 3)
+				{
+					Logger.Log(this, "Time already settet by more priority provider, ignoring.", LogLevels.Info);
+					return;
+				}
+
                 if (new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(gprmc.Time))
                 {
                     config.IsSystemTimeValid = true;
                     DisconnectSystemTimeChecking();
                     arduController.SetTimeToArduino();
+					appliedTimeProviderPriority = 3;
                 }
             },
             ex => Logger.Log(this, ex));
@@ -401,20 +411,24 @@ namespace HostController
 
         private void CheckSystemTimeFromInternet(DateTime inetTime)
         {
-			DisconnectSystemTimeChecking();
-			return;
-
             Logger.Log(this, string.Concat("CheckSystemTimeFromInternet handler called with proposed time ", inetTime), LogLevels.Info);
 
             systemTimeCorrectorGuard.ExecuteIfFreeAsync(() =>
             {
                 Logger.Log(this, "Executing CheckSystemTimeFromInternet handler async...", LogLevels.Info);
 
+				if (appliedTimeProviderPriority > 2)
+				{
+					Logger.Log(this, "Time already settet by more priority provider, ignoring.", LogLevels.Info);
+					return;
+				}
+
                 if (new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(inetTime))
                 {
                     config.IsSystemTimeValid = true;
                     DisconnectSystemTimeChecking();
                     arduController.SetTimeToArduino();
+					appliedTimeProviderPriority = 2;
                 }
             },
             ex => Logger.Log(this, ex));

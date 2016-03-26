@@ -34,12 +34,13 @@ namespace HostController.Lin
 
 		private bool GetTimeValidity(DateTime time)
 		{
-			return Math.Abs((time - DateTime.Now).TotalMilliseconds) < minTimeDifference;
+			var msDelta = (time.ToLocalTime() - DateTime.Now).TotalMilliseconds;
+			return Math.Abs(msDelta) < minTimeDifference;
 		}
 
         public bool IsSystemTimeValid(DateTime proposedTime)
         {
-            if (proposedTime.Year < 2016)
+			if (proposedTime.Year < 2016 || proposedTime.Year > 2017)
             {
                 logger.Log(this, string.Format("Proposed time '{0}' is invalid, ignoring.", proposedTime), LogLevels.Info);
                 return false;
@@ -51,14 +52,14 @@ namespace HostController.Lin
 
                 if (!GetTimeValidity(proposedTime))
                 {
-                    logger.Log(this, "Updating system time...", LogLevels.Info);
+					logger.Log(this, string.Format("Updating system time..."), LogLevels.Info);
 
                     try
                     {
                         var processConfig = new ProcessConfig
                         {
                             ExePath = setTimeCommand,
-                            Args = string.Format(setTimeArgs, proposedTime.ToString(setTimeSetFormat)),
+							Args = string.Format(setTimeArgs, proposedTime.ToLocalTime().ToString(setTimeSetFormat)),
                         };
 
                         var pr = processRunnerFactory.Create(processConfig);

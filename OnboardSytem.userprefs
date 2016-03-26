@@ -1,13 +1,16 @@
 ﻿<Properties StartupItem="HostController/HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/Lin/SerialArduPort.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/HostController.cs">
     <Files>
-      <File FileName="HostController/App.config" Line="35" Column="1" />
-      <File FileName="HostController/Lin/SerialArduPort.cs" Line="90" Column="1" />
+      <File FileName="HostController/App.config" Line="1" Column="1" />
+      <File FileName="HostController/Lin/SerialArduPort.cs" Line="1" Column="1" />
       <File FileName="ArduinoController/ArduinoController.cs" Line="1" Column="1" />
       <File FileName="ArduinoController/CommunicationQueue.cs" Line="1" Column="1" />
       <File FileName="SerialTransportProtocol/STPCodec.cs" Line="1" Column="1" />
       <File FileName="SerialTransportProtocol/STPDecoder.cs" Line="1" Column="1" />
+      <File FileName="GPSController/GPSController.cs" Line="82" Column="6" />
+      <File FileName="Interfaces/GPS/Primitives.cs" Line="1" Column="1" />
+      <File FileName="HostController/HostController.cs" Line="228" Column="28" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

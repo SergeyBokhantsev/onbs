@@ -79,7 +79,7 @@ namespace GPSController
         {
             Interlocked.Increment(ref gprmcCount);
 
-			obj = new GPRMC (new GeoPoint (50.5, 30.5), DateTime.Now, true, gprmcCount);
+			//obj = new GPRMC (new GeoPoint (50.5, 30.5), DateTime.Now, true, gprmcCount);
 
             lastGprmc = obj;
 
