@@ -2,27 +2,41 @@
 using Interfaces.UI;
 using System;
 using System.IO;
+using UIModels.MiniDisplay;
 
 namespace UIModels
 {
     public sealed class NavigationAppPage : ExternalApplicationPage
     {
         private readonly IAutomationController automation;
+        private readonly NavigationMiniDisplayModel miniDisplay;
 
         public NavigationAppPage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor, CreateProcessRunner(hc))
         {
             automation = hc.GetController<IAutomationController>();
-            Run();
+            miniDisplay = new NavigationMiniDisplayModel(hc, pageDescriptor.Name);
         }
 
+        private void OnTimer(IHostTimer obj)
+        {
+            OnMiniDisplayUpdate();
+        }
+
+        protected override void Initialize()
+        {
+            Run();
+            hc.CreateTimer(5000, OnTimer, true, true, "NavigationAppPage timer");
+            base.Initialize();
+        }
+        
         private static IProcessRunner CreateProcessRunner(IHostController hc)
         {
             try
             {
                 var config = hc.Config;
-
-				var templatePath = Path.Combine(hc.Config.DataFolder, config.GetString(ConfigNames.NavitConfigTemplatePath));
+                
+                var templatePath = Path.Combine(hc.Config.DataFolder, config.GetString(ConfigNames.NavitConfigTemplatePath));
 				var outFile = Path.Combine(hc.Config.DataFolder, config.GetString(ConfigNames.NavitConfigPath));
 
                 var navitConfig = new NavitConfigGenerator.NavitConfiguration();
@@ -109,10 +123,21 @@ namespace UIModels
                     automation.Key(AutomationKeys.d);
                     break;
 
+                case "GPSPause":
+                    hc.Config.InvertBoolSetting(ConfigNames.GPSDPaused);
+                    OnMiniDisplayUpdate();
+                    break;
+
                 default:
                     base.DoAction(name, actionArgs);
                     break;
             }
+        }
+
+        private void OnMiniDisplayUpdate()
+        {
+            miniDisplay.Draw();
+            hc.Logger.LogIfDebug(this, "OnMiniDisplayUpdate");
         }
     }
 }

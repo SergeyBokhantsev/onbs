@@ -80,5 +80,11 @@ namespace Tests.Mocks
         }
 
         public event Action<string> Changed;
+
+
+        public bool IsMessageShown
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }

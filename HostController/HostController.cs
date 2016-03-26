@@ -288,6 +288,30 @@ namespace HostController
                     arduController.Beep(100, 50, 2);
             };
 
+            uiController.DialogShown += dialog =>
+            {
+                config.IsMessageShown = null != dialog;
+
+                if (null != dialog)
+                {
+                    miniDisplayController.ResetQueue();
+                    miniDisplayController.Graphics.Delay(500);
+                    miniDisplayController.Graphics.Cls();
+                    miniDisplayController.Graphics.SetFont(Fonts.Small);
+                    var caption = string.IsNullOrWhiteSpace(dialog.Caption) ? "NO CAPTION" : dialog.Caption.Substring(0, 10);
+                    miniDisplayController.Graphics.Print(0, 10, caption, TextAlingModes.Center);
+
+                    int buttonCount = 0;
+                    foreach (var btn in dialog.Buttons)
+                    {
+                        miniDisplayController.Graphics.Print(0, (byte)(20 + buttonCount * 10), btn.Value, TextAlingModes.Center);
+                        buttonCount++;
+                    }
+
+                    miniDisplayController.Graphics.Update();
+                }
+            };
+
             uiController.PageChanging += (string descriptorName, string viewName) =>
             {
                 miniDisplayController.ResetQueue();
@@ -334,6 +358,9 @@ namespace HostController
 
         private void CheckSystemTimeFromArduino(DateTime time)
         {
+			DisconnectSystemTimeChecking();
+			return;
+
             Logger.Log(this, string.Concat("CheckSystemTimeFromArduino handler called with proposed time ", time), LogLevels.Info);
 
             systemTimeCorrectorGuard.ExecuteIfFreeAsync(() =>
@@ -350,6 +377,9 @@ namespace HostController
 
         private void CheckSystemTimeFromGPS(Interfaces.GPS.GPRMC gprmc)
         {
+			DisconnectSystemTimeChecking();
+			return;
+
 			if (!gprmc.Active)
 				return;
 
@@ -371,6 +401,9 @@ namespace HostController
 
         private void CheckSystemTimeFromInternet(DateTime inetTime)
         {
+			DisconnectSystemTimeChecking();
+			return;
+
             Logger.Log(this, string.Concat("CheckSystemTimeFromInternet handler called with proposed time ", inetTime), LogLevels.Info);
 
             systemTimeCorrectorGuard.ExecuteIfFreeAsync(() =>
@@ -474,6 +507,18 @@ namespace HostController
 
             switch (mode)
             {
+                case HostControllerShutdownModes.Update:
+                    {
+                        var processConfig = new ProcessConfig
+                        {
+                            ExePath = Config.GetString(ConfigNames.SystemUpdateCommand),
+                            Args = string.Format(Config.GetString(ConfigNames.SystemUpdateArg), Config.DataFolder)
+                        };
+
+                        ProcessRunnerFactory.Create(processConfig).Run();
+                    }
+                    break;
+
                 case HostControllerShutdownModes.Restart:
                     {
                         var processConfig = new ProcessConfig

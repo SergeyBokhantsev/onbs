@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using System.Threading;
 namespace Interfaces
 {
@@ -17,6 +19,11 @@ namespace Interfaces
             {
                 guard.ExecuteIfFree(action, exceptionHandler);
             });
+        }
+
+        public static string GetString(this MemoryStream ms)
+        {
+            return Encoding.Default.GetString(ms.ToArray());
         }
     }
 }

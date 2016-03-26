@@ -21,7 +21,8 @@
     <page name="NavApp" model="NavigationAppPage" default_view="ExternalApplicationPage">
       <Cancel name="Drive1"/>
       <Prev action="WheelDown"/>
-      <Next action="WheelUp"/>      
+      <Next action="WheelUp"/>
+      <F1 action="GPSPause"/>
     </page>
     <page name="WebCam" model="WebCamPage" default_view="ExternalApplicationPage">
       <Cancel name="Drive1"/>

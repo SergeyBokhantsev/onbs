@@ -16,6 +16,7 @@ namespace UIModels
             SetProperty(ModelNames.PageTitle, "System power management");
 
             ListItem<string>.PrepareItem(hc.SyncContext, ref items, "Quit", OnClick, "Quit application");
+            ListItem<string>.PrepareItem(hc.SyncContext, ref items, "Update", OnClick, "Firmware update");
             ListItem<string>.PrepareItem(hc.SyncContext, ref items, "Restart", OnClick, "Restart system");
             ListItem<string>.PrepareItem(hc.SyncContext, ref items, "Shutdown", OnClick, "Shutdown");
         }
@@ -28,6 +29,10 @@ namespace UIModels
             {
                 case "Quit":
                     hc.Shutdown(HostControllerShutdownModes.Exit);
+                    break;
+
+                case "Update":
+                    hc.Shutdown(HostControllerShutdownModes.Update);
                     break;
 
                 case "Restart":

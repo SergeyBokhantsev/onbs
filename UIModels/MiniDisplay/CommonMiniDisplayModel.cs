@@ -11,7 +11,7 @@ namespace UIModels.MiniDisplay
     internal abstract class CommonMiniDisplayModel
     {
         private readonly IMiniDisplayController mdc;
-        private readonly IConfig config;
+        protected readonly IConfig config;
         private readonly string pageName;
 
         private bool tick;
@@ -30,6 +30,11 @@ namespace UIModels.MiniDisplay
 
         public void Draw()
         {
+            if (config.IsMessageShown)
+            {
+                return;
+            }
+
             warning = false;
 
             mdc.ResetQueue();
@@ -44,7 +49,7 @@ namespace UIModels.MiniDisplay
 
             if (!string.IsNullOrWhiteSpace(pageName))
                 g.Print(0, 64 - 10, pageName, TextAlingModes.Center);
-
+            
             if (config.IsMessagePending)
             {
                 DrawMessageWarning(g);

@@ -1,4 +1,5 @@
-﻿namespace Interfaces
+﻿using System.IO;
+namespace Interfaces
 {
     /// <summary>
     /// Raised when target process has exited
@@ -14,7 +15,8 @@
         void Run();
         void SendToStandardInput(string message);
 		void SendToStandardInput(char c);
-        string GetFromStandardOutput();
+        //string GetFromStandardOutput();
+        bool WaitForExit(int timeoutMilliseconds, out MemoryStream output);
         bool WaitForExit(int timeoutMilliseconds);
         void Exit();
     }

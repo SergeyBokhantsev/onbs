@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.RegularExpressions;
 using Interfaces;
 
@@ -17,9 +18,9 @@ namespace NixHelpers
 
                 pr.Run();
 
-                pr.WaitForExit(5000);
-
-                var output = pr.GetFromStandardOutput();
+                MemoryStream outputStream;
+                pr.WaitForExit(5000, out outputStream);
+                var output = outputStream.GetString();
 
                 return output.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             }

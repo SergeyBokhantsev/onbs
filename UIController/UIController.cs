@@ -17,6 +17,7 @@ namespace UIController
     public class UIController : IUIController
     {
         public event Action<bool> DialogPending;
+        public event Action<IDialogModel> DialogShown;
 
         public event Action<string, string> PageChanging;
 
@@ -231,6 +232,7 @@ namespace UIController
                         {
                             lock (dialogs)
                             {
+                                OnDialogShown(null);
                                 currentDialog = null;
                                 OnDialogPending(false);
                                 hostController.SyncContext.Post(o => ProcessDialogsQueue(), null);
@@ -238,6 +240,7 @@ namespace UIController
                         };
 
                         uiHost.ShowDialog(currentDialog);
+                        OnDialogShown(currentDialog);
                     }
                 }
             }
@@ -251,6 +254,16 @@ namespace UIController
                 if (handler != null)
                     handler((bool)o);
             }, pending, "UIController.OnDialogPending -> ProcessDialogsQueue");
+        }
+
+        private void OnDialogShown(IDialogModel dialog)
+        {
+            hostController.SyncContext.Post(o =>
+            {
+                var handler = DialogShown;
+                if (handler != null)
+                    handler((IDialogModel)o);
+            }, dialog, "UIController.OnDialogShown -> ProcessDialogsQueue");
         }
     }
 }

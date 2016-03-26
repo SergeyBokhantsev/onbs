@@ -15,6 +15,7 @@ namespace GPSD.Net
         private readonly TcpClient tcpClient;
         private readonly NetworkStream stream;
         private readonly ILogger logger;
+        private readonly IConfig config;
 
         public readonly LockingProperty<GPRMC> gprmc = new LockingProperty<GPRMC>();
         public readonly LockingProperty<string> nmea = new LockingProperty<string>();
@@ -36,7 +37,7 @@ namespace GPSD.Net
             }
         }
 
-		public GPSDClient(TcpClient tcpClient, NetworkStream stream, ILogger logger)
+		public GPSDClient(TcpClient tcpClient, NetworkStream stream, ILogger logger, IConfig config)
         {
             if (stream == null)
                 throw new ArgumentNullException("stream");
@@ -44,9 +45,13 @@ namespace GPSD.Net
             if (logger == null)
                 throw new ArgumentNullException("logger");
 
+            if (config == null)
+                throw new ArgumentNullException("config");
+
             this.tcpClient = tcpClient;
             this.stream = stream;
             this.logger = logger;
+            this.config = config;
 
             nmea.Value = string.Empty;
             gprmc.Value = new GPRMC();
@@ -78,10 +83,13 @@ namespace GPSD.Net
 
                     case ClientStates.SendGPS:
                         pause = 1000;
-                        if (watch.json)
-                            SendJson();
-                        if (watch.nmea)
-                            SendNmea();
+                        if (!config.GetBool(ConfigNames.GPSDPaused))
+                        {
+                            if (watch.json)
+                                SendJson();
+                            if (watch.nmea)
+                                SendNmea();
+                        }
                         break;
                 }
 

@@ -95,7 +95,6 @@ namespace HostController.Lin
 								if (dialerProcess.HasExited)
 								{
 									logger.Log(this, "Dialer process exited unexpectedly", LogLevels.Warning);
-									logger.Log(this, dialerProcess.GetFromStandardOutput(), LogLevels.Warning);
 									break;
 								}
 
@@ -345,8 +344,11 @@ namespace HostController.Lin
                 var modemSwitchConfigFilePath = Path.Combine(config.DataFolder, "12d1_1446.cfg");
 				var pr = prf.Create("modeswitch", new object[] { modemSwitchConfigFilePath });
                 pr.Run();
-                pr.WaitForExit(30000);
-                var output = pr.GetFromStandardOutput();
+
+                MemoryStream outputStream;
+                pr.WaitForExit(30000, out outputStream);
+                var output = outputStream.GetString();
+
                 var result = output.Contains("Mode switch succeeded");
 
 				if (!result)

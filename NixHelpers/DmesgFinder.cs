@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 namespace NixHelpers
 {
@@ -17,9 +18,9 @@ namespace NixHelpers
 
                 pr.Run();
 
-                pr.WaitForExit(5000);
-
-                var output = pr.GetFromStandardOutput();
+                MemoryStream outputStream;
+                pr.WaitForExit(5000, out outputStream);
+                var output = outputStream.GetString();
 
                 return USBDevice.Parse(output);
             }

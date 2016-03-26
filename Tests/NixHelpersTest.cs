@@ -39,11 +39,6 @@ namespace Tests
             {
             }
 
-            public string GetFromStandardOutput()
-            {
-                return File.ReadAllText(filename);
-            }
-
             public bool WaitForExit(int timeoutMilliseconds)
             {
                 return true;
@@ -57,6 +52,13 @@ namespace Tests
             public void SendToStandardInput(char c)
             {
                 throw new NotImplementedException();
+            }
+
+
+            public bool WaitForExit(int timeoutMilliseconds, out MemoryStream output)
+            {
+                output = new MemoryStream(File.ReadAllBytes(filename));
+                return true;
             }
         }
 

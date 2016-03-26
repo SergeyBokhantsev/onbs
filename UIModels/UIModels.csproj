@@ -66,6 +66,7 @@
     <Compile Include="MiniDisplay\CommonMiniDisplayModel.cs" />
     <Compile Include="MiniDisplay\Demo.cs" />
     <Compile Include="MiniDisplay\DriveMiniDisplayModel.cs" />
+    <Compile Include="MiniDisplay\NavigationMiniDisplayModel.cs" />
     <Compile Include="ModelBase.cs" />
     <Compile Include="MultipurposeModels\MultilineModel.cs" />
     <Compile Include="MultipurposeModels\RotaryListModel.cs" />

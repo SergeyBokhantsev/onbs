@@ -105,7 +105,11 @@ namespace HostController
             if (schedulerThread != null)
                 throw new InvalidOperationException("already started");
 
-            schedulerThread = new Thread(Scheduler) {IsBackground = true};
+            schedulerThread = new Thread(Scheduler) 
+			{
+				IsBackground = true,
+				Name = "TimerScheduler"
+			};
             schedulerThread.Start();
         }
 

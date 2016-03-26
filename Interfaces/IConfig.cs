@@ -10,6 +10,7 @@ namespace Interfaces
         bool IsInternetConnected { get; }
         bool IsGPSLock { get; }
         bool IsMessagePending { get; }
+        bool IsMessageShown { get; }
         string DataFolder { get; }
     }
 
@@ -42,6 +43,7 @@ namespace Interfaces
         public static readonly string GPSLocation = "GPSLocation";
 
         public static readonly string GPSDEnabled = "GPSDEnabled";
+        public static readonly string GPSDPaused = "GPSDPaused";
 
         public static readonly string Elm327Port = "Elm327Port";
 
@@ -62,6 +64,8 @@ namespace Interfaces
         public static readonly string DashCamRecorderPreviewEnabled = "DashCamRecorderPreviewEnabled";
         public static readonly string DashCamRecorderExe = "DashCamRecorderExe";
         public static readonly string DashCamRecorderArg = "DashCamRecorderArg";
+        public static readonly string DashCamPictureExe = "DashCamPictureExe";
+        public static readonly string DashCamPictureArg = "DashCamPictureArg";
         public static readonly string DashCamRecorderFolder = "DashCamRecorderFolder";
         public static readonly string DashCamRecorderFilesNumberQuota = "DashCamRecorderFilesNumberQuota";
         public static readonly string DashCamRecorderSplitIntervalSec = "DashCamRecorderSplitIntervalSec";
@@ -83,6 +87,8 @@ namespace Interfaces
         public static readonly string SystemShutdownArg = "SystemShutdownArg";
         public static readonly string SystemRestartCommand = "SystemRestartCommand";
         public static readonly string SystemRestartArg = "SystemRestartArg";
+        public static readonly string SystemUpdateCommand = "SystemUpdateCommand";
+        public static readonly string SystemUpdateArg = "SystemUpdateArg";
 
         public static readonly string NavitExe = "navit_exe";
         public static readonly string NavitArgs = "navit_args";
