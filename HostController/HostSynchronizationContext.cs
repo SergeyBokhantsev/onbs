@@ -135,7 +135,11 @@ namespace HostController
                 while (pumpItems.TryDequeue(out workItem))
                 {
                     itemWatch.Restart();
-                    workItem.Execute();
+
+					if (workItem != null) {
+						workItem.Execute ();
+					}
+
                     itemWatch.Stop();
 
                     if (workItem.Exception != null)
@@ -176,12 +180,22 @@ namespace HostController
         /// </summary>
         public override void Post(SendOrPostCallback action, object state)
         {
+			if (action == null) {
+				logger.Log (this, "NULL action provided to POST", LogLevels.Error);
+				return;
+			}
+
             pumpItems.Enqueue(new AsynchronousWorkItem(action, state, null));
             pumpResetEvent.Set();
         }
 
         public override void Post(SendOrPostCallback action, object state, string details)
         {
+			if (action == null) {
+				logger.Log (this, string.Format("NULL '{0}' action provided to POST", details), LogLevels.Error);
+				return;
+			}
+
             pumpItems.Enqueue(new AsynchronousWorkItem(action, state, details));
             pumpResetEvent.Set();
         }
