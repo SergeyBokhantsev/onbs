@@ -2,6 +2,7 @@ using Interfaces;
 using System;
 using System.IO.Ports;
 using System.Threading;
+using System.Text;
 
 namespace HostController.Lin
 {
@@ -30,14 +31,16 @@ namespace HostController.Lin
 
             this.logger = logger;
 
-            var t = new Thread(() => Monitor(config)) {IsBackground = true};
+            var t = new Thread(() => Monitor(config)) 
+			{
+				IsBackground = true,
+				Name = "Serial port"
+			};
             t.Start ();
         }
 
         private void Monitor(IConfig config)
         {
-            Thread.CurrentThread.Name = "Serial";
-
             while (true)
             {
                 try
@@ -59,8 +62,24 @@ namespace HostController.Lin
 
                         lock (portLocker)
                         {
-                            port = new SerialPort(portPath, speed, parity, databits, stopbits);
-                            port.Open();
+							try
+							{
+	                            port = new SerialPort(portPath, speed, parity, databits, stopbits);
+	                            port.Open();
+								//port.WriteLine("dd");
+								//var i = port.BytesToRead;
+								//if (i<0)
+								//	logger.Log(this, i.ToString(), LogLevels.Warning);
+							}
+							catch (Exception ex)
+							{
+								logger.Log(this, ex);
+								if (port != null)
+									port.Dispose();
+								port = null;
+								Thread.Sleep(5000);
+								continue;
+							}
                         }
                     }
 
@@ -107,6 +126,8 @@ namespace HostController.Lin
                 if (port != null)
                 {
                     var readed = port.Read(buffer, offset, count);
+
+					//var temp = Encoding.Default.GetString (buffer, offset, readed);
 
                     Interlocked.Add(ref readedCount, readed);
 

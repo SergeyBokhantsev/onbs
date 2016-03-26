@@ -358,6 +358,9 @@ namespace HostController
 
         private void CheckSystemTimeFromArduino(DateTime time)
         {
+			DisconnectSystemTimeChecking();
+			return;
+
             Logger.Log(this, string.Concat("CheckSystemTimeFromArduino handler called with proposed time ", time), LogLevels.Info);
 
             systemTimeCorrectorGuard.ExecuteIfFreeAsync(() =>
@@ -374,6 +377,9 @@ namespace HostController
 
         private void CheckSystemTimeFromGPS(Interfaces.GPS.GPRMC gprmc)
         {
+			DisconnectSystemTimeChecking();
+			return;
+
 			if (!gprmc.Active)
 				return;
 
@@ -395,6 +401,9 @@ namespace HostController
 
         private void CheckSystemTimeFromInternet(DateTime inetTime)
         {
+			DisconnectSystemTimeChecking();
+			return;
+
             Logger.Log(this, string.Concat("CheckSystemTimeFromInternet handler called with proposed time ", inetTime), LogLevels.Info);
 
             systemTimeCorrectorGuard.ExecuteIfFreeAsync(() =>
