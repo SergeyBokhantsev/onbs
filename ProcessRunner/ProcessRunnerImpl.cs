@@ -70,7 +70,8 @@ namespace ProcessRunner
                     // ReSharper disable once AssignNullToNotNullAttribute
                     WorkingDirectory = string.IsNullOrWhiteSpace(config.ExePath) ? string.Empty : Path.GetDirectoryName(config.ExePath),
                     RedirectStandardInput = config.RedirectStandardInput,
-                    RedirectStandardOutput = config.RedirectStandardOutput
+                    RedirectStandardOutput = config.RedirectStandardOutput,
+					StandardOutputEncoding = Encoding.Unicode
                 };
 
                 proc = Process.Start(psi);
@@ -198,17 +199,24 @@ namespace ProcessRunner
             if (proc == null)
                 throw new InvalidOperationException("Process was not run");
 
-            output = new MemoryStream();
-            var buffer = new char[1024];
+			output = new MemoryStream();
+
+			int bufReadyLen = 0;
+
+            var bufferReady = new byte[1024 * 16];
+			var bufferEmpty = new byte[1024 * 16];
 
             const int checkSpanMs = 100;
             int waitingMs = 0;
 
+			var bs =  proc.StandardOutput.BaseStream;
+
             do
             {
-                var task = proc.StandardOutput.ReadBlockAsync(buffer, 0, buffer.Length);
+				var readTask = bs.ReadAsync(bufferEmpty, 0, bufferEmpty.Length);
+				var writeTask = output.WriteAsync(bufferReady, 0, bufReadyLen);
 
-                while (!task.IsCompleted)
+				while (!(readTask.IsCompleted && writeTask.IsCompleted))
                 {
                     Thread.Sleep(checkSpanMs);
                     waitingMs += checkSpanMs;
@@ -219,21 +227,28 @@ namespace ProcessRunner
                         return false;
                     }
                 }
-
-                if (task.Result > 0)
-                {
-                    for (int i = 0; i < task.Result; ++i)
-                    {
-                        output.WriteByte((byte)buffer[i]);
-                    }
-                }
+					
+				SwitchBuffers(ref bufferEmpty, ref bufferReady);
+				bufReadyLen = readTask.Result;
             }
-            while (!proc.StandardOutput.EndOfStream);
+			while (bufReadyLen > 0);
 
-            output.Seek(0, SeekOrigin.Begin);
+			if (bufReadyLen > 0)
+			{
+				output.Write(bufferReady, 0, bufReadyLen);
+			}
+
+            //output.Seek(0, SeekOrigin.Begin);
 
             return true;
         }
+
+		private void SwitchBuffers(ref byte[] a, ref byte[] b)
+		{
+			byte[] temp = a;
+			a = b;
+			b = temp;
+		}
 
         public bool WaitForExit(int timeoutMilliseconds)
         {

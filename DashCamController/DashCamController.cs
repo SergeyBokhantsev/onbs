@@ -132,7 +132,7 @@ namespace DashCamController
                 cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);
                 cameraProcess.Run();
 
-                bool result = cameraProcess.WaitForExit(5000, out ms);
+                bool result = cameraProcess.WaitForExit(25000, out ms);
 
                 if (!result)
                 {

@@ -1,26 +1,20 @@
 ﻿<Properties StartupItem="HostController/HostController.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/HostController.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="UIModels/DrivePage.cs">
     <Files>
-      <File FileName="HostController/App.config" Line="1" Column="1" />
-      <File FileName="HostController/Lin/SerialArduPort.cs" Line="1" Column="1" />
-      <File FileName="ArduinoController/ArduinoController.cs" Line="1" Column="1" />
-      <File FileName="ArduinoController/CommunicationQueue.cs" Line="1" Column="1" />
-      <File FileName="SerialTransportProtocol/STPCodec.cs" Line="1" Column="1" />
-      <File FileName="SerialTransportProtocol/STPDecoder.cs" Line="1" Column="1" />
-      <File FileName="GPSController/GPSController.cs" Line="92" Column="10" />
-      <File FileName="Interfaces/GPS/Primitives.cs" Line="1" Column="1" />
-      <File FileName="HostController/HostController.cs" Line="422" Column="6" />
-      <File FileName="HostController/Lin/InternetConnectionKeeper.cs" Line="67" Column="1" />
-      <File FileName="HostController/Lin/SystemTimeCorrector.cs" Line="64" Column="7" />
+      <File FileName="HostController/App.config" Line="54" Column="77" />
+      <File FileName="UIModels/DrivePage.cs" Line="62" Column="6" />
+      <File FileName="DashCamController/DashCamController.cs" Line="133" Column="1" />
+      <File FileName="ProcessRunner/ProcessRunnerImpl.cs" Line="234" Column="23" />
+      <File FileName="NixHelpers/CPUInfo.cs" Line="1" Column="1" />
+      <File FileName="NixHelpers/DmesgFinder.cs" Line="1" Column="1" />
+      <File FileName="Elm327Controller/Elm327Controller.cs" Line="72" Column="1" />
+      <File FileName="HostController/Configuration.cs" Line="30" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/home/pi/onbs/HostController/HostController.cs" line="422" column="1" />
-      <Breakpoint file="/home/pi/onbs/HostController/HostController.cs" line="371" column="1" />
-      <Breakpoint file="/home/pi/onbs/HostController/Lin/SystemTimeCorrector.cs" line="38" column="1" />
-      <Breakpoint file="/home/pi/onbs/HostController/HostController.cs" line="397" column="1" />
+      <Breakpoint file="/home/pi/onbs/UIModels/DrivePage.cs" line="73" column="5" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>

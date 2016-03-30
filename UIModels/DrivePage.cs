@@ -59,8 +59,21 @@ namespace UIModels
                 weatherGuard.ExecuteIfFreeAsync(UpdateWeatherForecast);
             }
 
+			//hc.GetController<IDashCamController> ().ScheduleTakePicture (pict);
+
             base.OnSecondaryTimer(timer);
         }
+
+		void pict(MemoryStream p)
+		{
+			if (p != null) {
+
+				//var arr = p.ToArray ();
+
+				//File.WriteAllBytes (Path.Combine (hc.Config.DataFolder, "t4.jpg"), arr);
+
+			}
+		}
 
         protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
         {
