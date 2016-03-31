@@ -302,6 +302,15 @@
     <None Include="Data\firmware_update.sh">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\ZXRoms\A.T.A.C %281987%29%28Sinclair User%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Extreme %281991%29%28Digital Integration%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Worm In Paradise, The %281985%29%28Level 9 Computing%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

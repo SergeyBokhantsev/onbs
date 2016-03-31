@@ -17,6 +17,7 @@
       <RotaryItem_7 name="CommonConfig" caption="CFG"/>
       <RotaryItem_8 name="Shutdown" caption="PWR"/>
       <RotaryItem_9 name="SystemInfoCatalog" caption="SYS"/>
+      <RotaryItem_10 name="ZXGamesList" caption="GAM"/>
     </page>
     <page name="NavApp" model="NavigationAppPage" default_view="ExternalApplicationPage">
       <Cancel name="Drive1"/>
@@ -142,6 +143,12 @@
     </page>
     <page name="LsUsb" model="LsUsbModel" default_view="MultilineView">
       <Cancel name="SystemInfoCatalog" caption="Back"/>
+    </page>
+    <page name="ZXGamesList" model="ZXGamesListModel" default_view="CommonVertcalStackPage">
+      <Cancel name="Drive1" caption="Back"/>
+    </page>
+    <page name="ZXEmulator" model="ZXEmulatorModel" default_view="ExternalApplicationPage">
+      <Cancel name="ZXGamesList" caption="Back"/>
     </page>
   </pages>
 </app>

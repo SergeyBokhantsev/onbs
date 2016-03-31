@@ -134,5 +134,8 @@ namespace Interfaces
         public static readonly string WeatherCityId = "WeatherCityId";
 
         public static readonly string OBD_DTC_DescriptionFiles = "OBD_DTC_DescriptionFiles";
+
+        public static readonly string ZXEmulatorExe = "zx_emulator_exe";
+        public static readonly string ZXEmulatorArgs = "zx_emulator_args";
     }
 }

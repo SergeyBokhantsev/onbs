@@ -82,6 +82,8 @@
     <Compile Include="UnexpectedErrorModel.cs" />
     <Compile Include="WeatherPage.cs" />
     <Compile Include="WebCamPage.cs" />
+    <Compile Include="ZXGames\ZXEmulatorModel.cs" />
+    <Compile Include="ZXGames\ZXGamesListModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
