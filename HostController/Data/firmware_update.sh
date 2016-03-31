@@ -1,5 +1,6 @@
 cd /home/pi/onbs/
-git pull
+sudo stash
+sudo git pull
 
 sudo xbuild /p:Configuration=Release OnboardSytem.sln
 

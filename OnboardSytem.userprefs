@@ -1,15 +1,16 @@
 ﻿<Properties StartupItem="HostController/HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="UIModels/DrivePage.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/Data/firmware_update.sh">
     <Files>
-      <File FileName="HostController/App.config" Line="54" Column="77" />
+      <File FileName="HostController/App.config" Line="13" Column="39" />
       <File FileName="UIModels/DrivePage.cs" Line="62" Column="6" />
-      <File FileName="DashCamController/DashCamController.cs" Line="133" Column="1" />
-      <File FileName="ProcessRunner/ProcessRunnerImpl.cs" Line="234" Column="23" />
+      <File FileName="DashCamController/DashCamController.cs" Line="1" Column="1" />
+      <File FileName="ProcessRunner/ProcessRunnerImpl.cs" Line="1" Column="1" />
       <File FileName="NixHelpers/CPUInfo.cs" Line="1" Column="1" />
       <File FileName="NixHelpers/DmesgFinder.cs" Line="1" Column="1" />
-      <File FileName="Elm327Controller/Elm327Controller.cs" Line="72" Column="1" />
-      <File FileName="HostController/Configuration.cs" Line="30" Column="1" />
+      <File FileName="Elm327Controller/Elm327Controller.cs" Line="1" Column="1" />
+      <File FileName="HostController/Configuration.cs" Line="1" Column="1" />
+      <File FileName="HostController/Data/firmware_update.sh" Line="5" Column="14" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
