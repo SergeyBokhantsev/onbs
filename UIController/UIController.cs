@@ -39,6 +39,14 @@ namespace UIController
 
         private bool shutdowning;
 
+        public int UserIdleMinutes
+        {
+            get
+            {
+                return uiHost != null ? uiHost.UserIdleMinutes : 0;
+            }
+        }
+
         public UIController(string uiHostAssemblyPath, string uiHostClassName, ApplicationMap map, IHostController hostController, PageConstructorDelegate pageConstructor)
         {
             this.map = map;

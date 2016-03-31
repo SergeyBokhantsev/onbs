@@ -29,7 +29,7 @@ namespace GtkApplication
 				l_error.Text = message; 
 			}, "ex");
 
-			binder.UpdateBindings();
+			binder.UpdateBindings();            
 		}
 	}
 

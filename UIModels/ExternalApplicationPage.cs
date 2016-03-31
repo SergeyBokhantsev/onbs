@@ -25,7 +25,7 @@ namespace UIModels
 
                 this.Disposing += (s, e) => Runner.Exit();
 
-                SetProperty("label_launch_info", string.Format("Launching {0}...", Runner.Name));
+                SetProperty("label_launch_info", string.Format("Launching {0}...", Runner.ToString()));
                 SetProperty("is_error", "0");
             }
             else
@@ -52,7 +52,7 @@ namespace UIModels
             try
             {
                 Runner.Run();
-                SetProperty("label_launch_info", string.Format("{0} now launched", Runner.Name));
+                SetProperty("label_launch_info", string.Format("{0} now launched", Runner.ToString()));
 
                 return true;
             }
@@ -60,7 +60,7 @@ namespace UIModels
             {
                 hc.Logger.Log(this, ex);
                 SetProperty("is_error", "1");
-                SetProperty("label_launch_info", string.Format("Error launching {0}...{1}{2}", Runner.Name, Environment.NewLine, ex.Message));
+                SetProperty("label_launch_info", string.Format("Error launching {0}...{1}{2}", Runner.ToString(), Environment.NewLine, ex.Message));
                 return false;
             }
         }

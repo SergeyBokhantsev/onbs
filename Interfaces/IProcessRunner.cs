@@ -10,7 +10,6 @@ namespace Interfaces
     public interface IProcessRunner
     {
         event ExitedEventHandler Exited;
-        string Name { get; }
         bool HasExited { get; }
         void Run();
         void SendToStandardInput(string message);

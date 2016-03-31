@@ -9,6 +9,16 @@ namespace GtkApplication
 {
 	public class App : IUIHost
 	{
+        private readonly IdleMeter idleMeter = new IdleMeter();
+
+        public int UserIdleMinutes
+        {
+            get
+            {
+                return idleMeter.IdleMinutes;
+            }
+        }
+
         private class ShowPageEventArgs : EventArgs
         {
             public IPageModel Model { get; private set; }
@@ -176,7 +186,8 @@ namespace GtkApplication
             {
                 foreach (var btn in model.Buttons)
                 {
-                    dlg.AddButton(btn.Value, (ResponseType)btn.Key);
+                    var wgt = dlg.AddButton(btn.Value, (ResponseType)btn.Key);
+                    wgt.EnterNotifyEvent += Wgt_EnterNotifyEvent;
                 }
             }
 
@@ -190,6 +201,11 @@ namespace GtkApplication
 
             dlg.Run();
             dlg.Destroy();
+        }
+
+        private void Wgt_EnterNotifyEvent(object o, EnterNotifyEventArgs args)
+        {
+            idleMeter.Reset();
         }
 
         public void Shutdown()

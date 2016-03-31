@@ -1,0 +1,5 @@
+http://www.emulationstation.org/gettingstarted.html#install_rpi_standalone
+
+http://www.emuparadise.me/ZX_Spectrum_%28Z80%29_ROMs/Games-Starting-With-E/35
+
+http://www.instructables.com/id/Installing-RetroPieEmulationStation-onto-Raspberry/step6/Putting-in-ROMs-Finally/

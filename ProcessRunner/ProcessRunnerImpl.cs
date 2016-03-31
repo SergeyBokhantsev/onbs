@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ProcessRunner
 {
@@ -16,14 +17,6 @@ namespace ProcessRunner
         private readonly ILogger logger;
 
         private bool closing;
-
-        public string Name
-        {
-            get
-            {
-                return string.Format("{0} {1}", Path.GetFileName(config.ExePath), config.Args);
-            }
-        }
 
         public bool HasExited
         {
@@ -50,7 +43,12 @@ namespace ProcessRunner
             this.config = config;
             this.logger = logger;
 
-            logger.LogIfDebug(this, string.Concat("Process runner created for {0}", Name));
+            logger.LogIfDebug(this, string.Concat("Process runner created for {0}", ToString()));
+        }
+
+        public override string ToString()
+        {
+            return string.Concat("{", config.ExePath, " ", config.Args, "}");
         }
 
         public void Run()
@@ -61,7 +59,7 @@ namespace ProcessRunner
             try
             {
                 if (!config.Silent)
-                    logger.Log(this, string.Format("Launching {0}", Name), LogLevels.Info);
+                    logger.Log(this, string.Format("Launching {0}", ToString()), LogLevels.Info);
 
                 var psi = new ProcessStartInfo(config.ExePath)
                 {
@@ -79,7 +77,7 @@ namespace ProcessRunner
                 if (proc == null)
                     throw new Exception("Created process is null unexpectedly");
 
-                logger.LogIfDebug(this, string.Format("Launched {0}", Name));
+                logger.LogIfDebug(this, string.Format("Launched {0}", ToString()));
 
                 if (config.WaitForUI)
                 {
@@ -90,7 +88,7 @@ namespace ProcessRunner
             catch (Exception ex)
             {
                 logger.Log(this, ex);
-                throw new Exception(string.Format("Unable to launch '{0}': {1}", Name, ex.Message), ex);
+                throw new Exception(string.Format("Unable to launch '{0}': {1}", ToString(), ex.Message), ex);
             }
 
             //var monitor = new Thread(Monitor);
@@ -104,7 +102,7 @@ namespace ProcessRunner
                 if (proc == null)
                     return;
 
-                logger.LogIfDebug(this, string.Format("Launching monitor loop for {0}", Name));
+                logger.LogIfDebug(this, string.Format("Launching monitor loop for {0}", ToString()));
 
                 while (!proc.HasExited)
                 {
@@ -112,7 +110,7 @@ namespace ProcessRunner
                 }
 
                 if (!config.Silent)
-                    logger.Log(this, string.Format("{0} has exited", Name), LogLevels.Info);
+                    logger.Log(this, string.Format("{0} has exited", ToString()), LogLevels.Info);
             }
             catch (Exception ex)
             {
@@ -126,7 +124,7 @@ namespace ProcessRunner
         {
             closing = true;
 
-            logger.LogIfDebug(this, string.Format("Begin closing {0}", Name));
+            logger.LogIfDebug(this, string.Format("Begin closing {0}", ToString()));
 
             if (proc != null && !proc.HasExited)
             {
@@ -178,68 +176,51 @@ namespace ProcessRunner
 			}
 		}
 
-        //public string GetFromStandardOutput()
-        //{
-        //    StringBuilder res = new StringBuilder();
-        //    var buffer = new char[1024];
-        //    int readed;
-
-        //    do
-        //    {
-        //        readed = proc.StandardOutput.Read(buffer, 0, buffer.Length);
-        //        res.Append(buffer, 0, readed);
-        //    }
-        //    while (readed == buffer.Length);
-
-        //    return res.ToString();
-        //}
-
-        public bool WaitForExit(int timeoutMilliseconds, out MemoryStream output)
+        public bool WaitForExit(int timeoutMs, out MemoryStream output)
         {
             if (proc == null)
                 throw new InvalidOperationException("Process was not run");
 
-			output = new MemoryStream();
+            if (!config.RedirectStandardOutput)
+                throw new InvalidOperationException("Set RedirectStandardOutput=true on order to use this method");
 
-			int bufReadyLen = 0;
+            output = new MemoryStream();
 
-            var bufferReady = new byte[1024 * 16];
-			var bufferEmpty = new byte[1024 * 16];
+			int bufferToReadFromLen = 0;
 
-            const int checkSpanMs = 100;
-            int waitingMs = 0;
+            var bufferToReadFrom = new byte[1024 * 16];
+			var bufferToWriteTo = new byte[1024 * 16];
 
 			var bs =  proc.StandardOutput.BaseStream;
 
+            if (bs == null)
+                throw new NullReferenceException(string.Format("{0} : Proces.StandardOutput.BaseStream is null", ToString()));
+
+            const int sleepDelay = 100;
+            int waited = 0;
+
             do
             {
-				var readTask = bs.ReadAsync(bufferEmpty, 0, bufferEmpty.Length);
-				var writeTask = output.WriteAsync(bufferReady, 0, bufReadyLen);
+                var readTask = bs.ReadAsync(bufferToWriteTo, 0, bufferToWriteTo.Length);
+                var writeTask = output.WriteAsync(bufferToReadFrom, 0, bufferToReadFromLen);
 
-				while (!(readTask.IsCompleted && writeTask.IsCompleted))
+                while (!(writeTask.IsCompleted && readTask.IsCompleted))
                 {
-                    Thread.Sleep(checkSpanMs);
-                    waitingMs += checkSpanMs;
+                    Thread.Sleep(sleepDelay);
+                    waited += sleepDelay;
 
-                    if (waitingMs > timeoutMilliseconds)
+                    if (waited > timeoutMs)
                     {
-                        output.Seek(0, SeekOrigin.Begin);
+                        logger.Log(this, string.Format("Timeout occured for ProcessRunner {0}. Output stream reading will be interrupted, thus target process can be locked", ToString()), LogLevels.Warning);
                         return false;
                     }
                 }
-					
-				SwitchBuffers(ref bufferEmpty, ref bufferReady);
-				bufReadyLen = readTask.Result;
+
+				SwitchBuffers(ref bufferToWriteTo, ref bufferToReadFrom);
+				bufferToReadFromLen = readTask.Result;
             }
-			while (bufReadyLen > 0);
-
-			if (bufReadyLen > 0)
-			{
-				output.Write(bufferReady, 0, bufReadyLen);
-			}
-
-            //output.Seek(0, SeekOrigin.Begin);
-
+			while (bufferToReadFromLen > 0);
+            
             return true;
         }
 
@@ -256,20 +237,6 @@ namespace ProcessRunner
                 throw new InvalidOperationException("Process was not run");
 
             return proc.WaitForExit(timeoutMilliseconds);
-
-            //const int checkSpanMs = 500;
-            //int waitingMs = 0;
-
-            //while (waitingMs < timeoutMilliseconds)
-            //{
-            //    if (proc == null || proc.HasExited)
-            //        return true;
-
-            //    Thread.Sleep(checkSpanMs);
-            //    waitingMs += checkSpanMs;
-            //}
-
-            //return false;
         }
     }
 }

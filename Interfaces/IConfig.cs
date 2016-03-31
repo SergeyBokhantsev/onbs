@@ -32,7 +32,8 @@ namespace Interfaces
         public static readonly string Placeholder_UIFullscreen = "FULLSCREEN";
         public static readonly string Placeholder_Vehicle = "VEHICLE";
         public static readonly string Placeholder_ArduinoConfirmationTimeout = "COMM_CONFIRMATION_TIMEOUT";
-        
+
+        public static readonly string TurnOffAftrerInputIdleMinutes = "TurnOffAftrerInputIdleMinutes";
 
         public static readonly string UIHostAssemblyName = "UIHostAssemblyName";
         public static readonly string UIHostClass = "UIHostClass";

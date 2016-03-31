@@ -27,7 +27,7 @@ namespace HostController
 
         private Configuration config;
         private UIController.UIController uiController;
-        private IInputController inputController;
+        private InputController.InputController inputController;
         private ArduinoController.ArduinoController arduController;
         private GPSController.GPSController gpsController;
         private IAutomationController automationController;
@@ -42,6 +42,8 @@ namespace HostController
         private TravelsClient.OnlineLogger onlineLogger;
 
 		private int appliedTimeProviderPriority;
+
+        private Interfaces.IOperationGuard inputIddleCheckingLocker = new InterlockedGuard();
 
         public IConfig Config
         {
@@ -239,6 +241,8 @@ namespace HostController
 
             inputController = new InputController.InputController(Logger);
 
+            CreateTimer(10000, CheckUserInputIddle, true, false, "CheckUserInputIddle timer");
+
             elm327Controller = new Elm327Controller.Elm327Controller(this);
 
             IPort arduPort = null;
@@ -339,6 +343,26 @@ namespace HostController
             StartTimers();
 
             arduController.GetArduinoTime(t => syncContext.Post(tt => CheckSystemTimeFromArduino((DateTime)tt), t, "CheckSystemTimeFromArduino"));
+        }
+
+        private void CheckUserInputIddle(IHostTimer obj)
+        {
+            inputIddleCheckingLocker.ExecuteIfFreeAsync(() =>
+            {
+                var maxIdleTime = config.GetInt(ConfigNames.TurnOffAftrerInputIdleMinutes);
+                if (inputController.IddleMinutes >= maxIdleTime && uiController.UserIdleMinutes >= maxIdleTime)
+                {
+                    var dialogTask = uiController.ShowDialogAsync(new UIModels.Dialogs.OkDialog("Turn Off", "User is inactive, press cancel to continue", "Cancel", this, 60000, DialogResults.Yes));
+
+                    dialogTask.Wait();
+                    
+                    if (dialogTask.Result == DialogResults.Yes)
+                    {
+                        Logger.Log(this, string.Format("Turning off system because of user's inactivity for {0} minutes", maxIdleTime), LogLevels.Info);
+                        syncContext.Post(o => Shutdown(HostControllerShutdownModes.Shutdown), null, "Shutdown call from CheckUserInputIddle");
+                    }
+                }
+            });
         }
 
         private void InetKeeperRestartNeeded()

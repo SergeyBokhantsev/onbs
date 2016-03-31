@@ -7,11 +7,11 @@ namespace UIModels.Dialogs
 {
     public class OkDialog : DialogModelBase
     {
-        public OkDialog(string caption, string message, string okCaption, IHostController hc, int timeout)
+        public OkDialog(string caption, string message, string okCaption, IHostController hc, int timeout, DialogResults defaultResult = DialogResults.Ok)
             : base(hc)
         {
             this.timeout = timeout;
-            this.defaultResult = DialogResults.Ok;
+            this.defaultResult = defaultResult;
 
             Caption = caption;
             Message = message;

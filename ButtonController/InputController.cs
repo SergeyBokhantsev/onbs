@@ -18,11 +18,21 @@ namespace InputController
         private readonly ILogger logger;
         private readonly STPCodec codec;
 
+        private readonly IdleMeter iddleMeter = new IdleMeter();
+
         public STPFrame.Types FrameType
         {
             get
             {
                 return STPFrame.Types.Button;
+            }
+        }
+
+        public int IddleMinutes
+        {
+            get
+            {
+                return iddleMeter.IdleMinutes;
             }
         }
 
@@ -38,6 +48,8 @@ namespace InputController
             var buttonFrames = codec.Decode(transportFrames);
             if (buttonFrames != null)
             {
+                iddleMeter.Reset();
+
                 foreach (var frame in buttonFrames)
                 {
                     try
