@@ -38,7 +38,8 @@ namespace UIModels
         private void ItemSelected(object sender, EventArgs e)
         {
            var item = (ListItem<string>)sender;
-           hc.GetController<IUIController>().ShowPage("ZXEmulator", null, CreateProcessRunner(item.Value));
+			var page = hc.GetController<IUIController>().ShowPage("ZXEmulator", null, CreateProcessRunner(item.Value)) as ExternalApplicationPage;
+			page.Run ();
         }
 
         private IProcessRunner CreateProcessRunner(string romFilePath)
@@ -47,7 +48,10 @@ namespace UIModels
             {
                 ExePath = hc.Config.GetString(ConfigNames.ZXEmulatorExe),
                 Args = string.Format(hc.Config.GetString(ConfigNames.ZXEmulatorArgs), romFilePath),
-                WaitForUI = true
+                WaitForUI = true,
+				RedirectStandardInput = false,
+				RedirectStandardOutput = false,
+				Silent = false
             };
 
             return hc.ProcessRunnerFactory.Create(config);

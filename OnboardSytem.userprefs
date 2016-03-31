@@ -1,16 +1,12 @@
 ﻿<Properties StartupItem="HostController/HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/Data/firmware_update.sh">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ProcessRunner/ProcessRunnerImpl.cs">
     <Files>
-      <File FileName="HostController/App.config" Line="13" Column="39" />
-      <File FileName="UIModels/DrivePage.cs" Line="62" Column="6" />
-      <File FileName="DashCamController/DashCamController.cs" Line="1" Column="1" />
-      <File FileName="ProcessRunner/ProcessRunnerImpl.cs" Line="1" Column="1" />
-      <File FileName="NixHelpers/CPUInfo.cs" Line="1" Column="1" />
-      <File FileName="NixHelpers/DmesgFinder.cs" Line="1" Column="1" />
-      <File FileName="Elm327Controller/Elm327Controller.cs" Line="1" Column="1" />
-      <File FileName="HostController/Configuration.cs" Line="1" Column="1" />
-      <File FileName="HostController/Data/firmware_update.sh" Line="5" Column="14" />
+      <File FileName="UIModels/ZXGames/ZXGamesListModel.cs" Line="52" Column="3" />
+      <File FileName="UIController/UIController.cs" Line="166" Column="1" />
+      <File FileName="UIModels/DashCam/DashPlayerModel.cs" Line="1" Column="1" />
+      <File FileName="UIModels/DashCam/DashFileOptionsModel.cs" Line="80" Column="6" />
+      <File FileName="ProcessRunner/ProcessRunnerImpl.cs" Line="63" Column="5" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

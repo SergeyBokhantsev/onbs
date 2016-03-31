@@ -68,8 +68,7 @@ namespace ProcessRunner
                     // ReSharper disable once AssignNullToNotNullAttribute
                     WorkingDirectory = string.IsNullOrWhiteSpace(config.ExePath) ? string.Empty : Path.GetDirectoryName(config.ExePath),
                     RedirectStandardInput = config.RedirectStandardInput,
-                    RedirectStandardOutput = config.RedirectStandardOutput,
-					StandardOutputEncoding = Encoding.Unicode
+                    RedirectStandardOutput = config.RedirectStandardOutput
                 };
 
                 proc = Process.Start(psi);
