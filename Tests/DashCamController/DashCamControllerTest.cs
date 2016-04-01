@@ -28,7 +28,7 @@ namespace Tests.DashCam
 
             return new ProcessConfig
             {
-                ExePath = "ping",
+                ExePath = "ping_foo",
                 Args = "localhost"
             };
         }
@@ -49,8 +49,20 @@ namespace Tests.DashCam
     [TestClass]
     public class DashCamControllerTest
     {
+        private void InitSettings(IConfig cfg)
+        {
+            cfg.Set(ConfigNames.DashCamRecorderFolder, Path.GetTempPath());
+            cfg.Set(ConfigNames.DashCamRecorderFilesNumberQuota, 10);
+
+            cfg.Set(ConfigNames.DashCamRecorderExe, "");
+            cfg.Set(ConfigNames.DashCamRecorderArg, "");
+            cfg.Set(ConfigNames.DashCamRecorderSplitIntervalSec, 0);
+            cfg.Set(ConfigNames.DashCamPictureExe, "");
+            cfg.Set(ConfigNames.DashCamPictureArg, "");
+        }
+
         [TestMethod]
-        public void TestContiniousRecordings()
+        public void TestDisabledRecordings()
         {
             //INIT
             var hc = new Mocks.MockHostController();
@@ -70,16 +82,89 @@ namespace Tests.DashCam
             Assert.AreEqual(0, createRecordProcessConfigCalls);
         }
 
-        private void InitSettings(IConfig cfg)
+        [TestMethod]
+        public void TestEnabledRecordings()
         {
-            cfg.Set(ConfigNames.DashCamRecorderFolder, Path.GetTempPath());
-            cfg.Set(ConfigNames.DashCamRecorderFilesNumberQuota, 10);
+            //INIT
+            var hc = new Mocks.MockHostController();
 
-            cfg.Set(ConfigNames.DashCamRecorderExe, "");
-            cfg.Set(ConfigNames.DashCamRecorderArg, "");
-            cfg.Set(ConfigNames.DashCamRecorderSplitIntervalSec, 0);
-            cfg.Set(ConfigNames.DashCamPictureExe, "");
-            cfg.Set(ConfigNames.DashCamPictureArg, "");
+            InitSettings(hc.Config);
+            hc.Config.Set(ConfigNames.DashCamRecorderEnabled, false);
+
+            int createPictureProcessConfigCalls = 0;
+            int createRecordProcessConfigCalls = 0;
+
+            var ctrl = new TestDashCamController(hc);
+            ctrl.OnCreatePictureProcessConfig += () => createPictureProcessConfigCalls++;
+            ctrl.OnCreateRecordProcessConfig += () => createRecordProcessConfigCalls++;
+            hc.Config.Set(ConfigNames.DashCamRecorderEnabled, true);
+
+            Thread.Sleep(10000);
+
+            Assert.AreEqual(0, createPictureProcessConfigCalls);
+            Assert.AreEqual(3, createRecordProcessConfigCalls);
+        }
+
+        [TestMethod]
+        public void TestRecordingsDisabling()
+        {
+            //INIT
+            var hc = new Mocks.MockHostController();
+
+            InitSettings(hc.Config);
+            hc.Config.Set(ConfigNames.DashCamRecorderEnabled, false);
+
+            int createPictureProcessConfigCalls = 0;
+            int createRecordProcessConfigCalls = 0;
+
+            var ctrl = new TestDashCamController(hc);
+            ctrl.OnCreatePictureProcessConfig += () => createPictureProcessConfigCalls++;
+            ctrl.OnCreateRecordProcessConfig += () => createRecordProcessConfigCalls++;
+            hc.Config.Set(ConfigNames.DashCamRecorderEnabled, true);
+
+            Thread.Sleep(10000);
+            hc.Config.Set(ConfigNames.DashCamRecorderEnabled, false);
+
+            Thread.Sleep(5000);
+
+            Assert.AreEqual(0, createPictureProcessConfigCalls);
+            Assert.AreEqual(3, createRecordProcessConfigCalls);
+        }
+
+        [TestMethod]
+        public void TestOrderOnePictureWithRecordings()
+        {
+            //INIT
+            var hc = new Mocks.MockHostController();
+
+            InitSettings(hc.Config);
+            hc.Config.Set(ConfigNames.DashCamRecorderEnabled, false);
+
+            int createPictureProcessConfigCalls = 0;
+            int createRecordProcessConfigCalls = 0;
+
+            int picturesCallbacks = 0;
+
+            var ctrl = new TestDashCamController(hc);
+            ctrl.OnCreatePictureProcessConfig += () => createPictureProcessConfigCalls++;
+            ctrl.OnCreateRecordProcessConfig += () => createRecordProcessConfigCalls++;
+
+            //Thread.Sleep(100000);
+
+            ctrl.OrderPicture(10, 10, ms =>
+                {
+                    picturesCallbacks++;
+                });
+
+            hc.Config.Set(ConfigNames.DashCamRecorderEnabled, true);
+
+            Thread.Sleep(10000);
+
+            hc.Config.Set(ConfigNames.DashCamRecorderEnabled, false);
+
+            Assert.AreEqual(1, createPictureProcessConfigCalls);
+            Assert.AreEqual(3, createRecordProcessConfigCalls);
+            Assert.AreEqual(1, picturesCallbacks);
         }
     }
 }
