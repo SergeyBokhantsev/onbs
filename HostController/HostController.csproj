@@ -302,10 +302,175 @@
     <None Include="Data\firmware_update.sh">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\ZXRoms\3 Deep Space %281984%29%28Postern%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\3-D Maze %281982%29%28Impact Software%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\3D Grand Prix Championship %281991%29%28Ace Software%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\747 Flight Simulator %281984%29%28DACC%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\ZXRoms\A.T.A.C %281987%29%28Sinclair User%29.z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\ZXRoms\Academy %281986%29%28CRL Group%29[a][Part 1 of 4].z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Action Fighter %281989%29%28Firebird%29%28128k%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Action Force %281987%29%28Virgin Mastertronic%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Advanced Binary Simulator %281998%29%28Radovan Garabik%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Advanced Pinball Simulator %281990%29%28Codemasters%29%28128k%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Adventure %2819xx%29%28Paul McGuire%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Adventure 1 - Inka Tempel %281983%29%28F&amp;K Ware%29%28De%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\After Shock %281986%29%28Interceptor Micros Software%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Afterburner %281988%29%28Activision%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Afteroids %281988%29%28Zigurat Software%29%28Sp%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Ant Attack %281983%29%28Quicksilva%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Arkanoid - Revenge Of Doh %281988%29%28Imagine Software%29%28128k%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Art Studio %281986%29%28Rainbird Software%29%28128k%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Art Studio %281986%29%28Rainbird Software%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Artist II, The %281986%29%28Xcellent Software%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Artist, The %281985%29%28Xcellent Software%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\ASCII %272002 - AY Music Original Collection %282002%29%28-%29%28Ru%29.scl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Asteroids %281985%29%28Ian Collier%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\ATV Simulator - All Terrain Vehicle %281987%29%28Codemasters%29%28128k%29[a].z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\AY 3-8910 Demo Part Two %2819xx%29%28John Dalthon%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\AY3 Demo %281992%29%28Trash Soft%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Bandit %281983%29%28Spartan Software%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Barbarian %281988%29%28Melbourne House%29%28128k%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Beets %27n%27 Eggs %281986%29%28Mesoft%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Best Demo Music Part 1 %281993%29%28THD &amp; Alexboy%29%28128k%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Best Demo Music Part 2 %281993%29%28THD &amp; Alexboy%29%28128k%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Best Demo Music Part 3 %281993%29%28THD &amp; Alexboy%29%28128k%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Best Demo Music Part 4 %281993%29%28THD &amp; Alexboy%29%28128k%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Blade Runner %281985%29%28CRL Group%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Bomb Jack %281986%29%28Elite Systems%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Bomb Jack II %281987%29%28Elite Systems%29[a].z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Bomber Man %281983%29%28Hudson Soft%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Boulder Dash %281984%29%28First Star Software%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Boulder Dash 5 %281992%29%28First Star Software%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Bunker Swamp %281985%29%28Green Fish Software Enterprise%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Butch - Hard Guy %281986%29%28Advance Software%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Byte, The %281983%29%28CCS%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Cannon Ball %281983%29%28Hudson Soft%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Castle %2819xx%29%28Peter Lumbye &amp; Dan Nielson%29%28128k%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Castle Master %281990%29%28Incentive%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Cauldron %281985%29%28Palace%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Cauldron II %281986%29%28Palace%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Chase HQ %281989%29%28Ocean Software%29%28128k%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Chase HQ %281989%29%28Ocean Software%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\ZXRoms\Extreme %281991%29%28Digital Integration%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Tank Attack %281988%29%28CDS Microsystems%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Tau Ceti %281985%29%28CRL Group%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Tau Ceti - Special Edition %281985%29%28CRL Group%29%28128k%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Tetris %281986%29%28Alexey pazhitnov%29%28Ru%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Tetris %281988%29%28Mirrorsoft%29.z80">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\They Stole A Million %281986%29%28Ariolasoft%29.tap">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ZXRoms\Toyota Celica GT Rally %281991%29%28Gremlin Graphics%29%28128k%29.z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\ZXRoms\Worm In Paradise, The %281985%29%28Level 9 Computing%29.z80">
