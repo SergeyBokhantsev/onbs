@@ -50,12 +50,15 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="DashCamController\DashCamControllerTest.cs" />
     <Compile Include="DashCamController\FileManagerTests.cs" />
     <Compile Include="Elm327Test.cs" />
     <Compile Include="HttpClientTests\TestHttpClient.cs" />
     <Compile Include="Mocks\Config.cs" />
     <Compile Include="Mocks\GPSController.cs" />
+    <Compile Include="Mocks\MockHostController.cs" />
     <Compile Include="Mocks\Logger.cs" />
+    <Compile Include="Mocks\MockONBSSyncContext.cs" />
     <Compile Include="SimpleJsonSerializerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GPSDTests.cs" />

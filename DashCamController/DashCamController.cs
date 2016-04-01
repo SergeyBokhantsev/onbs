@@ -27,7 +27,7 @@ namespace DashCamController
 
         private bool disposed;
 
-        private readonly List<ScheduleTakePictureCallback> pictureCallbacks = new List<ScheduleTakePictureCallback>();
+        private readonly List<Tuple<int, int, OrderPictureCallback>> pictureOrders = new List<Tuple<int, int, OrderPictureCallback>>();
 
         public DashCamController(IHostController hc)
         {
@@ -94,11 +94,11 @@ namespace DashCamController
             }
         }
 
-        public void ScheduleTakePicture(ScheduleTakePictureCallback callback)
+        public void OrderPicture(int width, int height, OrderPictureCallback callback)
         {
-            lock (pictureCallbacks)
+            lock (pictureOrders)
             {
-                pictureCallbacks.Add(callback);
+                pictureOrders.Add(new Tuple<int, int, OrderPictureCallback>(width, height, callback));
             }
 
             monitorEvent.Set();
@@ -108,31 +108,28 @@ namespace DashCamController
         {
             MemoryStream ms = null;
 
-            ScheduleTakePictureCallback[] callbacks = null;
+            int width;
+            int height;
 
-            lock (pictureCallbacks)
+            lock (pictureOrders)
             {
-                callbacks = pictureCallbacks.ToArray();
-                pictureCallbacks.Clear();
-            }
+                if (!pictureOrders.Any())
+                    return;
 
-            if (callbacks.Length == 0)
-                return;
+                var firstOrder = pictureOrders.First();
+
+                width = firstOrder.Item1;
+                height = firstOrder.Item2;
+            }
 
             try
             {
-                var processConfig = new ProcessConfig
-                {
-                    ExePath = pictureExe,
-                    Args = pictureArg,                    
-                    WaitForUI = false,
-                    RedirectStandardOutput = true
-                };
+                var processConfig = CreatePictureProcessConfig(width, height);
 
                 cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);
                 cameraProcess.Run();
 
-                bool result = cameraProcess.WaitForExit(25000, out ms);
+                bool result = cameraProcess.WaitForExit(15000, out ms);
 
                 if (!result)
                 {
@@ -145,6 +142,16 @@ namespace DashCamController
             catch (Exception ex)
             {
                 hc.Logger.Log(this, ex);
+            }
+
+            OrderPictureCallback[] callbacks;
+            bool moreOrders = false;
+
+            lock (pictureOrders)
+            {
+                callbacks = pictureOrders.Where(p => p.Item1 == width && p.Item2 == height).Select(p => p.Item3).ToArray();
+                pictureOrders.RemoveAll(p => p.Item1 == width && p.Item2 == height);
+                moreOrders = pictureOrders.Any();
             }
 
             foreach (var c in callbacks)
@@ -160,6 +167,48 @@ namespace DashCamController
 
                 }, ms, "Take picture callback");
             }
+
+            if (moreOrders)
+                monitorEvent.Set();
+        }
+
+        protected virtual ProcessConfig CreatePictureProcessConfig(int width, int height)
+        {
+            return new ProcessConfig
+            {
+                ExePath = pictureExe,
+                Args = string.Format(pictureArg, width, height),
+                WaitForUI = false,
+                RedirectStandardOutput = true
+            };
+        }
+
+        protected virtual ProcessConfig CreateRecordProcessConfig()
+        {
+            return new ProcessConfig
+            {
+                ExePath = recordingExe,
+                Args = string.Format(recordingArg,
+                recordingLenSec * 1000, //0
+                hc.Config.GetString("DashCamRecorderOpacity"), //1
+                hc.Config.GetString("DashCamRecorderSharpness"), //2
+                hc.Config.GetString("DashCamRecorderContrast"), //3
+                hc.Config.GetString("DashCamRecorderBrightness"), //4
+                hc.Config.GetString("DashCamRecorderSaturation"), //5
+                hc.Config.GetString("DashCamRecorderISO"), //6
+                hc.Config.GetString("DashCamRecorderEV"), //7
+                hc.Config.GetString("DashCamRecorderExposure"), //8
+                hc.Config.GetString("DashCamRecorderAWB"), //9
+                hc.Config.GetString("DashCamRecorderEffect"), //10
+                hc.Config.GetString("DashCamRecorderMetering"), //11
+                hc.Config.GetString("DashCamRecorderRotation"), //12
+                hc.Config.GetString("DashCamRecorderDRC"), //13
+                hc.Config.GetString("DashCamRecorderAnnotate"), //14
+                fileManager.GetNextFileName()), // 15
+                Silent = true,
+                WaitForUI = false,
+                AliveMonitoringInterval = 200
+            };
         }
 
         private void DoRecord()
@@ -169,31 +218,7 @@ namespace DashCamController
 
             try
             {
-                var processConfig = new ProcessConfig
-                {
-                    ExePath = recordingExe,
-                    Args = string.Format(recordingArg, 
-                    recordingLenSec * 1000, //0
-                    hc.Config.GetString("DashCamRecorderOpacity"), //1
-                    hc.Config.GetString("DashCamRecorderSharpness"), //2
-                    hc.Config.GetString("DashCamRecorderContrast"), //3
-                    hc.Config.GetString("DashCamRecorderBrightness"), //4
-                    hc.Config.GetString("DashCamRecorderSaturation"), //5
-                    hc.Config.GetString("DashCamRecorderISO"), //6
-                    hc.Config.GetString("DashCamRecorderEV"), //7
-                    hc.Config.GetString("DashCamRecorderExposure"), //8
-                    hc.Config.GetString("DashCamRecorderAWB"), //9
-                    hc.Config.GetString("DashCamRecorderEffect"), //10
-                    hc.Config.GetString("DashCamRecorderMetering"), //11
-                    hc.Config.GetString("DashCamRecorderRotation"), //12
-                    hc.Config.GetString("DashCamRecorderDRC"), //13
-                    hc.Config.GetString("DashCamRecorderAnnotate"), //14
-                    fileManager.GetNextFileName()), // 15
-                    Silent = true,
-                    WaitForUI = false,
-                    AliveMonitoringInterval = 200
-                };
-
+                var processConfig = CreateRecordProcessConfig();
                 cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);
                 cameraProcess.Exited += b => monitorEvent.Set();
                 cameraProcess.Run();
