@@ -2446,4 +2446,107 @@
       </widget>
     </child>
   </widget>
+  <widget class="Gtk.Bin" id="GtkApplication.LightSensorInfoPage" design-size="300 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <widget class="Gtk.VBox" id="vbox1">
+        <property name="MemberName" />
+        <property name="Spacing">6</property>
+        <child>
+          <widget class="Gtk.EventBox" id="eventbox2">
+            <property name="MemberName" />
+            <property name="HeightRequest">100</property>
+            <child>
+              <widget class="Gtk.Label" id="l_message">
+                <property name="MemberName" />
+                <property name="WidthRequest">100</property>
+                <property name="LabelProp" translatable="yes">label3</property>
+              </widget>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">0</property>
+            <property name="AutoSize">False</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.HBox" id="hbox1">
+            <property name="MemberName" />
+            <property name="Spacing">6</property>
+            <child>
+              <widget class="Gtk.EventBox" id="eventbox3">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Label" id="l_sensor_a">
+                    <property name="MemberName" />
+                    <property name="LabelProp" translatable="yes">label2</property>
+                    <property name="Justify">Center</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">0</property>
+                <property name="AutoSize">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.EventBox" id="eventbox4">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Label" id="l_separator">
+                    <property name="MemberName" />
+                    <property name="LabelProp" translatable="yes">&lt;span size='60000'&gt;|&lt;/span&gt;</property>
+                    <property name="UseMarkup">True</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">1</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="Gtk.EventBox" id="eventbox5">
+                <property name="MemberName" />
+                <child>
+                  <widget class="Gtk.Label" id="l_sensor_b">
+                    <property name="MemberName" />
+                    <property name="LabelProp" translatable="yes">label2</property>
+                    <property name="Justify">Center</property>
+                  </widget>
+                </child>
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">False</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">1</property>
+            <property name="AutoSize">False</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.EventBox" id="eventbox1">
+            <property name="MemberName" />
+            <child>
+              <placeholder />
+            </child>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
 </stetic-interface>

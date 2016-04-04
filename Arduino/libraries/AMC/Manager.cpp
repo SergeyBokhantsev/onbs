@@ -28,11 +28,12 @@ bool is_raise_shutdown_signal(unsigned long* ts)
 	}
 }
 
-Manager::Manager(HardwareSerial* _arduino_out_port, RelayController* _relay, OledController* _oled, Buzzer* _buzzer)
+Manager::Manager(HardwareSerial* _arduino_out_port, RelayController* _relay, OledController* _oled, Buzzer* _buzzer, LightSensor* _light_sensor)
 : command_writer(_arduino_out_port),
 relay(_relay),
 oled(_oled),
 buzzer(_buzzer),
+light_sensor(_light_sensor),
 screen_timestamp(0),
 state_timestamp(0),
 shutdown_signal_timestamp(0)
@@ -232,6 +233,17 @@ uint8_t Manager::process_frame(uint8_t* frame_array, int frame_len)
 			}
 			else return MANAGER_ERROR_INVALID_COMMAND;
 			
+		case ARDUCOMMAND_GET_LIGHT_SENSOR_REQUEST:
+			if (frame_len == 2)
+			{
+				char sensorIndex = frame_array[1];
+				int value = light_sensor->read_sensor((uint8_t)sensorIndex);
+				char byteValue = value / 4;
+				command_writer.send_command(ARDUCOMMAND_GET_LIGHT_SENSOR_RESPONSE, sensorIndex, byteValue);
+				return 0;
+			}
+			else return MANAGER_ERROR_INVALID_COMMAND;
+
 		default:
 			return MANAGER_ERROR_UNKNOWN_COMMAND;
 	}

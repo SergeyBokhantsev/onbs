@@ -55,6 +55,7 @@
     <Compile Include="ArduinoController.cs" />
     <Compile Include="ArduinoFrameReceiver.cs" />
     <Compile Include="CommunicationQueue.cs" />
+    <Compile Include="LightSensorService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RelayService.cs" />
   </ItemGroup>

@@ -12,6 +12,7 @@
 #include "OledController.h"
 #include "RelayController.h"
 #include "Buzzer.h"
+#include "LightSensor.h"
 
 #define ARDUINO_OUT_BUFFER_SIZE 2048
 #define BUTTONS_OUT_BUFFER_SIZE 128
@@ -51,6 +52,8 @@ private:
 	RelayController relay;
 	
 	Buzzer buzzer;
+
+	LightSensor light_sensor;
 	
 	void process_incoming();
 };

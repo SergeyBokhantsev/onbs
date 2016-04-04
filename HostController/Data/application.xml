@@ -140,6 +140,7 @@
     <page name="SystemInfoCatalog" model="PagesSelectorPage" default_view="CommonVertcalStackPage">
       <Cancel name="Drive1" caption="Back"/>
       <RotaryItem_1 name="LsUsb" caption="lsusb (USB info)"/>
+      <RotaryItem_2 name="LightSensorInfo" caption="Light sensors readings"/>
     </page>
     <page name="LsUsb" model="LsUsbModel" default_view="MultilineView">
       <Cancel name="SystemInfoCatalog" caption="Back"/>
@@ -149,6 +150,9 @@
     </page>
     <page name="ZXEmulator" model="ZXEmulatorModel" default_view="ExternalApplicationPage">
       <Cancel name="ZXGamesList" caption="Back"/>
+    </page>
+    <page name="LightSensorInfo" model="LightSensorInfoModel" default_view="LightSensorInfoPage">
+      <Cancel name="SystemInfoCatalog" caption="Back"/>
     </page>
   </pages>
 </app>

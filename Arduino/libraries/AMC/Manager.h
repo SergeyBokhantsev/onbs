@@ -7,6 +7,7 @@
 #include "OledController.h"
 #include "CommandWriter.h"
 #include "Buzzer.h"
+#include "LightSensor.h"
 
 // RPi env is up and connected (evaluated by PING signal)
 #define MANAGER_STATE_ACTIVE 0
@@ -31,7 +32,7 @@
 class Manager
 {
 	public:
-	Manager(HardwareSerial* _arduino_out_port, RelayController* _relay, OledController* _oled, Buzzer* _buzzer);
+	Manager(HardwareSerial* _arduino_out_port, RelayController* _relay, OledController* _oled, Buzzer* _buzzer, LightSensor* _light_sensor);
 	~Manager();
 	
 	bool before_button_send(int button_id, char state);
@@ -45,7 +46,8 @@ class Manager
 	OledController* oled;
 	CommandWriter command_writer;
 	Buzzer* buzzer;
-	
+	LightSensor* light_sensor;
+
 	int temp;
 	
 	int state;

@@ -12,7 +12,7 @@ namespace GtkLauncher
 		{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-			app.ShowPage(GetFileOptionsPage());
+			app.ShowPage(GetLightSensorInfoModel());
 
 				app.Run(false);
 
@@ -351,6 +351,27 @@ namespace GtkLauncher
 			page.SetProperty (ModelNames.ButtonF4Label, "Copy to external storage");
 			page.SetProperty (ModelNames.ButtonF5Label, "Remove");
 			page.SetProperty (ModelNames.ButtonCancelLabel, "Return to files list");
+
+			return page;
+		}
+
+		private static IPageModel GetLightSensorInfoModel()
+		{
+			var page = new EmptyPageModel ("LightSensorInfoPage");
+
+			page.SetProperty ("sensor_a", "256");
+			page.SetProperty ("sensor_b", "35");
+			page.SetProperty ("message", "No message...");
+
+			Random r = new Random ();
+
+			var timer = new Timer (new TimerCallback (o => 
+			{
+					page.SetProperty ("sensor_a", r.Next(255));
+					page.SetProperty ("sensor_b", r.Next(255));
+				}), null, 500, 100);
+
+			page.SetProperty ("_timer", timer);
 
 			return page;
 		}

@@ -4,9 +4,10 @@ AMCController::AMCController(HardwareSerial* _gsmPort, HardwareSerial* _gpsPort,
 buzzer(),
 oled(),
 relay(),
+light_sensor(),
 arduino_out_port(arduino_out_buffer, ARDUINO_OUT_BUFFER_SIZE),
 buttons_out_port(buttons_out_buffer, BUTTONS_OUT_BUFFER_SIZE),
-manager(&arduino_out_port, &relay, &oled, &buzzer),
+manager(&arduino_out_port, &relay, &oled, &buzzer, &light_sensor),
 gsmPort(_gsmPort),
 comPort(_comPort),
 frame_sender(_comPort, ports, ports_types, 4),
@@ -38,6 +39,8 @@ void AMCController::init()
 	rotary_encoder.init();
 	
 	relay.init();	
+
+	light_sensor.init();
 }
 
 void AMCController::run()

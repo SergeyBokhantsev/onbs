@@ -59,6 +59,12 @@ namespace ArduinoController
             private set;
         }
 
+        public ILightSensorService LightSensorService
+        {
+            get;
+            private set;
+        }
+
         private Action<DateTime> GetArduinoTimeHandler
         {
             get;
@@ -79,6 +85,10 @@ namespace ArduinoController
             var relayService = new RelayService(hc.Logger);
             RegisterFrameProvider(relayService);
             RelayService = relayService;
+
+            var lss = new LightSensorService(hc.Logger);
+            RegisterFrameProvider(lss);
+            LightSensorService = lss;
 
             logger.Log(this, string.Format("{0} created.", this.GetType().Name), LogLevels.Info);
 
@@ -175,6 +185,13 @@ namespace ArduinoController
                             logger.Log(this, string.Concat("Get time respone invalid. Raw bytes: ", frame), LogLevels.Warning);
                         }
                         GetArduinoTimeHandler = null;
+                        break;
+
+                    case ArduinoComands.LightSensorResponse:
+                        if (!((LightSensorService)LightSensorService).ProcessResponse(frame))
+                        {
+                            logger.Log(this, string.Concat("LightSensorResponse is invalid. Raw bytes: ", frame), LogLevels.Warning);
+                        }
                         break;
 
                     default:

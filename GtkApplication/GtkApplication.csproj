@@ -106,6 +106,8 @@
     <Compile Include="gtk-gui\GtkApplication.MultilineView.cs" />
     <Compile Include="Pages\DashCamPages\FileOptionsPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.FileOptionsPage.cs" />
+    <Compile Include="Pages\LightSensorInfoPage.cs" />
+    <Compile Include="gtk-gui\GtkApplication.LightSensorInfoPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">

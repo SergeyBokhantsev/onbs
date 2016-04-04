@@ -69,6 +69,7 @@
     <Compile Include="IGPSController.cs" />
     <Compile Include="IHostController.cs" />
     <Compile Include="IInputController.cs" />
+    <Compile Include="ILightSensorService.cs" />
     <Compile Include="ILogger.cs" />
     <Compile Include="IMiniDisplayController.cs" />
     <Compile Include="Input\Buttons.cs" />

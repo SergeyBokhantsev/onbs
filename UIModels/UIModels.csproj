@@ -62,6 +62,7 @@
     <Compile Include="Dialogs\YesNoDialog.cs" />
     <Compile Include="DrivePage.cs" />
     <Compile Include="ExternalApplicationPage.cs" />
+    <Compile Include="LightSensorInfoModel.cs" />
     <Compile Include="MainPage.cs" />
     <Compile Include="MiniDisplay\CommonMiniDisplayModel.cs" />
     <Compile Include="MiniDisplay\Demo.cs" />
