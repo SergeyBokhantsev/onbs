@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
-    public enum LightSensorIndexes { Sensor_A, Sensor_B };
+    public enum LightSensorIndexes { Sensor_A, Sensor_B, All };
 
     public interface ILightSensorService
     {

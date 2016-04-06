@@ -86,7 +86,7 @@ namespace ArduinoController
             RegisterFrameProvider(relayService);
             RelayService = relayService;
 
-            var lss = new LightSensorService(hc.Logger);
+            var lss = new LightSensorService(hc.Logger, hc.SyncContext);
             RegisterFrameProvider(lss);
             LightSensorService = lss;
 
