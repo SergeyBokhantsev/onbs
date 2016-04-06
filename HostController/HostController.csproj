@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Lin\RPiConfigResolver.cs" />
+    <Compile Include="SpeakService.cs" />
     <Compile Include="Win\ArduinoEmulatorPort.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="ConsoleLoggerWrapper.cs" />

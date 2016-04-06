@@ -137,5 +137,8 @@ namespace Interfaces
 
         public static readonly string ZXEmulatorExe = "zx_emulator_exe";
         public static readonly string ZXEmulatorArgs = "zx_emulator_args";
+
+        public static readonly string SpeakerExe = "SpeakerExe";
+        public static readonly string SpeakerArgs = "SpeakerArgs";
     }
 }

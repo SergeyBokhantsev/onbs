@@ -13,6 +13,7 @@ using HostController.Win;
 using Interfaces.MiniDisplay;
 using Implementation.MiniDisplay;
 using System.Threading.Tasks;
+using Interfaces.GPS;
 
 namespace HostController
 {
@@ -45,6 +46,8 @@ namespace HostController
 
         private Interfaces.IOperationGuard inputIddleCheckingLocker = new InterlockedGuard();
 
+        private ISpeakService speakService;
+
         public IConfig Config
         {
             get
@@ -71,6 +74,14 @@ namespace HostController
             get
             {
                 return this;
+            }
+        }
+
+        public ISpeakService SpeakService
+        {
+            get
+            {
+                return speakService;
             }
         }
 
@@ -233,8 +244,10 @@ namespace HostController
         {
             ServicePointManager.ServerCertificateValidationCallback = (s1, s2, s3, s4) => true;
 
+            this.speakService = new SpeakService(Logger, Config, this);
+
             netKeeper = new InternetConnectionKeeper(Config, Logger, this);
-            netKeeper.InternetConnectionStatus += connected => config.IsInternetConnected = connected;
+            netKeeper.InternetConnectionStatus += OnInternetConnectionStatus;
             netKeeper.InternetTime += CheckSystemTimeFromInternet;
             netKeeper.RestartNeeded += InetKeeperRestartNeeded;
             netKeeper.StartChecking();
@@ -268,7 +281,7 @@ namespace HostController
             await miniDisplayController.WaitQueueFlushes();
 
             var gpsCtrl = new GPSController.GPSController(Config, SyncContext, Logger);
-            gpsCtrl.GPRMCReseived += gprmc => config.IsGPSLock = gprmc.Active;
+            gpsCtrl.GPRMCReseived += GPRMCReceived;
 
             arduController.RegisterFrameAcceptor(gpsCtrl);
             gpsController = gpsCtrl;
@@ -343,6 +356,26 @@ namespace HostController
             StartTimers();
 
             arduController.GetArduinoTime(t => syncContext.Post(tt => CheckSystemTimeFromArduino((DateTime)tt), t, "CheckSystemTimeFromArduino"));
+
+            await SpeakService.Speak("System started");
+        }
+
+        private async void GPRMCReceived(GPRMC gprmc)
+        {
+            if (config.IsGPSLock != gprmc.Active)
+            {
+                config.IsGPSLock = gprmc.Active;
+                await SpeakService.Speak(gprmc.Active ? "GPS lock" : "GPS signal has been lost");
+            }
+        }
+
+        private async void OnInternetConnectionStatus(bool status)
+        {
+            if (config.IsInternetConnected != status)
+            {
+                config.IsInternetConnected = status;
+                await SpeakService.Speak(status ? "Internet connected" : "Internet connection has been lost");
+            }
         }
 
         private void CheckUserInputIddle(IHostTimer obj)
