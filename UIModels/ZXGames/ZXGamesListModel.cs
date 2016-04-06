@@ -12,13 +12,17 @@ namespace UIModels
 {
     class ZXGamesListModel : RotaryListModel<string>
     {
+		private static int focused = 0;
+
         private readonly List<ListItem<string>> list;
 
         public ZXGamesListModel(string viewName, IHostController hc, MappedPage pageDescriptor)
-            : base(viewName, hc, pageDescriptor, "list", 10)
+            : base(viewName, hc, pageDescriptor, "list", 10, focused)
         {
             SetProperty(ModelNames.PageTitle, "ZX Games list");
             list = CreateList();
+
+			this.Disposing += (s, e) => focused = SelectedIndexAbsolute;
         }
 
         private List<ListItem<string>> CreateList()
@@ -29,11 +33,31 @@ namespace UIModels
 
             if (Directory.Exists(romFolders))
             {
-                ListItem<string>.PrepareItems(hc.SyncContext, ref res, Directory.GetFiles(romFolders).OrderBy(s => s), ItemSelected, f => Path.GetFileName(f));
+				ListItem<string>.PrepareItems(hc.SyncContext, ref res, Directory.GetFiles(romFolders).OrderBy(s => s), ItemSelected, GetItemCaption);
             }
 
             return res;
         }
+
+		private string GetItemCaption(string fname)
+		{
+			string result;
+			var name = Path.GetFileName (fname);
+
+			if (!string.IsNullOrWhiteSpace (name)) 
+			{
+				result = name.Substring (0, Math.Min (name.Length, 40));
+			} 
+			else 
+			{
+				result = "NO NAME";
+			}
+
+			if (string.IsNullOrWhiteSpace (result))
+				throw new NullReferenceException (fname);
+
+			return result;
+		}
 
         private void ItemSelected(object sender, EventArgs e)
         {

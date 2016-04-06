@@ -1,12 +1,14 @@
 ﻿<Properties StartupItem="HostController/HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ProcessRunner/ProcessRunnerImpl.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="UIModels/ZXGames/ZXGamesListModel.cs">
     <Files>
-      <File FileName="UIModels/ZXGames/ZXGamesListModel.cs" Line="52" Column="3" />
-      <File FileName="UIController/UIController.cs" Line="166" Column="1" />
+      <File FileName="UIModels/ZXGames/ZXGamesListModel.cs" Line="59" Column="1" />
+      <File FileName="UIController/UIController.cs" Line="1" Column="1" />
       <File FileName="UIModels/DashCam/DashPlayerModel.cs" Line="1" Column="1" />
-      <File FileName="UIModels/DashCam/DashFileOptionsModel.cs" Line="80" Column="6" />
-      <File FileName="ProcessRunner/ProcessRunnerImpl.cs" Line="63" Column="5" />
+      <File FileName="UIModels/DashCam/DashFileOptionsModel.cs" Line="1" Column="1" />
+      <File FileName="ProcessRunner/ProcessRunnerImpl.cs" Line="160" Column="21" />
+      <File FileName="HostController/App.config" Line="9" Column="55" />
+      <File FileName="HostController/SpeakService.cs" Line="41" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
