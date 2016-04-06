@@ -15,6 +15,7 @@ namespace Interfaces
         T GetController<T>() where T : class, IController;
         Task Shutdown(HostControllerShutdownModes mode);
         IHostTimer CreateTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly, string name);
+        ISpeakService SpeakService { get; }
     }
 
     public abstract class ONBSSyncContext : SynchronizationContext
