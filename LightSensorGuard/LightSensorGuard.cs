@@ -17,6 +17,14 @@ namespace SensorProcessing
 
         private bool disposed;
 
+		public string ConditionsLevelInfo
+		{
+			get 
+			{
+				return string.Join (", ", conditionDetectors.Select (cd => string.Concat((cd.Level * 100).ToString ("0"), "%")));
+			}
+		}
+
         public LightSensorGuard(ILightSensorService lss, ONBSSyncContext syncContext)
         {
             this.lss = Ensure.ArgumentIsNotNull(lss);
@@ -24,9 +32,9 @@ namespace SensorProcessing
 
             conditionDetectors = new ConditionDetectorBase[]
             {
-                new BalanceCondition(5, 5),
-                new LevelAttackCondition(LightSensorIndexes.Sensor_A, 0.5, 0.3),
-                new LevelAttackCondition(LightSensorIndexes.Sensor_B, 0.5, 0.3)
+                new BalanceCondition(4, 5, 7),
+                new LevelAttackCondition(LightSensorIndexes.Sensor_A, 0.15),
+                new LevelAttackCondition(LightSensorIndexes.Sensor_B, 0.2)
             };
 
             lss.ReadResult += SensorReadResult;
@@ -34,9 +42,13 @@ namespace SensorProcessing
 
         void SensorReadResult(LightSensorIndexes sensor, byte value)
         {
-            var result = conditionDetectors.All(cd => cd.Accept(sensor, value));
+			var c1 = conditionDetectors [0].Accept (sensor, value);
+			var c2 = conditionDetectors [1].Accept (sensor, value);
+			var c3 = conditionDetectors [2].Accept (sensor, value);
 
-            if (result)
+			var result = c1 && (c2 != c3);
+
+			if (result)
             {
                 syncContext.Post((o) => OnConditionEvent(), null, "LightSensorGuard ConditionEvent");
             }

@@ -56,11 +56,9 @@ namespace UIModels
                 case LightSensorIndexes.Sensor_B:
                     SetProperty("sensor_b", value);
                     break;
-
-                default:
-                    OnMessage("Invalid result");
-                    break;
             }
+
+			OnMessage (lsg.ConditionsLevelInfo);
         }
 
         private void OnMessage(string message)
