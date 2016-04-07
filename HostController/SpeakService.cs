@@ -43,6 +43,8 @@ namespace HostController
                     {
                         logger.Log(this, "Cannot initiate Speak process", LogLevels.Warning);
                     }
+
+					Thread.Sleep(1500);
                 }
             });
         }
