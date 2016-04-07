@@ -72,20 +72,36 @@ namespace SensorProcessing
     internal class LevelAttackCondition : ConditionDetectorBase
     {
         private readonly double maxAttack;
+        private readonly double inertion;
 
-        //private DateTime last
+        private DateTime lastTime;
+        private double lastValue;
 
         /// <param name="sensor">Target sensor</param>
         /// <param name="maxAttack">Maximum delta in percent/second</param>
-        internal LevelAttackCondition(LightSensorIndexes sensor, double maxAttack)
+        /// <param name="inertion">1 - no inertion, 0 - max inertion</param>
+        internal LevelAttackCondition(LightSensorIndexes sensor, double maxAttack, double inertion)
             :base(sensor)
         {
             this.maxAttack = maxAttack;
+            this.inertion = inertion;
         }
 
         protected override void DoAccept(LightSensorIndexes sensor, byte value)
         {
-            
+            var now = DateTime.Now;
+            var period = lastTime - now;
+
+            var delta = Math.Abs((double)value - lastValue);
+
+            var deltaPercent = (lastValue + delta) / lastValue;
+
+            var deltaPercentPerSecond = deltaPercent / period.TotalSeconds;
+
+            State = deltaPercentPerSecond >= maxAttack;
+
+            lastValue = (lastValue + value) * inertion;
+            lastTime = now;
         }
     }
 

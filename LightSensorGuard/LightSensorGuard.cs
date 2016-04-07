@@ -22,6 +22,13 @@ namespace SensorProcessing
             this.lss = Ensure.ArgumentIsNotNull(lss);
             this.syncContext = Ensure.ArgumentIsNotNull(syncContext);
 
+            conditionDetectors = new ConditionDetectorBase[]
+            {
+                new BalanceCondition(5, 5),
+                new LevelAttackCondition(LightSensorIndexes.Sensor_A, 0.5, 0.3),
+                new LevelAttackCondition(LightSensorIndexes.Sensor_B, 0.5, 0.3)
+            };
+
             lss.ReadResult += SensorReadResult;
         }
 
@@ -49,6 +56,7 @@ namespace SensorProcessing
             if (!disposed)
             {
                 lss.ReadResult -= SensorReadResult;
+                disposed = true;
             }
         }
     }
