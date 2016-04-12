@@ -14,16 +14,20 @@ namespace ArduinoController
 
         public event Action<LightSensorIndexes, byte> ReadResult;
 
-        private ILogger logger;
+        private readonly ILogger logger;
+        private readonly ONBSSyncContext syncContext;
 
-        public LightSensorService(ILogger logger)
+        public LightSensorService(ILogger logger, ONBSSyncContext syncContext)
         {
             this.logger = logger;
+            this.syncContext = syncContext;
         }
 
         private void OnFrameToSend(STPFrame frame)
         {
-            FrameToSend?.Invoke(frame);
+            var handler = FrameToSend;
+            if (handler != null)
+                handler(frame);
         }
 
         public void ReadSensor(LightSensorIndexes index)
@@ -49,7 +53,11 @@ namespace ArduinoController
 
         private void OnReadResult(LightSensorIndexes sensorIndex, byte sensorValue)
         {
-            ReadResult?.Invoke(sensorIndex, sensorValue);
+            var handler = ReadResult;
+            if (handler != null)
+            {
+                syncContext.Post(h => ((Action<LightSensorIndexes, byte>)h)(sensorIndex, sensorValue), handler, "LightSensor.ReadResult handler");
+            }
         }
     }
 }

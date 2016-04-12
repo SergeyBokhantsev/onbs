@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Interfaces;
 using Interfaces.UI;
+using SensorProcessing;
 
 namespace UIModels
 {
     public class LightSensorInfoModel : ModelBase
     {
-        ILightSensorService lss;
+        private readonly ILightSensorService lss;
+        private readonly LightSensorGuard lsg;
 
         public LightSensorInfoModel(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)
@@ -18,12 +20,14 @@ namespace UIModels
             this.lss = hc.GetController<IArduinoController>().LightSensorService;
 
             lss.ReadResult += Lss_ReadResult;
+            lsg = new LightSensorGuard(lss, hc.SyncContext);
+            lsg.ConditionEvent += () => OnMessage("GUARD EVENT: " + DateTime.Now.ToLongTimeString());
 
             this.Disposing += LightSensorInfoModel_Disposing;
 
             hc.CreateTimer(500, t => ReadSensors(), true, false, "Light sensors reading timer");
 
-            OnMessage("Waiting data...");
+            OnMessage("Working...");
         }
 
         private void ReadSensors()
@@ -36,6 +40,9 @@ namespace UIModels
         {
             if (lss != null)
                 lss.ReadResult -= Lss_ReadResult;
+
+            if (lsg != null)
+                lsg.Dispose();
         }
 
         private void Lss_ReadResult(LightSensorIndexes sensorIndex, byte value)
@@ -49,11 +56,9 @@ namespace UIModels
                 case LightSensorIndexes.Sensor_B:
                     SetProperty("sensor_b", value);
                     break;
-
-                default:
-                    OnMessage("Invalid result");
-                    break;
             }
+
+			OnMessage (lsg.ConditionsLevelInfo);
         }
 
         private void OnMessage(string message)

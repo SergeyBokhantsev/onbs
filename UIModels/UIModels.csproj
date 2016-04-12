@@ -91,6 +91,10 @@
       <Project>{3F066CD9-3523-4248-B37C-3378B44C426A}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LightSensorGuard\SensorProcessing.csproj">
+      <Project>{94fa884d-cbb1-44dd-8575-a12f22fcf7d3}</Project>
+      <Name>SensorProcessing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NavitConfigGenerator\NavitConfigGenerator.csproj">
       <Project>{34252C77-00D2-4E38-B432-274B6D6A0032}</Project>
       <Name>NavitConfigGenerator</Name>
