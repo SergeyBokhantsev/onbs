@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="DashCamController\DashCamControllerTest.cs" />
     <Compile Include="DashCamController\FileManagerTests.cs" />
+    <Compile Include="DropboxTest\DropboxApiTest.cs" />
     <Compile Include="Elm327Test.cs" />
     <Compile Include="HttpClientTests\TestHttpClient.cs" />
     <Compile Include="Mocks\Config.cs" />
@@ -80,6 +81,10 @@
     <ProjectReference Include="..\DashCamController\DashCamController.csproj">
       <Project>{311a5749-db14-4366-a32c-1045fcd2d0a6}</Project>
       <Name>DashCamController</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Dropbox.Api_v3.0.5\Dropbox.Api.csproj">
+      <Project>{68180b54-4724-4cd1-baa6-ee7bc309797c}</Project>
+      <Name>Dropbox.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\Elm327Controller\Elm327Controller.csproj">
       <Project>{ed21248d-2af6-4b71-90c8-2ce86a5603e2}</Project>

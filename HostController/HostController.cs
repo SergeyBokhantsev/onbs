@@ -48,6 +48,8 @@ namespace HostController
 
         private ISpeakService speakService;
 
+        private DropboxService.DropboxService remoteStorageService;
+
         public IConfig Config
         {
             get
@@ -82,6 +84,14 @@ namespace HostController
             get
             {
                 return speakService;
+            }
+        }
+
+        public IRemoteStorageService RemoteStorageService
+        {
+            get
+            {
+                return remoteStorageService;
             }
         }
 
@@ -245,6 +255,8 @@ namespace HostController
             ServicePointManager.ServerCertificateValidationCallback = (s1, s2, s3, s4) => true;
 
             this.speakService = new SpeakService(Logger, Config, this);
+
+            this.remoteStorageService = new DropboxService.DropboxService();
 
             netKeeper = new InternetConnectionKeeper(Config, Logger, this);
             netKeeper.InternetConnectionStatus += OnInternetConnectionStatus;

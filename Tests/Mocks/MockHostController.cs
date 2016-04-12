@@ -66,5 +66,11 @@ namespace Tests.Mocks
         {
             return new ProcessRunner.ProcessRunnerImpl(param, Logger);
         }
+
+
+        public ISpeakService SpeakService
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }

@@ -78,6 +78,7 @@
     <Compile Include="IProcessRunner.cs" />
     <Compile Include="IMetricsProvider.cs" />
     <Compile Include="IRelayService.cs" />
+    <Compile Include="IRemoteStorageService.cs" />
     <Compile Include="ISpeakService.cs" />
     <Compile Include="ITravelController.cs" />
     <Compile Include="IUIController.cs" />
