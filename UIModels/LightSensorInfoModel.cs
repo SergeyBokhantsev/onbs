@@ -58,7 +58,7 @@ namespace UIModels
                     break;
             }
 
-			OnMessage (lsg.ConditionsLevelInfo);
+			//OnMessage (lsg.ConditionsLevelInfo);
         }
 
         private void OnMessage(string message)
