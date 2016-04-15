@@ -21,9 +21,31 @@ namespace DropboxService
 					?? Environment.GetEnvironmentVariable("DropboxToken", EnvironmentVariableTarget.Process);
 
             if (string.IsNullOrWhiteSpace(token))
-                throw new Exception("No Dropbox token found (provide 'DropboxToken' Environment variable)");
+                token = "vT27L-8JO00AAAAAAAAEuYrQgS5qdGnyr5DfhEch28GJvIQAWCSe90HDPlSAA_6r";
 
             client = new DropboxClient(token);
+        }
+
+        public async Task UploadFile(RemoteFileMetadata fileData)
+        {
+            if (fileData == null)
+                throw new ArgumentNullException("fileData");
+
+            if (fileData.Stream == null)
+                throw new ArgumentNullException("fileData.Stream");
+
+            if (string.IsNullOrWhiteSpace(fileData.Name))
+                throw new ArgumentNullException("fileData.Name");
+
+            var result = await client.Files.UploadAsync(fileData.Name,
+                Dropbox.Api.Files.WriteMode.Add.Instance,
+                true,
+                null,
+                false,
+                fileData.Stream);
+
+            fileData.Name = result.AsFile.Name;
+            fileData.Id = result.AsFile.Id;
         }
 
         public async Task TestUpload()

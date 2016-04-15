@@ -72,5 +72,11 @@ namespace Tests.Mocks
         {
             get { throw new NotImplementedException(); }
         }
+
+
+        public IRemoteStorageService RemoteStorageService
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }

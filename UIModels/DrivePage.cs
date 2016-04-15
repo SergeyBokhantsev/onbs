@@ -138,7 +138,7 @@ namespace UIModels
             miniDisplayModel.Draw();
         }
 
-        protected override void OnPrimaryTick(IHostTimer timer)
+        protected override async void OnPrimaryTick(IHostTimer timer)
         {
             if (!Disposed)
             {

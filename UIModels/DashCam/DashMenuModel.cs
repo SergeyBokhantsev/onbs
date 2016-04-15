@@ -19,6 +19,7 @@ namespace UIModels
             ListItem<object>.PrepareItem(hc.SyncContext, ref menuItems, null, ClickHandler, "Video catalog");
             ListItem<object>.PrepareItem(hc.SyncContext, ref menuItems, null, ClickHandler, "");
             ListItem<object>.PrepareItem(hc.SyncContext, ref menuItems, null, ClickHandler, "");
+            ListItem<object>.PrepareItem(hc.SyncContext, ref menuItems, null, ClickHandler, "");
             ListItem<object>.PrepareItem(hc.SyncContext, ref menuItems, null, ClickHandler, "Settings");
 
             UpdateLabels();
@@ -42,10 +43,15 @@ namespace UIModels
             }
             else if (sender == menuItems[2])
             {
-                hc.Config.InvertBoolSetting(ConfigNames.DashCamRecorderPreviewEnabled);
+                hc.Config.InvertBoolSetting(ConfigNames.PhotoJobEnabled);
                 UpdateLabels();
             }
             else if (sender == menuItems[3])
+            {
+                hc.Config.InvertBoolSetting(ConfigNames.DashCamRecorderPreviewEnabled);
+                UpdateLabels();
+            }
+            else if (sender == menuItems[4])
             {
                 hc.GetController<IUIController>().ShowPage("DashCamConfig", null, null);
             }
@@ -54,7 +60,8 @@ namespace UIModels
         private void UpdateLabels()
         {
             menuItems[1].Caption = string.Concat("Recordings: ", hc.Config.GetBool(ConfigNames.DashCamRecorderEnabled) ? "enabled" : "DISABLED");
-            menuItems[2].Caption = string.Concat("Preview: ", hc.Config.GetBool(ConfigNames.DashCamRecorderPreviewEnabled) ? "ON" : "OFF");
+            menuItems[2].Caption = string.Concat("Photos: ", hc.Config.GetBool(ConfigNames.PhotoJobEnabled) ? "enabled" : "DISABLED");
+            menuItems[3].Caption = string.Concat("Preview: ", hc.Config.GetBool(ConfigNames.DashCamRecorderPreviewEnabled) ? "ON" : "OFF");
         }
 
     }

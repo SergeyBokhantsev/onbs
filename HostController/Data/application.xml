@@ -81,7 +81,7 @@
       <ConfigItem_11 action="Behavior:CycleString;Values:average,spot,backlit,matrix;SettingName:DashCamRecorderMetering" caption="Metering mode: "/>
       <ConfigItem_12 action="Behavior:CycleString;Values:0,90,180,270;SettingName:DashCamRecorderRotation" caption="Image rotation: "/>
       <ConfigItem_13 action="Behavior:CycleString;Values:off,low,medium,high;SettingName:DashCamRecorderDRC" caption="Dynamic Range compression: "/>
-      
+      <ConfigItem_14 action="Behavior:IntRange;Min:1;Max:30;Step:1;SettingName:PhotoJobPeriodMinutes" caption="Photos interval, minutes: "/>
     </page>
     <page name="DashCamCatalog" model="DashCamCatalogModel" default_view="CommonVertcalStackPage">
       <Cancel name="DashCamMenu" caption="Return"/>
