@@ -37,6 +37,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -53,15 +55,15 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
-      <Project>{3f066cd9-3523-4248-b37c-3378b44c426a}</Project>
+      <Project>{3F066CD9-3523-4248-B37C-3378B44C426A}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\TravelsClient\TravelsClient.csproj">
-      <Project>{fbdb1458-ca4b-45d9-9e7e-7b9484959859}</Project>
+      <Project>{FBDB1458-CA4B-45D9-9E7E-7B9484959859}</Project>
       <Name>TravelsClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\UIModels\UIModels.csproj">
-      <Project>{8ddd45ef-f719-48bd-93c0-27eb6c44df3f}</Project>
+      <Project>{8DDD45EF-F719-48BD-93C0-27EB6C44DF3F}</Project>
       <Name>UIModels</Name>
     </ProjectReference>
   </ItemGroup>

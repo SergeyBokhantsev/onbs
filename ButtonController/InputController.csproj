@@ -11,8 +11,6 @@
     <AssemblyName>ButtonController</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProductVersion>12.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,6 +37,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -60,7 +60,7 @@
       <Name>Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\SerialTransportProtocol\SerialTransportProtocol.csproj">
-      <Project>{b1069b60-bc03-4a71-b8d2-c33f0043d96c}</Project>
+      <Project>{B1069B60-BC03-4A71-B8D2-C33F0043D96C}</Project>
       <Name>SerialTransportProtocol</Name>
     </ProjectReference>
   </ItemGroup>

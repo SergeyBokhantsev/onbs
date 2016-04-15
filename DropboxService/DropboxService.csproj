@@ -43,13 +43,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Dropbox.Api_v3.0.5\Dropbox.Api.csproj">
-      <Project>{68180b54-4724-4cd1-baa6-ee7bc309797c}</Project>
-      <Name>Dropbox.Api</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
-      <Project>{3f066cd9-3523-4248-b37c-3378b44c426a}</Project>
+      <Project>{3F066CD9-3523-4248-B37C-3378B44C426A}</Project>
       <Name>Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Dropbox.Api_v3.0.5\Dropbox.Api.csproj">
+      <Project>{68180B54-4724-4CD1-BAA6-EE7BC309797C}</Project>
+      <Name>Dropbox.Api</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

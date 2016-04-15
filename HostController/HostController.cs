@@ -256,7 +256,7 @@ namespace HostController
 
             this.speakService = new SpeakService(Logger, Config, this);
 
-            this.remoteStorageService = new DropboxService.DropboxService();
+			this.remoteStorageService = new DropboxService.DropboxService("vT27L-8JO00AAAAAAAAEuYrQgS5qdGnyr5DfhEch28GJvIQAWCSe90HDPlSAA_6r");
 
             netKeeper = new InternetConnectionKeeper(Config, Logger, this);
             netKeeper.InternetConnectionStatus += OnInternetConnectionStatus;
@@ -370,6 +370,11 @@ namespace HostController
             arduController.GetArduinoTime(t => syncContext.Post(tt => CheckSystemTimeFromArduino((DateTime)tt), t, "CheckSystemTimeFromArduino"));
 
             await SpeakService.Speak("System started");
+
+			//var t2 = this.remoteStorageService.TestUpload ();
+			//t2.Wait();
+
+			//var r = t2.Status;
         }
 
         private async void GPRMCReceived(GPRMC gprmc)

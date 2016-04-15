@@ -1,16 +1,24 @@
 ﻿<Properties StartupItem="HostController/HostController.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="LightSensorGuard/LightSensorGuard.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Dropbox.Api_v3.0.5/DropboxRequestHandler.cs">
     <Files>
-      <File FileName="LightSensorGuard/ConditionDetectorBase.cs" Line="63" Column="24" />
-      <File FileName="LightSensorGuard/LightSensorGuard.cs" Line="37" Column="74" />
-      <File FileName="Interfaces/ILightSensorService.cs" Line="9" Column="5" />
-      <File FileName="UIModels/LightSensorInfoModel.cs" Line="57" Column="52" />
+      <File FileName="HostController/HostController.cs" Line="377" Column="6" />
+      <File FileName="DropboxService/DropboxService.cs" Line="31" Column="1" />
+      <File FileName="Dropbox.Api_v3.0.5/Files/FilesRoutes.cs" Line="1626" Column="1" />
+      <File FileName="HostController/HostSynchronizationContext.cs" Line="46" Column="1" />
+      <File FileName="Dropbox.Api_v3.0.5/Files/WriteMode.cs" Line="210" Column="1" />
+      <File FileName="Dropbox.Api_v3.0.5/DropboxRequestHandler.cs" Line="400" Column="1" />
+      <File FileName="UIModels/DrivePage.cs" Line="145" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/home/pi/onbs/UIModels/DrivePage.cs" line="73" column="5" />
+      <Breakpoint file="/home/pi/onbs/DropboxService/DropboxService.cs" line="31" column="1" />
+      <Breakpoint file="/home/pi/onbs/Dropbox.Api_v3.0.5/DropboxRequestHandler.cs" line="393" column="1" />
+      <Breakpoint file="/home/pi/onbs/Dropbox.Api_v3.0.5/DropboxRequestHandler.cs" line="392" column="1" />
+      <Breakpoint file="/home/pi/onbs/UIModels/DrivePage.cs" line="145" column="49" />
+      <Breakpoint file="/home/pi/onbs/UIModels/DrivePage.cs" line="147" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>

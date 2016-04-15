@@ -11,8 +11,6 @@
     <AssemblyName>UIModels</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProductVersion>12.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,6 +37,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -91,29 +91,29 @@
       <Project>{3F066CD9-3523-4248-B37C-3378B44C426A}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LightSensorGuard\SensorProcessing.csproj">
-      <Project>{94fa884d-cbb1-44dd-8575-a12f22fcf7d3}</Project>
-      <Name>SensorProcessing</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NavitConfigGenerator\NavitConfigGenerator.csproj">
       <Project>{34252C77-00D2-4E38-B432-274B6D6A0032}</Project>
       <Name>NavitConfigGenerator</Name>
     </ProjectReference>
     <ProjectReference Include="..\NixHelpers\NixHelpers.csproj">
-      <Project>{a822c3f5-f40f-4ded-b568-caeb1cf6a401}</Project>
+      <Project>{A822C3F5-F40F-4DED-B568-CAEB1CF6A401}</Project>
       <Name>NixHelpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\OBDProcessor\OBD.csproj">
-      <Project>{eae855e8-89e1-4f2f-8947-39187b7c9f51}</Project>
+      <Project>{EAE855E8-89E1-4F2F-8947-39187B7C9F51}</Project>
       <Name>OBD</Name>
     </ProjectReference>
     <ProjectReference Include="..\UIController\UIController.csproj">
-      <Project>{1e7b884f-479a-4562-bb89-445786fec998}</Project>
+      <Project>{1E7B884F-479A-4562-BB89-445786FEC998}</Project>
       <Name>UIController</Name>
     </ProjectReference>
     <ProjectReference Include="..\YandexServicesProvider\YandexServicesProvider.csproj">
-      <Project>{a8956707-42dd-4bf5-b4b2-955598a60b97}</Project>
+      <Project>{A8956707-42DD-4BF5-B4B2-955598A60B97}</Project>
       <Name>YandexServicesProvider</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LightSensorGuard\SensorProcessing.csproj">
+      <Project>{94FA884D-CBB1-44DD-8575-A12F22FCF7D3}</Project>
+      <Name>SensorProcessing</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

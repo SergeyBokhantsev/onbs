@@ -37,6 +37,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -53,11 +55,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Elm327\Elm327.csproj">
-      <Project>{03e3079e-f438-4c00-8c22-3b13afc3c644}</Project>
+      <Project>{03E3079E-F438-4C00-8C22-3B13AFC3C644}</Project>
       <Name>Elm327</Name>
     </ProjectReference>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
-      <Project>{3f066cd9-3523-4248-b37c-3378b44c426a}</Project>
+      <Project>{3F066CD9-3523-4248-B37C-3378B44C426A}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
   </ItemGroup>

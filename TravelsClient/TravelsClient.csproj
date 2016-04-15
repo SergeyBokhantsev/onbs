@@ -37,6 +37,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -58,15 +60,15 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HttpClient\HttpClient.csproj">
-      <Project>{73f2bd9f-8e72-4ea5-8ec8-8943c37c21c6}</Project>
+      <Project>{73F2BD9F-8E72-4EA5-8EC8-8943C37C21C6}</Project>
       <Name>HttpClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
-      <Project>{3f066cd9-3523-4248-b37c-3378b44c426a}</Project>
+      <Project>{3F066CD9-3523-4248-B37C-3378B44C426A}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\Json\Json.csproj">
-      <Project>{2f22767d-1b1a-4293-bbe5-11c9d04aee83}</Project>
+      <Project>{2F22767D-1B1A-4293-BBE5-11C9D04AEE83}</Project>
       <Name>Json</Name>
     </ProjectReference>
   </ItemGroup>

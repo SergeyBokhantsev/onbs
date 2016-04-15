@@ -16,8 +16,9 @@ namespace DropboxService
         public DropboxService(string token = null)
         {
             if (string.IsNullOrWhiteSpace(token))
-                token = Environment.GetEnvironmentVariable("DropboxToken", EnvironmentVariableTarget.Machine) ??
-                    Environment.GetEnvironmentVariable("DropboxToken", EnvironmentVariableTarget.Machine);
+                token = Environment.GetEnvironmentVariable("DropboxToken", EnvironmentVariableTarget.Machine)
+					?? Environment.GetEnvironmentVariable("DropboxToken", EnvironmentVariableTarget.User)
+					?? Environment.GetEnvironmentVariable("DropboxToken", EnvironmentVariableTarget.Process);
 
             if (string.IsNullOrWhiteSpace(token))
                 throw new Exception("No Dropbox token found (provide 'DropboxToken' Environment variable)");

@@ -21,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DocumentationFile>bin\Debug\net45\Dropbox.Api.XML</DocumentationFile>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <NoWarn>419</NoWarn>
@@ -34,7 +33,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DocumentationFile>bin\Release\net45\Dropbox.Api.XML</DocumentationFile>
     <NoWarn>419</NoWarn>
   </PropertyGroup>

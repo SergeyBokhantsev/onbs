@@ -116,7 +116,7 @@
       <Name>DashCamController</Name>
     </ProjectReference>
     <ProjectReference Include="..\DropboxService\DropboxService.csproj">
-      <Project>{e919b930-71d8-4644-b5a4-7f4878684dcd}</Project>
+      <Project>{E919B930-71D8-4644-B5A4-7F4878684DCD}</Project>
       <Name>DropboxService</Name>
     </ProjectReference>
     <ProjectReference Include="..\Elm327Controller\Elm327Controller.csproj">
