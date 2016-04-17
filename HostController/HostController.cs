@@ -535,6 +535,11 @@ namespace HostController
 			arduController.RelayService.Disable(Relay.Relay3);
 			arduController.RelayService.Disable(Relay.Relay4);
 
+            arduController.RelayService.Enable(Relay.Relay4);
+            Thread.Sleep(100);
+            arduController.RelayService.Disable(Relay.Relay4);
+            arduController.RelayService.Disable(Relay.Relay4);
+
 			if (mode == HostControllerShutdownModes.Exit
 				|| mode == HostControllerShutdownModes.Update) 
 			{
