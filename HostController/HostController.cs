@@ -521,6 +521,8 @@ namespace HostController
 
             dashCamController.Dispose();
 
+            await Task.Delay(200);
+
             var shutdownModel = uiController.ShowPage("ShutdownProgress", null, null) as UIModels.ShutdownProgressModel;
 
             Action<string> showLine = line => { if (shutdownModel != null) { shutdownModel.AddLine(line); } };
@@ -530,15 +532,17 @@ namespace HostController
 
             showLine("Disposing ELM327 Controller");
             elm327Controller.Dispose();
+            await Task.Delay(200);
 
 			arduController.RelayService.Disable(Relay.OBD);
 			arduController.RelayService.Disable(Relay.Relay3);
 			arduController.RelayService.Disable(Relay.Relay4);
+            await Task.Delay(200);
 
             arduController.RelayService.Enable(Relay.Relay4);
-            Thread.Sleep(100);
+            await Task.Delay(200);
             arduController.RelayService.Disable(Relay.Relay4);
-            arduController.RelayService.Disable(Relay.Relay4);
+            await Task.Delay(200);
 
 			if (mode == HostControllerShutdownModes.Exit
 				|| mode == HostControllerShutdownModes.Update) 
@@ -549,18 +553,23 @@ namespace HostController
 
             showLine("Disposing Travel Controller");
             travelController.Dispose();
+            await Task.Delay(200);
 
             showLine("Disposing InetKeeper");
 			netKeeper.Dispose();
+            await Task.Delay(200);
 
             showLine("Stopping GPSD service");
 			gpsd.Stop();
+            await Task.Delay(200);
 
             showLine("Disconnecting time checking events");
             DisconnectSystemTimeChecking();
+            await Task.Delay(200);
 
             showLine("Disabling GPS Controller");
             gpsController.Shutdown();
+            await Task.Delay(200);
 
             if (mode != HostControllerShutdownModes.UnhandledException)
             {
@@ -580,22 +589,27 @@ namespace HostController
 
             showLine("Flushing loggers");
             Logger.Flush();
+            await Task.Delay(200);
 
             showLine("Flushing online log");
             onlineLogger.Upload(true);
+            await Task.Delay(200);
 
             showLine("Stopping UI...");
 
             miniDisplayController.ResetQueue();
 
             miniDisplayController.Dispose();
+            await Task.Delay(200);
 
             uiController.Shutdown();
+            await Task.Delay(200);
 
 			await arduController.Beep (100);
 
             showLine("Stopping timers");
             StopTimers();
+            await Task.Delay(200);
 
             showLine("Stopping SyncContext");
             syncContext.Stop();

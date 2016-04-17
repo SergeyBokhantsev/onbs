@@ -9,6 +9,8 @@ namespace UIModels
         public ShutdownProgressModel(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)
         {
+            NoDialogsAllowed = true;
+
             SetProperty(ModelNames.PageTitle, "Shutdown in progress");
 
             var mdc = hc.GetController<IMiniDisplayController>();

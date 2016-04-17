@@ -518,20 +518,27 @@ namespace TravelController
         {
             List<TravelPoint> res = null;
 
-            var filePath = Path.Combine(hc.Config.DataFolder, storedPointsFileName);
-            
-            if (File.Exists(filePath))
+            try
             {
-                using (var fs = File.OpenRead(filePath))
+                var filePath = Path.Combine(hc.Config.DataFolder, storedPointsFileName);
+
+                if (File.Exists(filePath))
                 {
-                    var serializer = new BinaryFormatter();
-                    res = serializer.Deserialize(fs) as List<TravelPoint>;
+                    using (var fs = File.OpenRead(filePath))
+                    {
+                        var serializer = new BinaryFormatter();
+                        res = serializer.Deserialize(fs) as List<TravelPoint>;
+                    }
+
+                    File.Delete(filePath);
+
+                    locallyStoredPointsLoaded = true;
+                    hc.Logger.Log(this, string.Concat("Buffered points were successfully loaded from ", filePath), LogLevels.Info);
                 }
-
-                File.Delete(filePath);
-
-                locallyStoredPointsLoaded = true;
-                hc.Logger.Log(this, string.Concat("Buffered points were successfully loaded from ", filePath), LogLevels.Info);
+            }
+            catch (Exception ex)
+            {
+                hc.Logger.Log(this, ex);
             }
 
             return res;
