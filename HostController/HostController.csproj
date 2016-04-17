@@ -82,8 +82,10 @@
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Jobs\CheckUserInputIdle.cs" />
+    <Compile Include="Jobs\UploadLog.cs" />
     <Compile Include="Lin\RPiConfigResolver.cs" />
-    <Compile Include="PhotoJob.cs" />
+    <Compile Include="Jobs\PhotoJob.cs" />
     <Compile Include="SpeakService.cs" />
     <Compile Include="Win\ArduinoEmulatorPort.cs" />
     <Compile Include="Configuration.cs" />

@@ -32,6 +32,9 @@ namespace GPSController
         private LockingProperty<GeoPoint> location = new LockingProperty<GeoPoint>();
         private bool shutdown;
 
+        private readonly IdleMeter gpsCoordinateIdleMeter = new IdleMeter();
+        private GeoPoint idleBasePoint;
+
         public GeoPoint Location
         {
             get
@@ -43,6 +46,14 @@ namespace GPSController
         public STPFrame.Types FrameType
         {
             get { return STPFrame.Types.GPS; }
+        }
+
+        public int IdleMinutes 
+        {
+            get 
+            {
+                return gpsCoordinateIdleMeter.IdleMinutes;
+            }
         }
 
         public GPSController(IConfig config, ONBSSyncContext syncContext, ILogger logger)
@@ -80,6 +91,12 @@ namespace GPSController
             Interlocked.Increment(ref gprmcCount);
 
 			//obj = new GPRMC (new GeoPoint (50.5, 30.5), DateTime.Now, true, gprmcCount);
+
+            if (obj.Active && Interfaces.GPS.Helpers.GetDistance(idleBasePoint, obj.Location) > 50)
+            {
+                idleBasePoint = obj.Location;
+                gpsCoordinateIdleMeter.Reset();
+            }
 
             lastGprmc = obj;
 

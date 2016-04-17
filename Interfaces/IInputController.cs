@@ -8,5 +8,7 @@ namespace Interfaces
     public interface IInputController : IController, IFramesAcceptor
     {
         event ButtonPressedEventHandler ButtonPressed;
+
+        int IddleMinutes { get; }
     }
 }

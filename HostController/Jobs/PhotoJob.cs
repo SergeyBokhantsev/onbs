@@ -6,12 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace HostController
+namespace HostController.Jobs
 {
     public class PhotoJob
     {
         private readonly IHostTimer jobTimer;
         private readonly IHostController hc;
+
+        private volatile int busy;
 
         private int PeriodMs
         {
@@ -38,10 +40,14 @@ namespace HostController
 
         private void TakePhoto(IHostTimer obj)
         {
+            if (busy > 0)
+                return;
+
             if (hc.Config.IsInternetConnected)
             {
                 hc.Logger.LogIfDebug(this, "PhotoJob.TakePhoto begin");
                 hc.GetController<IDashCamController>().OrderPicture(800, 600, OnPicture);
+                busy = 1;
             }
             else
             {
@@ -51,13 +57,15 @@ namespace HostController
 
         private async void OnPicture(MemoryStream ms)
         {
+            busy = 0;
+
             hc.Logger.LogIfDebug(this, "PhotoJob.OnPicture begin");
 
             if (ms != null && ms.Length > 0)
             {
                 try
                 {
-                    var fileData = new RemoteFileMetadata { Stream = ms, Name = "/Photos/auto" };
+                    var fileData = new RemoteFileMetadata { Stream = ms, Name = "/Photos/auto.jpg" };
                     await hc.RemoteStorageService.UploadFile(fileData);
                     hc.Logger.Log(this, string.Format("DashCam photo uploaded succerfully as {0}.", fileData.Name), LogLevels.Info);
                 }

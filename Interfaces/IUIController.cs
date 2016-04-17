@@ -9,5 +9,7 @@ namespace Interfaces
         void ShowDefaultPage();
         void ShowDialog(IDialogModel model);
         Task<DialogResults> ShowDialogAsync(IDialogModel model);
+
+        int UserIdleMinutes { get; }
     }
 }

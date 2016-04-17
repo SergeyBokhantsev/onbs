@@ -9,5 +9,7 @@ namespace Interfaces
         event Action<string> NMEAReceived;
 
         GeoPoint Location {get;}
+
+        int IdleMinutes { get; }
     }
 }
