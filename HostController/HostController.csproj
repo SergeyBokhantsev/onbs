@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Jobs\CheckUserInputIdle.cs" />
+    <Compile Include="Jobs\DimLightningCheckerJob.cs" />
     <Compile Include="Jobs\UploadLog.cs" />
     <Compile Include="Lin\RPiConfigResolver.cs" />
     <Compile Include="Jobs\PhotoJob.cs" />

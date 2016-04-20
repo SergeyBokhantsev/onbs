@@ -11,6 +11,7 @@ namespace Interfaces
         bool IsGPSLock { get; }
         bool IsMessagePending { get; }
         bool IsMessageShown { get; }
+        bool IsDimLighting { get; }
         string DataFolder { get; }
     }
 
@@ -60,6 +61,8 @@ namespace Interfaces
         public static readonly string LogLevel = "LogLevel";
         public static readonly string LoggedClasses = "LoggedClasses";
         public static readonly string LogFolder = "LogFolder";
+
+        public static readonly string DimLightningGate = "DimLightningGate";
 
         public static readonly string DashCamRecorderEnabled = "DashCamRecorderEnabled";
         public static readonly string DashCamRecorderPreviewEnabled = "DashCamRecorderPreviewEnabled";

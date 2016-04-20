@@ -34,7 +34,7 @@ namespace HostController.Jobs
         public PhotoJob(IHostController hc)
         {
             this.hc = hc;
-            jobTimer = hc.CreateTimer(PeriodMs, TakePhoto, Enabled, false, "PhotoJob");
+            jobTimer = hc.CreateTimer(PeriodMs, TakePhoto, Enabled, true, "PhotoJob");
             hc.Config.Changed += Config_Changed;
         }
 

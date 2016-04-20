@@ -150,5 +150,11 @@ namespace HostController
         }
 
         public event Action<string> Changed;
+
+        public bool IsDimLighting
+        {
+            get;
+            set;
+        }
     }
 }

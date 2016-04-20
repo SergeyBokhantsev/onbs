@@ -32,8 +32,17 @@ namespace ArduinoController
 
         public void ReadSensor(LightSensorIndexes index)
         {
-            var frame = new STPFrame(new byte[] { (byte)ArduinoComands.LightSensorRequest, (byte)index }, STPFrame.Types.ArduCommand);
-            OnFrameToSend(frame);
+            if (index == LightSensorIndexes.Sensor_A || index == LightSensorIndexes.All)
+            {
+                var frame = new STPFrame(new byte[] { (byte)ArduinoComands.LightSensorRequest, (byte)LightSensorIndexes.Sensor_A }, STPFrame.Types.ArduCommand);
+                OnFrameToSend(frame);
+            }
+
+            if (index == LightSensorIndexes.Sensor_B || index == LightSensorIndexes.All)
+            {
+                var frame = new STPFrame(new byte[] { (byte)ArduinoComands.LightSensorRequest, (byte)LightSensorIndexes.Sensor_B }, STPFrame.Types.ArduCommand);
+                OnFrameToSend(frame);
+            }            
         }
 
         internal bool ProcessResponse(STPFrame frame)

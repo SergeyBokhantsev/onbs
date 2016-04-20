@@ -174,22 +174,40 @@ namespace DashCamController
 
         protected virtual ProcessConfig CreatePictureProcessConfig(int width, int height)
         {
+            var dim = hc.Config.IsDimLighting;
+
             return new ProcessConfig
             {
                 ExePath = pictureExe,
-                Args = string.Format(pictureArg, 
+                Args = string.Format(pictureArg,
                 width, //0
                 height, //1
-                hc.Config.GetString("DashCamRecorderRotation"), //2
-                hc.Config.GetBool(ConfigNames.DashCamRecorderPreviewEnabled) ? string.Empty : "--nopreview" //3
+                hc.Config.GetString("DashCamRecorderOpacity"), //2
+                hc.Config.GetString("DashCamRecorderSharpness"), //3
+                hc.Config.GetString("DashCamRecorderContrast"), //4
+                dim ? hc.Config.GetString("DashCamRecorderBrightness_Night") : hc.Config.GetString("DashCamRecorderBrightness"), //5
+                hc.Config.GetString("DashCamRecorderSaturation"), //6
+                dim ? hc.Config.GetString("DashCamRecorderISO_Night") : hc.Config.GetString("DashCamRecorderISO"), //7
+                dim ? hc.Config.GetString("DashCamRecorderEV_Night") : hc.Config.GetString("DashCamRecorderEV"), //8
+                hc.Config.GetString("DashCamRecorderExposure"), //9
+                hc.Config.GetString("DashCamRecorderAWB"), //10
+                hc.Config.GetString("DashCamRecorderEffect"), //11
+                hc.Config.GetString("DashCamRecorderMetering"), //12
+                hc.Config.GetString("DashCamRecorderRotation"), //13
+                hc.Config.GetString("DashCamRecorderDRC"), //14
+                hc.Config.GetString("DashCamRecorderAnnotate"), //15
+                hc.Config.GetBool(ConfigNames.DashCamRecorderPreviewEnabled) ? string.Empty : "--nopreview" //16
                 ),
                 WaitForUI = false,
-                RedirectStandardOutput = true
+                RedirectStandardOutput = true,
+                Silent = true
             };
         }
 
         protected virtual ProcessConfig CreateRecordProcessConfig()
         {
+            var dim = hc.Config.IsDimLighting;
+
             return new ProcessConfig
             {
                 ExePath = recordingExe,
@@ -198,10 +216,10 @@ namespace DashCamController
                 hc.Config.GetString("DashCamRecorderOpacity"), //1
                 hc.Config.GetString("DashCamRecorderSharpness"), //2
                 hc.Config.GetString("DashCamRecorderContrast"), //3
-                hc.Config.GetString("DashCamRecorderBrightness"), //4
+                dim ? hc.Config.GetString("DashCamRecorderBrightness_Night") : hc.Config.GetString("DashCamRecorderBrightness"), //4
                 hc.Config.GetString("DashCamRecorderSaturation"), //5
-                hc.Config.GetString("DashCamRecorderISO"), //6
-                hc.Config.GetString("DashCamRecorderEV"), //7
+                dim ? hc.Config.GetString("DashCamRecorderISO_Night") : hc.Config.GetString("DashCamRecorderISO"), //6
+                dim ? hc.Config.GetString("DashCamRecorderEV_Night") : hc.Config.GetString("DashCamRecorderEV"), //7
                 hc.Config.GetString("DashCamRecorderExposure"), //8
                 hc.Config.GetString("DashCamRecorderAWB"), //9
                 hc.Config.GetString("DashCamRecorderEffect"), //10
@@ -210,7 +228,9 @@ namespace DashCamController
                 hc.Config.GetString("DashCamRecorderDRC"), //13
                 hc.Config.GetString("DashCamRecorderAnnotate"), //14
                 fileManager.GetNextFileName(), //15
-                hc.Config.GetBool(ConfigNames.DashCamRecorderPreviewEnabled) ? string.Empty : "--nopreview" //16
+                hc.Config.GetInt("DashCamRecorderBitrate") * 1000000, //16
+                hc.Config.GetBool("DashCamRecorderStab") ? "--vstab" : string.Empty, // 17
+                hc.Config.GetBool(ConfigNames.DashCamRecorderPreviewEnabled) ? string.Empty : "--nopreview" //18
                 ), 
                 Silent = true,
                 WaitForUI = false,
@@ -218,31 +238,17 @@ namespace DashCamController
             };
         }
 
-        StringBuilder log = new StringBuilder();
-        Stopwatch logsw = new Stopwatch();
-
         private void DoRecord()
         {
             if (disposed)
                 return;
 
-            log.Append("DoRecord: ");
-            logsw.Restart();
-
             try
             {
                 var processConfig = CreateRecordProcessConfig();
-                log.Append("Config - ");
-                log.Append(logsw.ElapsedMilliseconds);
-                
-                cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);
-                log.Append(" Process - ");
-                log.Append(logsw.ElapsedMilliseconds);
-
+                cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);                
                 cameraProcess.Exited += b => monitorEvent.Set();
                 cameraProcess.Run();
-                log.Append(" Run - ");
-                log.Append(logsw.ElapsedMilliseconds);
             }
             catch (Exception ex)
             {
@@ -250,10 +256,6 @@ namespace DashCamController
                 Thread.Sleep(5000);
                 monitorEvent.Set();
             }
-
-            logsw.Stop();
-            hc.Logger.Log(this, log.ToString(), LogLevels.Info);
-            log.Clear();
         }
 
         public void Dispose()

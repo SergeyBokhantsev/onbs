@@ -268,7 +268,7 @@ namespace HostController
 
             inputController = new InputController.InputController(Logger);
 
-            StartJob(typeof(Jobs.CheckUserInputIdle), new object[] { this });
+            StartJob(typeof(Jobs.CheckUserInputIdle), new object[] { this as IHostController });
 
             elm327Controller = new Elm327Controller.Elm327Controller(this);
 
@@ -368,6 +368,7 @@ namespace HostController
 
             arduController.GetArduinoTime(t => syncContext.Post(tt => CheckSystemTimeFromArduino((DateTime)tt), t, "CheckSystemTimeFromArduino"));
 
+            StartJob(typeof(Jobs.DimLightningCheckerJob), new object[] { this as IHostController, config });
             StartJob(typeof(Jobs.UploadLog), new object[] { this, onlineLogger });
             StartJob(typeof(Jobs.PhotoJob), new object[] { this });
 
