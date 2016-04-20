@@ -177,7 +177,12 @@ namespace DashCamController
             return new ProcessConfig
             {
                 ExePath = pictureExe,
-                Args = string.Format(pictureArg, width, height),
+                Args = string.Format(pictureArg, 
+                width, //0
+                height, //1
+                hc.Config.GetString("DashCamRecorderRotation"), //2
+                hc.Config.GetBool(ConfigNames.DashCamRecorderPreviewEnabled) ? string.Empty : "--nopreview" //3
+                ),
                 WaitForUI = false,
                 RedirectStandardOutput = true
             };
@@ -204,24 +209,40 @@ namespace DashCamController
                 hc.Config.GetString("DashCamRecorderRotation"), //12
                 hc.Config.GetString("DashCamRecorderDRC"), //13
                 hc.Config.GetString("DashCamRecorderAnnotate"), //14
-                fileManager.GetNextFileName()), // 15
+                fileManager.GetNextFileName(), //15
+                hc.Config.GetBool(ConfigNames.DashCamRecorderPreviewEnabled) ? string.Empty : "--nopreview" //16
+                ), 
                 Silent = true,
                 WaitForUI = false,
                 AliveMonitoringInterval = 200
             };
         }
 
+        StringBuilder log = new StringBuilder();
+        Stopwatch logsw = new Stopwatch();
+
         private void DoRecord()
         {
             if (disposed)
                 return;
 
+            log.Append("DoRecord: ");
+            logsw.Restart();
+
             try
             {
                 var processConfig = CreateRecordProcessConfig();
+                log.Append("Config - ");
+                log.Append(logsw.ElapsedMilliseconds);
+                
                 cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);
+                log.Append(" Process - ");
+                log.Append(logsw.ElapsedMilliseconds);
+
                 cameraProcess.Exited += b => monitorEvent.Set();
                 cameraProcess.Run();
+                log.Append(" Run - ");
+                log.Append(logsw.ElapsedMilliseconds);
             }
             catch (Exception ex)
             {
@@ -229,6 +250,10 @@ namespace DashCamController
                 Thread.Sleep(5000);
                 monitorEvent.Set();
             }
+
+            logsw.Stop();
+            hc.Logger.Log(this, log.ToString(), LogLevels.Info);
+            log.Clear();
         }
 
         public void Dispose()
