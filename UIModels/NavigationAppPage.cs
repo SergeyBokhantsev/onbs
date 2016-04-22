@@ -10,23 +10,38 @@ namespace UIModels
     {
         private readonly IAutomationController automation;
         private readonly NavigationMiniDisplayModel miniDisplay;
+        private IHostTimer timer;
 
         public NavigationAppPage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor, CreateProcessRunner(hc))
         {
             automation = hc.GetController<IAutomationController>();
             miniDisplay = new NavigationMiniDisplayModel(hc, pageDescriptor.Name);
+
+            this.Disposing += NavigationAppPage_Disposing;
+        }
+
+        void NavigationAppPage_Disposing(object sender, EventArgs e)
+        {
+            if (timer != null)
+            {
+                timer.Dispose();
+                timer = null;
+            }
         }
 
         private void OnTimer(IHostTimer obj)
         {
-            OnMiniDisplayUpdate();
+            if (obj.IsEnabled)
+            {
+                OnMiniDisplayUpdate();
+            }
         }
 
         protected override void Initialize()
         {
             Run();
-            hc.CreateTimer(5000, OnTimer, true, true, "NavigationAppPage timer");
+            timer = hc.CreateTimer(5000, OnTimer, true, true, "NavigationAppPage timer");
             base.Initialize();
         }
         

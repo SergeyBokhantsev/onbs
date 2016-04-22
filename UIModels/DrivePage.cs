@@ -26,7 +26,7 @@ namespace UIModels
         private readonly IOperationGuard weatherGuard = new InterlockedGuard();
         private readonly IOperationGuard geocoderGuard = new TimedGuard(new TimeSpan(0, 0, 3));
         private readonly IOperationGuard obdGuard = new InterlockedGuard();
-        private readonly IOperationGuard minidisplayGuard = new TimedGuard(new TimeSpan(0, 0, 4));
+        private readonly IOperationGuard minidisplayGuard = new TimedGuard(new TimeSpan(0, 0, 2));
         private readonly IOperationGuard cpuInfoGuard = new TimedGuard(new TimeSpan(0, 0, 10));
 
         private readonly DriveMiniDisplayModel miniDisplayModel;

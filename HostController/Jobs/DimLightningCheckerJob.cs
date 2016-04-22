@@ -14,6 +14,9 @@ namespace HostController.Jobs
         private readonly TimedGuard operationGuard_A = new TimedGuard(new TimeSpan(0, 0, 10));
         private readonly TimedGuard operationGuard_B = new TimedGuard(new TimeSpan(0, 0, 10));
 
+        private int A =-1;
+        private int B =-1;
+
         public DimLightningCheckerJob(IHostController hc, Configuration config)
         {
             this.hc = Ensure.ArgumentIsNotNull(hc);
@@ -30,8 +33,18 @@ namespace HostController.Jobs
 
             guard.ExecuteIfFree(() =>
             {
-                config.IsDimLighting = (int)value <= config.GetInt(ConfigNames.DimLightningGate);
-                hc.Logger.Log(this, string.Format("Dim condition resolved as: {0} basing on sensor {1}", config.IsDimLighting ? "Dark" : "Light", sensor), LogLevels.Info);
+                if (guard == operationGuard_A)
+                    A = value;
+                else
+                    B = value;
+
+                if (A > -1 && B > -1)
+                {
+                    var gate = config.GetInt(ConfigNames.DimLightningGate);
+                    config.IsDimLighting = A <= gate || B <= gate;
+
+                    hc.Logger.Log(this, string.Format("Dim condition resolved as: {0}. Sensor A {1}, sensor B {2}, gate {3}", config.IsDimLighting ? "Dark" : "Light", A, B, gate), LogLevels.Info);
+                }
             });
         }
 

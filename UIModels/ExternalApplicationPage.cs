@@ -64,30 +64,5 @@ namespace UIModels
                 return false;
             }
         }
-
-        //protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
-        //{
-        //    switch (name)
-        //    {
-        //        case "Exit":
-        //            ExitRunner();
-        //            break;
-
-        //        default:
-        //            base.DoAction(name, actionArgs);
-        //            break;
-        //    }
-        //}
-
-        //private void ExitRunner()
-        //{
-        //    if (Runner != null)
-        //    {
-        //        Runner.Exit();
-        //        Runner = null;
-        //    }
-        //    else
-        //        RunnerExited(false);
-        //}
     }
 }

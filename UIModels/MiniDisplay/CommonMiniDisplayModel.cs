@@ -117,6 +117,13 @@ namespace UIModels.MiniDisplay
                 y += 12;
                 warning = true;
             }
+
+            if (!config.GetBool(ConfigNames.DashCamRecorderEnabled))
+            {
+                g.Print(0, y, "D");
+                y += 12;
+                warning = true;
+            }
         }
 
         protected abstract void DrawClient(IMiniDisplayGraphics graphics);
