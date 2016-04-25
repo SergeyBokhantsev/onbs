@@ -61,7 +61,7 @@ namespace HostController.Jobs
 
             hc.Logger.LogIfDebug(this, "PhotoJob.OnPicture begin");
 
-            if (ms != null && ms.Length > 0)
+            if (hc.Config.IsInternetConnected && ms != null && ms.Length > 0)
             {
                 try
                 {
@@ -71,7 +71,7 @@ namespace HostController.Jobs
                 }
                 catch (Exception ex)
                 {
-                    hc.Logger.Log(this, ex);
+                    hc.Logger.Log(this, string.Format("Failed to upload picture: {0}", ex.Message), LogLevels.Warning);
                 }
             }
             else
