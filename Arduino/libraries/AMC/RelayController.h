@@ -3,10 +3,10 @@
 
 #include "Arduino.h"
 
-#define RELAY_MASTER_PIN 28
-#define RELAY_OBD_PIN 26
+#define RELAY_MASTER_PIN 22
+#define RELAY_OBD_PIN 28
 #define RELAY_3_PIN 24
-#define RELAY_4_PIN 22
+#define RELAY_4_PIN 26
 
 #define RELAY_MASTER 0
 #define RELAY_OBD 1
