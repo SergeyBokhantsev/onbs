@@ -8,6 +8,7 @@
 #include "CommandWriter.h"
 #include "Buzzer.h"
 #include "LightSensor.h"
+#include "GpsController.h"
 
 // RPi env is up and connected (evaluated by PING signal)
 #define MANAGER_STATE_ACTIVE 0
@@ -24,6 +25,9 @@
 #define MANAGER_SHUTDOWN_SIGNAL_TIMEOUT_MS 3000
 #define MANAGER_SCREEN_UPDATE_MS 200
 
+#define MANAGER_GPS_GUARD_CHECK_MS 3000
+#define MANAGER_GPS_GUARD_TRIGGER_DISTANCE_METERS 50
+
 #define MANAGER_ERROR_UNKNOWN_FRAME_TYPE 20
 #define MANAGER_ERROR_FRAME_TYPE_DISABLED 21
 #define MANAGER_ERROR_UNKNOWN_COMMAND 22
@@ -32,7 +36,7 @@
 class Manager
 {
 	public:
-	Manager(HardwareSerial* _arduino_out_port, RelayController* _relay, OledController* _oled, Buzzer* _buzzer, LightSensor* _light_sensor);
+	Manager(HardwareSerial* _arduino_out_port, RelayController* _relay, OledController* _oled, Buzzer* _buzzer, LightSensor* _light_sensor, GpsController* _gpsController);
 	~Manager();
 	
 	bool before_button_send(int button_id, char state);
@@ -48,6 +52,8 @@ class Manager
 	Buzzer* buzzer;
 	LightSensor* light_sensor;
 
+	GpsController* gpsController;
+	
 	int temp;
 	
 	int state;
@@ -61,8 +67,15 @@ class Manager
 	
 	void update_screen();
 	
+	bool check_gps_guard();
+	
 	int guard_animation_counter;
 	int guard_animation_mode;
+	
+	double gps_guard_lat;
+	double gps_guard_lon;
+	bool gps_guard_location_valid;
+	unsigned long gps_guard_last_check_time;
 };
 
 #endif

@@ -28,15 +28,20 @@ bool is_raise_shutdown_signal(unsigned long* ts)
 	}
 }
 
-Manager::Manager(HardwareSerial* _arduino_out_port, RelayController* _relay, OledController* _oled, Buzzer* _buzzer, LightSensor* _light_sensor)
+Manager::Manager(HardwareSerial* _arduino_out_port, RelayController* _relay, OledController* _oled, Buzzer* _buzzer, LightSensor* _light_sensor, GpsController* _gpsController)
 : command_writer(_arduino_out_port),
 relay(_relay),
 oled(_oled),
 buzzer(_buzzer),
 light_sensor(_light_sensor),
+gpsController(_gpsController),
 screen_timestamp(0),
 state_timestamp(0),
-shutdown_signal_timestamp(0)
+shutdown_signal_timestamp(0),
+gps_guard_lat(0),
+gps_guard_lon(0),
+gps_guard_location_valid(false),
+gps_guard_last_check_time(0)
 {
 	set_state(MANAGER_STATE_GUARD);
 }
@@ -71,10 +76,38 @@ void Manager::tick()
 			
 		case MANAGER_STATE_GUARD:
 			relay->turn_relay(RELAY_MASTER, RELAY_DISABLE);
+			
+			if (check_gps_guard())
+			{
+				set_state(MANAGER_STATE_WAITING);
+			}
+			
 			break;
 	}
 	
 	update_screen();
+}
+
+bool Manager::check_gps_guard()
+{
+	unsigned long now = millis();
+	
+	if (now > gps_guard_last_check_time + MANAGER_GPS_GUARD_CHECK_MS)
+	{
+		if (gps_guard_location_valid && gpsController->GPS()->location.isValid())
+		{
+			double lat = gpsController->GPS()->location.lat();
+			double lon = gpsController->GPS()->location.lng();
+			
+			double dist = gpsController->distance(lat, lon, gps_guard_lat, gps_guard_lon);
+			
+			return dist > MANAGER_GPS_GUARD_TRIGGER_DISTANCE_METERS;
+		}
+		
+		gps_guard_last_check_time = now;
+	}
+	
+	return false;
 }
 
 bool Manager::before_button_send(int buttonId, char buttonState)
@@ -136,6 +169,9 @@ void Manager::set_state(int newState)
 	{
 		case MANAGER_STATE_GUARD:
 			oled->display.setBrightness(0);
+			gps_guard_lat = gpsController->GPS()->location.lat();
+			gps_guard_lon = gpsController->GPS()->location.lng();
+			gps_guard_location_valid = gpsController->GPS()->location.isValid();
 			break;
 	}
 }

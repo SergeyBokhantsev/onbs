@@ -13,14 +13,16 @@
 #include "RelayController.h"
 #include "Buzzer.h"
 #include "LightSensor.h"
+#include "GpsController.h"
 
 #define ARDUINO_OUT_BUFFER_SIZE 2048
 #define BUTTONS_OUT_BUFFER_SIZE 128
+#define GPS_OUT_BUFFER_SIZE 2048
 
 class AMCController
 {
 public:
-	AMCController(HardwareSerial* _gsmPort, HardwareSerial* _gpsPort, UARTClass* _commPort);
+	AMCController(HardwareSerial* _gsmPort, HardwareSerial* _nmeaGpsPort, UARTClass* _commPort);
 	~AMCController();
 	void init();
 	void run();
@@ -28,7 +30,7 @@ public:
 private:
 	HardwareSerial* gsmPort;
 	HardwareSerial* comPort;
-
+	
 	HardwareSerial* ports[4];
 	uint8_t ports_types[4];
 
@@ -42,6 +44,10 @@ private:
 	ArrayToSerialAdapter buttons_out_port;
 	uint8_t buttons_out_buffer[BUTTONS_OUT_BUFFER_SIZE];
 	
+	ArrayToSerialAdapter gps_out_port;
+	uint8_t gps_out_buffer[GPS_OUT_BUFFER_SIZE];
+	
+	GpsController gpsController;
 	ButtonProcessor button_processor;
 	Rotary rotary_encoder;
 	

@@ -1,13 +1,15 @@
 #include "AMCController.h"
 
-AMCController::AMCController(HardwareSerial* _gsmPort, HardwareSerial* _gpsPort, UARTClass* _comPort) :
+AMCController::AMCController(HardwareSerial* _gsmPort, HardwareSerial* _nmeaGpsPort, UARTClass* _comPort) :
 buzzer(),
 oled(),
 relay(),
 light_sensor(),
 arduino_out_port(arduino_out_buffer, ARDUINO_OUT_BUFFER_SIZE),
 buttons_out_port(buttons_out_buffer, BUTTONS_OUT_BUFFER_SIZE),
-manager(&arduino_out_port, &relay, &oled, &buzzer, &light_sensor),
+gps_out_port(gps_out_buffer, GPS_OUT_BUFFER_SIZE),
+gpsController(_nmeaGpsPort, &gps_out_port),
+manager(&arduino_out_port, &relay, &oled, &buzzer, &light_sensor, &gpsController),
 gsmPort(_gsmPort),
 comPort(_comPort),
 frame_sender(_comPort, ports, ports_types, 4),
@@ -16,7 +18,7 @@ button_processor(&buttons_out_port, &manager),
 rotary_encoder(&button_processor)
 {
 	ports[0] = _gsmPort;
-	ports[1] = _gpsPort;
+	ports[1] = &gps_out_port;
 	ports[2] = &arduino_out_port;
 	ports[3] = &buttons_out_port;
 
@@ -54,6 +56,8 @@ void AMCController::run()
 	process_incoming();
 
 	button_processor.process();
+	
+	gpsController.process();
 	
 	rotary_encoder.process();
 }
