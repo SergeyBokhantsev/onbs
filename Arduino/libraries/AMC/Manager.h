@@ -26,7 +26,8 @@
 #define MANAGER_SCREEN_UPDATE_MS 200
 
 #define MANAGER_GPS_GUARD_CHECK_MS 3000
-#define MANAGER_GPS_GUARD_TRIGGER_DISTANCE_METERS 50
+#define MANAGER_GPS_GUARD_TRIGGER_DISTANCE_METERS 20
+#define MANAGER_GPS_GUARD_TRIGGER_DISTANCE_EXCEEDING_MAX 3
 
 #define MANAGER_ERROR_UNKNOWN_FRAME_TYPE 20
 #define MANAGER_ERROR_FRAME_TYPE_DISABLED 21
@@ -76,6 +77,7 @@ class Manager
 	double gps_guard_lon;
 	bool gps_guard_location_valid;
 	unsigned long gps_guard_last_check_time;
+	int gps_exceeding_distance_count;
 };
 
 #endif

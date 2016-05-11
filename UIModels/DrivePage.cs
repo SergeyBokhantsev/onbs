@@ -77,8 +77,16 @@ namespace UIModels
 
         protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
         {
+            switch (name)
+            {
+                case "ProtectCurrentDashClip":
+                    hc.GetController<IDashCamController>().ProtectDeletion(null);
+                    break;
 
-            base.DoAction(name, actionArgs);
+                default:
+                    base.DoAction(name, actionArgs);
+                    break;
+            }
         }
 
         private void UpdateOBD()

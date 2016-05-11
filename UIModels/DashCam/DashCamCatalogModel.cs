@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using UIModels.Dialogs;
 using UIModels.MultipurposeModels;
@@ -24,6 +25,8 @@ namespace UIModels
             SetProperty(ModelNames.PageTitle, "Dash camera files");
 
             hc.Config.Set(ConfigNames.DashCamRecorderEnabled, false);
+
+            Thread.Sleep(300);// to let controller to finish recording
 
             files = hc.GetController<IDashCamController>().GetVideoFilesInfo();
 

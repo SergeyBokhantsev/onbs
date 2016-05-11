@@ -8,6 +8,7 @@
     <page name="Drive1" model="DrivePage" default_view="DrivePage">
       <Cancel name="Shutdown"/>
       <F1 name="NavApp"/>
+      <F2 action="ProtectCurrentDashClip"/>
       <RotaryItem_1 name="NavApp" caption="NAV"/>
       <RotaryItem_2 name="WebCam" caption="CAM"/>
       <RotaryItem_3 name="Weather" caption="WTHR"/>

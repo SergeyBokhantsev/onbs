@@ -41,7 +41,8 @@ shutdown_signal_timestamp(0),
 gps_guard_lat(0),
 gps_guard_lon(0),
 gps_guard_location_valid(false),
-gps_guard_last_check_time(0)
+gps_guard_last_check_time(0),
+gps_exceeding_distance_count(0)
 {
 	set_state(MANAGER_STATE_GUARD);
 }
@@ -94,14 +95,29 @@ bool Manager::check_gps_guard()
 	
 	if (now > gps_guard_last_check_time + MANAGER_GPS_GUARD_CHECK_MS)
 	{
-		if (gps_guard_location_valid && gpsController->GPS()->location.isValid())
+		if(gpsController->GPS()->location.isValid())
 		{
-			double lat = gpsController->GPS()->location.lat();
-			double lon = gpsController->GPS()->location.lng();
-			
-			double dist = gpsController->distance(lat, lon, gps_guard_lat, gps_guard_lon);
-			
-			return dist > MANAGER_GPS_GUARD_TRIGGER_DISTANCE_METERS;
+			if (gps_guard_location_valid)
+			{
+				double lat = gpsController->GPS()->location.lat();
+				double lon = gpsController->GPS()->location.lng();
+				
+				double dist = gpsController->distance(lat, lon, gps_guard_lat, gps_guard_lon);
+				
+				if (dist > MANAGER_GPS_GUARD_TRIGGER_DISTANCE_METERS)
+					gps_exceeding_distance_count++;
+				else
+					gps_exceeding_distance_count = 0;
+				
+				return gps_exceeding_distance_count >= MANAGER_GPS_GUARD_TRIGGER_DISTANCE_EXCEEDING_MAX;
+			}
+			else
+			{
+				gps_guard_lat = gpsController->GPS()->location.lat();
+				gps_guard_lon = gpsController->GPS()->location.lng();
+				gps_guard_location_valid = true;
+				gps_exceeding_distance_count = 0;
+			}
 		}
 		
 		gps_guard_last_check_time = now;
@@ -169,9 +185,7 @@ void Manager::set_state(int newState)
 	{
 		case MANAGER_STATE_GUARD:
 			oled->display.setBrightness(0);
-			gps_guard_lat = gpsController->GPS()->location.lat();
-			gps_guard_lon = gpsController->GPS()->location.lng();
-			gps_guard_location_valid = gpsController->GPS()->location.isValid();
+			gps_guard_location_valid = false;
 			break;
 	}
 }
