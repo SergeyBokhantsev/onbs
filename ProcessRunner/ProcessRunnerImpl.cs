@@ -113,10 +113,17 @@ namespace ProcessRunner
             }
             catch (Exception ex)
             {
+				logger.Log(this, "Exception while monitoring", LogLevels.Warning);
                 logger.Log(this, ex);
+
+				if (null != proc && !proc.HasExited)
+				{
+					logger.Log(this, "Application is not closed after exception, killing...", LogLevels.Warning);
+					proc.Kill();
+				}
             }
 
-            OnExited();
+			OnExited ();
         }
 
         public void Exit()

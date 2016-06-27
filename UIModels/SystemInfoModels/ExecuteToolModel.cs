@@ -16,14 +16,19 @@ namespace UIModels
         {
             System.Threading.ThreadPool.QueueUserWorkItem(o =>
                 {
+					IProcessRunner pr = null;
+
                     try
                     {
-                        var pr = hc.ProcessRunnerFactory.Create(toolName);
+                        pr = hc.ProcessRunnerFactory.Create(toolName);
                         pr.Run();
 
                         MemoryStream outputStream;
-                        pr.WaitForExit(5000, out outputStream);
-                        var output = outputStream.GetString();
+                        
+						if(!pr.WaitForExit(5000, out outputStream))
+							return;
+                        
+						var output = outputStream.GetString();
 
                         hc.Logger.Log(this, output, LogLevels.Info);
 
@@ -44,6 +49,11 @@ namespace UIModels
                         hc.Logger.Log(this, ex);
                         AddLine(ex.Message);
                     }
+					finally
+					{
+						if(null != pr && !pr.HasExited)
+							pr.Exit();
+					}
                 });
         }
     }

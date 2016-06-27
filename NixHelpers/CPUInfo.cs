@@ -17,7 +17,10 @@ namespace NixHelpers
             pr.Run();
 
             MemoryStream outputStream;
-            pr.WaitForExit(5000, out outputStream);
+			if (!pr.WaitForExit (5000, out outputStream)) {
+				pr.Exit ();
+				return null;
+			}
             var output = outputStream.GetString();
 
             int rawValue = 0;
@@ -34,8 +37,13 @@ namespace NixHelpers
             pr.Run();
 
             MemoryStream outputStream;
-            pr.WaitForExit(5000, out outputStream);
-            var output = outputStream.GetString();
+            
+			if (!pr.WaitForExit (5000, out outputStream)) {
+				pr.Exit ();
+				return null;
+			}
+            
+			var output = outputStream.GetString();
 
             int rawValue = 0;
             if (int.TryParse(output, out rawValue))

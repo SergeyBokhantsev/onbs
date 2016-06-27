@@ -61,7 +61,7 @@ namespace HostController.Jobs
 
             hc.Logger.LogIfDebug(this, "PhotoJob.OnPicture begin");
 
-            if (hc.Config.IsInternetConnected && ms != null && ms.Length > 0)
+           if (hc.Config.IsInternetConnected && ms != null && ms.Length > 0)
             {
                 try
                 {
