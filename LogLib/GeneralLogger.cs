@@ -51,7 +51,15 @@ namespace LogLib
 
         public void Log(object caller, Exception ex)
         {
-            Log(caller, string.Concat(ex.Message, Environment.NewLine, ex.StackTrace), LogLevels.Error);
+            if (this.Level == LogLevels.Debug)
+            {
+                Log(caller, string.Concat(ex.Message, Environment.NewLine, ex.StackTrace), LogLevels.Error);
+            }
+            else
+            {
+                Log(caller, ex.Message, LogLevels.Error);
+            }
+
             Flush();
         }
 
