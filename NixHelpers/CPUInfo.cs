@@ -12,7 +12,11 @@ namespace NixHelpers
     {
         public static double? GetCPUTemp(IProcessRunnerFactory prf)
         {
-            var pr = prf.Create("cputemp");
+            var cfg = prf.CreateConfig("cputemp");
+            cfg.RedirectStandardInput = false;
+            cfg.RedirectStandardOutput = true;
+
+            var pr = prf.Create(cfg);
 
             pr.Run();
 
@@ -32,7 +36,11 @@ namespace NixHelpers
 
         public static int? GetCPUSpeed(IProcessRunnerFactory prf)
         {
-            var pr = prf.Create("cpuspeed");
+            var cfg = prf.CreateConfig("cpuspeed");
+            cfg.RedirectStandardOutput = true;
+            cfg.RedirectStandardInput = false;
+
+            var pr = prf.Create(cfg);
 
             pr.Run();
 

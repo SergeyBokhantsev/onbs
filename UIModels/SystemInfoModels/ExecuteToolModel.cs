@@ -20,7 +20,11 @@ namespace UIModels
 
                     try
                     {
-                        pr = hc.ProcessRunnerFactory.Create(toolName);
+                        var cfg = hc.ProcessRunnerFactory.CreateConfig(toolName);
+                        cfg.RedirectStandardInput = false;
+                        cfg.RedirectStandardOutput = true;
+
+                        pr = hc.ProcessRunnerFactory.Create(cfg);
                         pr.Run();
 
                         MemoryStream outputStream;

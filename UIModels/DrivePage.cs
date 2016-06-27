@@ -95,10 +95,23 @@ namespace UIModels
             miniDisplayModel.EngineTemp = engineTemp;
             SetProperty("eng_temp", engineTemp);
 
+            var speed = obdProcessor.GetSpeed();
+            var rpm = obdProcessor.GetRPM();
+
+            if (speed.HasValue && rpm.HasValue)
+            {
+                var ratio = ((double)rpm.Value / (double)speed.Value);
+                SetProperty("gear_ratio", ratio);
+            }
+            else
+            {
+                SetProperty("gear_ratio", -1d);
+            }
+
 			if (!string.IsNullOrEmpty (elm.Error))
 				elm.Reset();
 
-            Thread.Sleep(3000);
+            Thread.Sleep(2000);
         }
 
         private void UpdateWeatherForecast()
@@ -148,7 +161,7 @@ namespace UIModels
             miniDisplayModel.Draw();
         }
 
-        protected override async void OnPrimaryTick(IHostTimer timer)
+        protected override void OnPrimaryTick(IHostTimer timer)
         {
             if (!Disposed)
             {

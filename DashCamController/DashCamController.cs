@@ -202,6 +202,7 @@ namespace DashCamController
                 ),
                 WaitForUI = false,
                 RedirectStandardOutput = true,
+                RedirectStandardInput = false,
                 Silent = true
             };
         }
@@ -236,7 +237,9 @@ namespace DashCamController
                 ), 
                 Silent = true,
                 WaitForUI = false,
-                AliveMonitoringInterval = 200
+                AliveMonitoringInterval = 200,
+                RedirectStandardInput = false, 
+                RedirectStandardOutput = false
             };
         }
 
@@ -250,7 +253,7 @@ namespace DashCamController
                 var fileName = fileManager.GetNextFileName();
                 var processConfig = CreateRecordProcessConfig(fileName);
                 cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);
-                cameraProcess.Exited += b =>
+                cameraProcess.Exited += isUnexpected =>
                 {
                     monitorEvent.Set();
 

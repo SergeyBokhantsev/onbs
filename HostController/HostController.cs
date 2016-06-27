@@ -118,7 +118,7 @@ namespace HostController
         }
 
         public void Run()
-        {
+        {            
             CreateConfig();
 
             CreateLogger();
@@ -623,7 +623,9 @@ namespace HostController
                         var processConfig = new ProcessConfig
                         {
                             ExePath = Config.GetString(ConfigNames.SystemUpdateCommand),
-                            Args = string.Format(Config.GetString(ConfigNames.SystemUpdateArg), Config.DataFolder)
+                            Args = string.Format(Config.GetString(ConfigNames.SystemUpdateArg), Config.DataFolder),
+                            RedirectStandardOutput = false,
+                            RedirectStandardInput = false
                         };
 
                         ProcessRunnerFactory.Create(processConfig).Run();
@@ -635,7 +637,9 @@ namespace HostController
                         var processConfig = new ProcessConfig
                         {
                             ExePath = Config.GetString(ConfigNames.SystemRestartCommand),
-                            Args = Config.GetString(ConfigNames.SystemRestartArg) 
+                            Args = Config.GetString(ConfigNames.SystemRestartArg),
+                            RedirectStandardOutput = false,
+                            RedirectStandardInput = false
                         };
 
 						try
@@ -654,7 +658,9 @@ namespace HostController
                         var processConfig = new ProcessConfig
                         {
                             ExePath = Config.GetString(ConfigNames.SystemShutdownCommand),
-                            Args = Config.GetString(ConfigNames.SystemShutdownArg)
+                            Args = Config.GetString(ConfigNames.SystemShutdownArg),
+                            RedirectStandardOutput = false,
+                            RedirectStandardInput = false
                         };
 
                         ProcessRunnerFactory.Create(processConfig).Run();
@@ -663,7 +669,7 @@ namespace HostController
             }
         }
 
-		public IProcessRunner Create(string appKey, object[] argumentParameters = null)
+		public ProcessConfig CreateConfig(string appKey, object[] argumentParameters = null)
         {
 			var args = Config.GetString (string.Concat (appKey, "_args"));
 
@@ -678,7 +684,7 @@ namespace HostController
 				Silent = true
             };
 
-            return Create(processConfig);
+            return processConfig;
         }
 
         public IProcessRunner Create(ProcessConfig processConfig)

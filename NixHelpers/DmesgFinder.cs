@@ -16,7 +16,12 @@ namespace NixHelpers
             {
                 Ensure.ArgumentIsNotNull(prf);
 
-				pr = prf.Create("dmesg");
+				var procConfig = prf.CreateConfig("dmesg");
+
+                procConfig.RedirectStandardInput = false;
+                procConfig.RedirectStandardOutput = true;
+
+                pr = prf.Create(procConfig);
 
 				pr.Run();
 

@@ -89,7 +89,7 @@ namespace ProcessRunner
                 logger.Log(this, ex);
                 throw new Exception(string.Format("Unable to launch '{0}': {1}", ToString(), ex.Message), ex);
             }
-
+            
             //var monitor = new Thread(Monitor);
 			ThreadPool.QueueUserWorkItem(Monitor);
         }

@@ -44,7 +44,7 @@ namespace Interfaces
 
     public interface IProcessRunnerFactory
     {
-        IProcessRunner Create(string appKey, object[] argumentParameters = null);
+        ProcessConfig CreateConfig(string appKey, object[] argumentParameters = null);
         IProcessRunner Create(ProcessConfig param);
     }
 }

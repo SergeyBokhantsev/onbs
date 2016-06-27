@@ -195,15 +195,13 @@ namespace HostController.Lin
         {
             try
             {
-                //if (!Directory.Exists(checkFolder))
-                   // return false;
-
                 var request = WebRequest.Create(config.GetString(ConfigNames.InetKeeperCheckUrl)) as HttpWebRequest;
 
                 if (request == null)
                     throw new Exception("Request is null");
 
                 request.Method = config.GetString(ConfigNames.InetKeeperCheckMethod);
+                request.UserAgent = config.GetString(ConfigNames.InetKeeperCheckUserAgent);
 
                 using (var response = request.GetResponse() as HttpWebResponse)
                 {
@@ -323,7 +321,12 @@ namespace HostController.Lin
                     return;
             }
 
-            var pr = prf.Create("modeswitch_reset", new object[] { deviceVid, devicePid });
+
+            var cfg = prf.CreateConfig("modeswitch_reset", new object[] { deviceVid, devicePid });
+            cfg.RedirectStandardOutput = false;
+            cfg.RedirectStandardInput = false;
+
+            var pr = prf.Create(cfg);
             pr.Run();
             pr.WaitForExit(60000);
 
@@ -344,7 +347,10 @@ namespace HostController.Lin
             try
             {
                 var modemSwitchConfigFilePath = Path.Combine(config.DataFolder, "12d1_1446.cfg");
-				pr = prf.Create("modeswitch", new object[] { modemSwitchConfigFilePath });
+                var cfg = prf.CreateConfig("modeswitch", new object[] { modemSwitchConfigFilePath });
+                cfg.RedirectStandardInput = false;
+                cfg.RedirectStandardOutput = true;
+                pr = prf.Create(cfg);
                 pr.Run();
 
                 MemoryStream outputStream;
@@ -448,7 +454,10 @@ namespace HostController.Lin
 
             logger.Log(this, string.Format("Running Dialer for {0}, config file created in {1}", usbPort, dialConfigPath), LogLevels.Info);
 
-			var dialer = prf.Create("dialer", new object[] { dialConfigPath });
+			var dialerProcCfg = prf.CreateConfig("dialer", new object[] { dialConfigPath });
+            dialerProcCfg.RedirectStandardInput = false;
+            dialerProcCfg.RedirectStandardOutput = false;
+            var dialer = prf.Create(dialerProcCfg);
             dialer.Run();
 			dialer.WaitForExit(10000);
             return dialer;
@@ -466,6 +475,8 @@ namespace HostController.Lin
                 {
                     ExePath = "sudo",
 					Args = "kill " + dialerPID.ToString(),
+                    RedirectStandardInput = false,
+                    RedirectStandardOutput = false
                 };
 
                 logger.Log(this, string.Format("Another dialler instance found, pid {0}, trying to kill...", dialerPID), LogLevels.Info);

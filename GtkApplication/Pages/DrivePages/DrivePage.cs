@@ -69,6 +69,10 @@ namespace GtkApplication
 				label_air_temp.Markup = CB.CreateMarkup(m_AIR_TEMP, CB.m_FG_WHITE, CB.m_BG_EMPTY, air_temp)
 				, "air_temp");
 
+            binder.BindCustomAction<double>(gear_ratio =>
+                label_air_temp.Markup = CB.CreateMarkup(m_AIR_TEMP, CB.m_FG_WHITE, CB.m_BG_EMPTY, gear_ratio.ToString("0.00"))
+                , "gear_ratio");
+
 			binder.BindCustomAction<int>(eng_temp =>
                 label_eng_temp.Markup = CB.CreateMarkup(m_ENG_TEMP, CB.m_FG_GRAY_DARK, CB.m_BG_EMPTY, eng_temp > int.MinValue ? string.Concat(eng_temp, "° C") : "NA")
 				, "eng_temp");

@@ -16,7 +16,11 @@ namespace NixHelpers
             {
                 Ensure.ArgumentIsNotNull(prf);
 
-                pr = prf.Create("ps");
+                var cfg = prf.CreateConfig("ps");
+                cfg.RedirectStandardInput = false;
+                cfg.RedirectStandardOutput = true;
+
+                pr = prf.Create(cfg);
 
                 pr.Run();
 

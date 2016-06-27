@@ -60,6 +60,8 @@ namespace HostController.Lin
                         {
                             ExePath = setTimeCommand,
 							Args = string.Format(setTimeArgs, proposedTime.ToLocalTime().ToString(setTimeSetFormat)),
+                            RedirectStandardOutput = false,
+                            RedirectStandardInput = false
                         };
 
                         var pr = processRunnerFactory.Create(processConfig);
