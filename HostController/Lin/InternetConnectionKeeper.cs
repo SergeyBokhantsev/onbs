@@ -339,14 +339,19 @@ namespace HostController.Lin
 
         private bool SwitchToModem()
         {
+			IProcessRunner pr = null;
+
             try
             {
                 var modemSwitchConfigFilePath = Path.Combine(config.DataFolder, "12d1_1446.cfg");
-				var pr = prf.Create("modeswitch", new object[] { modemSwitchConfigFilePath });
+				pr = prf.Create("modeswitch", new object[] { modemSwitchConfigFilePath });
                 pr.Run();
 
                 MemoryStream outputStream;
-                pr.WaitForExit(30000, out outputStream);
+
+				if(!pr.WaitForExit(30000, out outputStream))
+					return false;
+
                 var output = outputStream.GetString();
 
                 var result = output.Contains("Mode switch succeeded");
@@ -361,6 +366,11 @@ namespace HostController.Lin
                 logger.Log(this, ex);
                 return false;
             }
+			finally
+			{
+				if (null != pr && !pr.HasExited)
+					pr.Exit ();
+			}
         }
 
         private ModemModes GetModemMode()

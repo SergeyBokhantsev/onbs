@@ -56,7 +56,7 @@ namespace UIModels
         {
             if (!Disposed)
             {
-                weatherGuard.ExecuteIfFreeAsync(UpdateWeatherForecast);
+                //weatherGuard.ExecuteIfFreeAsync(UpdateWeatherForecast);
             }
 
 			//hc.GetController<IDashCamController> ().ScheduleTakePicture (pict);
@@ -132,6 +132,8 @@ namespace UIModels
 
         private void UpdateAddres(GeoPoint location)
         {
+			return;
+
             if (!Disposed && hc.Config.IsInternetConnected)
             {
                 var addres = geocoder.GetAddres(location);
@@ -164,6 +166,8 @@ namespace UIModels
 
         private void UpdateCpuInfo()
         {
+			return;
+
             if (!Disposed)
             {
                 var cpuSpeed = NixHelpers.CPUInfo.GetCPUSpeed(hc.ProcessRunnerFactory);

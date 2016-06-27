@@ -10,17 +10,24 @@ namespace NixHelpers
     {
         public static IEnumerable<string> EnumerateProcesses(IProcessRunnerFactory prf)
         {
+			IProcessRunner pr = null;
+
             try
             {
                 Ensure.ArgumentIsNotNull(prf);
 
-                var pr = prf.Create("ps");
+                pr = prf.Create("ps");
 
                 pr.Run();
 
                 MemoryStream outputStream;
-                pr.WaitForExit(5000, out outputStream);
-                var output = outputStream.GetString();
+                
+				if(!pr.WaitForExit(5000, out outputStream))
+				{
+					throw new Exception("Enumerate processes timeout");
+				}
+
+				var output = outputStream.GetString();
 
                 return output.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             }
@@ -28,6 +35,10 @@ namespace NixHelpers
             {
                 throw new Exception(string.Format("Exception in NixHelpers.ProcessFinder.EnumerateProcesses: {0}", ex.Message), ex);
             }
+			finally {
+				if(null != pr && !pr.HasExited)
+					pr.Exit();
+			}
         }
 
         public static int FindProcess(string name, IProcessRunnerFactory prf)

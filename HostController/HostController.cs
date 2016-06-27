@@ -331,7 +331,8 @@ namespace HostController
                     miniDisplayController.Graphics.Delay(500);
                     miniDisplayController.Graphics.Cls();
                     miniDisplayController.Graphics.SetFont(Fonts.Small);
-                    var caption = string.IsNullOrWhiteSpace(dialog.Caption) ? "NO CAPTION" : dialog.Caption.Substring(0, 10);
+                    var caption = string.IsNullOrWhiteSpace(dialog.Caption) ? "NO CAPTION" :
+						dialog.Caption.Length > 10 ? dialog.Caption.Substring(0, 10) : dialog.Caption;
                     miniDisplayController.Graphics.Print(0, 10, caption, TextAlingModes.Center);
 
                     int buttonCount = 0;
@@ -540,9 +541,9 @@ namespace HostController
 			arduController.RelayService.Disable(Relay.Relay4);
             await Task.Delay(200);
 
-            arduController.RelayService.Enable(Relay.Relay4);
+            arduController.RelayService.Enable(Relay.Relay3);
             await Task.Delay(200);
-            arduController.RelayService.Disable(Relay.Relay4);
+            arduController.RelayService.Disable(Relay.Relay3);
             await Task.Delay(200);
 
 			if (mode == HostControllerShutdownModes.Exit
