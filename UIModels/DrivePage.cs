@@ -49,6 +49,8 @@ namespace UIModels
 
 			SetProperty("oil_temp_icon", Path.Combine(hc.Config.DataFolder, "icons", "OilTemp.png"));
 
+			SetProperty("gear_ratio", -1d);
+
             gpsController.GPRMCReseived += GPRMCReseived;         
         }
 
@@ -98,7 +100,7 @@ namespace UIModels
             var speed = obdProcessor.GetSpeed();
             var rpm = obdProcessor.GetRPM();
 
-            if (speed.HasValue && rpm.HasValue)
+			if (speed.HasValue && rpm.HasValue && speed.Value > 0)
             {
                 var ratio = ((double)rpm.Value / (double)speed.Value);
                 SetProperty("gear_ratio", ratio);

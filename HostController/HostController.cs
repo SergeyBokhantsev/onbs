@@ -519,6 +519,11 @@ namespace HostController
 
         public async Task Shutdown(HostControllerShutdownModes mode)
         {
+			arduController.RelayService.Enable(Relay.Relay3);
+			await Task.Delay(400);
+			arduController.RelayService.Disable(Relay.Relay3);
+			//await Task.Delay(200);
+
 			arduController.StopPing();
 
             dashCamController.Dispose();
@@ -541,10 +546,10 @@ namespace HostController
 			arduController.RelayService.Disable(Relay.Relay4);
             await Task.Delay(200);
 
-            arduController.RelayService.Enable(Relay.Relay3);
-            await Task.Delay(200);
-            arduController.RelayService.Disable(Relay.Relay3);
-            await Task.Delay(200);
+            //arduController.RelayService.Enable(Relay.Relay3);
+            //await Task.Delay(200);
+            //arduController.RelayService.Disable(Relay.Relay3);
+            //await Task.Delay(200);
 
 			if (mode == HostControllerShutdownModes.Exit
 				|| mode == HostControllerShutdownModes.Update) 
