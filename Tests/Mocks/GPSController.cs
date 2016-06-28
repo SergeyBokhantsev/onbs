@@ -38,5 +38,11 @@ namespace Tests.Mocks
             get;
             set;
         }
+
+
+        public int IdleMinutes
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }

@@ -293,12 +293,67 @@ namespace HostController.Lin
             {
                 case ModemModes.Modem:
                 case ModemModes.Storage:
-                    ResetDevice(mode);
+                    ResetDevice_new(mode);
                     break;
 
                 default:
                     logger.Log(this, "No modem found, nothing to reset", LogLevels.Warning);
                     break;
+            }
+        }
+
+        private void ResetDevice_new(ModemModes mode)
+        {
+            var deviceVid = config.GetString(ConfigNames.Modem_vid);
+            string devicePid;
+
+            switch (mode)
+            {
+                case ModemModes.Modem:
+                    devicePid = config.GetString(ConfigNames.Modem_modemmode_pid);
+                    break;
+
+                case ModemModes.Storage:
+                    devicePid = config.GetString(ConfigNames.Modem_storagemode_pid);
+                    break;
+
+                default:
+                    return;
+            }
+
+            var modemDevice = NixHelpers.LsUsb.EnumerateDevices(prf).FirstOrDefault(d => d.VID == deviceVid && d.PID == devicePid);
+
+            if (null == modemDevice)
+            {
+                logger.Log(this, string.Format("Unable to reset modem. No corresponding device found ({0}:{1})", deviceVid, devicePid), LogLevels.Error);
+                return;
+            }
+
+            var cfg = new ProcessConfig
+            {
+                AliveMonitoringInterval = 1000,
+                ExePath = "sudo",
+                Args = Path.Combine(config.DataFolder, string.Format("usbreset /dev/bus/usb/{0}/{1}", modemDevice.Bus, modemDevice.Device)),
+                Silent = false,
+                RedirectStandardInput = false,
+                RedirectStandardOutput = true,
+                WaitForUI = false
+            };
+
+            var pr = prf.Create(cfg);
+
+            MemoryStream stream;
+            pr.Run();
+
+            if (pr.WaitForExit(30000, out stream))
+            {
+                var outStr = stream.GetString();
+
+                logger.Log(this, string.Format("Device {0}:{1} seems was reset successfully: {2}", modemDevice.PID, modemDevice.VID, outStr), LogLevels.Info);
+            }
+            else
+            {
+                logger.Log(this, string.Format("There was some trouble resetting Device {0}:{1}.", modemDevice.VID, modemDevice.PID), LogLevels.Warning);
             }
         }
 
