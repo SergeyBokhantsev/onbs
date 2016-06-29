@@ -49,7 +49,7 @@ namespace UIModels
 
 			SetProperty("oil_temp_icon", Path.Combine(hc.Config.DataFolder, "icons", "OilTemp.png"));
 
-			SetProperty("gear_ratio", -1d);
+			SetProperty("gear", "-");
 
             gpsController.GPRMCReseived += GPRMCReseived;         
         }
@@ -103,17 +103,30 @@ namespace UIModels
 			if (speed.HasValue && rpm.HasValue && speed.Value > 0)
             {
                 var ratio = ((double)rpm.Value / (double)speed.Value);
-                SetProperty("gear_ratio", ratio);
+                var gear = "-";
+
+                if (ratio >= 100)
+                    gear = "1";
+                else if (ratio >= 67 && ratio < 100)
+                    gear = "2";
+                else if (ratio >= 47 && ratio < 67)
+                    gear = "3";
+                else if (ratio >= 35 && ratio < 47)
+                    gear = "4";
+                else 
+                    gear = "5";
+
+                SetProperty("gear", gear);
             }
             else
             {
-                SetProperty("gear_ratio", -1d);
+                SetProperty("gear", "2");
             }
 
 			if (!string.IsNullOrEmpty (elm.Error))
 				elm.Reset();
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
         }
 
         private void UpdateWeatherForecast()

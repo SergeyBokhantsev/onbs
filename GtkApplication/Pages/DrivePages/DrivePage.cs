@@ -23,7 +23,7 @@ namespace GtkApplication
 
 		private const string m_EXPORTED_POINTS = "<span {0} {1} size='14000'>Track: {2}</span>";
 		private const string m_HEADING = "<span {0} {1} size='20000'>{2}</span>";
-		private const string m_AIR_TEMP = "<span {0} {1} size='14000'>{2}</span>";
+		private const string m_AIR_TEMP = "<span {0} {1} size='34000'>{2}</span>";
 		private const string m_ENG_TEMP = "<span {0} {1} size='14000'>{2}</span>";
 
 		public DrivePage (IPageModel model, Style style, ILogger logger)
@@ -65,13 +65,13 @@ namespace GtkApplication
 				label_heading.Markup = CB.CreateMarkup(m_HEADING, CB.m_FG_GRAY, CB.m_BG_EMPTY, heading)
 				, "heading");
 
-			binder.BindCustomAction<string>(air_temp =>
-				label_air_temp.Markup = CB.CreateMarkup(m_AIR_TEMP, CB.m_FG_WHITE, CB.m_BG_EMPTY, air_temp)
-				, "air_temp");
+            //binder.BindCustomAction<string>(air_temp =>
+            //    label_air_temp.Markup = CB.CreateMarkup(m_AIR_TEMP, CB.m_FG_WHITE, CB.m_BG_EMPTY, air_temp)
+            //    , "air_temp");
 
-            binder.BindCustomAction<double>(gear_ratio =>
-                label_air_temp.Markup = CB.CreateMarkup(m_AIR_TEMP, CB.m_FG_WHITE, CB.m_BG_EMPTY, gear_ratio.ToString("0.00"))
-                , "gear_ratio");
+            binder.BindCustomAction<string>(gear =>
+                label_air_temp.Markup = CB.CreateMarkup(m_AIR_TEMP, CB.m_FG_WHITE, CB.m_BG_EMPTY, gear)
+                , "gear");
 
 			binder.BindCustomAction<int>(eng_temp =>
                 label_eng_temp.Markup = CB.CreateMarkup(m_ENG_TEMP, CB.m_FG_GRAY_DARK, CB.m_BG_EMPTY, eng_temp > int.MinValue ? string.Concat(eng_temp, "° C") : "NA")
