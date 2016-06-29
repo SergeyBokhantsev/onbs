@@ -25,6 +25,8 @@ namespace DashCamController
 
         private IProcessRunner cameraProcess;
 
+        private bool protectCurrent;
+
         private bool disposed;
 
         private readonly List<Tuple<int, int, OrderPictureCallback>> pictureOrders = new List<Tuple<int, int, OrderPictureCallback>>();
@@ -200,11 +202,12 @@ namespace DashCamController
                 ),
                 WaitForUI = false,
                 RedirectStandardOutput = true,
+                RedirectStandardInput = false,
                 Silent = true
             };
         }
 
-        protected virtual ProcessConfig CreateRecordProcessConfig()
+        protected virtual ProcessConfig CreateRecordProcessConfig(string fileName)
         {
             var dim = hc.Config.IsDimLighting;
 
@@ -227,14 +230,16 @@ namespace DashCamController
                 hc.Config.GetString("DashCamRecorderRotation"), //12
                 hc.Config.GetString("DashCamRecorderDRC"), //13
                 hc.Config.GetString("DashCamRecorderAnnotate"), //14
-                fileManager.GetNextFileName(), //15
+                fileName, //15
                 hc.Config.GetInt("DashCamRecorderBitrate") * 1000000, //16
                 hc.Config.GetBool("DashCamRecorderStab") ? "--vstab" : string.Empty, // 17
                 hc.Config.GetBool(ConfigNames.DashCamRecorderPreviewEnabled) ? string.Empty : "--nopreview" //18
                 ), 
                 Silent = true,
                 WaitForUI = false,
-                AliveMonitoringInterval = 200
+                AliveMonitoringInterval = 200,
+                RedirectStandardInput = false, 
+                RedirectStandardOutput = false
             };
         }
 
@@ -245,9 +250,29 @@ namespace DashCamController
 
             try
             {
-                var processConfig = CreateRecordProcessConfig();
-                cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);                
-                cameraProcess.Exited += b => monitorEvent.Set();
+                var fileName = fileManager.GetNextFileName();
+                var processConfig = CreateRecordProcessConfig(fileName);
+                cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);
+                cameraProcess.Exited += isUnexpected =>
+                {
+                    monitorEvent.Set();
+
+                    if (protectCurrent)
+                    {
+                        protectCurrent = false;
+
+                        try
+                        {
+                            ProtectDeletion(new FileInfo(fileName));
+                        }
+                        catch (Exception ex)
+                        {
+                            hc.Logger.Log(this, "Failed to protect current recorded video.", LogLevels.Error);
+                            hc.Logger.Log(this, ex);
+                        }
+                    }
+                };
+
                 cameraProcess.Run();
             }
             catch (Exception ex)
@@ -277,7 +302,15 @@ namespace DashCamController
 
         public FileInfo ProtectDeletion(FileInfo fileInfo)
         {
-            return fileManager.ProtectDeletion(fileInfo);
+            if (fileInfo != null)
+                return fileManager.ProtectDeletion(fileInfo);
+            else
+            {
+                if (cameraProcess != null && !cameraProcess.HasExited)
+                    protectCurrent = true;
+
+                return null;
+            }
         }
 
         public FileInfo GetMP4File(FileInfo fileInfo)

@@ -311,6 +311,9 @@
     <None Include="Data\firmware_update.sh">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Content Include="Data\usbreset">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Data\ZXRoms\3 Deep Space %281984%29%28Postern%29.z80">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

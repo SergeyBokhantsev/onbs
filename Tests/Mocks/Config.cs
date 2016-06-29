@@ -86,5 +86,11 @@ namespace Tests.Mocks
         {
             get { throw new NotImplementedException(); }
         }
+
+
+        public bool IsDimLighting
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }

@@ -12,12 +12,19 @@ namespace NixHelpers
     {
         public static double? GetCPUTemp(IProcessRunnerFactory prf)
         {
-            var pr = prf.Create("cputemp");
+            var cfg = prf.CreateConfig("cputemp");
+            cfg.RedirectStandardInput = false;
+            cfg.RedirectStandardOutput = true;
+
+            var pr = prf.Create(cfg);
 
             pr.Run();
 
             MemoryStream outputStream;
-            pr.WaitForExit(5000, out outputStream);
+			if (!pr.WaitForExit (5000, out outputStream)) {
+				pr.Exit ();
+				return null;
+			}
             var output = outputStream.GetString();
 
             int rawValue = 0;
@@ -29,13 +36,22 @@ namespace NixHelpers
 
         public static int? GetCPUSpeed(IProcessRunnerFactory prf)
         {
-            var pr = prf.Create("cpuspeed");
+            var cfg = prf.CreateConfig("cpuspeed");
+            cfg.RedirectStandardOutput = true;
+            cfg.RedirectStandardInput = false;
+
+            var pr = prf.Create(cfg);
 
             pr.Run();
 
             MemoryStream outputStream;
-            pr.WaitForExit(5000, out outputStream);
-            var output = outputStream.GetString();
+            
+			if (!pr.WaitForExit (5000, out outputStream)) {
+				pr.Exit ();
+				return null;
+			}
+            
+			var output = outputStream.GetString();
 
             int rawValue = 0;
             if (int.TryParse(output, out rawValue))

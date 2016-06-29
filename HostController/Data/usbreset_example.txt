@@ -1,0 +1,20 @@
+@raspberrypi:~ $ chmod +x usbreset
+pi@raspberrypi:~ $ lsusb
+Bus 001 Device 007: ID 12d1:1506 Huawei Technologies Co., Ltd. E398 LTE/UMTS/GSM Modem/Networkcard
+Bus 001 Device 005: ID 25a7:0701  
+Bus 001 Device 004: ID 0403:6001 Future Technology Devices International, Ltd FT232 USB-Serial (UART) IC
+Bus 001 Device 003: ID 0424:ec00 Standard Microsystems Corp. SMSC9512/9514 Fast Ethernet Adapter
+Bus 001 Device 002: ID 0424:9514 Standard Microsystems Corp. 
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+pi@raspberrypi:~ $ usbreset
+bash: usbreset: command not found
+pi@raspberrypi:~ $ usbreset
+bash: usbreset: command not found
+pi@raspberrypi:~ $ ./usbreset
+Usage: usbreset device-filename
+pi@raspberrypi:~ $ sudo ./usbreset /dev/bus/usb/001/007
+Resetting USB device /dev/bus/usb/001/007
+Reset successful
+pi@raspberrypi:~ $ sudo ./usbreset /dev/bus/usb/001/007
+Resetting USB device /dev/bus/usb/001/007
+Reset successful

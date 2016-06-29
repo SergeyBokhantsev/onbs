@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Interfaces;
 using System.Linq;
 using System.IO;
+using NixHelpers;
 
 namespace Tests
 {
@@ -69,9 +70,9 @@ namespace Tests
             this.filename = filename;
         }
 
-        public IProcessRunner Create(string appKey, object[] args)
+        public ProcessConfig CreateConfig(string appKey, object[] args)
         {
-            return new MockProcessRunnerForNixHelpers(filename);
+            return new ProcessConfig();
         }
 
         public IProcessRunner Create(ProcessConfig config)
@@ -128,6 +129,31 @@ namespace Tests
             Assert.AreEqual(12, bashPID);
             Assert.AreEqual(123, sudoPID);
             Assert.AreEqual(-1, nonExistPID);
+        }
+
+        [TestMethod]
+        [DeploymentItem("Data\\lsusb")]
+        public void USBBusDevice_Parse()
+        {
+            //INIT-ACT
+            using (var stream = File.OpenRead("lsusb.txt"))
+            {
+                var devices = USBBusDevice.Parse(stream).ToArray();
+
+                //ASSERT
+                Assert.AreEqual(6, devices.Length);
+
+                Assert.IsTrue(devices.All(d => d.Bus == "001"));
+
+                var expectedDeviceNums = new[] { "007", "005", "004", "003", "002", "001" };
+                var expectedPidVids = new[] { "12d1:1506", "25a7:0701", "0403:6001", "0424:ec00", "0424:9514", "1d6b:0002" };
+
+                for(int i=0; i<devices.Length; ++i)
+                {
+                    Assert.AreEqual(expectedDeviceNums[i], devices[i].Device);
+                    Assert.AreEqual(expectedPidVids[i], devices[i].VID + ":" + devices[i].PID);
+                }
+            }
         }
     }
 }

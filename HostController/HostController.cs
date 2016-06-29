@@ -118,7 +118,7 @@ namespace HostController
         }
 
         public void Run()
-        {
+        {            
             CreateConfig();
 
             CreateLogger();
@@ -331,7 +331,8 @@ namespace HostController
                     miniDisplayController.Graphics.Delay(500);
                     miniDisplayController.Graphics.Cls();
                     miniDisplayController.Graphics.SetFont(Fonts.Small);
-                    var caption = string.IsNullOrWhiteSpace(dialog.Caption) ? "NO CAPTION" : dialog.Caption.Substring(0, 10);
+                    var caption = string.IsNullOrWhiteSpace(dialog.Caption) ? "NO CAPTION" : 
+                        dialog.Caption.Length > 10 ? dialog.Caption.Substring(0, 10) : dialog.Caption;
                     miniDisplayController.Graphics.Print(0, 10, caption, TextAlingModes.Center);
 
                     int buttonCount = 0;
@@ -518,6 +519,11 @@ namespace HostController
 
         public async Task Shutdown(HostControllerShutdownModes mode)
         {
+			arduController.RelayService.Enable(Relay.Relay3);
+			await Task.Delay(400);
+			arduController.RelayService.Disable(Relay.Relay3);
+			//await Task.Delay(200);
+
 			arduController.StopPing();
 
             dashCamController.Dispose();
@@ -540,10 +546,10 @@ namespace HostController
 			arduController.RelayService.Disable(Relay.Relay4);
             await Task.Delay(200);
 
-            arduController.RelayService.Enable(Relay.Relay4);
-            await Task.Delay(200);
-            arduController.RelayService.Disable(Relay.Relay4);
-            await Task.Delay(200);
+            //arduController.RelayService.Enable(Relay.Relay3);
+            //await Task.Delay(200);
+            //arduController.RelayService.Disable(Relay.Relay3);
+            //await Task.Delay(200);
 
 			if (mode == HostControllerShutdownModes.Exit
 				|| mode == HostControllerShutdownModes.Update) 
@@ -622,7 +628,9 @@ namespace HostController
                         var processConfig = new ProcessConfig
                         {
                             ExePath = Config.GetString(ConfigNames.SystemUpdateCommand),
-                            Args = string.Format(Config.GetString(ConfigNames.SystemUpdateArg), Config.DataFolder)
+                            Args = string.Format(Config.GetString(ConfigNames.SystemUpdateArg), Config.DataFolder),
+                            RedirectStandardOutput = false,
+                            RedirectStandardInput = false
                         };
 
                         ProcessRunnerFactory.Create(processConfig).Run();
@@ -634,7 +642,9 @@ namespace HostController
                         var processConfig = new ProcessConfig
                         {
                             ExePath = Config.GetString(ConfigNames.SystemRestartCommand),
-                            Args = Config.GetString(ConfigNames.SystemRestartArg) 
+                            Args = Config.GetString(ConfigNames.SystemRestartArg),
+                            RedirectStandardOutput = false,
+                            RedirectStandardInput = false
                         };
 
 						try
@@ -653,7 +663,9 @@ namespace HostController
                         var processConfig = new ProcessConfig
                         {
                             ExePath = Config.GetString(ConfigNames.SystemShutdownCommand),
-                            Args = Config.GetString(ConfigNames.SystemShutdownArg)
+                            Args = Config.GetString(ConfigNames.SystemShutdownArg),
+                            RedirectStandardOutput = false,
+                            RedirectStandardInput = false
                         };
 
                         ProcessRunnerFactory.Create(processConfig).Run();
@@ -662,7 +674,7 @@ namespace HostController
             }
         }
 
-		public IProcessRunner Create(string appKey, object[] argumentParameters = null)
+		public ProcessConfig CreateConfig(string appKey, object[] argumentParameters = null)
         {
 			var args = Config.GetString (string.Concat (appKey, "_args"));
 
@@ -677,7 +689,7 @@ namespace HostController
 				Silent = true
             };
 
-            return Create(processConfig);
+            return processConfig;
         }
 
         public IProcessRunner Create(ProcessConfig processConfig)

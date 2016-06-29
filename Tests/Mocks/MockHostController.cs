@@ -57,7 +57,7 @@ namespace Tests.Mocks
             throw new NotImplementedException();
         }
 
-        public IProcessRunner Create(string appKey, object[] argumentParameters = null)
+        public ProcessConfig CreateConfig(string appKey, object[] argumentParameters = null)
         {
             throw new NotImplementedException();
         }

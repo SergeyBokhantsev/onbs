@@ -89,7 +89,7 @@ namespace ProcessRunner
                 logger.Log(this, ex);
                 throw new Exception(string.Format("Unable to launch '{0}': {1}", ToString(), ex.Message), ex);
             }
-
+            
             //var monitor = new Thread(Monitor);
 			ThreadPool.QueueUserWorkItem(Monitor);
         }
@@ -113,10 +113,17 @@ namespace ProcessRunner
             }
             catch (Exception ex)
             {
+				logger.Log(this, "Exception while monitoring", LogLevels.Warning);
                 logger.Log(this, ex);
+
+				if (null != proc && !proc.HasExited)
+				{
+					logger.Log(this, "Application is not closed after exception, killing...", LogLevels.Warning);
+					proc.Kill();
+				}
             }
 
-            OnExited();
+			OnExited ();
         }
 
         public void Exit()
@@ -220,6 +227,8 @@ namespace ProcessRunner
             }
 			while (bufferToReadFromLen > 0);
             
+			output.Seek (0, SeekOrigin.Begin);
+
             return true;
         }
 

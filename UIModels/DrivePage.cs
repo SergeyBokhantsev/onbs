@@ -49,6 +49,8 @@ namespace UIModels
 
 			SetProperty("oil_temp_icon", Path.Combine(hc.Config.DataFolder, "icons", "OilTemp.png"));
 
+			SetProperty("gear", "-");
+
             gpsController.GPRMCReseived += GPRMCReseived;         
         }
 
@@ -56,7 +58,7 @@ namespace UIModels
         {
             if (!Disposed)
             {
-                weatherGuard.ExecuteIfFreeAsync(UpdateWeatherForecast);
+                //weatherGuard.ExecuteIfFreeAsync(UpdateWeatherForecast);
             }
 
 			//hc.GetController<IDashCamController> ().ScheduleTakePicture (pict);
@@ -77,8 +79,16 @@ namespace UIModels
 
         protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
         {
+            switch (name)
+            {
+                case "ProtectCurrentDashClip":
+                    hc.GetController<IDashCamController>().ProtectDeletion(null);
+                    break;
 
-            base.DoAction(name, actionArgs);
+                default:
+                    base.DoAction(name, actionArgs);
+                    break;
+            }
         }
 
         private void UpdateOBD()
@@ -87,10 +97,36 @@ namespace UIModels
             miniDisplayModel.EngineTemp = engineTemp;
             SetProperty("eng_temp", engineTemp);
 
+            var speed = obdProcessor.GetSpeed();
+            var rpm = obdProcessor.GetRPM();
+
+			if (speed.HasValue && rpm.HasValue && speed.Value > 0)
+            {
+                var ratio = ((double)rpm.Value / (double)speed.Value);
+                var gear = "-";
+
+                if (ratio >= 100)
+                    gear = "1";
+                else if (ratio >= 67 && ratio < 100)
+                    gear = "2";
+                else if (ratio >= 47 && ratio < 67)
+                    gear = "3";
+                else if (ratio >= 35 && ratio < 47)
+                    gear = "4";
+                else 
+                    gear = "5";
+
+                SetProperty("gear", gear);
+            }
+            else
+            {
+                SetProperty("gear", "2");
+            }
+
 			if (!string.IsNullOrEmpty (elm.Error))
 				elm.Reset();
 
-            Thread.Sleep(3000);
+            Thread.Sleep(1000);
         }
 
         private void UpdateWeatherForecast()
@@ -124,6 +160,8 @@ namespace UIModels
 
         private void UpdateAddres(GeoPoint location)
         {
+			return;
+
             if (!Disposed && hc.Config.IsInternetConnected)
             {
                 var addres = geocoder.GetAddres(location);
@@ -138,7 +176,7 @@ namespace UIModels
             miniDisplayModel.Draw();
         }
 
-        protected override async void OnPrimaryTick(IHostTimer timer)
+        protected override void OnPrimaryTick(IHostTimer timer)
         {
             if (!Disposed)
             {
@@ -156,6 +194,8 @@ namespace UIModels
 
         private void UpdateCpuInfo()
         {
+			return;
+
             if (!Disposed)
             {
                 var cpuSpeed = NixHelpers.CPUInfo.GetCPUSpeed(hc.ProcessRunnerFactory);

@@ -131,6 +131,7 @@ namespace Interfaces
         public static readonly string InetRestartIfNoConnectMinutes = "InetRestartIfNoConnectMinutes";
         public static readonly string InetKeeperCheckUrl = "InetKeeperCheckUrl";
         public static readonly string InetKeeperCheckMethod = "InetKeeperCheckMethod";
+        public static readonly string InetKeeperCheckUserAgent = "InetKeeperCheckUserAgent";
         public static readonly string InetKeeperCheckFolder = "InetKeeperCheckFolder";
 
         public static readonly string Modem_vid = "Modem_vid";

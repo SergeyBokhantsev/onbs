@@ -33,7 +33,7 @@ namespace Tests.DashCam
             };
         }
 
-        protected override ProcessConfig CreateRecordProcessConfig()
+        protected override ProcessConfig CreateRecordProcessConfig(string fileName)
         {
             if (OnCreateRecordProcessConfig != null)
                 OnCreateRecordProcessConfig();

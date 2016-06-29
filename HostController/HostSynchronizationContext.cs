@@ -136,9 +136,10 @@ namespace HostController
                 {
                     itemWatch.Restart();
 
-					if (workItem != null) {
-						workItem.Execute ();
-					}
+                    if (workItem == null)
+                        continue;
+
+                    workItem.Execute();
 
                     itemWatch.Stop();
 
@@ -148,6 +149,8 @@ namespace HostController
                     if (itemWatch.ElapsedMilliseconds > 1000)
                         logger.Log(this, string.Format("Work item {0} spent {1} milliseconds", workItem, itemWatch.ElapsedMilliseconds), LogLevels.Warning);
                 }
+
+                itemWatch.Stop();
 
                 pumpResetEvent.WaitOne();
 
