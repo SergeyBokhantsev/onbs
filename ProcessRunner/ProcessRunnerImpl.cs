@@ -227,6 +227,8 @@ namespace ProcessRunner
             }
 			while (bufferToReadFromLen > 0);
             
+			output.Seek (0, SeekOrigin.Begin);
+
             return true;
         }
 

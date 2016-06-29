@@ -195,7 +195,7 @@ namespace HostController.Lin
         {
             try
             {
-                var request = WebRequest.Create(config.GetString(ConfigNames.InetKeeperCheckUrl)) as HttpWebRequest;
+				var request = WebRequest.Create(config.GetString(ConfigNames.InetKeeperCheckUrl)) as HttpWebRequest;
 
                 if (request == null)
                     throw new Exception("Request is null");
