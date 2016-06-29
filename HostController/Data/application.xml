@@ -1,7 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <app>
-  <default name="Drive1"/>
+  <default name="Welcome"/>
   <pages>
+    <page name="Welcome" model="WelcomeModel" default_view="CommonYesNoPage">
+      <Accept name="Drive1"/>
+    </page>
     <page name="Test" model="TestListModel" default_view="CommonVertcalStackPage">
       <Cancel name="Drive1"/>
     </page>

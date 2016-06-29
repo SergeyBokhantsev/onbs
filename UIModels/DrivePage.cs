@@ -120,7 +120,7 @@ namespace UIModels
             }
             else
             {
-                SetProperty("gear", "2");
+                SetProperty("gear", "-");
             }
 
 			if (!string.IsNullOrEmpty (elm.Error))
