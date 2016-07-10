@@ -524,8 +524,6 @@ namespace HostController
 			arduController.RelayService.Disable(Relay.Relay3);
 			//await Task.Delay(200);
 
-			arduController.StopPing();
-
             dashCamController.Dispose();
 
             await Task.Delay(200);
@@ -550,13 +548,6 @@ namespace HostController
             //await Task.Delay(200);
             //arduController.RelayService.Disable(Relay.Relay3);
             //await Task.Delay(200);
-
-			if (mode == HostControllerShutdownModes.Exit
-				|| mode == HostControllerShutdownModes.Update) 
-			{
-                showLine("Sending HOLD POWER signal");
-                await arduController.HoldPower();
-			}
 
             showLine("Disposing Travel Controller");
             travelController.Dispose();
@@ -611,6 +602,17 @@ namespace HostController
 
             uiController.Shutdown();
             await Task.Delay(200);
+
+            arduController.StopPing();
+
+            if (mode == HostControllerShutdownModes.Exit
+                || mode == HostControllerShutdownModes.Update)
+            {
+                showLine("Sending HOLD POWER signal");
+                await arduController.HoldPower();
+            }
+
+            await Task.Delay(500);
 
 			await arduController.Beep (100);
 

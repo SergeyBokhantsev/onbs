@@ -343,5 +343,10 @@ namespace TravelsClient
         {
             return await Task.Run<ActionResult>(() => AddTravelPoint(tps, travel));
         }
+
+        public void Cancel()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
