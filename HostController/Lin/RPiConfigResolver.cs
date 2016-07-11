@@ -8,12 +8,14 @@ namespace HostController.Lin
     public class RPiConfigResolver : ConfigValuesResolver
     {
         private readonly IProcessRunnerFactory processRunnerFactory;
+        private readonly ILogger logger;
         private readonly Dictionary<string, object> cache = new Dictionary<string, object>();
         private readonly Dictionary<string, Func<string>> resolvers;
 
-        public RPiConfigResolver(IProcessRunnerFactory processRunnerFactory)
+        public RPiConfigResolver(IProcessRunnerFactory processRunnerFactory, ILogger logger)
         {
             this.processRunnerFactory = processRunnerFactory;
+            this.logger = logger;
 
             resolvers = new Dictionary<string, Func<string>>
             {
@@ -34,22 +36,31 @@ namespace HostController.Lin
 
         private string GetElm327Port()
         {
-            //if (cache.ContainsKey(ConfigNames.Placeholder_Elm327Port))
-            //    return cache[ConfigNames.Placeholder_Elm327Port] as string;
+            if (cache.ContainsKey(ConfigNames.Placeholder_Elm327Port))
+                return cache[ConfigNames.Placeholder_Elm327Port] as string;
 
             const string vid = "0403";
             const string pid = "6001";
 
-            var device = NixHelpers.DmesgFinder.FindUSBDevice(vid, pid, processRunnerFactory);
+            try
+            {
+                var device = NixHelpers.DmesgFinder.FindUSBDevice(vid, pid, processRunnerFactory);
 
-            if (device != null && device.AttachedTo.Any())
-            {
-                var ret = device.AttachedTo.First();
-                //cache.Add(ConfigNames.Placeholder_Elm327Port, ret);
-                return ret;
+                if (device != null && device.AttachedTo.Any())
+                {
+                    var ret = device.AttachedTo.First();
+                    cache.Add(ConfigNames.Placeholder_Elm327Port, ret);
+                    logger.Log(this, string.Format("ELm327 port resolved as {0}", ret), LogLevels.Info);
+                    return ret;
+                }
+                else
+                {
+                    return string.Empty;
+                }
             }
-            else
+            catch (Exception ex)
             {
+                logger.Log(this, ex);
                 return string.Empty;
             }
         }

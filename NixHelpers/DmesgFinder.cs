@@ -26,23 +26,26 @@ namespace NixHelpers
 				pr.Run();
 
                 MemoryStream outputStream;
-				if(pr.WaitForExit(10000, out outputStream))
-				{ 
-                var output = outputStream.GetString();
-                return USBDevice.Parse(output);
-				}
-				else
-				{
-					throw new Exception("dmsg timeout");
-				}
+                if (pr.WaitForExit(5000, out outputStream))
+                {
+                    var output = outputStream.GetString();
+                    return USBDevice.Parse(output);
+                }
+                else
+                {
+                    throw new Exception("dmsg timeout");
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception(string.Format("Exception in EnumerateUSBDevices: {0}", ex.Message), ex);
             }
-			finally {
-				if(null != pr && !pr.HasExited)
-					pr.Exit();
+			finally 
+            {
+                if (null != pr && !pr.HasExited)
+                {
+                    pr.Exit();
+                }
 			}
         }
 

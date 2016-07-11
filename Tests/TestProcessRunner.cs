@@ -170,5 +170,34 @@ namespace Tests
             Assert.IsTrue(sw.ElapsedMilliseconds > 3000);
             Assert.IsTrue(output.Contains("Approximate round trip times in milli-seconds:"));
         }
+
+        [TestMethod]
+        public void TestPingProcessLockedOutStream()
+        {
+            //INIT
+            var logger = new Mocks.Logger();
+            var config = new ProcessConfig
+            {
+                ExePath = "ping",
+                Args = "localhost -t"
+            };
+
+            var ping = new ProcessRunner.ProcessRunnerImpl(config, logger);
+
+            //ACT
+            ping.Run();
+
+            MemoryStream ms;
+            var waitResult = ping.WaitForExit(5000, out ms);
+
+            //ASSERT
+            Assert.IsFalse(waitResult);
+            Assert.IsNotNull(ms);
+            Assert.IsFalse(ping.HasExited);
+
+            ping.Exit();
+
+            Assert.IsTrue(ping.HasExited);
+        }
     }
 }
