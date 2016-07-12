@@ -306,7 +306,7 @@ namespace TravelController
                     {
                         bufferedPoints.AddRange(pointsToExport);
                         metricsBufferedPoints = bufferedPoints.Count;
-                        DumpPoints();
+                        //DumpPoints();
                     }
 
                     hc.Logger.Log(this, string.Concat("Attempt to add Travel points was failed: ", result.Error), LogLevels.Warning);
