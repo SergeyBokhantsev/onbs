@@ -104,7 +104,7 @@ namespace HttpClient
                 {
                     var data = Encoding.Default.GetBytes(body);
                     request.ContentLength = data.Length;
-
+                    
                     using (var stream = request.GetRequestStream())
                     {
                         for (int i = 0; i < data.Length; ++i)
@@ -156,6 +156,7 @@ namespace HttpClient
                     case WebExceptionStatus.Timeout:
                         OnException(new Exception(string.Concat("Repeating transient error event. WebExceptionStatus was: ", response.WebExceptionStatus)));
                         Thread.Sleep(delay);
+                        response.Dispose();
                         continue;
 
                     case WebExceptionStatus.ProtocolError:
@@ -168,12 +169,13 @@ namespace HttpClient
                             case HttpStatusCode.BadGateway:
                                 OnException(new Exception(string.Concat("Repeating transient error event. HttpStatus was: ", response.Status)));
                                 Thread.Sleep(delay);
+                                response.Dispose();
                                 continue;
                         }
                         break;
                 }
 
-                return response;
+                break;
             }
 
             return response;
