@@ -8,14 +8,12 @@ namespace HostController.Lin
     public class RPiConfigResolver : ConfigValuesResolver
     {
         private readonly IProcessRunnerFactory processRunnerFactory;
-        private readonly ILogger logger;
         private readonly Dictionary<string, object> cache = new Dictionary<string, object>();
         private readonly Dictionary<string, Func<string>> resolvers;
 
-        public RPiConfigResolver(IProcessRunnerFactory processRunnerFactory, ILogger logger)
+        public RPiConfigResolver(IProcessRunnerFactory processRunnerFactory)
         {
             this.processRunnerFactory = processRunnerFactory;
-            this.logger = logger;
 
             resolvers = new Dictionary<string, Func<string>>
             {
@@ -50,7 +48,7 @@ namespace HostController.Lin
                 {
                     var ret = device.AttachedTo.First();
                     cache.Add(ConfigNames.Placeholder_Elm327Port, ret);
-                    logger.Log(this, string.Format("ELm327 port resolved as {0}", ret), LogLevels.Info);
+                    //logger.Log(this, string.Format("ELm327 port resolved as {0}", ret), LogLevels.Info);
                     return ret;
                 }
                 else
@@ -60,7 +58,7 @@ namespace HostController.Lin
             }
             catch (Exception ex)
             {
-                logger.Log(this, ex);
+                //logger.Log(this, ex);
                 return string.Empty;
             }
         }
