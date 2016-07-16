@@ -436,20 +436,27 @@ namespace HostController.Lin
 
         private ModemModes GetModemMode()
         {
-			var modemVid = config.GetString(ConfigNames.Modem_vid);
-			var modemPid_modemMode = config.GetString(ConfigNames.Modem_modemmode_pid);
-			var modemPid_storageMode = config.GetString(ConfigNames.Modem_storagemode_pid);
-
-            foreach(var dev in NixHelpers.DmesgFinder.EnumerateUSBDevices(prf))
+            try
             {
-                if (dev.VID == modemVid)
-                {
-					if (modemPid_modemMode.Equals(dev.PID, StringComparison.InvariantCultureIgnoreCase))
-                        return ModemModes.Modem;
+                var modemVid = config.GetString(ConfigNames.Modem_vid);
+                var modemPid_modemMode = config.GetString(ConfigNames.Modem_modemmode_pid);
+                var modemPid_storageMode = config.GetString(ConfigNames.Modem_storagemode_pid);
 
-					if (modemPid_storageMode.Equals(dev.PID, StringComparison.InvariantCultureIgnoreCase))
-                        return ModemModes.Storage;
+                foreach (var dev in NixHelpers.DmesgFinder.EnumerateUSBDevices(prf))
+                {
+                    if (dev.VID == modemVid)
+                    {
+                        if (modemPid_modemMode.Equals(dev.PID, StringComparison.InvariantCultureIgnoreCase))
+                            return ModemModes.Modem;
+
+                        if (modemPid_storageMode.Equals(dev.PID, StringComparison.InvariantCultureIgnoreCase))
+                            return ModemModes.Storage;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                logger.Log(this, ex);                
             }
 
             return ModemModes.NotFound;

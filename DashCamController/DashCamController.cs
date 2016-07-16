@@ -138,12 +138,14 @@ namespace DashCamController
                     hc.Logger.Log(this, "Timeout while taking picture", LogLevels.Warning);
                     ms = null;
                 }
-
-                cameraProcess.Exit();
             }
             catch (Exception ex)
             {
                 hc.Logger.Log(this, ex);
+            }
+            finally
+            {
+                cameraProcess.Exit();
             }
 
             OrderPictureCallback[] callbacks;
