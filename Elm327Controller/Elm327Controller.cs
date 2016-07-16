@@ -138,16 +138,18 @@ namespace Elm327Controller
 
         public void Dispose()
         {
-            lock (locker)
-            {
+            //lock (locker)
+            //{
                 if (!disposed)
                 {
                     disposed = true;
-                    Reset();
+                    //Reset();
+
+                    elm.Dispose();
 
 					hc.GetController<IArduinoController>().RelayService.Disable(Interfaces.Relays.Relay.OBD);
                 }
-            }
+            //}
         }
     }
 }
