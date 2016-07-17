@@ -14,6 +14,8 @@ namespace LogLib
     {
         private readonly string logFolder;
 
+        public event LogEventHandlerDelegate LogEvent;
+
         public LogLevels Level
         {
             get;

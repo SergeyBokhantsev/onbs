@@ -148,10 +148,14 @@
     </page>
     <page name="SystemInfoCatalog" model="PagesSelectorPage" default_view="CommonVertcalStackPage">
       <Cancel name="Drive1" caption="Back"/>
-      <RotaryItem_1 name="LsUsb" caption="lsusb (USB info)"/>
-      <RotaryItem_2 name="LightSensorInfo" caption="Light sensors readings"/>
+      <RotaryItem_1 name="LastLogMsg" caption="Last log message"/>
+      <RotaryItem_2 name="LsUsb" caption="lsusb (USB info)"/>
+      <RotaryItem_3 name="LightSensorInfo" caption="Light sensors readings"/>
     </page>
     <page name="LsUsb" model="LsUsbModel" default_view="MultilineView">
+      <Cancel name="SystemInfoCatalog" caption="Back"/>
+    </page>
+    <page name="LastLogMsg" model="LastLogMsgModel" default_view="MultilineView">
       <Cancel name="SystemInfoCatalog" caption="Back"/>
     </page>
     <page name="ZXGamesList" model="ZXGamesListModel" default_view="CommonVertcalStackPage">

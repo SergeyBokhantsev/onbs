@@ -22,6 +22,8 @@ namespace TravelsClient
         private int logId = -1;
         private int logSize;
 
+        public event LogEventHandlerDelegate LogEvent;
+
         public OnlineLogger(IConfig config)
         {
             this.config = config;

@@ -12,8 +12,11 @@ namespace Interfaces
         Debug = 4
     }
 
+    public delegate void LogEventHandlerDelegate(object caller, string message, LogLevels level);
+
     public interface ILogger
     {
+        event LogEventHandlerDelegate LogEvent;
         void Log(object caller, string message, LogLevels level);
         void Log(object caller, Exception ex);
         void Flush();

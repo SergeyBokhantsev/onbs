@@ -7,7 +7,10 @@ namespace HostController
 {
     public class ConsoleLoggerWrapper : ILogger
     {
+        public event LogEventHandlerDelegate LogEvent;
+
         private readonly ILogger[] loggers;
+
         internal ConsoleLoggerWrapper(ILogger[] loggers)
         {
             if (loggers == null)
@@ -25,6 +28,8 @@ namespace HostController
             {
                 logger.Log(caller, message, level);
             }
+
+            OnLogEvent(caller, message, level);
         }
 
         public void Log(object caller, Exception ex)
@@ -35,6 +40,16 @@ namespace HostController
             {
                 logger.Log(caller, ex);
             }
+
+            OnLogEvent(caller, ex.Message, LogLevels.Error);
+        }
+
+        private void OnLogEvent(object caller, string message, LogLevels level)
+        {
+            var handler = LogEvent;
+
+            if (null != handler)
+                handler(caller, message, level);
         }
 
         [Conditional("DEBUG")]

@@ -61,6 +61,7 @@
     <Compile Include="Dialogs\OkDialog.cs" />
     <Compile Include="Dialogs\YesNoDialog.cs" />
     <Compile Include="DrivePage.cs" />
+    <Compile Include="SystemInfoModels\LastLogMsgModel.cs" />
     <Compile Include="WelcomeModel.cs" />
     <Compile Include="ExternalApplicationPage.cs" />
     <Compile Include="LightSensorInfoModel.cs" />
