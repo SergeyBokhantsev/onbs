@@ -16,6 +16,51 @@ namespace UIModels
 {
     public class DrivePage : DrivePageBase
     {
+        private class DriveStatusReporter
+        {
+            private readonly ILogger logger;
+            private readonly ISpeakService speaker;
+
+            private double lastSpeed;
+            private bool engineSpeedWarning;
+
+            public DriveStatusReporter(ILogger logger, ISpeakService speaker)
+            {
+                this.logger = logger;
+                this.speaker = speaker;
+            }
+
+            public void SetSpeed(double speed)
+            {
+                if (speed > 15)
+                {
+                    if (speed % 10d < 0.6)
+                    {
+                        var rounded = Math.Floor(speed);
+
+                        if (lastSpeed != rounded)
+                        {
+                            lastSpeed = rounded;
+
+                            speaker.Speak(lastSpeed.ToString("0"));
+                        }
+                    }
+                }
+            }
+
+            public void SetRPM(int rpm)
+            {
+                if (rpm > 3200 && !engineSpeedWarning)
+                {
+                    engineSpeedWarning = true;
+                    speaker.Speak("Engine speed");
+                }
+
+                if (rpm < 2800)
+                    engineSpeedWarning = false;
+            }
+        }
+
         private static int focusedItemIndex;
 
         private readonly ITravelController tc;
@@ -26,6 +71,7 @@ namespace UIModels
         private readonly IOperationGuard weatherGuard = new InterlockedGuard();
         private readonly IOperationGuard geocoderGuard = new TimedGuard(new TimeSpan(0, 0, 3));
         private readonly IOperationGuard obdGuard = new InterlockedGuard();
+        private readonly IOperationGuard engineCoolantTempGuard = new TimedGuard(new TimeSpan(0, 0, 30));
         private readonly IOperationGuard minidisplayGuard = new TimedGuard(new TimeSpan(0, 0, 2));
         private readonly IOperationGuard cpuInfoGuard = new TimedGuard(new TimeSpan(0, 0, 10));
 
@@ -33,6 +79,8 @@ namespace UIModels
 
 		private readonly IElm327Controller elm;
         private readonly OBDProcessor obdProcessor;
+
+        private readonly DriveStatusReporter reporter;
 
         public DrivePage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor, focusedItemIndex)
@@ -51,7 +99,9 @@ namespace UIModels
 
 			SetProperty("gear", "-");
 
-            gpsController.GPRMCReseived += GPRMCReseived;         
+            gpsController.GPRMCReseived += GPRMCReseived;
+
+            reporter = new DriveStatusReporter(hc.Logger, hc.SpeakService);
         }
 
         protected override void OnSecondaryTimer(IHostTimer timer)
@@ -93,40 +143,52 @@ namespace UIModels
 
         private void UpdateOBD()
         {
-            var engineTemp = obdProcessor.GetCoolantTemp() ?? int.MinValue;
-            miniDisplayModel.EngineTemp = engineTemp;
-            SetProperty("eng_temp", engineTemp);
-
-            var speed = obdProcessor.GetSpeed();
-            var rpm = obdProcessor.GetRPM();
-
-			if (speed.HasValue && rpm.HasValue && speed.Value > 0)
+            if (!Disposed)
             {
-                var ratio = ((double)rpm.Value / (double)speed.Value);
-                var gear = "-";
+                engineCoolantTempGuard.ExecuteIfFree(() =>
+                {
+                     var engineTemp = obdProcessor.GetCoolantTemp() ?? int.MinValue;
+                     miniDisplayModel.EngineTemp = engineTemp;
+                     SetProperty("eng_temp", engineTemp);
+                });
 
-                if (ratio >= 100)
-                    gear = "1";
-                else if (ratio >= 67 && ratio < 100)
-                    gear = "2";
-                else if (ratio >= 47 && ratio < 67)
-                    gear = "3";
-                else if (ratio >= 35 && ratio < 47)
-                    gear = "4";
-                else 
-                    gear = "5";
+                var speed = obdProcessor.GetSpeed();
+                var rpm = obdProcessor.GetRPM();
 
-                SetProperty("gear", gear);
+                if (speed.HasValue && rpm.HasValue && speed.Value > 0)
+                {
+                    var ratio = ((double)rpm.Value / (double)speed.Value);
+                    var gear = "-";
+
+                    if (ratio >= 100)
+                        gear = "1";
+                    else if (ratio >= 67 && ratio < 100)
+                        gear = "2";
+                    else if (ratio >= 47 && ratio < 67)
+                        gear = "3";
+                    else if (ratio >= 35 && ratio < 47)
+                        gear = "4";
+                    else
+                        gear = "5";
+
+                    SetProperty("gear", gear);
+                }
+                else
+                {
+                    SetProperty("gear", "-");
+                }
+
+                if (speed.HasValue)
+                    reporter.SetSpeed((double)speed.Value);
+
+                if (rpm.HasValue)
+                    reporter.SetRPM(rpm.Value);
+
+                if (!string.IsNullOrEmpty(elm.Error))
+                    elm.Reset();
+
+                Thread.Sleep(1000);
             }
-            else
-            {
-                SetProperty("gear", "-");
-            }
-
-			if (!string.IsNullOrEmpty (elm.Error))
-				elm.Reset();
-
-            Thread.Sleep(1000);
         }
 
         private void UpdateWeatherForecast()
