@@ -91,6 +91,10 @@ namespace DashCamController
                     if (cameraProcess != null && !cameraProcess.HasExited)
                     {
                         cameraProcess.Exit();
+                        while (!cameraProcess.WaitForExit(10000) || disposed)
+                        {
+                            hc.Logger.Log(this, "Camera process still had not exited after waiting", LogLevels.Warning);
+                        }
                     }
                 }
             }

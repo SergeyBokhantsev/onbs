@@ -23,17 +23,23 @@ void GpsController::process()
 		
 		for (int i=0; i<count; ++i)
 		{
-			tinyGps.encode(nmeaGpsPort->read());
+			char v = nmeaGpsPort->read();
+			write_c(v);
+			tinyGps.encode(v);
 		}
 		
 		last_process_time = now;
 	}
+	
+	//!!!!
+	return;
 	
 	if (now > last_send_time + GPS_SEND_INTERVAL)
 	{	
 		write_c('G');write_c('P');write_c('S');write_c(':');
 
 		write_c((char)GPS_CONTROLLER_VALUE_LOCATION);
+		write_d(tinyGps.location.isValid() ? '1' : '0');
 		write_d(tinyGps.location.lat());
 		write_d(tinyGps.location.lng());		
 		

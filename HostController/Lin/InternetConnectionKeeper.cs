@@ -442,7 +442,8 @@ namespace HostController.Lin
                 var modemPid_modemMode = config.GetString(ConfigNames.Modem_modemmode_pid);
                 var modemPid_storageMode = config.GetString(ConfigNames.Modem_storagemode_pid);
 
-                foreach (var dev in NixHelpers.DmesgFinder.EnumerateUSBDevices(prf))
+                //foreach (var dev in NixHelpers.DmesgFinder.EnumerateUSBDevices(prf))
+                foreach (var dev in NixHelpers.LsUsb.EnumerateDevices(prf))
                 {
                     if (dev.VID == modemVid)
                     {
@@ -469,6 +470,8 @@ namespace HostController.Lin
         private readonly IConfig config;
         private readonly IProcessRunnerFactory prf;
 
+        private NixHelpers.USBDevice modemDevice;
+
         public Dialer(ILogger logger, IConfig config, IProcessRunnerFactory prf)
         {
             this.logger = Ensure.ArgumentIsNotNull(logger);
@@ -486,18 +489,26 @@ namespace HostController.Lin
             catch (Exception ex)
             {
                 logger.Log(this, ex);
+                modemDevice = null;
 				return null;
             }
         }
 
         private IProcessRunner RunDialer()
         {
-			var modemVid = config.GetString(ConfigNames.Modem_vid);
-			var modemPid_modemMode = config.GetString(ConfigNames.Modem_modemmode_pid);
-			var modemDevice = NixHelpers.DmesgFinder.FindUSBDevice (modemVid, modemPid_modemMode, prf);
+            if (null == modemDevice)
+            {
+                logger.Log(this, "Resolving Modem device via dmesg", LogLevels.Info);
 
-            if (modemDevice == null)
-                throw new Exception(string.Format("No {0}:{1} USB device found", modemVid, modemPid_modemMode));
+                var modemVid = config.GetString(ConfigNames.Modem_vid);
+                var modemPid_modemMode = config.GetString(ConfigNames.Modem_modemmode_pid);
+                modemDevice = NixHelpers.DmesgFinder.FindUSBDevice(modemVid, modemPid_modemMode, prf);
+
+                if (modemDevice == null)
+                    throw new Exception(string.Format("No {0}:{1} USB device found", modemVid, modemPid_modemMode));
+
+                logger.Log(this, string.Format("Modem device resolved: {0}:{1}", modemDevice.VID, modemDevice.PID), LogLevels.Info);
+            }
 
             if (modemDevice.AttachedTo == null || !modemDevice.AttachedTo.Any())
                 throw new Exception(string.Format("USB device {0}:{1} has no any ttyUSB attached", modemDevice.VID, modemDevice.PID));
@@ -521,8 +532,14 @@ namespace HostController.Lin
             dialerProcCfg.RedirectStandardOutput = false;
             var dialer = prf.Create(dialerProcCfg);
             dialer.Run();
-			dialer.WaitForExit(10000);
-            return dialer;
+
+			if (dialer.WaitForExit(10000))
+            {
+                logger.Log(this, "Inet dealer exited too fast...", LogLevels.Warning);
+                return null;
+            }
+            else
+                return dialer;
         }
 
         private void KillRunningDialers()

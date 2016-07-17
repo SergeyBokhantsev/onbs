@@ -2,7 +2,6 @@
 #define outbuffer_h
 
 #include "HardwareSerial.h"
-#include "RingBuffer.h"
 
 #define OUT_BUFFER_SIZE 128
 
