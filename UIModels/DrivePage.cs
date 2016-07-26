@@ -186,8 +186,6 @@ namespace UIModels
 
                 if (!string.IsNullOrEmpty(elm.Error))
                     elm.Reset();
-
-                Thread.Sleep(1000);
             }
         }
 
