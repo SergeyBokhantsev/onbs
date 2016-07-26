@@ -25,5 +25,7 @@ namespace Tests.Mocks
         public void Flush()
         {
         }
+
+        public event LogEventHandlerDelegate LogEvent;
     }
 }

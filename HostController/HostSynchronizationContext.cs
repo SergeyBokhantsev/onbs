@@ -188,8 +188,7 @@ namespace HostController
 				return;
 			}
 
-            pumpItems.Enqueue(new AsynchronousWorkItem(action, state, null));
-            pumpResetEvent.Set();
+            Post(action, state, action.Target != null ? action.Target.GetType().FullName : "NO TARGET");
         }
 
         public override void Post(SendOrPostCallback action, object state, string details)

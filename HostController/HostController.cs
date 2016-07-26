@@ -519,108 +519,117 @@ namespace HostController
 
         public async Task Shutdown(HostControllerShutdownModes mode)
         {
-			arduController.RelayService.Enable(Relay.Relay3);
-			await Task.Delay(400);
-			arduController.RelayService.Disable(Relay.Relay3);
-			//await Task.Delay(200);
-
-            dashCamController.Dispose();
-
-            await Task.Delay(200);
-
-            var shutdownModel = uiController.ShowPage("ShutdownProgress", null, null) as UIModels.ShutdownProgressModel;
-
-            Action<string> showLine = line => { if (shutdownModel != null) { shutdownModel.AddLine(line); } };
-
-            showLine(string.Format("Begin shutdown in {0} mode", mode));
-            Logger.Log(this, string.Format("Begin shutdown in {0} mode", mode), LogLevels.Info);
-
-            showLine("Disposing ELM327 Controller");
-            elm327Controller.Dispose();
-            await Task.Delay(200);
-
-			arduController.RelayService.Disable(Relay.OBD);
-			arduController.RelayService.Disable(Relay.Relay3);
-			arduController.RelayService.Disable(Relay.Relay4);
-            await Task.Delay(200);
-
-            //arduController.RelayService.Enable(Relay.Relay3);
-            //await Task.Delay(200);
-            //arduController.RelayService.Disable(Relay.Relay3);
-            //await Task.Delay(200);
-
-            showLine("Disposing Travel Controller");
-            travelController.Dispose();
-            await Task.Delay(200);
-
-            showLine("Disposing InetKeeper");
-			netKeeper.Dispose();
-            await Task.Delay(200);
-
-            showLine("Stopping GPSD service");
-			gpsd.Stop();
-            await Task.Delay(200);
-
-            showLine("Disconnecting time checking events");
-            DisconnectSystemTimeChecking();
-            await Task.Delay(200);
-
-            showLine("Disabling GPS Controller");
-            gpsController.Shutdown();
-            await Task.Delay(200);
-
-            if (mode != HostControllerShutdownModes.UnhandledException)
+            try
             {
-                try
+                arduController.RelayService.Enable(Relay.Relay3);
+                await Task.Delay(400);
+                arduController.RelayService.Disable(Relay.Relay3);
+                //await Task.Delay(200);
+
+                dashCamController.Dispose();
+
+                await Task.Delay(200);
+
+                var shutdownModel = uiController.ShowPage("ShutdownProgress", null, null) as UIModels.ShutdownProgressModel;
+
+                Action<string> showLine = line => { if (shutdownModel != null) { shutdownModel.AddLine(line); } };
+
+                showLine(string.Format("Begin shutdown in {0} mode", mode));
+                Logger.Log(this, string.Format("Begin shutdown in {0} mode", mode), LogLevels.Info);
+
+                showLine("Disposing ELM327 Controller");
+                elm327Controller.Dispose();
+                await Task.Delay(200);
+
+                arduController.RelayService.Disable(Relay.OBD);
+                arduController.RelayService.Disable(Relay.Relay3);
+                arduController.RelayService.Disable(Relay.Relay4);
+                await Task.Delay(200);
+
+                //arduController.RelayService.Enable(Relay.Relay3);
+                //await Task.Delay(200);
+                //arduController.RelayService.Disable(Relay.Relay3);
+                //await Task.Delay(200);
+
+                showLine("Disposing Travel Controller");
+                await travelController.ShutdownAsync();
+                await Task.Delay(200);
+
+                showLine("Disposing InetKeeper");
+                netKeeper.Dispose();
+                await Task.Delay(200);
+
+                showLine("Stopping GPSD service");
+                gpsd.Stop();
+                await Task.Delay(200);
+
+                showLine("Disconnecting time checking events");
+                DisconnectSystemTimeChecking();
+                await Task.Delay(200);
+
+                showLine("Disabling GPS Controller");
+                gpsController.Shutdown();
+                await Task.Delay(200);
+
+                if (mode != HostControllerShutdownModes.UnhandledException)
                 {
-                    showLine("Saving Configuration");
-                    Config.Save();
+                    try
+                    {
+                        showLine("Saving Configuration");
+                        Config.Save();
+                    }
+                    catch (Exception ex)
+                    {
+                        showLine(ex.Message);
+                        Logger.Log(this, ex);
+                    }
                 }
-                catch (Exception ex)
+
+                Logger.Log(this, "--- Logging finished ---", LogLevels.Info);
+
+                showLine("Flushing loggers");
+                Logger.Flush();
+                await Task.Delay(200);
+
+                showLine("Flushing online log");
+                onlineLogger.Upload(true);
+                await Task.Delay(200);
+
+                showLine("Stopping UI...");
+
+                miniDisplayController.ResetQueue();
+
+                miniDisplayController.Dispose();
+                await Task.Delay(200);
+
+                uiController.Shutdown();
+                await Task.Delay(200);
+
+                arduController.StopPing();
+
+                if (mode == HostControllerShutdownModes.Exit
+                    || mode == HostControllerShutdownModes.Update)
                 {
-                    showLine(ex.Message);
-                    Logger.Log(this, ex);
+                    showLine("Sending HOLD POWER signal");
+                    await arduController.HoldPower();
                 }
+
+                await Task.Delay(500);
+
+                await arduController.Beep(100);
+
+                showLine("Stopping timers");
+                StopTimers();
+                await Task.Delay(200);
+
+                showLine("Stopping SyncContext");
+            }
+            catch (Exception ex)
+            {
+                WriteUnhandledException(ex);
+                mode = HostControllerShutdownModes.UnhandledException;
             }
 
-            Logger.Log(this, "--- Logging finished ---", LogLevels.Info);
-
-            showLine("Flushing loggers");
-            Logger.Flush();
-            await Task.Delay(200);
-
-            showLine("Flushing online log");
-            onlineLogger.Upload(true);
-            await Task.Delay(200);
-
-            showLine("Stopping UI...");
-
-            miniDisplayController.ResetQueue();
-
-            miniDisplayController.Dispose();
-            await Task.Delay(200);
-
-            uiController.Shutdown();
-            await Task.Delay(200);
-
-            arduController.StopPing();
-
-            if (mode == HostControllerShutdownModes.Exit
-                || mode == HostControllerShutdownModes.Update)
-            {
-                showLine("Sending HOLD POWER signal");
-                await arduController.HoldPower();
-            }
-
-            await Task.Delay(500);
-
-			await arduController.Beep (100);
-
-            showLine("Stopping timers");
-            StopTimers();
-            await Task.Delay(200);
-
-            showLine("Stopping SyncContext");
             syncContext.Stop();
 
             switch (mode)

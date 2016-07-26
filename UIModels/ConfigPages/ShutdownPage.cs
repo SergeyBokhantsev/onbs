@@ -28,7 +28,7 @@ namespace UIModels
             switch (action)
             {
                 case "Quit":
-                    hc.Shutdown(HostControllerShutdownModes.Exit);
+                    await hc.Shutdown(HostControllerShutdownModes.Exit);
                     break;
 
 			case "Update":
@@ -37,16 +37,16 @@ namespace UIModels
 					         new Dialogs.YesNoDialog ("Updating", "Pull latest sources and compile?", "Update", "Cancel", hc, 10000, DialogResults.No));
 
 				if (dr == DialogResults.Yes) {
-					hc.Shutdown (HostControllerShutdownModes.Update);
+					await hc.Shutdown (HostControllerShutdownModes.Update);
 				}
                     break;
 
                 case "Restart":
-                    hc.Shutdown(HostControllerShutdownModes.Restart);
+                    await hc.Shutdown(HostControllerShutdownModes.Restart);
                     break;
 
                 case "Shutdown":
-                    hc.Shutdown(HostControllerShutdownModes.Shutdown);
+                    await hc.Shutdown(HostControllerShutdownModes.Shutdown);
                     break;
             }
         }

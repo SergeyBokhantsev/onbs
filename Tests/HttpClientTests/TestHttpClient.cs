@@ -20,7 +20,9 @@ namespace Tests.HttpClientTests
             //ASSERT
             Assert.IsNotNull(response);
             Assert.AreEqual(HttpStatusCode.OK, response.Status);
-            Assert.IsNull(response.Error);
+            Assert.AreEqual("OK", response.Error);
+
+            response.Dispose();
         }
 
         [TestMethod]
@@ -37,6 +39,24 @@ namespace Tests.HttpClientTests
             Assert.IsNotNull(response);
             Assert.AreEqual(HttpStatusCode.NotFound, response.Status);
             Assert.IsNotNull(response.Error);
+            Assert.AreNotEqual("OK", response.Error);
+        }
+
+        [TestMethod]
+        public void HttpClientPostInvalidUrl()
+        {
+            //INIT
+            var client = new HttpClient.Client();
+            var uri = new Uri("https://www.google.com");
+
+            //ACT
+            var response = client.Post(uri, "hhh", 3, 1);
+
+            //ASSERT
+            Assert.IsNotNull(response);
+            Assert.AreEqual(HttpStatusCode.NotFound, response.Status);
+            Assert.IsNotNull(response.Error);
+            Assert.AreNotEqual("OK", response.Error);
         }
     }
 }

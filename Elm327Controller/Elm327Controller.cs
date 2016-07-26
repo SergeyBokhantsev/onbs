@@ -145,7 +145,8 @@ namespace Elm327Controller
                     disposed = true;
                     //Reset();
 
-                    elm.Dispose();
+                    if (null != elm)
+                        elm.Dispose();
 
 					hc.GetController<IArduinoController>().RelayService.Disable(Interfaces.Relays.Relay.OBD);
                 }

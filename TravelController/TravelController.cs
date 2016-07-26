@@ -13,7 +13,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace TravelController
 {
-    public class TravelController : ITravelController, IDisposable
+    public class TravelController : ITravelController
     {
         private const string storedPointsFileName = "StoredTravelPoints.bin";
 
@@ -271,10 +271,12 @@ namespace TravelController
                 handler(this, metrics);
         }
 
-        private async Task ExportPoints()
+        private async Task<bool> ExportPoints()
         {
+            var isSended = false;
+
             if (state.Value != States.Ready)
-                return;
+                return isSended;
 
             state.Value = States.ExportingPoints;
 
@@ -299,6 +301,7 @@ namespace TravelController
                     hc.Logger.LogIfDebug(this, "Point(s) were exported succesfully");
                     metricsError = false;
                     exportErrorCount = 0;
+                    isSended = true;
                 }
                 else
                 {
@@ -328,6 +331,8 @@ namespace TravelController
             }
 
             state.Value = States.Ready;
+
+            return isSended;
         }
 
         private void DumpPoints()
@@ -434,11 +439,12 @@ namespace TravelController
             }
         }
 
-        public void Dispose()
+        public async Task ShutdownAsync()
         {
             if (!disposed)
             {
                 disposed = true;
+                hc.GetController<IGPSController>().GPRMCReseived -= GPRMCReseived;
                 timer.Dispose();
 
                 var lastKnownGprmc = logFilter.LastKnownLocation;
@@ -471,9 +477,10 @@ namespace TravelController
                     {
                         hc.Logger.Log(this, "Trying to send buffered points...", LogLevels.Info);
 
-                        bool result = Task.Run(async () => { await ExportPoints(); }).Wait(15000);
+                        var sendTask = ExportPoints();
+                        await Task.WhenAny(sendTask, Task.Delay(15000));
 
-                        if (result)
+                        if (sendTask.IsCompleted && sendTask.Result)
                             hc.Logger.Log(this, "Buffered points were successfully sended.", LogLevels.Info);
                         else
                         {
