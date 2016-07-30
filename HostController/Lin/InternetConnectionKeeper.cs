@@ -72,7 +72,7 @@ namespace HostController.Lin
 
                     generalRetries++;
 
-                    if (generalRetries > 3)
+                    if (generalRetries > 2)
                     {
                         logger.Log(this, "Still no inet connection. Trying to find and reset modem...", LogLevels.Warning);
                         modemSwitcher.CheckAndReset();

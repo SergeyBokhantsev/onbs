@@ -136,50 +136,53 @@ namespace HttpClient
         }
 
         private ClientResponse ExecuteWithTransientConnectionErrorRetry(Func<ClientResponse> func, int retries, int delay)
-        {
-            ClientResponse response = null;
+		{
+			ClientResponse response = null;
+			bool wasRetried = false;
 
-            while (retries-- > 0)
-            {
-                response = func();
+			while (retries-- > 0) {
+				response = func ();			
 
-                switch (response.WebExceptionStatus)
-                {
-                    case WebExceptionStatus.ConnectFailure:
-                    case WebExceptionStatus.ConnectionClosed:
-                    case WebExceptionStatus.NameResolutionFailure:
-                    case WebExceptionStatus.PipelineFailure:
-                    case WebExceptionStatus.ProxyNameResolutionFailure:
-                    case WebExceptionStatus.ReceiveFailure:
-                    case WebExceptionStatus.SecureChannelFailure:
-                    case WebExceptionStatus.SendFailure:
-                    case WebExceptionStatus.Timeout:
-                        OnException(new Exception(string.Concat("Repeating transient error event. WebExceptionStatus was: ", response.WebExceptionStatus)));
-                        Thread.Sleep(delay);
-                        response.Dispose();
-                        continue;
+				switch (response.WebExceptionStatus) {
+				case WebExceptionStatus.ConnectFailure:
+				case WebExceptionStatus.ConnectionClosed:
+				case WebExceptionStatus.NameResolutionFailure:
+				case WebExceptionStatus.PipelineFailure:
+				case WebExceptionStatus.ProxyNameResolutionFailure:
+				case WebExceptionStatus.ReceiveFailure:
+				case WebExceptionStatus.SecureChannelFailure:
+				case WebExceptionStatus.SendFailure:
+				case WebExceptionStatus.Timeout:
+					OnException (new Exception (string.Concat ("Repeating transient error event. WebExceptionStatus was: ", response.WebExceptionStatus)));
+					response.Dispose ();
+					wasRetried = true;
+					Thread.Sleep (delay);
+					continue;
 
-                    case WebExceptionStatus.ProtocolError:
-                        switch (response.Status)
-                        {
-                            case HttpStatusCode.GatewayTimeout:
-                            case HttpStatusCode.InternalServerError:
-                            case HttpStatusCode.RequestTimeout:
-                            case HttpStatusCode.ServiceUnavailable:
-                            case HttpStatusCode.BadGateway:
-                                OnException(new Exception(string.Concat("Repeating transient error event. HttpStatus was: ", response.Status)));
-                                Thread.Sleep(delay);
-                                response.Dispose();
-                                continue;
-                        }
-                        break;
-                }
+				case WebExceptionStatus.ProtocolError:
+					switch (response.Status) {
+					case HttpStatusCode.GatewayTimeout:
+					case HttpStatusCode.InternalServerError:
+					case HttpStatusCode.RequestTimeout:
+					case HttpStatusCode.ServiceUnavailable:
+					case HttpStatusCode.BadGateway:
+						OnException (new Exception (string.Concat ("Repeating transient error event. HttpStatus was: ", response.Status)));
+						response.Dispose ();
+						Thread.Sleep (delay);
+						wasRetried = true;
+						continue;
+					}
+					break;
+				}
 
-                break;
-            }
+				break;
+			}
 
-            return response;
-        }
+			if (wasRetried)
+				OnException (new Exception (string.Concat("Http operation finished after retries: ", response.Status)));
+
+			return response;
+		}
 
         private void OnBeforeSendRequest(HttpWebRequest request)
         {

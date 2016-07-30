@@ -71,12 +71,12 @@ namespace NixHelpers
 
             MemoryStream stream;
             pr.Run();
-            if (pr.WaitForExit(10000, out stream))
-            {
-                return USBBusDevice.Parse(stream);
-            }
-            else
-                return new USBBusDevice[0];
+			if (pr.WaitForExit (10000, out stream)) {
+				return USBBusDevice.Parse (stream);
+			} else {
+				pr.Exit ();
+				return new USBBusDevice[0];
+			}
         }
     }
 }

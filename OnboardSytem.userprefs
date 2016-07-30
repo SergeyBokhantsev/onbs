@@ -1,12 +1,13 @@
 ﻿<Properties StartupItem="HostController/HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/Lin/InternetConnectionKeeper.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/HostController.cs">
     <Files>
-      <File FileName="HostController/HostController.cs" Line="1" Column="1" />
-      <File FileName="HostController/Lin/InternetConnectionKeeper.cs" Line="296" Column="43" />
-      <File FileName="HostController/Configuration.cs" Line="116" Column="1" />
-      <File FileName="NixHelpers/LsUsb.cs" Line="51" Column="1" />
-      <File FileName="ProcessRunner/ProcessRunnerImpl.cs" Line="230" Column="38" />
+      <File FileName="HostController/HostController.cs" Line="108" Column="46" />
+      <File FileName="HostController/Lin/InternetConnectionKeeper.cs" Line="1" Column="1" />
+      <File FileName="HostController/Configuration.cs" Line="1" Column="1" />
+      <File FileName="NixHelpers/LsUsb.cs" Line="1" Column="1" />
+      <File FileName="ProcessRunner/ProcessRunnerImpl.cs" Line="1" Column="1" />
+      <File FileName="HostController/App.config" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

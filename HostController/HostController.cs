@@ -119,6 +119,8 @@ namespace HostController
 
         public void Run()
         {            
+			ThreadPool.SetMinThreads (20, 20);
+
             CreateConfig();
 
             CreateLogger();

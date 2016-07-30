@@ -57,8 +57,6 @@ namespace HostController.Jobs
 
         private async void OnPicture(MemoryStream ms)
         {
-            busy = 0;
-
             hc.Logger.LogIfDebug(this, "PhotoJob.OnPicture begin");
 
            if (hc.Config.IsInternetConnected && ms != null && ms.Length > 0)
@@ -78,6 +76,8 @@ namespace HostController.Jobs
             {
                 hc.Logger.Log(this, "Picture stream is null or empty", LogLevels.Warning);
             }
+
+			busy = 0;
         }
 
         private void Config_Changed(string name)
