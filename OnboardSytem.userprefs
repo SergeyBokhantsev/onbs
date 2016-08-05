@@ -2,7 +2,7 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
   <MonoDevelop.Ide.Workbench ActiveDocument="HostController/HostController.cs">
     <Files>
-      <File FileName="HostController/HostController.cs" Line="108" Column="46" />
+      <File FileName="HostController/HostController.cs" Line="102" Column="44" />
       <File FileName="HostController/Lin/InternetConnectionKeeper.cs" Line="1" Column="1" />
       <File FileName="HostController/Configuration.cs" Line="1" Column="1" />
       <File FileName="NixHelpers/LsUsb.cs" Line="1" Column="1" />
