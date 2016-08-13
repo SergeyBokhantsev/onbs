@@ -5,6 +5,9 @@ using System.Threading;
 using Interfaces;
 using System.IO;
 
+//$ ls -al /sys/class/tty/ttyUSB0//device/driver
+//lrwxrwxrwx 1 root root 0 sep  6 21:28 /sys/class/tty/ttyUSB0//device/driver -> ../../../bus/platform/drivers/usbseria
+
 namespace HostController.Lin
 {
     internal class InternetConnectionKeeper : IDisposable
@@ -513,7 +516,9 @@ namespace HostController.Lin
             if (modemDevice.AttachedTo == null || !modemDevice.AttachedTo.Any())
                 throw new Exception(string.Format("USB device {0}:{1} has no any ttyUSB attached", modemDevice.VID, modemDevice.PID));
 
-			var usbPort = modemDevice.AttachedTo.First();
+			var attached = modemDevice.AttachedTo.ToArray ();
+
+			var usbPort = attached.Length > 2 ? attached[attached.Length - 3] : attached.First();
 
             if (string.IsNullOrWhiteSpace(usbPort) || !usbPort.Contains("ttyUSB"))
                 throw new Exception(string.Format("USB device {0}:{1} has invalid attached ttyUSB: {2}", modemDevice.VID, modemDevice.PID, usbPort));

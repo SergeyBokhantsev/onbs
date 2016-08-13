@@ -1,9 +1,9 @@
 ﻿<Properties StartupItem="HostController/HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/HostController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/Lin/InternetConnectionKeeper.cs">
     <Files>
       <File FileName="HostController/HostController.cs" Line="102" Column="44" />
-      <File FileName="HostController/Lin/InternetConnectionKeeper.cs" Line="1" Column="1" />
+      <File FileName="HostController/Lin/InternetConnectionKeeper.cs" Line="6" Column="17" />
       <File FileName="HostController/Configuration.cs" Line="1" Column="1" />
       <File FileName="NixHelpers/LsUsb.cs" Line="1" Column="1" />
       <File FileName="ProcessRunner/ProcessRunnerImpl.cs" Line="1" Column="1" />
@@ -12,9 +12,9 @@
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/home/pi/onbs/HostController/Lin/InternetConnectionKeeper.cs" line="324" column="1" />
+      <Breakpoint file="/home/pi/onbs/HostController/Lin/InternetConnectionKeeper.cs" line="327" column="1" />
       <Breakpoint file="/home/pi/onbs/NixHelpers/LsUsb.cs" line="22" column="1" />
-      <Breakpoint file="/home/pi/onbs/HostController/Lin/InternetConnectionKeeper.cs" line="77" column="1" />
+      <Breakpoint file="/home/pi/onbs/HostController/Lin/InternetConnectionKeeper.cs" line="80" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>
