@@ -1,0 +1,4 @@
+http://vialatm.com:7732/?lat=50.9&lon=31&uid=338032
+
+Open GPS Tracker (OPEN_GPS_TRACKER) Google Play
+http://vialatm.com:7732/?lat=@LAT@&lon=@LON@&time=@TIME@&speed=@SPEED@&alt=@ALT@&acc=@ACC@&bear=@BEAR@&uid=YOUR_UNIQ_ID
