@@ -125,6 +125,7 @@ namespace Interfaces
         public static readonly string TravelServiceGPSFilterDistanceToSpeedRatio = "TravelServiceGPSFilterDistanceToSpeedRatio";
         public static readonly string TravelServiceGPSFilterDeadZoneMeters = "TravelServiceGPSFilterDeadZoneMeters";
         public static readonly string TravelServiceGPSFilterDeadZoneSpeed = "TravelServiceGPSFilterDeadZoneSpeed";
+        public static readonly string TravelServiceExportBatchSize = "TravelServiceExportBatchSize";
         
         public static readonly string InetKeeperEnabled = "InetKeeperEnabled";
         public static readonly string InetRestartIfNoConnectEnabled = "InetRestartIfNoConnectEnabled";

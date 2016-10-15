@@ -48,6 +48,8 @@ namespace TravelController
         private bool disposed;
         private volatile int requestCustomPoint;
 
+        private int exportBatchSize;
+
         public int BufferedPoints
         {
             get { return metricsBufferedPoints; }
@@ -77,6 +79,8 @@ namespace TravelController
                 throw new ArgumentNullException("hc");
 
             this.hc = hc;
+
+            exportBatchSize = hc.Config.GetInt(ConfigNames.TravelServiceExportBatchSize);
 
             bufferedPoints = LoadPointsLocally() ?? new List<TravelPoint>();
 
@@ -281,12 +285,16 @@ namespace TravelController
             state.Value = States.ExportingPoints;
 
             var pointsToExport = new List<TravelPoint>();
-
+            
             lock (bufferedPoints)
             {
-                pointsToExport.AddRange(bufferedPoints);
-                bufferedPoints.Clear();
-                metricsBufferedPoints = 0;
+                if (bufferedPoints.Any())
+                {
+                    int batchSize = Math.Min(5, bufferedPoints.Count);
+                    pointsToExport.AddRange(bufferedPoints.Take(batchSize));
+                    bufferedPoints.RemoveRange(0, batchSize);
+                    metricsBufferedPoints = bufferedPoints.Count;
+                }
             }
 
             if (pointsToExport.Any())
