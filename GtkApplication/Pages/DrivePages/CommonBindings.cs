@@ -9,6 +9,7 @@ namespace GtkApplication
 	internal class CommonBindings
 	{
 		public const string m_BG_RED = "background='#FF0000'";
+		public const string m_BG_GRAY = "background='#666666'";
 		public const string m_BG_EMPTY = "";
 
 		public const string m_FG_TOP_STATUS_TEXT = "foreground='#205768'";
@@ -23,6 +24,9 @@ namespace GtkApplication
 		private const string m_ARD = "<span {0} {1} size='12000'>  ARD  </span>";
 		private const string m_GPS = "<span {0} {1} size='12000'>  GPS  </span>";
 		private const string m_INET = "<span {0} {1} size='12000'>  INET  </span>";
+		private const string m_DIM = "<span {0} {1} size='12000'>  Dark  </span>";
+		private const string m_WARN = "<span {0} {1} size='12000'>  WARN  </span>";
+
 		public const string m_WND_STATUS = "<span {0} {1} size='12000'>{2}</span>";
 
 		private const string m_TIME = "<span {0} {1} size='18000'>{2}</span><span {0} {1} size='10000'> : {3}</span>";
@@ -55,16 +59,31 @@ namespace GtkApplication
 			// GPS LED
 			var gps_status_label = new Label();
             gps_status_label.UseMarkup = true;
-            gps_status_label.Markup = CreateMarkup(m_ARD, m_FG_TOP_STATUS_TEXT, m_BG_RED);
+            gps_status_label.Markup = CreateMarkup(m_GPS, m_FG_TOP_STATUS_TEXT, m_BG_RED);
 			binder.BindCustomAction<bool> (status => gps_status_label.Markup = CreateMarkup (m_GPS, m_FG_TOP_STATUS_TEXT, status ? m_BG_EMPTY : m_BG_RED), "gps_status");
 			system_status_box.Add (gps_status_label);
 
 			// INET LED
 			var inet_status_label = new Label();
             inet_status_label.UseMarkup = true;
-            inet_status_label.Markup = CreateMarkup(m_ARD, m_FG_TOP_STATUS_TEXT, m_BG_RED);
+            inet_status_label.Markup = CreateMarkup(m_INET, m_FG_TOP_STATUS_TEXT, m_BG_RED);
 			binder.BindCustomAction<bool> (status => inet_status_label.Markup = CreateMarkup (m_INET, m_FG_TOP_STATUS_TEXT, status ? m_BG_EMPTY : m_BG_RED), "inet_status");
 			system_status_box.Add (inet_status_label);
+
+			// DIM CONDITION LED
+			var dim_condition_label = new Label();
+			dim_condition_label.UseMarkup = true;
+			dim_condition_label.Markup = CreateMarkup(m_DIM, m_FG_TOP_STATUS_TEXT, m_BG_EMPTY);
+			binder.BindCustomAction<bool>(status => dim_condition_label.Markup = CreateMarkup(m_DIM, m_FG_TOP_STATUS_TEXT, status ? m_BG_EMPTY : m_BG_GRAY), "dim_light");
+			system_status_box.Add(dim_condition_label);
+
+			// WARNING LED
+			var warning_label = new Label();
+			warning_label.UseMarkup = true;
+			warning_label.Markup = CreateMarkup(m_WARN, m_FG_TOP_STATUS_TEXT, m_BG_RED);
+			binder.BindCustomAction<bool>(status => warning_label.Markup = CreateMarkup(m_WARN, m_FG_TOP_STATUS_TEXT, status ? m_BG_EMPTY : m_BG_RED), "warning_log");
+			system_status_box.Add(warning_label);
+
 
 			// TIME LABEL
 			var time_label = new Label();

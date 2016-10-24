@@ -24,6 +24,12 @@ namespace TravelsClient
 
         public event LogEventHandlerDelegate LogEvent;
 
+        public DateTime LastWarningTime
+        {
+            get;
+            private set;
+        }
+
         public OnlineLogger(IConfig config)
         {
             this.config = config;
@@ -35,6 +41,9 @@ namespace TravelsClient
 
         public void Log(object caller, string message, LogLevels level)
         {
+            if (level <= LogLevels.Warning)
+                LastWarningTime = DateTime.Now;
+
             if (level <= this.level)
             {
                 string className = caller != null ? caller.GetType().ToString() : "NULL";

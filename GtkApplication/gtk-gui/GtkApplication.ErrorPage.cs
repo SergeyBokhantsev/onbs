@@ -5,39 +5,40 @@ namespace GtkApplication
 	public partial class ErrorPage
 	{
 		private global::Gtk.VBox vbox1;
-		
+
 		private global::Gtk.EventBox eventbox_error;
-		
+
 		private global::Gtk.Label l_error;
 
-		protected virtual void Build ()
+		protected virtual void Build()
 		{
-			global::Stetic.Gui.Initialize (this);
+			global::Stetic.Gui.Initialize(this);
 			// Widget GtkApplication.ErrorPage
-			global::Stetic.BinContainer.Attach (this);
+			global::Stetic.BinContainer.Attach(this);
 			this.Name = "GtkApplication.ErrorPage";
 			// Container child GtkApplication.ErrorPage.Gtk.Container+ContainerChild
-			this.vbox1 = new global::Gtk.VBox ();
+			this.vbox1 = new global::Gtk.VBox();
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.eventbox_error = new global::Gtk.EventBox ();
+			this.eventbox_error = new global::Gtk.EventBox();
 			this.eventbox_error.Name = "eventbox_error";
 			// Container child eventbox_error.Gtk.Container+ContainerChild
-			this.l_error = new global::Gtk.Label ();
+			this.l_error = new global::Gtk.Label();
 			this.l_error.Name = "l_error";
-			this.l_error.LabelProp = global::Mono.Unix.Catalog.GetString ("label2");
-			this.eventbox_error.Add (this.l_error);
-			this.vbox1.Add (this.eventbox_error);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox_error]));
+			this.l_error.LabelProp = global::Mono.Unix.Catalog.GetString("label2");
+			this.eventbox_error.Add(this.l_error);
+			this.vbox1.Add(this.eventbox_error);
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.eventbox_error]));
 			w2.Position = 0;
 			w2.Expand = false;
 			w2.Fill = false;
-			this.Add (this.vbox1);
-			if ((this.Child != null)) {
-				this.Child.ShowAll ();
+			this.Add(this.vbox1);
+			if ((this.Child != null))
+			{
+				this.Child.ShowAll();
 			}
-			this.Hide ();
+			this.Hide();
 		}
 	}
 }

@@ -17,6 +17,9 @@ namespace Interfaces
     public interface ILogger
     {
         event LogEventHandlerDelegate LogEvent;
+
+        DateTime LastWarningTime { get; }
+
         void Log(object caller, string message, LogLevels level);
         void Log(object caller, Exception ex);
         void Flush();

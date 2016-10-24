@@ -544,7 +544,15 @@ namespace HostController
                 await Task.Delay(200);
 
                 arduController.RelayService.Disable(Relay.OBD);
+                await Task.Delay(100);
+                arduController.RelayService.Disable(Relay.OBD);
+                await Task.Delay(100);
                 arduController.RelayService.Disable(Relay.Relay3);
+                await Task.Delay(100);
+                arduController.RelayService.Disable(Relay.Relay3);
+                await Task.Delay(100);
+                arduController.RelayService.Disable(Relay.Relay4);
+                await Task.Delay(100);
                 arduController.RelayService.Disable(Relay.Relay4);
                 await Task.Delay(200);
 

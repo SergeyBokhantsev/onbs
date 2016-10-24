@@ -10,6 +10,8 @@ namespace GtkLauncher
 	{
 		private readonly object locker = new object();
 
+		public event LogEventHandlerDelegate LogEvent;
+
 		public ConsoleLogger ()
 		{
 			AllowedClassNames = new List<string> ();
@@ -23,8 +25,17 @@ namespace GtkLauncher
 
 		#region ILogger implementation
 
+		public DateTime LastWarningTime
+		{
+			get;
+			private set;
+		}
+
 		public void Log(object caller, string message, LogLevels level)
 		{
+			if (level <= LogLevels.Warning)
+				LastWarningTime = DateTime.Now;
+
 			if (level <= this.Level)
 			{
 				var className = GetClassName(caller);

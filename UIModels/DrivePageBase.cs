@@ -24,8 +24,7 @@ namespace UIModels
         {
             this.Disposing += OnDisposing;
 
-            foreach (var key in crossPageProperties.Keys)
-                SetProperty(key, crossPageProperties[key]);
+            ReadCrossPageProps();
 
             gpsController = hc.GetController<IGPSController>();
 
@@ -44,6 +43,18 @@ namespace UIModels
             SetProperty(ModelNames.ButtonNextLabel, ">>");
         }
 
+        private void ReadCrossPageProps()
+        {
+            foreach (var key in crossPageProperties.Keys)
+                SetProperty(key, crossPageProperties[key]);
+        }
+
+        private void SaveCrossPageProps()
+        {
+            foreach (var key in crossPageProperties.Keys)
+                crossPageProperties[key] = GetProperty<object>(key);
+        }
+
         protected override IList<ListItem<MappedActionBase>> QueryItems(int skip, int take)
         {
             return rotaryItems.Skip(skip).Take(take).ToList();
@@ -56,7 +67,9 @@ namespace UIModels
 
             SetProperty("ard_status", hc.GetController<IArduinoController>().IsCommunicationOk);
             SetProperty("inet_status", hc.Config.IsInternetConnected);
-            SetProperty("gps_status", hc.Config.IsGPSLock);
+            SetProperty("gps_status", hc.Config.IsGPSLock);            
+            SetProperty("dim_light", hc.Config.IsDimLighting);
+            SetProperty("warning_log", hc.Logger.LastWarningTime.AddSeconds(30) > DateTime.Now);
 
             if (hc.Config.IsSystemTimeValid)
                 SetProperty("time", DateTime.Now.AddHours(hc.Config.GetInt(ConfigNames.SystemTimeLocalZone)));
@@ -70,10 +83,7 @@ namespace UIModels
         {
             primaryTimer.Dispose();
             secondaryTimer.Dispose();
-
-            crossPageProperties["ard_status"] = GetProperty<bool>("ard_status");
-            crossPageProperties["inet_status"] = GetProperty<bool>("inet_status");
-            crossPageProperties["gps_status"] = GetProperty<bool>("gps_status");
+            SaveCrossPageProps();
         }
     }
 }

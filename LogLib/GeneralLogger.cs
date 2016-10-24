@@ -22,6 +22,12 @@ namespace LogLib
             private set;
         }
 
+        public DateTime LastWarningTime
+        {
+            get;
+            private set;
+        }
+
         public List<string> AllowedClassNames
         {
             get;
@@ -40,6 +46,9 @@ namespace LogLib
 
         public void Log(object caller, string message, LogLevels level)
         {
+            if (level <= LogLevels.Warning)
+                LastWarningTime = DateTime.Now;
+
             if (level <= this.Level)
             {
                 string className = caller != null ? caller.GetType().ToString() : "NULL";

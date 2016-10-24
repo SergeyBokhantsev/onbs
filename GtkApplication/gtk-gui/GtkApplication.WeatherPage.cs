@@ -5,151 +5,151 @@ namespace GtkApplication
 	public partial class WeatherPage
 	{
 		private global::Gtk.VBox vbox1;
-		
+
 		private global::Gtk.HBox hbox1;
-		
+
 		private global::Gtk.HSeparator hseparator2;
-		
+
 		private global::Gtk.Table table1;
-		
+
 		private global::Gtk.HBox box_forecast;
-		
+
 		private global::Gtk.EventBox eventbox_image_weather_next1;
-		
+
 		private global::Gtk.Image image_weather_next1;
-		
+
 		private global::Gtk.EventBox eventbox_image_weather_now;
-		
+
 		private global::Gtk.Image image_weather_now;
-		
+
 		private global::Gtk.EventBox eventbox_temp_now;
-		
+
 		private global::Gtk.Label label_temp_now;
-		
+
 		private global::Gtk.EventBox eventbox_weather_next1_caption;
-		
+
 		private global::Gtk.Label label_weather_next1_caption;
-		
+
 		private global::Gtk.EventBox eventbox_weather_next1_condition;
-		
+
 		private global::Gtk.Label label_weather_next1_condition;
-		
+
 		private global::Gtk.EventBox eventbox_weather_next1_separator;
-		
+
 		private global::Gtk.EventBox eventbox_weather_next1_temp;
-		
+
 		private global::Gtk.Label label_weather_next1_temp;
-		
+
 		private global::Gtk.EventBox eventbox_weather_next2_caption;
-		
+
 		private global::Gtk.Label label_weather_next2_caption;
-		
+
 		private global::Gtk.EventBox eventbox_weather_next2_condition;
-		
+
 		private global::Gtk.Label label_weather_next2_condition;
-		
+
 		private global::Gtk.EventBox eventbox_weather_next2_temp;
-		
+
 		private global::Gtk.Label label_weather_next2_temp;
-		
+
 		private global::Gtk.EventBox eventbox_weather_now_caption;
-		
+
 		private global::Gtk.Label label_weather_now_caption;
-		
+
 		private global::Gtk.EventBox eventbox_weather_now_condition;
-		
+
 		private global::Gtk.Label label_weather_now_condition;
-		
+
 		private global::Gtk.EventBox eventbox_weather_now_separator;
-		
+
 		private global::Gtk.HSeparator hseparator3;
-		
+
 		private global::Gtk.Image image_weather_next2;
-		
+
 		private global::Gtk.VBox vbox4;
-		
+
 		private global::Gtk.EventBox eventbox_info1;
-		
+
 		private global::Gtk.Label label_info1;
-		
+
 		private global::Gtk.EventBox eventbox_info2;
-		
+
 		private global::Gtk.Label label_info2;
-		
+
 		private global::Gtk.EventBox eventbox_info3;
-		
+
 		private global::Gtk.Label label_info3;
-		
+
 		private global::Gtk.EventBox eventbox_info4;
-		
+
 		private global::Gtk.Label label_info4;
-		
+
 		private global::Gtk.EventBox eventbox_info5;
-		
+
 		private global::Gtk.Label label_info5;
-		
+
 		private global::Gtk.VSeparator vseparator5;
-		
+
 		private global::Gtk.HSeparator hseparator1;
-		
+
 		private global::Gtk.HBox hbox5;
 
-		protected virtual void Build ()
+		protected virtual void Build()
 		{
-			global::Stetic.Gui.Initialize (this);
+			global::Stetic.Gui.Initialize(this);
 			// Widget GtkApplication.WeatherPage
-			global::Stetic.BinContainer.Attach (this);
+			global::Stetic.BinContainer.Attach(this);
 			this.WidthRequest = 800;
 			this.HeightRequest = 200;
 			this.Name = "GtkApplication.WeatherPage";
 			// Container child GtkApplication.WeatherPage.Gtk.Container+ContainerChild
-			this.vbox1 = new global::Gtk.VBox ();
+			this.vbox1 = new global::Gtk.VBox();
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.hbox1 = new global::Gtk.HBox ();
+			this.hbox1 = new global::Gtk.HBox();
 			this.hbox1.HeightRequest = 35;
 			this.hbox1.Name = "hbox1";
 			this.hbox1.Homogeneous = true;
 			this.hbox1.Spacing = 6;
 			this.hbox1.BorderWidth = ((uint)(5));
-			this.vbox1.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox1]));
+			this.vbox1.Add(this.hbox1);
+			global::Gtk.Box.BoxChild w1 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
 			w1.Position = 0;
 			w1.Expand = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.hseparator2 = new global::Gtk.HSeparator ();
+			this.hseparator2 = new global::Gtk.HSeparator();
 			this.hseparator2.Name = "hseparator2";
-			this.vbox1.Add (this.hseparator2);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hseparator2]));
+			this.vbox1.Add(this.hseparator2);
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hseparator2]));
 			w2.Position = 1;
 			w2.Expand = false;
 			w2.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.table1 = new global::Gtk.Table (((uint)(6)), ((uint)(12)), false);
+			this.table1 = new global::Gtk.Table(((uint)(6)), ((uint)(12)), false);
 			this.table1.Name = "table1";
 			this.table1.BorderWidth = ((uint)(10));
 			// Container child table1.Gtk.Table+TableChild
-			this.box_forecast = new global::Gtk.HBox ();
+			this.box_forecast = new global::Gtk.HBox();
 			this.box_forecast.Name = "box_forecast";
 			this.box_forecast.Spacing = 6;
-			this.table1.Add (this.box_forecast);
-			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1 [this.box_forecast]));
+			this.table1.Add(this.box_forecast);
+			global::Gtk.Table.TableChild w3 = ((global::Gtk.Table.TableChild)(this.table1[this.box_forecast]));
 			w3.TopAttach = ((uint)(5));
 			w3.BottomAttach = ((uint)(6));
 			w3.RightAttach = ((uint)(12));
 			w3.XOptions = ((global::Gtk.AttachOptions)(0));
 			// Container child table1.Gtk.Table+TableChild
-			this.eventbox_image_weather_next1 = new global::Gtk.EventBox ();
+			this.eventbox_image_weather_next1 = new global::Gtk.EventBox();
 			this.eventbox_image_weather_next1.Name = "eventbox_image_weather_next1";
 			// Container child eventbox_image_weather_next1.Gtk.Container+ContainerChild
-			this.image_weather_next1 = new global::Gtk.Image ();
+			this.image_weather_next1 = new global::Gtk.Image();
 			this.image_weather_next1.Name = "image_weather_next1";
 			this.image_weather_next1.Xalign = 0.7F;
 			this.image_weather_next1.Yalign = 0.9F;
-			this.eventbox_image_weather_next1.Add (this.image_weather_next1);
-			this.table1.Add (this.eventbox_image_weather_next1);
-			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1 [this.eventbox_image_weather_next1]));
+			this.eventbox_image_weather_next1.Add(this.image_weather_next1);
+			this.table1.Add(this.eventbox_image_weather_next1);
+			global::Gtk.Table.TableChild w5 = ((global::Gtk.Table.TableChild)(this.table1[this.eventbox_image_weather_next1]));
 			w5.TopAttach = ((uint)(1));
 			w5.BottomAttach = ((uint)(3));
 			w5.LeftAttach = ((uint)(4));
@@ -157,16 +157,16 @@ namespace GtkApplication
 			w5.XOptions = ((global::Gtk.AttachOptions)(4));
 			w5.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.eventbox_image_weather_now = new global::Gtk.EventBox ();
+			this.eventbox_image_weather_now = new global::Gtk.EventBox();
 			this.eventbox_image_weather_now.Name = "eventbox_image_weather_now";
 			// Container child eventbox_image_weather_now.Gtk.Container+ContainerChild
-			this.image_weather_now = new global::Gtk.Image ();
+			this.image_weather_now = new global::Gtk.Image();
 			this.image_weather_now.Name = "image_weather_now";
 			this.image_weather_now.Xalign = 0.7F;
 			this.image_weather_now.Yalign = 0.9F;
-			this.eventbox_image_weather_now.Add (this.image_weather_now);
-			this.table1.Add (this.eventbox_image_weather_now);
-			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1 [this.eventbox_image_weather_now]));
+			this.eventbox_image_weather_now.Add(this.image_weather_now);
+			this.table1.Add(this.eventbox_image_weather_now);
+			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table1[this.eventbox_image_weather_now]));
 			w7.TopAttach = ((uint)(1));
 			w7.BottomAttach = ((uint)(3));
 			w7.LeftAttach = ((uint)(1));
@@ -174,17 +174,17 @@ namespace GtkApplication
 			w7.XOptions = ((global::Gtk.AttachOptions)(4));
 			w7.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.eventbox_temp_now = new global::Gtk.EventBox ();
+			this.eventbox_temp_now = new global::Gtk.EventBox();
 			this.eventbox_temp_now.Name = "eventbox_temp_now";
 			// Container child eventbox_temp_now.Gtk.Container+ContainerChild
-			this.label_temp_now = new global::Gtk.Label ();
+			this.label_temp_now = new global::Gtk.Label();
 			this.label_temp_now.Name = "label_temp_now";
 			this.label_temp_now.Xalign = 0.3F;
-			this.label_temp_now.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'18000\'>24 C</span>");
+			this.label_temp_now.LabelProp = global::Mono.Unix.Catalog.GetString("<span foreground=\'#205768\' size=\'18000\'>24 C</span>");
 			this.label_temp_now.UseMarkup = true;
-			this.eventbox_temp_now.Add (this.label_temp_now);
-			this.table1.Add (this.eventbox_temp_now);
-			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1 [this.eventbox_temp_now]));
+			this.eventbox_temp_now.Add(this.label_temp_now);
+			this.table1.Add(this.eventbox_temp_now);
+			global::Gtk.Table.TableChild w9 = ((global::Gtk.Table.TableChild)(this.table1[this.eventbox_temp_now]));
 			w9.TopAttach = ((uint)(3));
 			w9.BottomAttach = ((uint)(4));
 			w9.LeftAttach = ((uint)(1));
@@ -192,35 +192,35 @@ namespace GtkApplication
 			w9.XOptions = ((global::Gtk.AttachOptions)(4));
 			w9.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.eventbox_weather_next1_caption = new global::Gtk.EventBox ();
+			this.eventbox_weather_next1_caption = new global::Gtk.EventBox();
 			this.eventbox_weather_next1_caption.Name = "eventbox_weather_next1_caption";
 			// Container child eventbox_weather_next1_caption.Gtk.Container+ContainerChild
-			this.label_weather_next1_caption = new global::Gtk.Label ();
+			this.label_weather_next1_caption = new global::Gtk.Label();
 			this.label_weather_next1_caption.Name = "label_weather_next1_caption";
 			this.label_weather_next1_caption.Xalign = 0.1F;
-			this.label_weather_next1_caption.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'12000\'>Вечером</span>");
+			this.label_weather_next1_caption.LabelProp = global::Mono.Unix.Catalog.GetString("<span foreground=\'#205768\' size=\'12000\'>Вечером</span>");
 			this.label_weather_next1_caption.UseMarkup = true;
-			this.eventbox_weather_next1_caption.Add (this.label_weather_next1_caption);
-			this.table1.Add (this.eventbox_weather_next1_caption);
-			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1 [this.eventbox_weather_next1_caption]));
+			this.eventbox_weather_next1_caption.Add(this.label_weather_next1_caption);
+			this.table1.Add(this.eventbox_weather_next1_caption);
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table1[this.eventbox_weather_next1_caption]));
 			w11.LeftAttach = ((uint)(4));
 			w11.RightAttach = ((uint)(6));
 			w11.XOptions = ((global::Gtk.AttachOptions)(4));
 			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.eventbox_weather_next1_condition = new global::Gtk.EventBox ();
+			this.eventbox_weather_next1_condition = new global::Gtk.EventBox();
 			this.eventbox_weather_next1_condition.Name = "eventbox_weather_next1_condition";
 			// Container child eventbox_weather_next1_condition.Gtk.Container+ContainerChild
-			this.label_weather_next1_condition = new global::Gtk.Label ();
+			this.label_weather_next1_condition = new global::Gtk.Label();
 			this.label_weather_next1_condition.WidthRequest = 100;
 			this.label_weather_next1_condition.Name = "label_weather_next1_condition";
 			this.label_weather_next1_condition.Xalign = 0.1F;
-			this.label_weather_next1_condition.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'10000\'>облачно, небольшой дождь</span>");
+			this.label_weather_next1_condition.LabelProp = global::Mono.Unix.Catalog.GetString("<span foreground=\'#205768\' size=\'10000\'>облачно, небольшой дождь</span>");
 			this.label_weather_next1_condition.UseMarkup = true;
 			this.label_weather_next1_condition.Wrap = true;
-			this.eventbox_weather_next1_condition.Add (this.label_weather_next1_condition);
-			this.table1.Add (this.eventbox_weather_next1_condition);
-			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1 [this.eventbox_weather_next1_condition]));
+			this.eventbox_weather_next1_condition.Add(this.label_weather_next1_condition);
+			this.table1.Add(this.eventbox_weather_next1_condition);
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table1[this.eventbox_weather_next1_condition]));
 			w13.TopAttach = ((uint)(1));
 			w13.BottomAttach = ((uint)(3));
 			w13.LeftAttach = ((uint)(5));
@@ -228,28 +228,28 @@ namespace GtkApplication
 			w13.XOptions = ((global::Gtk.AttachOptions)(4));
 			w13.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.eventbox_weather_next1_separator = new global::Gtk.EventBox ();
+			this.eventbox_weather_next1_separator = new global::Gtk.EventBox();
 			this.eventbox_weather_next1_separator.WidthRequest = 10;
 			this.eventbox_weather_next1_separator.Name = "eventbox_weather_next1_separator";
-			this.table1.Add (this.eventbox_weather_next1_separator);
-			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table1 [this.eventbox_weather_next1_separator]));
+			this.table1.Add(this.eventbox_weather_next1_separator);
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table1[this.eventbox_weather_next1_separator]));
 			w14.BottomAttach = ((uint)(4));
 			w14.LeftAttach = ((uint)(3));
 			w14.RightAttach = ((uint)(4));
 			w14.XOptions = ((global::Gtk.AttachOptions)(4));
 			w14.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.eventbox_weather_next1_temp = new global::Gtk.EventBox ();
+			this.eventbox_weather_next1_temp = new global::Gtk.EventBox();
 			this.eventbox_weather_next1_temp.Name = "eventbox_weather_next1_temp";
 			// Container child eventbox_weather_next1_temp.Gtk.Container+ContainerChild
-			this.label_weather_next1_temp = new global::Gtk.Label ();
+			this.label_weather_next1_temp = new global::Gtk.Label();
 			this.label_weather_next1_temp.Name = "label_weather_next1_temp";
 			this.label_weather_next1_temp.Xalign = 0.3F;
-			this.label_weather_next1_temp.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'13000\'>24 C</span>");
+			this.label_weather_next1_temp.LabelProp = global::Mono.Unix.Catalog.GetString("<span foreground=\'#205768\' size=\'13000\'>24 C</span>");
 			this.label_weather_next1_temp.UseMarkup = true;
-			this.eventbox_weather_next1_temp.Add (this.label_weather_next1_temp);
-			this.table1.Add (this.eventbox_weather_next1_temp);
-			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.table1 [this.eventbox_weather_next1_temp]));
+			this.eventbox_weather_next1_temp.Add(this.label_weather_next1_temp);
+			this.table1.Add(this.eventbox_weather_next1_temp);
+			global::Gtk.Table.TableChild w16 = ((global::Gtk.Table.TableChild)(this.table1[this.eventbox_weather_next1_temp]));
 			w16.TopAttach = ((uint)(3));
 			w16.BottomAttach = ((uint)(4));
 			w16.LeftAttach = ((uint)(4));
@@ -257,35 +257,35 @@ namespace GtkApplication
 			w16.XOptions = ((global::Gtk.AttachOptions)(4));
 			w16.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.eventbox_weather_next2_caption = new global::Gtk.EventBox ();
+			this.eventbox_weather_next2_caption = new global::Gtk.EventBox();
 			this.eventbox_weather_next2_caption.Name = "eventbox_weather_next2_caption";
 			// Container child eventbox_weather_next2_caption.Gtk.Container+ContainerChild
-			this.label_weather_next2_caption = new global::Gtk.Label ();
+			this.label_weather_next2_caption = new global::Gtk.Label();
 			this.label_weather_next2_caption.Name = "label_weather_next2_caption";
 			this.label_weather_next2_caption.Xalign = 0.1F;
-			this.label_weather_next2_caption.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'12000\'>Ночью</span>");
+			this.label_weather_next2_caption.LabelProp = global::Mono.Unix.Catalog.GetString("<span foreground=\'#205768\' size=\'12000\'>Ночью</span>");
 			this.label_weather_next2_caption.UseMarkup = true;
-			this.eventbox_weather_next2_caption.Add (this.label_weather_next2_caption);
-			this.table1.Add (this.eventbox_weather_next2_caption);
-			global::Gtk.Table.TableChild w18 = ((global::Gtk.Table.TableChild)(this.table1 [this.eventbox_weather_next2_caption]));
+			this.eventbox_weather_next2_caption.Add(this.label_weather_next2_caption);
+			this.table1.Add(this.eventbox_weather_next2_caption);
+			global::Gtk.Table.TableChild w18 = ((global::Gtk.Table.TableChild)(this.table1[this.eventbox_weather_next2_caption]));
 			w18.LeftAttach = ((uint)(7));
 			w18.RightAttach = ((uint)(10));
 			w18.XOptions = ((global::Gtk.AttachOptions)(4));
 			w18.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.eventbox_weather_next2_condition = new global::Gtk.EventBox ();
+			this.eventbox_weather_next2_condition = new global::Gtk.EventBox();
 			this.eventbox_weather_next2_condition.Name = "eventbox_weather_next2_condition";
 			// Container child eventbox_weather_next2_condition.Gtk.Container+ContainerChild
-			this.label_weather_next2_condition = new global::Gtk.Label ();
+			this.label_weather_next2_condition = new global::Gtk.Label();
 			this.label_weather_next2_condition.WidthRequest = 100;
 			this.label_weather_next2_condition.Name = "label_weather_next2_condition";
 			this.label_weather_next2_condition.Xalign = 0.1F;
-			this.label_weather_next2_condition.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'10000\'>облачно, небольшой дождь</span>");
+			this.label_weather_next2_condition.LabelProp = global::Mono.Unix.Catalog.GetString("<span foreground=\'#205768\' size=\'10000\'>облачно, небольшой дождь</span>");
 			this.label_weather_next2_condition.UseMarkup = true;
 			this.label_weather_next2_condition.Wrap = true;
-			this.eventbox_weather_next2_condition.Add (this.label_weather_next2_condition);
-			this.table1.Add (this.eventbox_weather_next2_condition);
-			global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.table1 [this.eventbox_weather_next2_condition]));
+			this.eventbox_weather_next2_condition.Add(this.label_weather_next2_condition);
+			this.table1.Add(this.eventbox_weather_next2_condition);
+			global::Gtk.Table.TableChild w20 = ((global::Gtk.Table.TableChild)(this.table1[this.eventbox_weather_next2_condition]));
 			w20.TopAttach = ((uint)(1));
 			w20.BottomAttach = ((uint)(3));
 			w20.LeftAttach = ((uint)(8));
@@ -293,17 +293,17 @@ namespace GtkApplication
 			w20.XOptions = ((global::Gtk.AttachOptions)(4));
 			w20.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.eventbox_weather_next2_temp = new global::Gtk.EventBox ();
+			this.eventbox_weather_next2_temp = new global::Gtk.EventBox();
 			this.eventbox_weather_next2_temp.Name = "eventbox_weather_next2_temp";
 			// Container child eventbox_weather_next2_temp.Gtk.Container+ContainerChild
-			this.label_weather_next2_temp = new global::Gtk.Label ();
+			this.label_weather_next2_temp = new global::Gtk.Label();
 			this.label_weather_next2_temp.Name = "label_weather_next2_temp";
 			this.label_weather_next2_temp.Xalign = 0.3F;
-			this.label_weather_next2_temp.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'13000\'>24 C</span>");
+			this.label_weather_next2_temp.LabelProp = global::Mono.Unix.Catalog.GetString("<span foreground=\'#205768\' size=\'13000\'>24 C</span>");
 			this.label_weather_next2_temp.UseMarkup = true;
-			this.eventbox_weather_next2_temp.Add (this.label_weather_next2_temp);
-			this.table1.Add (this.eventbox_weather_next2_temp);
-			global::Gtk.Table.TableChild w22 = ((global::Gtk.Table.TableChild)(this.table1 [this.eventbox_weather_next2_temp]));
+			this.eventbox_weather_next2_temp.Add(this.label_weather_next2_temp);
+			this.table1.Add(this.eventbox_weather_next2_temp);
+			global::Gtk.Table.TableChild w22 = ((global::Gtk.Table.TableChild)(this.table1[this.eventbox_weather_next2_temp]));
 			w22.TopAttach = ((uint)(3));
 			w22.BottomAttach = ((uint)(4));
 			w22.LeftAttach = ((uint)(7));
@@ -311,35 +311,35 @@ namespace GtkApplication
 			w22.XOptions = ((global::Gtk.AttachOptions)(4));
 			w22.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.eventbox_weather_now_caption = new global::Gtk.EventBox ();
+			this.eventbox_weather_now_caption = new global::Gtk.EventBox();
 			this.eventbox_weather_now_caption.Name = "eventbox_weather_now_caption";
 			// Container child eventbox_weather_now_caption.Gtk.Container+ContainerChild
-			this.label_weather_now_caption = new global::Gtk.Label ();
+			this.label_weather_now_caption = new global::Gtk.Label();
 			this.label_weather_now_caption.Name = "label_weather_now_caption";
 			this.label_weather_now_caption.Xalign = 0.1F;
-			this.label_weather_now_caption.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#d6d6d6\' size=\'12000\'><b>Сейчас</b></span>");
+			this.label_weather_now_caption.LabelProp = global::Mono.Unix.Catalog.GetString("<span foreground=\'#d6d6d6\' size=\'12000\'><b>Сейчас</b></span>");
 			this.label_weather_now_caption.UseMarkup = true;
-			this.eventbox_weather_now_caption.Add (this.label_weather_now_caption);
-			this.table1.Add (this.eventbox_weather_now_caption);
-			global::Gtk.Table.TableChild w24 = ((global::Gtk.Table.TableChild)(this.table1 [this.eventbox_weather_now_caption]));
+			this.eventbox_weather_now_caption.Add(this.label_weather_now_caption);
+			this.table1.Add(this.eventbox_weather_now_caption);
+			global::Gtk.Table.TableChild w24 = ((global::Gtk.Table.TableChild)(this.table1[this.eventbox_weather_now_caption]));
 			w24.LeftAttach = ((uint)(1));
 			w24.RightAttach = ((uint)(3));
 			w24.XOptions = ((global::Gtk.AttachOptions)(6));
 			w24.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.eventbox_weather_now_condition = new global::Gtk.EventBox ();
+			this.eventbox_weather_now_condition = new global::Gtk.EventBox();
 			this.eventbox_weather_now_condition.Name = "eventbox_weather_now_condition";
 			// Container child eventbox_weather_now_condition.Gtk.Container+ContainerChild
-			this.label_weather_now_condition = new global::Gtk.Label ();
+			this.label_weather_now_condition = new global::Gtk.Label();
 			this.label_weather_now_condition.WidthRequest = 100;
 			this.label_weather_now_condition.Name = "label_weather_now_condition";
 			this.label_weather_now_condition.Xalign = 0.1F;
-			this.label_weather_now_condition.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'10000\'>облачно, небольшой дождь</span>");
+			this.label_weather_now_condition.LabelProp = global::Mono.Unix.Catalog.GetString("<span foreground=\'#205768\' size=\'10000\'>облачно, небольшой дождь</span>");
 			this.label_weather_now_condition.UseMarkup = true;
 			this.label_weather_now_condition.Wrap = true;
-			this.eventbox_weather_now_condition.Add (this.label_weather_now_condition);
-			this.table1.Add (this.eventbox_weather_now_condition);
-			global::Gtk.Table.TableChild w26 = ((global::Gtk.Table.TableChild)(this.table1 [this.eventbox_weather_now_condition]));
+			this.eventbox_weather_now_condition.Add(this.label_weather_now_condition);
+			this.table1.Add(this.eventbox_weather_now_condition);
+			global::Gtk.Table.TableChild w26 = ((global::Gtk.Table.TableChild)(this.table1[this.eventbox_weather_now_condition]));
 			w26.TopAttach = ((uint)(1));
 			w26.BottomAttach = ((uint)(3));
 			w26.LeftAttach = ((uint)(2));
@@ -347,19 +347,19 @@ namespace GtkApplication
 			w26.XOptions = ((global::Gtk.AttachOptions)(4));
 			w26.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.eventbox_weather_now_separator = new global::Gtk.EventBox ();
+			this.eventbox_weather_now_separator = new global::Gtk.EventBox();
 			this.eventbox_weather_now_separator.WidthRequest = 10;
 			this.eventbox_weather_now_separator.Name = "eventbox_weather_now_separator";
-			this.table1.Add (this.eventbox_weather_now_separator);
-			global::Gtk.Table.TableChild w27 = ((global::Gtk.Table.TableChild)(this.table1 [this.eventbox_weather_now_separator]));
+			this.table1.Add(this.eventbox_weather_now_separator);
+			global::Gtk.Table.TableChild w27 = ((global::Gtk.Table.TableChild)(this.table1[this.eventbox_weather_now_separator]));
 			w27.BottomAttach = ((uint)(4));
 			w27.XOptions = ((global::Gtk.AttachOptions)(0));
 			w27.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.hseparator3 = new global::Gtk.HSeparator ();
+			this.hseparator3 = new global::Gtk.HSeparator();
 			this.hseparator3.Name = "hseparator3";
-			this.table1.Add (this.hseparator3);
-			global::Gtk.Table.TableChild w28 = ((global::Gtk.Table.TableChild)(this.table1 [this.hseparator3]));
+			this.table1.Add(this.hseparator3);
+			global::Gtk.Table.TableChild w28 = ((global::Gtk.Table.TableChild)(this.table1[this.hseparator3]));
 			w28.TopAttach = ((uint)(4));
 			w28.BottomAttach = ((uint)(5));
 			w28.LeftAttach = ((uint)(1));
@@ -367,12 +367,12 @@ namespace GtkApplication
 			w28.XOptions = ((global::Gtk.AttachOptions)(4));
 			w28.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.image_weather_next2 = new global::Gtk.Image ();
+			this.image_weather_next2 = new global::Gtk.Image();
 			this.image_weather_next2.Name = "image_weather_next2";
 			this.image_weather_next2.Xalign = 0.7F;
 			this.image_weather_next2.Yalign = 0.9F;
-			this.table1.Add (this.image_weather_next2);
-			global::Gtk.Table.TableChild w29 = ((global::Gtk.Table.TableChild)(this.table1 [this.image_weather_next2]));
+			this.table1.Add(this.image_weather_next2);
+			global::Gtk.Table.TableChild w29 = ((global::Gtk.Table.TableChild)(this.table1[this.image_weather_next2]));
 			w29.TopAttach = ((uint)(1));
 			w29.BottomAttach = ((uint)(3));
 			w29.LeftAttach = ((uint)(7));
@@ -380,88 +380,88 @@ namespace GtkApplication
 			w29.XOptions = ((global::Gtk.AttachOptions)(4));
 			w29.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table1.Gtk.Table+TableChild
-			this.vbox4 = new global::Gtk.VBox ();
+			this.vbox4 = new global::Gtk.VBox();
 			this.vbox4.Name = "vbox4";
 			this.vbox4.Spacing = 6;
 			this.vbox4.BorderWidth = ((uint)(6));
 			// Container child vbox4.Gtk.Box+BoxChild
-			this.eventbox_info1 = new global::Gtk.EventBox ();
+			this.eventbox_info1 = new global::Gtk.EventBox();
 			this.eventbox_info1.Name = "eventbox_info1";
 			// Container child eventbox_info1.Gtk.Container+ContainerChild
-			this.label_info1 = new global::Gtk.Label ();
+			this.label_info1 = new global::Gtk.Label();
 			this.label_info1.Name = "label_info1";
 			this.label_info1.Xalign = 0F;
-			this.label_info1.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'10000\'>Восход: 05:05 Закат: 21:02</span>");
+			this.label_info1.LabelProp = global::Mono.Unix.Catalog.GetString("<span foreground=\'#205768\' size=\'10000\'>Восход: 05:05 Закат: 21:02</span>");
 			this.label_info1.UseMarkup = true;
-			this.eventbox_info1.Add (this.label_info1);
-			this.vbox4.Add (this.eventbox_info1);
-			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.vbox4 [this.eventbox_info1]));
+			this.eventbox_info1.Add(this.label_info1);
+			this.vbox4.Add(this.eventbox_info1);
+			global::Gtk.Box.BoxChild w31 = ((global::Gtk.Box.BoxChild)(this.vbox4[this.eventbox_info1]));
 			w31.Position = 0;
 			w31.Expand = false;
 			w31.Fill = false;
 			// Container child vbox4.Gtk.Box+BoxChild
-			this.eventbox_info2 = new global::Gtk.EventBox ();
+			this.eventbox_info2 = new global::Gtk.EventBox();
 			this.eventbox_info2.Name = "eventbox_info2";
 			// Container child eventbox_info2.Gtk.Container+ContainerChild
-			this.label_info2 = new global::Gtk.Label ();
+			this.label_info2 = new global::Gtk.Label();
 			this.label_info2.Name = "label_info2";
 			this.label_info2.Xalign = 0F;
-			this.label_info2.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'10000\'>Восход: 05:05 Закат: 21:02</span>");
+			this.label_info2.LabelProp = global::Mono.Unix.Catalog.GetString("<span foreground=\'#205768\' size=\'10000\'>Восход: 05:05 Закат: 21:02</span>");
 			this.label_info2.UseMarkup = true;
-			this.eventbox_info2.Add (this.label_info2);
-			this.vbox4.Add (this.eventbox_info2);
-			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.vbox4 [this.eventbox_info2]));
+			this.eventbox_info2.Add(this.label_info2);
+			this.vbox4.Add(this.eventbox_info2);
+			global::Gtk.Box.BoxChild w33 = ((global::Gtk.Box.BoxChild)(this.vbox4[this.eventbox_info2]));
 			w33.Position = 1;
 			w33.Expand = false;
 			w33.Fill = false;
 			// Container child vbox4.Gtk.Box+BoxChild
-			this.eventbox_info3 = new global::Gtk.EventBox ();
+			this.eventbox_info3 = new global::Gtk.EventBox();
 			this.eventbox_info3.Name = "eventbox_info3";
 			// Container child eventbox_info3.Gtk.Container+ContainerChild
-			this.label_info3 = new global::Gtk.Label ();
+			this.label_info3 = new global::Gtk.Label();
 			this.label_info3.Name = "label_info3";
 			this.label_info3.Xalign = 0F;
-			this.label_info3.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'10000\'>Восход: 05:05 Закат: 21:02</span>");
+			this.label_info3.LabelProp = global::Mono.Unix.Catalog.GetString("<span foreground=\'#205768\' size=\'10000\'>Восход: 05:05 Закат: 21:02</span>");
 			this.label_info3.UseMarkup = true;
-			this.eventbox_info3.Add (this.label_info3);
-			this.vbox4.Add (this.eventbox_info3);
-			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.vbox4 [this.eventbox_info3]));
+			this.eventbox_info3.Add(this.label_info3);
+			this.vbox4.Add(this.eventbox_info3);
+			global::Gtk.Box.BoxChild w35 = ((global::Gtk.Box.BoxChild)(this.vbox4[this.eventbox_info3]));
 			w35.Position = 2;
 			w35.Expand = false;
 			w35.Fill = false;
 			// Container child vbox4.Gtk.Box+BoxChild
-			this.eventbox_info4 = new global::Gtk.EventBox ();
+			this.eventbox_info4 = new global::Gtk.EventBox();
 			this.eventbox_info4.Name = "eventbox_info4";
 			// Container child eventbox_info4.Gtk.Container+ContainerChild
-			this.label_info4 = new global::Gtk.Label ();
+			this.label_info4 = new global::Gtk.Label();
 			this.label_info4.Name = "label_info4";
 			this.label_info4.Xalign = 0F;
-			this.label_info4.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'10000\'>Восход: 05:05 Закат: 21:02</span>");
+			this.label_info4.LabelProp = global::Mono.Unix.Catalog.GetString("<span foreground=\'#205768\' size=\'10000\'>Восход: 05:05 Закат: 21:02</span>");
 			this.label_info4.UseMarkup = true;
-			this.eventbox_info4.Add (this.label_info4);
-			this.vbox4.Add (this.eventbox_info4);
-			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.vbox4 [this.eventbox_info4]));
+			this.eventbox_info4.Add(this.label_info4);
+			this.vbox4.Add(this.eventbox_info4);
+			global::Gtk.Box.BoxChild w37 = ((global::Gtk.Box.BoxChild)(this.vbox4[this.eventbox_info4]));
 			w37.Position = 3;
 			w37.Expand = false;
 			w37.Fill = false;
 			// Container child vbox4.Gtk.Box+BoxChild
-			this.eventbox_info5 = new global::Gtk.EventBox ();
+			this.eventbox_info5 = new global::Gtk.EventBox();
 			this.eventbox_info5.Name = "eventbox_info5";
 			// Container child eventbox_info5.Gtk.Container+ContainerChild
-			this.label_info5 = new global::Gtk.Label ();
+			this.label_info5 = new global::Gtk.Label();
 			this.label_info5.Name = "label_info5";
 			this.label_info5.Xalign = 0F;
-			this.label_info5.LabelProp = global::Mono.Unix.Catalog.GetString ("<span foreground=\'#205768\' size=\'10000\'>Восход: 05:05 Закат: 21:02</span>");
+			this.label_info5.LabelProp = global::Mono.Unix.Catalog.GetString("<span foreground=\'#205768\' size=\'10000\'>Восход: 05:05 Закат: 21:02</span>");
 			this.label_info5.UseMarkup = true;
-			this.eventbox_info5.Add (this.label_info5);
-			this.vbox4.Add (this.eventbox_info5);
-			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.vbox4 [this.eventbox_info5]));
+			this.eventbox_info5.Add(this.label_info5);
+			this.vbox4.Add(this.eventbox_info5);
+			global::Gtk.Box.BoxChild w39 = ((global::Gtk.Box.BoxChild)(this.vbox4[this.eventbox_info5]));
 			w39.PackType = ((global::Gtk.PackType)(1));
 			w39.Position = 4;
 			w39.Expand = false;
 			w39.Fill = false;
-			this.table1.Add (this.vbox4);
-			global::Gtk.Table.TableChild w40 = ((global::Gtk.Table.TableChild)(this.table1 [this.vbox4]));
+			this.table1.Add(this.vbox4);
+			global::Gtk.Table.TableChild w40 = ((global::Gtk.Table.TableChild)(this.table1[this.vbox4]));
 			w40.TopAttach = ((uint)(1));
 			w40.BottomAttach = ((uint)(4));
 			w40.LeftAttach = ((uint)(10));
@@ -469,43 +469,44 @@ namespace GtkApplication
 			w40.XOptions = ((global::Gtk.AttachOptions)(4));
 			w40.YOptions = ((global::Gtk.AttachOptions)(0));
 			// Container child table1.Gtk.Table+TableChild
-			this.vseparator5 = new global::Gtk.VSeparator ();
+			this.vseparator5 = new global::Gtk.VSeparator();
 			this.vseparator5.Name = "vseparator5";
-			this.table1.Add (this.vseparator5);
-			global::Gtk.Table.TableChild w41 = ((global::Gtk.Table.TableChild)(this.table1 [this.vseparator5]));
+			this.table1.Add(this.vseparator5);
+			global::Gtk.Table.TableChild w41 = ((global::Gtk.Table.TableChild)(this.table1[this.vseparator5]));
 			w41.TopAttach = ((uint)(1));
 			w41.BottomAttach = ((uint)(4));
 			w41.LeftAttach = ((uint)(9));
 			w41.RightAttach = ((uint)(10));
 			w41.XOptions = ((global::Gtk.AttachOptions)(4));
 			w41.YOptions = ((global::Gtk.AttachOptions)(4));
-			this.vbox1.Add (this.table1);
-			global::Gtk.Box.BoxChild w42 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.table1]));
+			this.vbox1.Add(this.table1);
+			global::Gtk.Box.BoxChild w42 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.table1]));
 			w42.Position = 2;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.hseparator1 = new global::Gtk.HSeparator ();
+			this.hseparator1 = new global::Gtk.HSeparator();
 			this.hseparator1.Name = "hseparator1";
-			this.vbox1.Add (this.hseparator1);
-			global::Gtk.Box.BoxChild w43 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hseparator1]));
+			this.vbox1.Add(this.hseparator1);
+			global::Gtk.Box.BoxChild w43 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hseparator1]));
 			w43.Position = 3;
 			w43.Expand = false;
 			w43.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.hbox5 = new global::Gtk.HBox ();
+			this.hbox5 = new global::Gtk.HBox();
 			this.hbox5.HeightRequest = 40;
 			this.hbox5.Name = "hbox5";
 			this.hbox5.Homogeneous = true;
 			this.hbox5.Spacing = 6;
-			this.vbox1.Add (this.hbox5);
-			global::Gtk.Box.BoxChild w44 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox5]));
+			this.vbox1.Add(this.hbox5);
+			global::Gtk.Box.BoxChild w44 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox5]));
 			w44.PackType = ((global::Gtk.PackType)(1));
 			w44.Position = 4;
 			w44.Expand = false;
-			this.Add (this.vbox1);
-			if ((this.Child != null)) {
-				this.Child.ShowAll ();
+			this.Add(this.vbox1);
+			if ((this.Child != null))
+			{
+				this.Child.ShowAll();
 			}
-			this.Hide ();
+			this.Hide();
 		}
 	}
 }

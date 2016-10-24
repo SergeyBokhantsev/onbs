@@ -2,6 +2,7 @@
 using System.Threading;
 using Interfaces;
 using System.Diagnostics;
+using System.Linq;
 
 namespace HostController
 {
@@ -10,6 +11,11 @@ namespace HostController
         public event LogEventHandlerDelegate LogEvent;
 
         private readonly ILogger[] loggers;
+
+        public DateTime LastWarningTime
+        {
+            get { return loggers.Max(l => l.LastWarningTime); }
+        }
 
         internal ConsoleLoggerWrapper(ILogger[] loggers)
         {

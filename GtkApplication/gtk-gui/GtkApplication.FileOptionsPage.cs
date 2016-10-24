@@ -5,78 +5,79 @@ namespace GtkApplication
 	public partial class FileOptionsPage
 	{
 		private global::Gtk.VBox vbox1;
-		
+
 		private global::Gtk.EventBox eventbox_file_name;
-		
+
 		private global::Gtk.Label label_file_name;
-		
+
 		private global::Gtk.EventBox eventbox_file_props;
-		
+
 		private global::Gtk.Label label_file_props;
-		
+
 		private global::Gtk.VBox vbox2;
-		
+
 		private global::Gtk.EventBox eventbox_cancel;
 
-		protected virtual void Build ()
+		protected virtual void Build()
 		{
-			global::Stetic.Gui.Initialize (this);
+			global::Stetic.Gui.Initialize(this);
 			// Widget GtkApplication.FileOptionsPage
-			global::Stetic.BinContainer.Attach (this);
+			global::Stetic.BinContainer.Attach(this);
 			this.Name = "GtkApplication.FileOptionsPage";
 			// Container child GtkApplication.FileOptionsPage.Gtk.Container+ContainerChild
-			this.vbox1 = new global::Gtk.VBox ();
+			this.vbox1 = new global::Gtk.VBox();
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.eventbox_file_name = new global::Gtk.EventBox ();
+			this.eventbox_file_name = new global::Gtk.EventBox();
 			this.eventbox_file_name.Name = "eventbox_file_name";
 			// Container child eventbox_file_name.Gtk.Container+ContainerChild
-			this.label_file_name = new global::Gtk.Label ();
+			this.label_file_name = new global::Gtk.Label();
 			this.label_file_name.Name = "label_file_name";
-			this.label_file_name.LabelProp = global::Mono.Unix.Catalog.GetString ("<span size=\'20000\'>1.h264</span>");
+			this.label_file_name.LabelProp = global::Mono.Unix.Catalog.GetString("<span size=\'20000\'>1.h264</span>");
 			this.label_file_name.UseMarkup = true;
-			this.eventbox_file_name.Add (this.label_file_name);
-			this.vbox1.Add (this.eventbox_file_name);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox_file_name]));
+			this.eventbox_file_name.Add(this.label_file_name);
+			this.vbox1.Add(this.eventbox_file_name);
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.eventbox_file_name]));
 			w2.Position = 0;
 			w2.Expand = false;
 			w2.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.eventbox_file_props = new global::Gtk.EventBox ();
+			this.eventbox_file_props = new global::Gtk.EventBox();
 			this.eventbox_file_props.Name = "eventbox_file_props";
 			// Container child eventbox_file_props.Gtk.Container+ContainerChild
-			this.label_file_props = new global::Gtk.Label ();
+			this.label_file_props = new global::Gtk.Label();
 			this.label_file_props.Name = "label_file_props";
-			this.label_file_props.LabelProp = global::Mono.Unix.Catalog.GetString ("<span size=\'14000\'>Created: 22-feb-2016 (76 Mb)</span>");
+			this.label_file_props.LabelProp = global::Mono.Unix.Catalog.GetString("<span size=\'14000\'>Created: 22-feb-2016 (76 Mb)</span>");
 			this.label_file_props.UseMarkup = true;
-			this.eventbox_file_props.Add (this.label_file_props);
-			this.vbox1.Add (this.eventbox_file_props);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox_file_props]));
+			this.eventbox_file_props.Add(this.label_file_props);
+			this.vbox1.Add(this.eventbox_file_props);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.eventbox_file_props]));
 			w4.Position = 1;
 			w4.Expand = false;
 			w4.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.vbox2 = new global::Gtk.VBox ();
+			this.vbox2 = new global::Gtk.VBox();
 			this.vbox2.Name = "vbox2";
 			this.vbox2.Spacing = 6;
-			this.vbox1.Add (this.vbox2);
-			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.vbox2]));
+			this.vbox1.Add(this.vbox2);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.vbox2]));
 			w5.Position = 2;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.eventbox_cancel = new global::Gtk.EventBox ();
+			this.eventbox_cancel = new global::Gtk.EventBox();
 			this.eventbox_cancel.Name = "eventbox_cancel";
-			this.vbox1.Add (this.eventbox_cancel);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox_cancel]));
+			this.vbox1.Add(this.eventbox_cancel);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.eventbox_cancel]));
 			w6.PackType = ((global::Gtk.PackType)(1));
 			w6.Position = 3;
 			w6.Expand = false;
 			w6.Padding = ((uint)(5));
-			this.Add (this.vbox1);
-			if ((this.Child != null)) {
-				this.Child.ShowAll ();
+			this.Add(this.vbox1);
+			if ((this.Child != null))
+			{
+				this.Child.ShowAll();
 			}
-			this.Hide ();
+			this.Hide();
 		}
 	}
 }

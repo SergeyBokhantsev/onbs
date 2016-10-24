@@ -12,7 +12,7 @@ namespace GtkLauncher
 		{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-			app.ShowPage(GetLightSensorInfoModel());
+			app.ShowPage(GetDrivePage());
 
 				app.Run(false);
 
@@ -108,6 +108,8 @@ namespace GtkLauncher
 				page.SetProperty("ard_status", !page.GetProperty<bool>("ard_status"));
 				page.SetProperty("gps_status", !page.GetProperty<bool>("gps_status"));
 				page.SetProperty("inet_status", !page.GetProperty<bool>("inet_status"));
+				page.SetProperty("dim_light", !page.GetProperty<bool>("dim_light"));
+				page.SetProperty("warning_log", !page.GetProperty<bool>("warning_log"));
 
 				page.SetProperty("speed", speed++);
 				page.SetProperty("time", DateTime.Now);
