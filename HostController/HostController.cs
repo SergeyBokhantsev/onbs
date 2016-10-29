@@ -200,7 +200,7 @@ namespace HostController
             if (!Directory.Exists(logFolder))
                 Directory.CreateDirectory(logFolder);
 
-            onlineLogger = new TravelsClient.OnlineLogger(Config);
+            onlineLogger = new TravelsClient.OnlineLogger(Config, new Lazy<SynchronizationContext>(() => SyncContext));
             
             Logger = new ConsoleLoggerWrapper(new ILogger[] { new GeneralLogger(Config), onlineLogger});
             Logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
@@ -369,7 +369,7 @@ namespace HostController
             
             StartTimers();
 
-            arduController.GetArduinoTime(t => syncContext.Post(tt => CheckSystemTimeFromArduino((DateTime)tt), t, "CheckSystemTimeFromArduino"));
+            arduController.GetArduinoTime(t => syncContext.Post(async tt => await CheckSystemTimeFromArduino((DateTime)tt), t, "CheckSystemTimeFromArduino"));
 
             StartJob(typeof(Jobs.DimLightningCheckerJob), new object[] { this as IHostController, config });
             StartJob(typeof(Jobs.UploadLog), new object[] { this, onlineLogger });
@@ -436,11 +436,11 @@ namespace HostController
             uiController.ShowDialog(dialog);
         }
 
-        private void CheckSystemTimeFromArduino(DateTime time)
+        private async Task CheckSystemTimeFromArduino(DateTime time)
         {
             Logger.Log(this, string.Concat("CheckSystemTimeFromArduino handler called with proposed time ", time), LogLevels.Info);
 
-            systemTimeCorrectorGuard.ExecuteIfFreeAsync(() =>
+            await systemTimeCorrectorGuard.ExecuteIfFreeAsync(() => Task.Run(() =>
             {
                 Logger.Log(this, "Executing CheckSystemTimeFromArduino handler async...", LogLevels.Info);
 
@@ -455,18 +455,18 @@ namespace HostController
                     config.IsSystemTimeValid = true;
 					appliedTimeProviderPriority = 1;
                 }
-            },
+            }),
             ex => Logger.Log(this, ex));
         }
 
-        private void CheckSystemTimeFromGPS(Interfaces.GPS.GPRMC gprmc)
+        private async void CheckSystemTimeFromGPS(Interfaces.GPS.GPRMC gprmc)
         {
 			if (!gprmc.Active)
 				return;
 
             Logger.Log(this, string.Concat("CheckSystemTimeFromGPS handler called with proposed time ", gprmc.Time), LogLevels.Info);
 
-            systemTimeCorrectorGuard.ExecuteIfFreeAsync(() =>
+            await systemTimeCorrectorGuard.ExecuteIfFreeAsync(() => Task.Run(() =>
             {
                 Logger.Log(this, "Executing CheckSystemTimeFromGPS handler async...", LogLevels.Info);
 
@@ -480,18 +480,20 @@ namespace HostController
                 {
                     config.IsSystemTimeValid = true;
                     DisconnectSystemTimeChecking();
-                    arduController.SetTimeToArduino();
+
+                    SyncContext.Post(s => arduController.SetTimeToArduino(), null, "Set GPS Time To Arduino");
+
 					appliedTimeProviderPriority = 3;
                 }
-            },
+            }),
             ex => Logger.Log(this, ex));
         }
 
-        private void CheckSystemTimeFromInternet(DateTime inetTime)
+        private async void CheckSystemTimeFromInternet(DateTime inetTime)
         {
             Logger.Log(this, string.Concat("CheckSystemTimeFromInternet handler called with proposed time ", inetTime), LogLevels.Info);
 
-            systemTimeCorrectorGuard.ExecuteIfFreeAsync(() =>
+            await systemTimeCorrectorGuard.ExecuteIfFreeAsync(() => Task.Run(() =>
             {
                 Logger.Log(this, "Executing CheckSystemTimeFromInternet handler async...", LogLevels.Info);
 
@@ -505,10 +507,12 @@ namespace HostController
                 {
                     config.IsSystemTimeValid = true;
                     DisconnectSystemTimeChecking();
-                    arduController.SetTimeToArduino();
+
+                    SyncContext.Post(s => arduController.SetTimeToArduino(), null, "Set inet Time To Arduino");
+
 					appliedTimeProviderPriority = 2;
                 }
-            },
+            }),
             ex => Logger.Log(this, ex));
         }
 
@@ -602,8 +606,8 @@ namespace HostController
                 await Task.Delay(200);
 
                 showLine("Flushing online log");
-                onlineLogger.Upload(true);
-                await Task.Delay(200);
+
+                await onlineLogger.DisableAndUpload(30000);
 
                 showLine("Stopping UI...");
 

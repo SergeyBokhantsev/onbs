@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using HttpServiceNamespace;
 using Interfaces;
 using Interfaces.GPS;
 
@@ -39,76 +41,41 @@ namespace YandexServicesProvider
         trf = 32
     }
 
-    public class StaticMapProvider
+    public class MapResultReader : IResultReader<SimpleResult<Stream>>
     {
-        private readonly ILogger logger;
-        private readonly HttpClient.Client client = new HttpClient.Client();
-
-        public StaticMapProvider(ILogger logger)
+        public async Task<SimpleResult<Stream>> FromResponse(HttpStatusCode statusCode, WebHeaderCollection headers, Stream responseStream)
         {
-            this.logger = logger;
+            if (statusCode == HttpStatusCode.OK)
+            {
+                var ret = await responseStream.ToMemoryStreamAsync();
+                return new SimpleResult<Stream>(true, statusCode, null, ret);
+            }
+            else
+                throw new Exception(string.Concat("Unecpected HTTP code ", statusCode));
         }
 
-        public Stream GetMap(GeoPoint center, int width, int height, int zoom, MapLayers layers)
+        public SimpleResult<Stream> FromException(string errorMessage, HttpStatusCode httpCode)
+        {
+            return new SimpleResult<Stream>(false, httpCode, errorMessage, null);
+        }
+    }
+
+    public class StaticMapProvider
+    {
+        private readonly HttpService client = new HttpService(null, null) { HttpGetTimeout = new TimeSpan(0, 0, 10), HttpPostTimeout = new TimeSpan(0, 0, 10) };
+
+        public async Task<SimpleResult<Stream>> GetMapAsync(GeoPoint center, int width, int height, int zoom, MapLayers layers)
         {
             width = Math.Min(width, 600);
             height = Math.Min(height, 450);
 
             var l = string.Join(",", Enum.GetValues(typeof(MapLayers)).Cast<Enum>().Where(layers.HasFlag).Select(f => f.ToString()));
 
-            string url = string.Format("https://static-maps.yandex.ru/1.x/?ll={0},{1}&z={2}&l={3}&size={4},{5}", center.Lon.Degrees, center.Lat.Degrees, zoom, l, width, height);
+            var uri = new Uri(string.Format("https://static-maps.yandex.ru/1.x/?ll={0},{1}&z={2}&l={3}&size={4},{5}", center.Lon.Degrees, center.Lat.Degrees, zoom, l, width, height));
 
-            try
-            {
-                using (var responce = client.Get(new Uri(url), 2, 3000))
-                {
-                    if (responce.Status == System.Net.HttpStatusCode.OK)
-                    {
-                        var ret = new MemoryStream();
+            var args = ExecuteArguments<SimpleResult<Stream>>.CreateGET(uri, new MapResultReader());
 
-                        using (var inputStream = responce.GetStream())
-                        {
-                            var buffer = new byte[2048];
-                            int readed = 0;
-                            do
-                            {
-                                readed = inputStream.Read(buffer, 0, buffer.Length);
-                                ret.Write(buffer, 0, readed);
-                            }
-                            while (readed > 0);
-                        }
-
-                        return ret;
-                    }
-                    else
-                    {
-                        logger.Log(this, string.Format("Unable to get map: {0}", responce.Error), LogLevels.Warning);
-                        return null;
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            {
-                logger.Log(this, ex);
-                return null;
-            }
-        }
-
-        public void GetMapAsync(GeoPoint center, int width, int height, int zoom, MapLayers layers, Action<Stream> callback)
-        {
-            ThreadPool.QueueUserWorkItem(state =>
-                {
-                    var mapStream = GetMap(center, width, height, zoom, layers);
-
-                    if (callback != null)
-                        callback(mapStream);
-                });
-        }
-
-        public async Task<Stream> GetMapAsync(GeoPoint center, int width, int height, int zoom, MapLayers layers)
-        {
-            return await Task.Run<Stream>(() => GetMap(center, width, height, zoom, layers));
+            return await client.ExecuteAsync(args);
         }
     }
 }

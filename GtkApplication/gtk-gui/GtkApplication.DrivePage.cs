@@ -44,13 +44,13 @@ namespace GtkApplication
 
 		private global::Gtk.Label label_speed;
 
-		private global::Gtk.Label label12;
-
-		private global::Gtk.HSeparator hseparator5;
+		private global::Gtk.Image image2;
 
 		private global::Gtk.Label label_travel_span;
 
 		private global::Gtk.Label label_distance;
+
+		private global::Gtk.Image image3;
 
 		private global::Gtk.HBox hbox2;
 
@@ -77,8 +77,6 @@ namespace GtkApplication
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
 			this.hbox1.HeightRequest = 35;
-			this.hbox1.Name = "hbox1";
-			this.hbox1.Homogeneous = true;
 			this.hbox1.Spacing = 6;
 			this.hbox1.BorderWidth = ((uint)(5));
 			this.vbox1.Add(this.hbox1);
@@ -249,14 +247,14 @@ namespace GtkApplication
 			w16.Fill = false;
 			// Container child hbox4.Gtk.Box+BoxChild
 			this.vbox2 = new global::Gtk.VBox();
-			this.vbox2.WidthRequest = 260;
+			this.vbox2.WidthRequest = 389;
 			this.vbox2.Name = "vbox2";
 			this.vbox2.Spacing = 6;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.label_speed = new global::Gtk.Label();
-			this.label_speed.HeightRequest = 150;
+			this.label_speed.HeightRequest = 250;
 			this.label_speed.Name = "label_speed";
-			this.label_speed.Yalign = 0.29F;
+			this.label_speed.Yalign = 1F;
 			this.label_speed.LabelProp = "<span foreground=\'#FFFFFF\' size=\'90000\'><b>-</b></span>";
 			this.label_speed.UseMarkup = true;
 			this.label_speed.Justify = ((global::Gtk.Justification)(2));
@@ -266,46 +264,44 @@ namespace GtkApplication
 			w17.Expand = false;
 			w17.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
-			this.label12 = new global::Gtk.Label();
-			this.label12.HeightRequest = 35;
-			this.label12.Name = "label12";
-			this.label12.Yalign = 1F;
-			this.label12.LabelProp = "<span foreground=\'#FFFFFF\' size=\'20000\'>km/h</span>";
-			this.label12.UseMarkup = true;
-			this.vbox2.Add(this.label12);
-			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.label12]));
+			this.image2 = new global::Gtk.Image();
+			this.image2.Name = "image2";
+			this.image2.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("GtkApplication.Resources.Sep_kmh.png");
+			this.vbox2.Add(this.image2);
+			global::Gtk.Box.BoxChild w18 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.image2]));
 			w18.Position = 1;
 			w18.Expand = false;
 			w18.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
-			this.hseparator5 = new global::Gtk.HSeparator();
-			this.hseparator5.Name = "hseparator5";
-			this.vbox2.Add(this.hseparator5);
-			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hseparator5]));
-			w19.Position = 2;
-			w19.Expand = false;
-			w19.Fill = false;
-			// Container child vbox2.Gtk.Box+BoxChild
 			this.label_travel_span = new global::Gtk.Label();
-			this.label_travel_span.HeightRequest = 35;
+			this.label_travel_span.HeightRequest = 50;
 			this.label_travel_span.Name = "label_travel_span";
 			this.label_travel_span.Yalign = 1F;
 			this.label_travel_span.LabelProp = "<span foreground=\'#D6D6D6\' size=\'20000\'>0 min</span>";
 			this.label_travel_span.UseMarkup = true;
 			this.vbox2.Add(this.label_travel_span);
-			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.label_travel_span]));
-			w20.Position = 3;
-			w20.Expand = false;
-			w20.Fill = false;
+			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.label_travel_span]));
+			w19.Position = 2;
+			w19.Expand = false;
+			w19.Fill = false;
 			// Container child vbox2.Gtk.Box+BoxChild
 			this.label_distance = new global::Gtk.Label();
-			this.label_distance.HeightRequest = 35;
+			this.label_distance.HeightRequest = 50;
 			this.label_distance.Name = "label_distance";
 			this.label_distance.Yalign = 1F;
 			this.label_distance.LabelProp = "<span foreground=\'#AAAAAA\' size=\'20000\'>0 km</span>";
 			this.label_distance.UseMarkup = true;
 			this.vbox2.Add(this.label_distance);
-			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.label_distance]));
+			global::Gtk.Box.BoxChild w20 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.label_distance]));
+			w20.Position = 3;
+			w20.Expand = false;
+			w20.Fill = false;
+			// Container child vbox2.Gtk.Box+BoxChild
+			this.image3 = new global::Gtk.Image();
+			this.image3.Name = "image3";
+			this.image3.Pixbuf = global::Gdk.Pixbuf.LoadFromResource("GtkApplication.Resources.Sep_route.png");
+			this.vbox2.Add(this.image3);
+			global::Gtk.Box.BoxChild w21 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.image3]));
 			w21.Position = 4;
 			w21.Expand = false;
 			w21.Fill = false;
@@ -355,7 +351,7 @@ namespace GtkApplication
 			w27.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox5 = new global::Gtk.HBox();
-			this.hbox5.HeightRequest = 40;
+			this.hbox5.HeightRequest = 60;
 			this.hbox5.Name = "hbox5";
 			this.hbox5.Homogeneous = true;
 			this.hbox5.Spacing = 6;

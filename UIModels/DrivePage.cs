@@ -11,6 +11,7 @@ using System.Threading;
 using System.IO;
 using UIModels.MultipurposeModels;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace UIModels
 {
@@ -93,7 +94,7 @@ namespace UIModels
             this.tc = hc.GetController<ITravelController>();
 
             this.weather = new WeatherProvider(hc.Logger, hc.Config.DataFolder);
-            this.geocoder = new GeocodingProvider(hc.Logger);
+            this.geocoder = new GeocodingProvider();
 
 			SetProperty("oil_temp_icon", Path.Combine(hc.Config.DataFolder, "icons", "OilTemp.png"));
 
@@ -141,51 +142,54 @@ namespace UIModels
             }
         }
 
-        private void UpdateOBD()
+        private async Task UpdateOBD()
         {
             if (!Disposed)
             {
-                engineCoolantTempGuard.ExecuteIfFree(() =>
-                {
-                     var engineTemp = obdProcessor.GetCoolantTemp() ?? int.MinValue;
-                     miniDisplayModel.EngineTemp = engineTemp;
-                     SetProperty("eng_temp", engineTemp);
-                });
+                await Task.Run(() =>
+                    {
+                        engineCoolantTempGuard.ExecuteIfFree(() =>
+                        {
+                             var engineTemp = obdProcessor.GetCoolantTemp() ?? int.MinValue;
+                             miniDisplayModel.EngineTemp = engineTemp;
+                             SetProperty("eng_temp", engineTemp);
+                        });
 
-                var speed = obdProcessor.GetSpeed();
-                var rpm = obdProcessor.GetRPM();
+                        var speed = obdProcessor.GetSpeed();
+                        var rpm = obdProcessor.GetRPM();
 
-                if (speed.HasValue && rpm.HasValue && speed.Value > 0)
-                {
-                    var ratio = ((double)rpm.Value / (double)speed.Value);
-                    var gear = "-";
+                        if (speed.HasValue && rpm.HasValue && speed.Value > 0)
+                        {
+                            var ratio = ((double)rpm.Value / (double)speed.Value);
+                            var gear = "-";
 
-                    if (ratio >= 100)
-                        gear = "1";
-                    else if (ratio >= 67 && ratio < 100)
-                        gear = "2";
-                    else if (ratio >= 47 && ratio < 67)
-                        gear = "3";
-                    else if (ratio >= 35 && ratio < 47)
-                        gear = "4";
-                    else
-                        gear = "5";
+                            if (ratio >= 100)
+                                gear = "1";
+                            else if (ratio >= 67 && ratio < 100)
+                                gear = "2";
+                            else if (ratio >= 47 && ratio < 67)
+                                gear = "3";
+                            else if (ratio >= 35 && ratio < 47)
+                                gear = "4";
+                            else
+                                gear = "5";
 
-                    SetProperty("gear", gear);
-                }
-                else
-                {
-                    SetProperty("gear", "-");
-                }
+                            SetProperty("gear", gear);
+                        }
+                        else
+                        {
+                            SetProperty("gear", "-");
+                        }
 
-                if (speed.HasValue)
-                    reporter.SetSpeed((double)speed.Value);
+                        if (speed.HasValue)
+                            reporter.SetSpeed((double)speed.Value);
 
-                if (rpm.HasValue)
-                    reporter.SetRPM(rpm.Value);
+                        if (rpm.HasValue)
+                            reporter.SetRPM(rpm.Value);
 
-                if (!string.IsNullOrEmpty(elm.Error))
-                    elm.Reset();
+                        if (!string.IsNullOrEmpty(elm.Error))
+                            elm.Reset();
+                    });
             }
         }
 
@@ -218,14 +222,18 @@ namespace UIModels
             }
         }
 
-        private void UpdateAddres(GeoPoint location)
+        private async Task UpdateAddres(GeoPoint location)
         {
 			return;
 
             if (!Disposed && hc.Config.IsInternetConnected)
             {
-                var addres = geocoder.GetAddres(location);
-                SetProperty("heading", addres);
+                var result = await geocoder.GetAddresAsync(location);
+
+                if (result.Success)
+                    SetProperty("heading", result.Value);
+                else
+                    hc.Logger.Log(this, string.Concat("Update address: ", result.ErrorMessage), LogLevels.Warning);
             }
         }
 
@@ -244,29 +252,30 @@ namespace UIModels
                 SetProperty("travel_span", tc.TravelTime.TotalMinutes);
                 SetProperty("distance", tc.TravelDistance);
 
-                obdGuard.ExecuteIfFreeAsync(UpdateOBD);
+                obdGuard.ExecuteIfFreeAsync(async () => await UpdateOBD());
                 minidisplayGuard.ExecuteIfFree(UpdateMiniDisplay);
-                cpuInfoGuard.ExecuteIfFreeAsync(UpdateCpuInfo, ex => SetProperty("cpu_info", "Error"));
+                cpuInfoGuard.ExecuteIfFreeAsync(async () => await UpdateCpuInfo(), ex => SetProperty("cpu_info", "Error"));
             }
 
             base.OnPrimaryTick(timer);
         }
 
-        private void UpdateCpuInfo()
+        private async Task UpdateCpuInfo()
         {
-			return;
-
             if (!Disposed)
             {
-                var cpuSpeed = NixHelpers.CPUInfo.GetCPUSpeed(hc.ProcessRunnerFactory);
-                var cpuTemp = NixHelpers.CPUInfo.GetCPUTemp(hc.ProcessRunnerFactory);
+                await Task.Run(() =>
+                {
+                    var cpuSpeed = NixHelpers.CPUInfo.GetCPUSpeed(hc.ProcessRunnerFactory);
+                    var cpuTemp = NixHelpers.CPUInfo.GetCPUTemp(hc.ProcessRunnerFactory);
 
-                string info = string.Format("{0} Mhz ({1}°)", 
-                    cpuSpeed.HasValue ? cpuSpeed.Value.ToString() : "-",
-                    cpuTemp.HasValue ? cpuTemp.Value.ToString("0.0") : "-");
+                    string info = string.Format("{0} Mhz ({1}°)",
+                        cpuSpeed.HasValue ? cpuSpeed.Value.ToString() : "-",
+                        cpuTemp.HasValue ? cpuTemp.Value.ToString("0.0") : "-");
 
-                if (!Disposed)
-                    SetProperty("cpu_info", info);
+                    if (!Disposed)
+                        SetProperty("cpu_info", info);
+                });
             }
         }
 
@@ -281,7 +290,7 @@ namespace UIModels
             base.OnDisposing(sender, e);
         }
 
-        private void GPRMCReseived(GPRMC gprmc)
+        private async void GPRMCReseived(GPRMC gprmc)
         {
             if (!Disposed)
             {
@@ -290,7 +299,7 @@ namespace UIModels
 
                 if (gprmc.Active)
                 {
-                    geocoderGuard.ExecuteIfFreeAsync(() => UpdateAddres(gprmc.Location));
+                    await geocoderGuard.ExecuteIfFreeAsync(() => UpdateAddres(gprmc.Location));
                 }
             }
         }

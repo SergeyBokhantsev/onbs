@@ -13,13 +13,13 @@ namespace Interfaces
             return value;
         }
 
-        public static void ExecuteIfFreeAsync(this IOperationGuard guard, Action action, Action<Exception> exceptionHandler = null)
-        {
-            ThreadPool.QueueUserWorkItem(state =>
-            {
-                guard.ExecuteIfFree(action, exceptionHandler);
-            });
-        }
+        //public static void ExecuteIfFreeAsync(this IOperationGuard guard, Action action, Action<Exception> exceptionHandler = null)
+        //{
+        //    ThreadPool.QueueUserWorkItem(state =>
+        //    {
+        //        guard.ExecuteIfFree(action, exceptionHandler);
+        //    });
+        //}
 
         public static string GetString(this MemoryStream ms)
         {

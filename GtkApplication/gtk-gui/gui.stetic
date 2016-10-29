@@ -682,7 +682,7 @@
       </widget>
     </child>
   </widget>
-  <widget class="Gtk.Bin" id="GtkApplication.DrivePage" design-size="800 554">
+  <widget class="Gtk.Bin" id="GtkApplication.DrivePage" design-size="1066 793">
     <property name="MemberName" />
     <property name="WidthRequest">800</property>
     <property name="HeightRequest">480</property>
@@ -695,7 +695,6 @@
           <widget class="Gtk.HBox" id="hbox1">
             <property name="MemberName" />
             <property name="HeightRequest">35</property>
-            <property name="Homogeneous">True</property>
             <property name="Spacing">6</property>
             <property name="BorderWidth">5</property>
             <child>
@@ -958,13 +957,13 @@
             <child>
               <widget class="Gtk.VBox" id="vbox2">
                 <property name="MemberName" />
-                <property name="WidthRequest">260</property>
+                <property name="WidthRequest">389</property>
                 <property name="Spacing">6</property>
                 <child>
                   <widget class="Gtk.Label" id="label_speed">
                     <property name="MemberName" />
-                    <property name="HeightRequest">150</property>
-                    <property name="Yalign">0.29</property>
+                    <property name="HeightRequest">250</property>
+                    <property name="Yalign">1</property>
                     <property name="LabelProp">&lt;span foreground='#FFFFFF' size='90000'&gt;&lt;b&gt;-&lt;/b&gt;&lt;/span&gt;</property>
                     <property name="UseMarkup">True</property>
                     <property name="Justify">Center</property>
@@ -977,12 +976,9 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Label" id="label12">
+                  <widget class="Gtk.Image" id="image2">
                     <property name="MemberName" />
-                    <property name="HeightRequest">35</property>
-                    <property name="Yalign">1</property>
-                    <property name="LabelProp">&lt;span foreground='#FFFFFF' size='20000'&gt;km/h&lt;/span&gt;</property>
-                    <property name="UseMarkup">True</property>
+                    <property name="Pixbuf">resource:GtkApplication.Resources.Sep_kmh.png</property>
                   </widget>
                   <packing>
                     <property name="Position">1</property>
@@ -992,8 +988,12 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.HSeparator" id="hseparator5">
+                  <widget class="Gtk.Label" id="label_travel_span">
                     <property name="MemberName" />
+                    <property name="HeightRequest">50</property>
+                    <property name="Yalign">1</property>
+                    <property name="LabelProp">&lt;span foreground='#D6D6D6' size='20000'&gt;0 min&lt;/span&gt;</property>
+                    <property name="UseMarkup">True</property>
                   </widget>
                   <packing>
                     <property name="Position">2</property>
@@ -1003,11 +1003,11 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Label" id="label_travel_span">
+                  <widget class="Gtk.Label" id="label_distance">
                     <property name="MemberName" />
-                    <property name="HeightRequest">35</property>
+                    <property name="HeightRequest">50</property>
                     <property name="Yalign">1</property>
-                    <property name="LabelProp">&lt;span foreground='#D6D6D6' size='20000'&gt;0 min&lt;/span&gt;</property>
+                    <property name="LabelProp">&lt;span foreground='#AAAAAA' size='20000'&gt;0 km&lt;/span&gt;</property>
                     <property name="UseMarkup">True</property>
                   </widget>
                   <packing>
@@ -1018,12 +1018,9 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="Gtk.Label" id="label_distance">
+                  <widget class="Gtk.Image" id="image3">
                     <property name="MemberName" />
-                    <property name="HeightRequest">35</property>
-                    <property name="Yalign">1</property>
-                    <property name="LabelProp">&lt;span foreground='#AAAAAA' size='20000'&gt;0 km&lt;/span&gt;</property>
-                    <property name="UseMarkup">True</property>
+                    <property name="Pixbuf">resource:GtkApplication.Resources.Sep_route.png</property>
                   </widget>
                   <packing>
                     <property name="Position">4</property>
@@ -1097,7 +1094,7 @@
         <child>
           <widget class="Gtk.HBox" id="hbox5">
             <property name="MemberName" />
-            <property name="HeightRequest">40</property>
+            <property name="HeightRequest">60</property>
             <property name="Homogeneous">True</property>
             <property name="Spacing">6</property>
             <child>

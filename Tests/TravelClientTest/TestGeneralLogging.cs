@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests.TravelClientTest
@@ -13,31 +14,34 @@ namespace Tests.TravelClientTest
         private const string vehicleId = "UnitTestsVehicle";
 
         [TestMethod]
-        public void CreateNewGeneralLogTest()
+        public async Task CreateNewGeneralLogTest()
         {
             //INIT
             var serviceUri = new Uri(serviceUrl);
             var logClient = new TravelsClient.GeneralLoggerClient(serviceUri, userKey, vehicleId);
 
             //ACT
-            var logId = logClient.CreateNewLog("test initial body");
+            var logId = (await logClient.CreateNewLogAsync("test initial body")).Value;
 
             //ASSERT
             Assert.IsTrue(logId != -1);
         }
 
         [TestMethod]
-        public void AppendGeneralLogTest()
+        public async Task AppendGeneralLogTest()
         {
             //INIT
             var serviceUri = new Uri(serviceUrl);
             var logClient = new TravelsClient.GeneralLoggerClient(serviceUri, userKey, vehicleId);
 
             //ACT
-            var logId = logClient.CreateNewLog("test initial body");
+            var logId = (await logClient.CreateNewLogAsync("test initial body")).Value;
             Assert.IsTrue(logId != -1);
 
-            logClient.AppendLog(logId, "appended message");
+            var result = await logClient.AppendLogAsync(logId, "appended message");
+
+            //ASSERT
+            Assert.IsTrue(result.Success);
         }
     }
 }

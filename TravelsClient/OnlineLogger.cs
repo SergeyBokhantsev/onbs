@@ -13,16 +13,20 @@ namespace TravelsClient
     {
         private const int logMaxSize = 100 * 1024;
 
+        public event LogEventHandlerDelegate LogEvent;
+
         private readonly IConfig config;
         private readonly LogLevels level;
         private readonly StringBuilder buffer = new StringBuilder();
         private readonly GeneralLoggerClient client;
-        private readonly InterlockedGuard uploadLocker = new InterlockedGuard();
+        private readonly Lazy<SynchronizationContext> syncContextAccessor;
 
         private int logId = -1;
         private int logSize;
 
-        public event LogEventHandlerDelegate LogEvent;
+        private int busy;
+
+        private bool disabled;
 
         public DateTime LastWarningTime
         {
@@ -30,9 +34,16 @@ namespace TravelsClient
             private set;
         }
 
-        public OnlineLogger(IConfig config)
+        public OnlineLogger(IConfig config, Lazy<SynchronizationContext> syncContextAccessor)
         {
+            if (null == config)
+                throw new ArgumentNullException("config");
+
+            if (null == syncContextAccessor)
+                throw new ArgumentNullException("syncContextAccessor");
+
             this.config = config;
+            this.syncContextAccessor = syncContextAccessor;
             level = LogLevels.Info;
             client = new GeneralLoggerClient(new Uri(config.GetString(ConfigNames.TravelServiceUrl)),
                                              config.GetString(ConfigNames.TravelServiceKey),
@@ -41,6 +52,9 @@ namespace TravelsClient
 
         public void Log(object caller, string message, LogLevels level)
         {
+            if (disabled)
+                return;
+
             if (level <= LogLevels.Warning)
                 LastWarningTime = DateTime.Now;
 
@@ -62,71 +76,117 @@ namespace TravelsClient
 
         public void Log(object caller, Exception ex)
         {
+            if (disabled)
+                return;
+
             Log(caller, string.Concat(ex.Message, Environment.NewLine, ex.StackTrace), LogLevels.Error);
             Flush();
         }
 
-        private void DoUpload()
+        private async Task<bool> Upload()
         {
-            if (!config.IsInternetConnected)
-                return;
-
-            string body = null;
-
-            lock (buffer)
+            if (Interlocked.Exchange(ref busy, 1) == 1)
             {
-                if (buffer.Length == 0)
-                    return;
-
-                if (logSize + buffer.Length > logMaxSize)
-                {
-                    logId = -1;
-                    logSize = 0;
-                }
-
-                body = buffer.ToString();
-                buffer.Clear();
+                return true;
             }
 
-            lock (client)
+            try
             {
-                try
+                if (config.IsInternetConnected)
                 {
-                    if (logId == -1)
+                    string body = null;
+                    bool success = false;
+
+                    lock (buffer)
                     {
-                        logId = client.CreateNewLog(body);
-                    }
-                    else
-                    {
-                        client.AppendLog(logId, body);
+                        if (buffer.Length > 0)
+                        {
+                            if (logSize + buffer.Length > logMaxSize)
+                            {
+                                logId = -1;
+                                logSize = 0;
+                            }
+
+                            body = buffer.ToString();
+                            buffer.Clear();
+                        }
                     }
 
-                    logSize += body.Length;
-                }
-                catch (Exception ex)
-                {
-                    buffer.Insert(0, body);
-                    Log(this, ex);
-                }
-            }
-        }
+                    if (null != body)
+                    {
+                        if (logId == -1)
+                        {
+                            var createLogResult = await client.CreateNewLogAsync(body);
 
-        public void Upload(bool blocking)
-        {
-            if (blocking)
-            {
-                uploadLocker.WaitHandle.WaitOne(10000);
-                DoUpload();
+                            if (success = createLogResult.Success)
+                                logId = createLogResult.Value;
+                            else
+                                Log(this, createLogResult.ErrorMessage, LogLevels.Warning);
+                        }
+                        else
+                        {
+                            var addResult = await client.AppendLogAsync(logId, body);
+
+                            if (!(success = addResult.Success))
+                                Log(this, addResult.ErrorMessage, LogLevels.Warning);
+                        }
+
+                        if (success)
+                            logSize += body.Length;
+                        else
+                        {
+                            lock (buffer)
+                            {
+                                buffer.Insert(0, body);
+                            }
+                        }
+                    }
+                }
+
+                lock (buffer)
+                {
+                    return buffer.Length > 0;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                uploadLocker.ExecuteIfFreeAsync(DoUpload);
+                Log(this, ex);
+
+                return true;
+            }
+            finally
+            {
+                Interlocked.Exchange(ref busy, 0);
             }
         }
 
         public void Flush()
         {
-            Upload(false);
+            var syncContext = syncContextAccessor.Value;
+
+            if (null == syncContext)
+                throw new Exception("Cannot retrieve SyncContext");
+
+            syncContext.Post(async state => await Upload(), null);
+        }
+
+        public async Task DisableAndUpload(int timeout)
+        {
+            disabled = true;
+
+            const int delay = 1000;
+
+            int waited = 0;
+
+            while (await Upload())
+            {
+                if (waited >= timeout)
+                    break;
+
+                await Task.Delay(delay);
+
+                waited += delay;
+            }
         }
     }
 }

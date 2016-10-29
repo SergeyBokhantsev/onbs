@@ -1,16 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using HttpServiceNamespace;
 using Interfaces;
 
 namespace TravelsClient
 {
+    public class CreateLogResultReader : IResultReader<SimpleResult<int>>
+    {
+        public Task<SimpleResult<int>> FromResponse(HttpStatusCode statusCode, WebHeaderCollection headers, Stream responseStream)
+        {
+            return Task.FromResult(new SimpleResult<int>(true, statusCode, null, int.Parse(headers["LogId"])));
+        }
+
+        public SimpleResult<int> FromException(string errorMessage, HttpStatusCode httpCode)
+        {
+            return new SimpleResult<int>(false, httpCode, errorMessage, -1);
+        }
+    }
+
+    public class AppendLogResultReader : IResultReader<SimpleResult>
+    {
+        public Task<SimpleResult> FromResponse(HttpStatusCode statusCode, WebHeaderCollection headers, Stream responseStream)
+        {
+            if (statusCode != HttpStatusCode.OK)
+                throw new Exception(string.Format("Http Operation code is {0} but 200 (OK) expected", statusCode));
+
+            return Task.FromResult(new SimpleResult(true, statusCode, null));
+        }
+
+        public SimpleResult FromException(string errorMessage, HttpStatusCode httpCode)
+        {
+            return new SimpleResult(false, httpCode, errorMessage);
+        }
+    }
+
     public class GeneralLoggerClient
     {
         private readonly Uri serviceUri;
-        private readonly HttpClient.Client client;
+        private readonly HttpService client;
         private readonly string key;
         private readonly string vehicle;
 
@@ -20,44 +52,29 @@ namespace TravelsClient
             this.key = key;
             this.vehicle = vehicle;
 
-            client = new HttpClient.Client();
+            client = new HttpService(null, null)
+            {
+                HttpGetTimeout = new TimeSpan(0, 0, 30),
+                HttpPostTimeout = new TimeSpan(0, 0, 45)
+            };
         }
 
-        public int CreateNewLog(string body)
+        public async Task<SimpleResult<int>> CreateNewLogAsync(string body)
         {
             var uri = new Uri(serviceUri, string.Format("api/GeneralLog/new?key={0}&vehicle={1}", key, vehicle));
 
-            using (var response = client.Post(uri, body, 2, 3000))
-            {
-                if (response.Status == System.Net.HttpStatusCode.Created)
-                {
-                    return int.Parse(response.Headers["LogId"]);
-                }
-                else
-                {
-                    throw new Exception(string.Format("Unable to create new log: {0}", response.Error));
-                }
-            }
+            var args = ExecuteArguments<SimpleResult<int>>.Create(uri, "POST", new CreateLogResultReader(), new StringRequestWriter(body));
+
+            return await client.ExecuteAsync(args);
         }
 
-        public async Task<int> CreateNewLogAsync(string body)
-        {
-            return await Task.Run<int>(() => CreateNewLog(body));
-        }
-
-        public void AppendLog(int logId, string body)
+        public async Task<SimpleResult> AppendLogAsync(int logId, string body)
         {
             var uri = new Uri(serviceUri, string.Format("api/GeneralLog/append?key={0}&vehicle={1}&id={2}", key, vehicle, logId));
-            using (var response = client.Put(uri, body, 3, 3000))
-            {
-                if (response.Status != System.Net.HttpStatusCode.OK)
-                    throw new Exception(string.Format("Unable to append log: {0}", response.Error));
-            }
-        }
 
-        public async Task AppendLogAsync(int logId, string body)
-        {
-            await Task.Run(() => AppendLog(logId, body));
+            var args = ExecuteArguments<SimpleResult>.Create(uri, "PUT", new AppendLogResultReader(), new StringRequestWriter(body));
+
+            return await client.ExecuteAsync(args);
         }
     }
 }

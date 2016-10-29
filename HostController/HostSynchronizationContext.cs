@@ -153,9 +153,7 @@ namespace HostController
                 itemWatch.Stop();
 
 
-				pumpResetEvent.WaitOne();
-
-                
+				pumpResetEvent.WaitOne();   
             }
 
             pumpResetEvent.Dispose();

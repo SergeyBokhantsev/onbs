@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TravelsClient;
 
@@ -16,22 +17,22 @@ namespace Tests.TravelClientTest
         private const string userKey = "1";
         private const string vehicleId = "UnitTestsVehicle";
 
-        private Travel CreateTravel(TravelsClient.Client client, string name)
+        private async Task <Travel> CreateTravel(TravelsClient.Client client, string name)
         {
-            var result = client.OpenTravel(name);
+            var result = await client.OpenTravelAsync(name);
 
             if (result.Success)
-                return result.Travel;
+                return result.Value;
             else
-                throw new Exception(result.Error);
+                throw result.MakeException();
         }
 
-        private void DeleteTravel(TravelsClient.Client client, Travel travel)
+        private async Task DeleteTravel(TravelsClient.Client client, Travel travel)
         {
-            var result = client.DeleteTravel(travel);
+            var result = await client.DeleteTravelAsync(travel);
 
             if (!result.Success)
-                throw new Exception(result.Error);
+                throw result.MakeException();
         }
 
         [TestMethod]
@@ -45,14 +46,14 @@ namespace Tests.TravelClientTest
         }
 
         [TestMethod]
-        public void CreateAndDeleteTravel()
+        public async Task CreateAndDeleteTravel()
         {
             //INIT
             var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, vehicleId, new Mocks.Logger());
             var name = Guid.NewGuid().ToString();
 
             //ACT
-            var travel = CreateTravel(client, name);
+            var travel = await CreateTravel(client, name);
 
             //ASSERT
             Assert.IsNotNull(travel);
@@ -63,16 +64,16 @@ namespace Tests.TravelClientTest
         }
 
         [TestMethod]
-        public void GetTravel()
+        public async Task GetTravel()
         {
             //INIT
             var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, vehicleId, new Mocks.Logger());
             var name = Guid.NewGuid().ToString();
-            var travel = CreateTravel(client, name);
+            var travel = await CreateTravel(client, name);
 
             //ACT
-            var result = client.GetTravel(travel.ID);
-            var receivedTravel = result.Travel;
+            var result = await client.GetTravelAsync(travel.ID);
+            var receivedTravel = result.Value;
 
             //ASSERT
             Assert.IsTrue(result.Success);
@@ -85,51 +86,51 @@ namespace Tests.TravelClientTest
         }
 
         [TestMethod]
-        public void CloseTravel()
+        public async Task CloseTravel()
         {
             //INIT
             var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, vehicleId, new Mocks.Logger());
             var name = Guid.NewGuid().ToString();
-            var travel = CreateTravel(client, name);
+            var travel = await CreateTravel(client, name);
 
             Assert.IsFalse(travel.Closed);
 
             //ACT
-            client.CloseTravel(travel);
-            var receivedTravel = client.GetTravel(travel.ID);
+            await client.CloseTravelAsync(travel);
+            var receivedTravel = await client.GetTravelAsync(travel.ID);
 
             //ASSERT
             Assert.IsNotNull(receivedTravel);
-            Assert.IsTrue(receivedTravel.Travel.Closed);
+            Assert.IsTrue(receivedTravel.Value.Closed);
 
             //Cleanup
             DeleteTravel(client, travel);
         }
 
         [TestMethod]
-        public void FindActiveTravel()
+        public async Task FindActiveTravel()
         {
             //INIT
             var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, vehicleId, new Mocks.Logger());
 
-            var travel1 = CreateTravel(client, Guid.NewGuid().ToString());
+            var travel1 = await CreateTravel(client, Guid.NewGuid().ToString());
             Thread.Sleep(1000);
-            var travel2 = CreateTravel(client, Guid.NewGuid().ToString());            
+            var travel2 = await CreateTravel(client, Guid.NewGuid().ToString());            
 
             //ACT 1
-            var activeTravel = client.FindActiveTravel();
+            var activeTravel = await client.FindActiveTravelAsync();
 
             //ASSERT 1
             Assert.IsNotNull(activeTravel);
-            Assert.AreEqual(travel2.ID, activeTravel.Travel.ID);
+            Assert.AreEqual(travel2.ID, activeTravel.Value.ID);
 
             // ACT 2
-            client.CloseTravel(travel2);
-            activeTravel = client.FindActiveTravel();
+            await client.CloseTravelAsync(travel2);
+            activeTravel = await client.FindActiveTravelAsync();
 
             //ASSERT 2
             Assert.IsNotNull(activeTravel);
-            Assert.AreEqual(travel1.ID, activeTravel.Travel.ID);
+            Assert.AreEqual(travel1.ID, activeTravel.Value.ID);
 
             //Cleanup
             DeleteTravel(client, travel1);
@@ -137,35 +138,35 @@ namespace Tests.TravelClientTest
         }
 
         [TestMethod]
-        public void FindActiveTravelForNonExistVehicle()
+        public async Task FindActiveTravelForNonExistVehicle()
         {
             //INIT
             var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, Guid.NewGuid().ToString(), new Mocks.Logger());
 
             //ACT 1
-            var activeTravelResult = client.FindActiveTravel();
+            var activeTravelResult = await client.FindActiveTravelAsync();
 
             //ASSERT 1
             Assert.IsTrue(activeTravelResult.Success);
-            Assert.IsNull(activeTravelResult.Travel);
+            Assert.IsNull(activeTravelResult.Value);
         }
 
         [TestMethod]
-        public void RenameTravel()
+        public async Task RenameTravel()
         {
             //INIT
             var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, vehicleId, new Mocks.Logger());
             var name = Guid.NewGuid().ToString();
-            var travel = CreateTravel(client, name);
+            var travel = await CreateTravel(client, name);
 
             //ACT
             travel.Name = "newname";
-            var result = client.RenameTravel(travel);
+            var result = await client.RenameTravelAsync(travel);
             Assert.IsTrue(result.Success);
 
-            var getResult = client.GetTravel(travel.ID);
+            var getResult = await client.GetTravelAsync(travel.ID);
             Assert.IsTrue(getResult.Success);
-            var receivedTravel = getResult.Travel;
+            var receivedTravel = getResult.Value;
 
             //ASSERT
             Assert.IsNotNull(receivedTravel);
@@ -176,20 +177,20 @@ namespace Tests.TravelClientTest
         }
 
         [TestMethod]
-        public void AddTravelPoint()
+        public async Task AddTravelPoint()
         {
             //INIT
             var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, vehicleId, new Mocks.Logger());
             var name = Guid.NewGuid().ToString();
-            var travel = CreateTravel(client, name);
+            var travel = await CreateTravel(client, name);
 
             Assert.AreEqual(travel.StartTime, travel.EndTime);
 
             //ACT
             Thread.Sleep(1000);
             var tp = new TravelPoint { Description = Guid.NewGuid().ToString(), Lat = 50, Lon = 30, Speed = 15.57, Type = TravelPointTypes.AutoTrackPoint };
-            client.AddTravelPoint(tp, travel);
-            travel = client.GetTravel(travel.ID).Travel;
+            await client.AddTravelPointAsync(tp, travel);
+            travel = (await client.GetTravelAsync(travel.ID)).Value;
 
             //ASSERT
             Assert.IsNotNull(travel);
@@ -200,12 +201,12 @@ namespace Tests.TravelClientTest
         }
 
         [TestMethod]
-        public void AddTravelPointFewTimes()
+        public async Task AddTravelPointFewTimes()
         {
             //INIT
             var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, vehicleId, new Mocks.Logger());
             var name = Guid.NewGuid().ToString();
-            var travel = CreateTravel(client, name);
+            var travel = await CreateTravel(client, name);
 
             Assert.AreEqual(travel.StartTime, travel.EndTime);
 
@@ -213,10 +214,10 @@ namespace Tests.TravelClientTest
             for (int i = 0; i < 10; ++i)
             {
                 var tp = new TravelPoint { Description = Guid.NewGuid().ToString(), Lat = 50, Lon = 30, Speed = 15.57, Type = TravelPointTypes.AutoTrackPoint };
-                client.AddTravelPoint(tp, travel);
+                Assert.IsTrue((await client.AddTravelPointAsync(tp, travel)).Success);
             }
 
-            travel = client.GetTravel(travel.ID).Travel;
+            travel = (await client.GetTravelAsync(travel.ID)).Value;
 
             //ASSERT
             Assert.AreNotEqual(travel.StartTime, travel.EndTime);
@@ -226,12 +227,12 @@ namespace Tests.TravelClientTest
         }
 
         [TestMethod]
-        public void AddTravelPoints()
+        public async Task AddTravelPoints()
         {
             //INIT
             var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, vehicleId, new Mocks.Logger());
             var name = Guid.NewGuid().ToString();
-            var travel = CreateTravel(client, name);
+            var travel = await CreateTravel(client, name);
 
             Assert.AreEqual(travel.StartTime, travel.EndTime);
 
@@ -244,9 +245,9 @@ namespace Tests.TravelClientTest
                 Thread.Sleep(100);
                 tps.Add(tp);
             }
-            client.AddTravelPoint(tps, travel);
+            await client.AddTravelPointAsync(tps, travel);
 
-            travel = client.GetTravel(travel.ID).Travel;
+            travel = (await client.GetTravelAsync(travel.ID)).Value;
 
             //ASSERT
             Assert.AreNotEqual(travel.StartTime, travel.EndTime);
@@ -256,12 +257,12 @@ namespace Tests.TravelClientTest
         }
 
         [TestMethod]
-        public void AddTravelPoints_CheckEndTime()
+        public async Task AddTravelPoints_CheckEndTime()
         {
             //INIT
             var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, vehicleId, new Mocks.Logger());
             var name = Guid.NewGuid().ToString();
-            var travel = CreateTravel(client, name);
+            var travel = await CreateTravel(client, name);
 
             Assert.AreEqual(travel.StartTime, travel.EndTime);
 
@@ -274,11 +275,11 @@ namespace Tests.TravelClientTest
                 Thread.Sleep(100);
                 tps.Add(tp);
             }
-            client.AddTravelPoint(tps, travel);
+            await client.AddTravelPointAsync(tps, travel);
 
             Thread.Sleep(3000); //To allow web app to commit changes
 
-            travel = client.GetTravel(travel.ID).Travel;
+            travel = (await client.GetTravelAsync(travel.ID)).Value;
 
             //ASSERT
             Assert.AreEqual(tps.First().Time.ToUniversalTime().ToString(), travel.EndTime.ToUniversalTime().ToString());
@@ -288,12 +289,12 @@ namespace Tests.TravelClientTest
         }
 
         [TestMethod]
-        public void AddTravelPoints_EqualPoints()
+        public async Task AddTravelPoints_EqualPoints()
         {
             //INIT
             var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, vehicleId, new Mocks.Logger());
             var name = Guid.NewGuid().ToString();
-            var travel = CreateTravel(client, name);
+            var travel = await CreateTravel(client, name);
 
             Assert.AreEqual(travel.StartTime, travel.EndTime);
 
@@ -306,9 +307,9 @@ namespace Tests.TravelClientTest
                 var tp = new TravelPoint { Description = "asd", Lat = 50, Lon = 30, Speed = 15.57, Type = TravelPointTypes.ManualTrackPoint, Time = time };
                 tps.Add(tp);
             }
-            var result = client.AddTravelPoint(tps, travel);
+            var result = await client.AddTravelPointAsync(tps, travel);
 
-            travel = client.GetTravel(travel.ID).Travel;
+            travel = (await client.GetTravelAsync(travel.ID)).Value;
 
             //ASSERT
             Assert.AreNotEqual(travel.StartTime, travel.EndTime);
@@ -318,12 +319,12 @@ namespace Tests.TravelClientTest
         }
 
         [TestMethod]
-        public void AddTravelPoints_RandomTimePoints()
+        public async Task AddTravelPoints_RandomTimePoints()
         {
             //INIT
             var client = new TravelsClient.Client(new Uri(serviceUrl), userKey, vehicleId, new Mocks.Logger());
             var name = Guid.NewGuid().ToString();
-            var travel = CreateTravel(client, name);
+            var travel = await CreateTravel(client, name);
 
             Assert.AreEqual(travel.StartTime, travel.EndTime);
 
@@ -336,9 +337,9 @@ namespace Tests.TravelClientTest
                 var tp = new TravelPoint { Description = "asd", Lat = 50, Lon = 30, Speed = 0, Type = TravelPointTypes.ManualTrackPoint, Time = DateTime.Now.AddMinutes(rnd.Next(20)-10) };
                 tps.Add(tp);
             }
-            var result = client.AddTravelPoint(tps, travel);
+            var result = await client.AddTravelPointAsync(tps, travel);
 
-            travel = client.GetTravel(travel.ID).Travel;
+            travel = (await client.GetTravelAsync(travel.ID)).Value;
 
             //ASSERT
             Assert.AreNotEqual(travel.StartTime, travel.EndTime);

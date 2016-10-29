@@ -21,21 +21,21 @@ namespace GtkApplication
 		public const string m_FG_RED = "foreground='#FF0000'";
 		public const string m_FG_BLUE = "foreground='#0000FF'";
 
-		private const string m_ARD = "<span {0} {1} size='12000'>  ARD  </span>";
-		private const string m_GPS = "<span {0} {1} size='12000'>  GPS  </span>";
-		private const string m_INET = "<span {0} {1} size='12000'>  INET  </span>";
-		private const string m_DIM = "<span {0} {1} size='12000'>  Dark  </span>";
-		private const string m_WARN = "<span {0} {1} size='12000'>  WARN  </span>";
+		private const string m_ARD = "<span {0} {1} size='20000'>  ARD  </span>";
+		private const string m_GPS = "<span {0} {1} size='20000'>  GPS  </span>";
+		private const string m_INET = "<span {0} {1} size='20000'>  INET  </span>";
+		private const string m_DIM = "<span {0} {1} size='20000'>  DARK  </span>";
+		private const string m_WARN = "<span {0} {1} size='20000'>  WARN  </span>";
 
-		public const string m_WND_STATUS = "<span {0} {1} size='12000'>{2}</span>";
+		public const string m_WND_STATUS = "<span {0} {1} size='20000'>{2}</span>";
 
-		private const string m_TIME = "<span {0} {1} size='18000'>{2}</span><span {0} {1} size='10000'> : {3}</span>";
+		private const string m_TIME = "<span {0} {1} size='20000'>{2}</span><span {0} {1} size='16000'> : {3}</span>";
 
-        private const string m_TASKBAR_BUTTON = "<span {0} size='8000'>{1}</span><span foreground='#606060' size='15000'>{2}</span>";
+        private const string m_TASKBAR_BUTTON = "<span {0} size='12000'>{1}</span><span foreground='#606060' size='15000'>{2}</span>";
 
 		public static void CreateStatusbar(ModelBinder binder, HBox bar, Style style)
 		{
-			bar.Homogeneous = true;
+			//bar.Homogeneous = true;
 
 			// WINDOW STATUS LABEL
 			var wnd_status_label = new Label();
@@ -81,7 +81,7 @@ namespace GtkApplication
 			var warning_label = new Label();
 			warning_label.UseMarkup = true;
 			warning_label.Markup = CreateMarkup(m_WARN, m_FG_TOP_STATUS_TEXT, m_BG_RED);
-			binder.BindCustomAction<bool>(status => warning_label.Markup = CreateMarkup(m_WARN, m_FG_TOP_STATUS_TEXT, status ? m_BG_EMPTY : m_BG_RED), "warning_log");
+            binder.BindCustomAction<bool>(status => warning_label.Markup = CreateMarkup(m_WARN, m_FG_TOP_STATUS_TEXT, status ? m_BG_RED : m_BG_EMPTY), "warning_log");
 			system_status_box.Add(warning_label);
 
 

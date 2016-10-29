@@ -44,7 +44,7 @@ namespace UIModels
         {
             if (!Disposed)
             {
-                obdGuard.ExecuteIfFreeAsync(UpdateOBD);
+                obdGuard.ExecuteIfFreeAsync(async () => await UpdateOBD());
                 minidisplayGuard.ExecuteIfFree(UpdateMiniDisplay);
             }
         }
@@ -56,14 +56,18 @@ namespace UIModels
             miniDisplayModel.Draw();
         }
 
-        private void UpdateOBD()
+        private async Task UpdateOBD()
         {
-            var engineTemp = obdProcessor.GetCoolantTemp() ?? int.MinValue;
-            miniDisplayModel.EngineTemp = engineTemp;
+            if (!Disposed)
+            {
+                await Task.Run(() =>
+                {
+                    var engineTemp = obdProcessor.GetCoolantTemp() ?? int.MinValue;
+                    miniDisplayModel.EngineTemp = engineTemp;
+                });
 
-            Thread.Sleep(5000);
+                await Task.Delay(5000);
+            }
         }
-
-        
     }
 }

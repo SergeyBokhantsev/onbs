@@ -17,7 +17,7 @@ namespace UIModels
         public TrafficPage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)
         {
-            this.provider = new StaticMapProvider(hc.Logger);
+            this.provider = new StaticMapProvider();
 
             SetProperty("daisy_path", Path.Combine(hc.Config.DataFolder, "loader_small.gif"));
         }
@@ -67,17 +67,16 @@ namespace UIModels
                 SetProperty("status", "Loading...");
                 SetProperty("traffic_image_stream", null);
 
-                var stream = await provider.GetMapAsync(location, 600, 450, scales[scale], MapLayers.map | MapLayers.trf);
-                
-                if (stream != null)
+                var result = await provider.GetMapAsync(location, 600, 450, scales[scale], MapLayers.map | MapLayers.trf);
+
+                if (result.Success)
                 {
                     SetProperty("status", null);
-                    SetProperty("traffic_image_stream", stream);
-                    
+                    SetProperty("traffic_image_stream", result.Value);
                 }
                 else
                 {
-                    SetProperty("status", "Download error.");
+                    SetProperty("status", result.ErrorMessage);
                     SetProperty("traffic_image_stream", new MemoryStream(File.ReadAllBytes(Path.Combine(hc.Config.DataFolder, "error.png"))));
                 }
 

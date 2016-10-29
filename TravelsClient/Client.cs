@@ -6,103 +6,65 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using HttpClient;
+using HttpServiceNamespace;
 using Interfaces;
 using Json;
 
 namespace TravelsClient
 {
-    public abstract class TravelClientResult
+    public class SimpleResultResultReader : IResultReader<SimpleResult>
     {
-        public bool Success { get; protected set; }
-        public string Error { get; protected set; }
+        private readonly string onErrorMessage;
+        private readonly HttpStatusCode expectedCode;
 
-        protected TravelClientResult()
+        public SimpleResultResultReader(string onErrorMessage, HttpStatusCode expectedCode)
         {
+            this.onErrorMessage = onErrorMessage;
+            this.expectedCode = expectedCode;
         }
 
-        protected void CreateErrorText(ClientResponse response, string error)
+        public Task<SimpleResult> FromResponse(HttpStatusCode statusCode, WebHeaderCollection headers, Stream responseStream)
         {
-            error = error ?? "Unknown error";
-            var responseMessage = "No response";
+            if (statusCode != expectedCode)
+                throw new Exception(string.Format("Http Operation code is {0} but {1} expected", statusCode, expectedCode));
 
-            if (response != null)
-            {
-                try
-                {
-                    var stream = response.GetStream();
-                    if (stream != null)
-                    {
-                        using (var reader = new StreamReader(stream))
-                        {
-                            var content = reader.ReadToEnd();
-                            responseMessage = string.Concat(response.Error, ", Response content: ", content);
-                        }                    
-                    }
-                }
-                catch (Exception ex)
-                {
-                    responseMessage = string.Concat(response.Error, ", Response content was not readed: ", ex.Message);
-                }
-            }
+            return Task.FromResult(new SimpleResult(true, statusCode, null));
+        }
 
-            Error = string.Format("{0}. Http response was: {1}", error, responseMessage);
+        public SimpleResult FromException(string errorMessage, HttpStatusCode httpCode)
+        {
+            return new SimpleResult(false, httpCode, string.Format("{0}. Exception was: {1}", onErrorMessage, errorMessage));
         }
     }
 
-    public class ActionResult : TravelClientResult
+    public class TravelResultReader : IResultReader<SimpleResult<Travel>>
     {
-        public ActionResult(ClientResponse response, string errorMessage, HttpStatusCode desiredStatus = HttpStatusCode.OK)
-        {
-            if (response != null && response.Status == desiredStatus)
-            {
-                Success = true;
-            }
-            else
-            {
-                Success = false;
-                CreateErrorText(response, errorMessage);
-            }
-        }
-    }
+        private readonly string onErrorMessage;
 
-    public class TravelResult : TravelClientResult
-    {
-        public Travel Travel { get; private set; }
-
-        public TravelResult(string error)
+        public TravelResultReader(string onErrorMessage)
         {
-            Success = false;
-            Error = error;
+            this.onErrorMessage = onErrorMessage;
         }
 
-        public TravelResult(ClientResponse response, string genericErrorMessage, params HttpStatusCode[] desiredStatuses)
+        public async Task<SimpleResult<Travel>> FromResponse(HttpStatusCode statusCode, WebHeaderCollection headers, Stream responseStream)
         {
-            if (response != null && desiredStatuses != null && desiredStatuses.Contains(response.Status))
+            if (statusCode == HttpStatusCode.OK || statusCode == HttpStatusCode.Created)
             {
-                try
-                {
-                    if (response.Status != HttpStatusCode.NotFound)
-                    {
-                        using (var stream = response.GetStream())
-                        {
-                            Travel = ParseTravel(stream);
-                        }
-                    }
 
-                    Success = true;
-                }
-                catch (Exception ex)
-                {
-                    Success = false;
-                    CreateErrorText(response, string.Format("Unable to parse Travel. {0}", ex.Message));
-                }
+
+                var travel = ParseTravel(responseStream);
+                return new SimpleResult<Travel>(true, statusCode, null, travel);
             }
             else
-            {
-                Success = false;
-                CreateErrorText(response, genericErrorMessage);
-            }
+                throw new Exception(string.Format("Unexpected HTTP status code: {0}", statusCode));
+        }
+
+        public SimpleResult<Travel> FromException(string errorMessage, HttpStatusCode statusCode)
+        {
+            return new SimpleResult<Travel>(false,
+                                    statusCode,
+                                    string.Format("{0}. Exception was: {1}", onErrorMessage, errorMessage),
+                                    null);
         }
 
         private Travel ParseTravel(Stream stream)
@@ -116,6 +78,7 @@ namespace TravelsClient
             return new Travel { ID = id, Name = name, Closed = closed, StartTime = DateTime.Parse(startTime), EndTime = DateTime.Parse(endTime) };
         }
     }
+
 
     public class Client
     {
@@ -146,7 +109,7 @@ namespace TravelsClient
         private readonly string vehicleId;
 
         private readonly ILogger logger;
-        private readonly HttpClient.Client client;
+        private readonly HttpService client;
 
         private string KeyParam
         {
@@ -172,8 +135,11 @@ namespace TravelsClient
 
             this.logger = logger;
 
-            client = new HttpClient.Client();
-            client.ClientException += exc => logger.Log(this, exc);
+            client = new HttpService(null, null) 
+            { 
+                HttpGetTimeout = new TimeSpan(0, 0, 30), 
+                HttpPostTimeout = new TimeSpan(0, 0, 30) 
+            };
         }
 
         private string CreateArg(string name, string value)
@@ -187,166 +153,135 @@ namespace TravelsClient
             return new Uri(serviceUri, string.Format("{0}{1}{2}", apiPrefix, relativeUrl, argLine));
         }
 
-        public TravelResult FindActiveTravel()
+        public async Task<SimpleResult<Travel>> FindActiveTravelAsync()
         {
-            var url = CreateUri("Travels/active", KeyParam, VehicleParam);
-            using (var response = client.Get(url, 3, 3000))
-            {
-                return new TravelResult(response, FIND_OPENED_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.OK, HttpStatusCode.NotFound);
-            }
+            var uri = CreateUri("Travels/active", KeyParam, VehicleParam);
+            var args = ExecuteArguments<SimpleResult<Travel>>.CreateGET(uri, new TravelResultReader(FIND_OPENED_TRAVEL_GENERIC_ERROR_MESSAGE));
+
+            return await client.ExecuteAsync(args);
         }
 
-        public async Task<TravelResult> FindActiveTravelAsync()
+        public async Task<SimpleResult<Travel>> GetTravelAsync(int id)
         {
-            return await Task.Run<TravelResult>((Func<TravelResult>)FindActiveTravel);
+            var uri = CreateUri("Travels/get", KeyParam, CreateArg(ARG_ID, id.ToString()));
+            var args = ExecuteArguments<SimpleResult<Travel>>.CreateGET(uri, new TravelResultReader(GET_TRAVEL_GENERIC_ERROR_MESSAGE));
+
+            return await client.ExecuteAsync(args);
         }
 
-        public TravelResult GetTravel(int id)
-        {
-            var url = CreateUri("Travels/get", KeyParam, CreateArg(ARG_ID, id.ToString()));
-            using (var response = client.Get(url, 3, 3000))
-            {
-                return new TravelResult(response, GET_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.OK);
-            }
-        }
-
-        public TravelResult OpenTravel(string name)
+        public async Task<SimpleResult<Travel>> OpenTravelAsync(string name)
         {
             if (string.IsNullOrEmpty(name))
-                return new TravelResult(null, "Name is not provided");
+                return new SimpleResult<Travel>(false, HttpStatusCode.Unused, "Name is not provided", null);
 
-            var url = CreateUri("Travels/open", KeyParam, VehicleParam, CreateArg(ARG_NAME, name));
-            using (var response = client.Post(url, null, 3, 3000))
-            {
-                return new TravelResult(response, OPEN_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.Created);
-            }
+            var uri = CreateUri("Travels/open", KeyParam, VehicleParam, CreateArg(ARG_NAME, name));
+
+            var args = ExecuteArguments<SimpleResult<Travel>>.Create(uri, "POST", new TravelResultReader(OPEN_TRAVEL_GENERIC_ERROR_MESSAGE), null);
+
+            return await client.ExecuteAsync(args);
         }
 
-        public async Task<TravelResult> OpenTravelAsync(string name)
-        {
-            return await Task.Run<TravelResult>(() => OpenTravel(name));
-        }
-
-        public ActionResult CloseTravel(Travel travel)
+        public async Task<SimpleResult> CloseTravelAsync(Travel travel)
         {
             if (travel == null)
-                return new ActionResult(null, "Travel is not provided.");
+                return new SimpleResult(false, HttpStatusCode.Unused, "Travel is not provided.");
 
-            var url = CreateUri("Travels/close", KeyParam, CreateArg(ARG_ID, travel.ID.ToString()));
-            using (var response = client.Post(url, null, 3, 3000))
-            {
-                return new ActionResult(response, CLOSE_TRAVEL_GENERIC_ERROR_MESSAGE);
-            }
+            var uri = CreateUri("Travels/close", KeyParam, CreateArg(ARG_ID, travel.ID.ToString()));
+
+            var args = ExecuteArguments<SimpleResult>.Create(uri, "POST", new SimpleResultResultReader(CLOSE_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.OK), null);
+
+            return await client.ExecuteAsync(args);
         }
 
-        public ActionResult RenameTravel(Travel travel)
+        public async Task<SimpleResult> RenameTravelAsync(Travel travel)
         {
             if (travel == null)
-                return new ActionResult(null, "Travel is not provided.");
+                return new SimpleResult(false, HttpStatusCode.Unused, "Travel is not provided.");
 
             if (string.IsNullOrEmpty(travel.Name))
-                return new ActionResult(null, "Travel is was invalid");
+                return new SimpleResult(false, HttpStatusCode.Unused, "Travel is was invalid");
 
             var tId = CreateArg(ARG_ID, travel.ID.ToString());
             var name = CreateArg(ARG_NAME, travel.Name);
-            var url = CreateUri("Travels/rename", KeyParam, tId, name);
-            using (var response = client.Post(url, null, 3, 3000))
-            {
-                return new ActionResult(response, RENAME_TRAVEL_GENERIC_ERROR_MESSAGE);
-            }
+            var uri = CreateUri("Travels/rename", KeyParam, tId, name);
+
+            var args = ExecuteArguments<SimpleResult>.Create(uri, "POST", new SimpleResultResultReader(RENAME_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.OK), null);
+
+            return await client.ExecuteAsync(args);
         }
 
-        public ActionResult DeleteTravel(Travel travel)
+        public async Task<SimpleResult> DeleteTravelAsync(Travel travel)
         {
             if (travel == null)
-                return new ActionResult(null, "Travel is not provided.");
+                return new SimpleResult(false, HttpStatusCode.Unused, "Travel is not provided.");
 
-            var url = CreateUri("Travels/delete", KeyParam, CreateArg(ARG_ID, travel.ID.ToString()));
-            using (var response = client.Delete(url))
-            {
-                return new ActionResult(response, DELETE_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.NoContent);
-            }
+            var uri = CreateUri("Travels/delete", KeyParam, CreateArg(ARG_ID, travel.ID.ToString()));
+
+            var args = ExecuteArguments<SimpleResult>.Create(uri, "DELETE", new SimpleResultResultReader(DELETE_TRAVEL_GENERIC_ERROR_MESSAGE, HttpStatusCode.NoContent), null);
+
+            return await client.ExecuteAsync(args);
         }
 
-        public ActionResult AddTravelPoint(TravelPoint tp, Travel travel)
+        public async Task<SimpleResult> AddTravelPointAsync(TravelPoint tp, Travel travel)
         {
             if (travel == null)
-                return new ActionResult(null, "Travel is not provided.");
+                return new SimpleResult(false, HttpStatusCode.Unused, "Travel is not provided.");
 
             if (tp == null)
-                return new ActionResult(null, "Travel point is not provided.");
+                return new SimpleResult(false, HttpStatusCode.Unused, "Travel point is not provided.");
 
-            try
-            {
-                var tId = CreateArg(ARG_TRAVELID, travel.ID.ToString());
-                var lat = CreateArg(ARG_LAT, tp.Lat.ToString());
-                var lon = CreateArg(ARG_LON, tp.Lon.ToString());
-                var speed = CreateArg(ARG_SPEED, tp.Speed.ToString());
-                var type = CreateArg(ARG_TYPE, ((int)tp.Type).ToString());
-                var descr = CreateArg(ARG_DESCRIPTION, tp.Description);
+            var tId = CreateArg(ARG_TRAVELID, travel.ID.ToString());
+            var lat = CreateArg(ARG_LAT, tp.Lat.ToString());
+            var lon = CreateArg(ARG_LON, tp.Lon.ToString());
+            var speed = CreateArg(ARG_SPEED, tp.Speed.ToString());
+            var type = CreateArg(ARG_TYPE, ((int)tp.Type).ToString());
+            var descr = CreateArg(ARG_DESCRIPTION, tp.Description);
 
-                var url = CreateUri("TravelPoints/add", KeyParam, VehicleParam, tId, lat, lon, speed, type, descr);
-                using (var response = client.Post(url, null, 3, 3000))
-                {
-                    return new ActionResult(response, ADD_TRAVEL_POINT_GENERIC_ERROR_MESSAGE);
-                }
-            }
-            catch (Exception ex)
-            {
-                return new ActionResult(null, ex.Message);
-            }
+            var uri = CreateUri("TravelPoints/add", KeyParam, VehicleParam, tId, lat, lon, speed, type, descr);
+
+            var args = ExecuteArguments<SimpleResult>.Create(uri, "POST", new SimpleResultResultReader(ADD_TRAVEL_POINT_GENERIC_ERROR_MESSAGE, HttpStatusCode.OK), null);
+
+            return await client.ExecuteAsync(args);
         }
 
-        public ActionResult AddTravelPoint(IEnumerable<TravelPoint> tps, Travel travel)
+        public async Task<SimpleResult> AddTravelPointAsync(IEnumerable<TravelPoint> tps, Travel travel)
         {
             if (travel == null)
-                return new ActionResult(null, "Travel is not provided.");
+                return new SimpleResult(false, HttpStatusCode.Unused, "Travel is not provided.");
 
             if (tps == null)
-                return new ActionResult(null, "Travel points is not provided.");
+                return new SimpleResult(false, HttpStatusCode.Unused, "Travel points is not provided.");
 
-            try
+            var tId = CreateArg(ARG_TRAVELID, travel.ID.ToString());
+
+            StringBuilder body = new StringBuilder();
+
+            foreach (var tp in tps)
             {
-                var tId = CreateArg(ARG_TRAVELID, travel.ID.ToString());
+                var lat = string.Concat(ARG_LAT, "=", tp.Lat);
+                var lon = string.Concat(ARG_LON, "=", tp.Lon);
+                var speed = string.Concat(ARG_SPEED, "=", tp.Speed);
+                var type = string.Concat(ARG_TYPE, "=", (int)tp.Type);
+                var time = string.Concat(ARG_TIME, "=", tp.Time.ToFileTimeUtc());
+                var descr = string.Concat(ARG_DESCRIPTION, "=", tp.Description);
 
-                StringBuilder body = new StringBuilder();
-
-                foreach (var tp in tps)
-                {
-                    var lat = string.Concat(ARG_LAT, "=", tp.Lat);
-                    var lon = string.Concat(ARG_LON, "=", tp.Lon);
-                    var speed = string.Concat(ARG_SPEED, "=", tp.Speed);
-                    var type = string.Concat(ARG_TYPE, "=", (int)tp.Type);
-                    var time = string.Concat(ARG_TIME, "=", tp.Time.ToFileTimeUtc());
-                    var descr = string.Concat(ARG_DESCRIPTION, "=", tp.Description);
-
-                    body.Append(string.Join(";", lat, lon, speed, type, time, descr));
-                    body.Append("|");
-                }
-
-                if (body.Length > 0)
-                    body.Remove(body.Length - 1, 1);
-
-                var url = CreateUri("TravelPoints/addmany", KeyParam, tId);
-                using (var response = client.Post(url, body.ToString(), 3, 3000))
-                {
-                    return new ActionResult(response, ADD_TRAVEL_POINT_GENERIC_ERROR_MESSAGE);
-                }
+                body.Append(string.Join(";", lat, lon, speed, type, time, descr));
+                body.Append("|");
             }
-            catch (Exception ex)
-            {
-                return new ActionResult(null, ex.Message);
-            }
-        }
 
-        public async Task<ActionResult> AddTravelPointAsync(IEnumerable<TravelPoint> tps, Travel travel)
-        {
-            return await Task.Run<ActionResult>(() => AddTravelPoint(tps, travel));
+            if (body.Length > 0)
+                body.Remove(body.Length - 1, 1);
+
+            var uri = CreateUri("TravelPoints/addmany", KeyParam, tId);
+
+            var args = ExecuteArguments<SimpleResult>.Create(uri, "POST", new SimpleResultResultReader(ADD_TRAVEL_POINT_GENERIC_ERROR_MESSAGE, HttpStatusCode.OK), new StringRequestWriter(body.ToString()));
+
+            return await client.ExecuteAsync(args);
         }
 
         public void Cancel()
         {
-            throw new NotImplementedException();
+            client.Abort();
         }
     }
 }

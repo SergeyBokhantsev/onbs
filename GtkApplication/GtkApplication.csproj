@@ -73,6 +73,8 @@
     <EmbeddedResource Include="gtk-gui\gui.stetic">
       <LogicalName>gui.stetic</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Sep_kmh.png" />
+    <EmbeddedResource Include="Resources\Sep_empty.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\HorizontalCarousel.cs" />
@@ -136,4 +138,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
 </Project>

@@ -15,7 +15,7 @@ namespace HostController.Jobs
             Ensure.ArgumentIsNotNull(hc);
             Ensure.ArgumentIsNotNull(onlineLogger);
             
-            hc.CreateTimer(60000, ht => onlineLogger.Upload(false), true, false, "online logger timer");
+            hc.CreateTimer(60000, ht => onlineLogger.Flush(), true, false, "online logger timer");
         }
     }
 }

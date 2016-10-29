@@ -11,7 +11,7 @@ namespace GtkApplication.Controls
 {
     public class HorizontalCarousel
     {
-        private const string m_ITEM = "<span {0} size='15000'>{1}</span>";
+        private const string m_ITEM = "<span {0} size='22000'>{1}</span>";
 
         private readonly HBox box;
         private readonly Style style;
@@ -72,7 +72,7 @@ namespace GtkApplication.Controls
                     };
                    
                     eventBox.Visible = true;
-                    eventBox.HeightRequest = 20;
+                    eventBox.HeightRequest = 40;
                     eventBox.WidthRequest = itemWidth;
                     eventBox.Data["item"] = item;
                     eventBox.Data["index"] = index;
@@ -91,7 +91,7 @@ namespace GtkApplication.Controls
                     //eventBoxChild.Child.HeightRequest = 10;
 
                     button.Xalign = 0.5f;
-                    button.HeightRequest = 10;
+                    button.HeightRequest = 30;
                     button.SetPadding(0, 0);
 
                     button.UseMarkup = true;

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 namespace Interfaces
 {
     /// <summary>
@@ -6,6 +7,8 @@ namespace Interfaces
     /// </summary>
     /// <param name="unexpected">True if process was closed without ProcessRunner request</param>
     public delegate void ExitedEventHandler(bool unexpected);
+
+    public delegate void IncomingDataEventHandler(byte[] buffer, int offset, int count);
 
     public interface IProcessRunner
     {
@@ -16,6 +19,44 @@ namespace Interfaces
 		void SendToStandardInput(char c);
         //string GetFromStandardOutput();
         bool WaitForExit(int timeoutMilliseconds, out MemoryStream output);
+        bool WaitForExit(int timeoutMilliseconds);
+        void Exit();
+    }
+
+    public interface IProcessRunnerEx
+    {
+        /// <summary>
+        /// Fired when target process has exited
+        /// </summary>
+        event ExitedEventHandler Exited;
+
+        /// <summary>
+        /// Fired if RedirectStandardOutput=true and data exist
+        /// Note: called in worker thread
+        /// </summary>
+        event IncomingDataEventHandler StdOut;
+
+        /// <summary>
+        /// Fired if RedirectStandardError=true and data exist
+        /// Note: called in worker thread
+        /// </summary>
+        event IncomingDataEventHandler StdError;
+
+        bool HasExited { get; }
+
+        /// <summary>
+        /// Access Std Out data if CollectStandardOutput=true
+        /// </summary>
+        void ReadStdOut(Action<MemoryStream> accessor);
+
+        /// <summary>
+        /// Access Std Error data if CollectStandardError=true
+        /// </summary>
+        void ReadStdError(Action<MemoryStream> accessor);
+
+        void Run();
+        void SendToStandardInput(string message);
+        void SendToStandardInput(char c);
         bool WaitForExit(int timeoutMilliseconds);
         void Exit();
     }

@@ -99,71 +99,68 @@ namespace TravelController
 
         private async void FindOpenedTravel()
         {
+            metricsError = false;
+
             state.Value = States.FindingOpenedTravel;
 
             var result = await client.FindActiveTravelAsync();
 
             if (result.Success)
             {
-                if (result.Travel != null)
-                {
-                    if (result.Travel.Closed)
-                    {
-                        this.travel = null;
-                        state.Value = States.ToOpenNewTravel;
-                        hc.Logger.Log(this, string.Format("Found travel is closed. Id={0}", result.Travel.ID), LogLevels.Warning);
-                    }
-                    else
-                    {
-                        if (locallyStoredPointsLoaded)
-                        {
-                            this.travel = result.Travel;
-                            state.Value = States.Ready;
-                            hc.Logger.Log(this, string.Format("Continuing travel Id={0} because some not pushed points exists", result.Travel.ID), LogLevels.Info);
-                        }
-                        else
-                        {
-                            var minutesGapToOpenNewTravel = hc.Config.GetInt(ConfigNames.TravelServiceMinutesGapToOpenNewTravel);
-
-                            if (result.Travel.EndTime.AddMinutes(minutesGapToOpenNewTravel) > DateTime.Now)
-                            {
-                                this.travel = result.Travel;
-                                state.Value = States.Ready;
-                                hc.Logger.Log(this, string.Format("Continuing travel Id={0} because existing travel time match", result.Travel.ID), LogLevels.Info);
-                            }
-                            else
-                            {
-                                var dRes = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Travel exist", "Start new travel or continue last one?", "(Y)Start new", "(N)Continue", hc, 60000, Interfaces.UI.DialogResults.Yes));
-
-                                if (dRes == Interfaces.UI.DialogResults.No)
-                                {
-                                    this.travel = result.Travel;
-                                    state.Value = States.Ready;
-                                    hc.Logger.Log(this, string.Format("Continuing travel Id={0} because of user confirmation", result.Travel.ID), LogLevels.Info);
-                                }
-                                else
-                                {
-                                    this.travel = null;
-                                    state.Value = States.ToOpenNewTravel;
-                                    hc.Logger.Log(this, string.Format("Found travel Id={0} but user had declined it. New travel will be created.", result.Travel.ID), LogLevels.Info);
-                                }
-                            }
-                        }
-                    }
-                }
-                else
+                if (result.Value.Closed)
                 {
                     this.travel = null;
                     state.Value = States.ToOpenNewTravel;
-                    hc.Logger.Log(this, "Opened travel not found", LogLevels.Info);
+                    hc.Logger.Log(this, string.Format("Found travel is closed. Id={0}", result.Value.ID), LogLevels.Warning);
                 }
+                else
+                {
+                    if (locallyStoredPointsLoaded)
+                    {
+                        this.travel = result.Value;
+                        state.Value = States.Ready;
+                        hc.Logger.Log(this, string.Format("Continuing travel Id={0} because some not pushed points exists", result.Value.ID), LogLevels.Info);
+                    }
+                    else
+                    {
+                        var minutesGapToOpenNewTravel = hc.Config.GetInt(ConfigNames.TravelServiceMinutesGapToOpenNewTravel);
 
-                metricsError = false;
+                        if (result.Value.EndTime.AddMinutes(minutesGapToOpenNewTravel) > DateTime.Now)
+                        {
+                            this.travel = result.Value;
+                            state.Value = States.Ready;
+                            hc.Logger.Log(this, string.Format("Continuing travel Id={0} because existing travel time match", result.Value.ID), LogLevels.Info);
+                        }
+                        else
+                        {
+                            var dRes = await hc.GetController<IUIController>().ShowDialogAsync(new YesNoDialog("Travel exist", "Start new travel or continue last one?", "(Y)Start new", "(N)Continue", hc, 60000, Interfaces.UI.DialogResults.Yes));
+
+                            if (dRes == Interfaces.UI.DialogResults.No)
+                            {
+                                this.travel = result.Value;
+                                state.Value = States.Ready;
+                                hc.Logger.Log(this, string.Format("Continuing travel Id={0} because of user confirmation", result.Value.ID), LogLevels.Info);
+                            }
+                            else
+                            {
+                                this.travel = null;
+                                state.Value = States.ToOpenNewTravel;
+                                hc.Logger.Log(this, string.Format("Found travel Id={0} but user had declined it. New travel will be created.", result.Value.ID), LogLevels.Info);
+                            }
+                        }
+                    }
+                }
+            }
+            else if (result.HttpCode == System.Net.HttpStatusCode.NotFound)
+            {
+                this.travel = null;
+                state.Value = States.ToOpenNewTravel;
+                hc.Logger.Log(this, "Opened travel not found", LogLevels.Info);
             }
             else
             {
                 hc.Logger.Log(this, "Error while finding opened travel:", LogLevels.Warning);
-                hc.Logger.Log(this, result.Error, LogLevels.Warning);
+                hc.Logger.Log(this, result.ErrorMessage, LogLevels.Warning);
                 state.Value = States.NotStarted;
                 metricsError = true;
             }
@@ -177,9 +174,9 @@ namespace TravelController
 
             if (result.Success)
             {
-                this.travel = result.Travel;
+                this.travel = result.Value;
                 state.Value = States.Ready;
-                hc.Logger.Log(this, string.Format("New travel was opened succesfully, Id={0}", result.Travel.ID), LogLevels.Info);
+                hc.Logger.Log(this, string.Format("New travel was opened succesfully, Id={0}", result.Value.ID), LogLevels.Info);
                 metricsError = false;
             }
             else
@@ -187,7 +184,7 @@ namespace TravelController
                 this.travel = null;
                 state.Value = States.NotStarted;
                 hc.Logger.Log(this, "Error while opening new travel:", LogLevels.Warning);
-                hc.Logger.Log(this, result.Error, LogLevels.Warning);
+                hc.Logger.Log(this, result.ErrorMessage, LogLevels.Warning);
                 metricsError = true;
             }
         }
@@ -320,7 +317,7 @@ namespace TravelController
                         //DumpPoints();
                     }
 
-                    hc.Logger.Log(this, string.Concat("Attempt to add Travel points was failed: ", result.Error), LogLevels.Warning);
+                    hc.Logger.Log(this, string.Concat("Attempt to add Travel points was failed: ", result.ErrorMessage), LogLevels.Warning);
 
                     metricsError = false;
 

@@ -7,13 +7,13 @@ public partial class MainWindow
 	{
 		global::Stetic.Gui.Initialize(this);
 		// Widget MainWindow
-		this.WidthRequest = 800;
-		this.HeightRequest = 480;
+		this.WidthRequest = 1280;
+		this.HeightRequest = 800;
 		this.Name = "MainWindow";
 		this.Title = global::Mono.Unix.Catalog.GetString("MainWindow");
 		this.WindowPosition = ((global::Gtk.WindowPosition)(4));
-		this.DefaultWidth = 800;
-		this.DefaultHeight = 480;
+		this.DefaultWidth = 1280;
+		this.DefaultHeight = 800;
 		if ((this.Child != null))
 		{
 			this.Child.ShowAll();

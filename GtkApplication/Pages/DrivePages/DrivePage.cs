@@ -12,9 +12,9 @@ namespace GtkApplication
 	[System.ComponentModel.ToolboxItem(true)]
     public partial class DrivePage : Gtk.Bin
 	{
-		private const string m_SPEED = "<span {0} {1} size='90000'><b>{2}</b></span>";
-		private const string m_TRAVEL_SPAN = "<span {0} {1} size='20000'>{2} min</span>";
-		private const string m_DISTANCE = "<span {0} {1} size='20000'>{2} km</span>";
+		private const string m_SPEED = "<span {0} {1} size='110000'><b>{2}</b></span>";
+		private const string m_TRAVEL_SPAN = "<span {0} {1} size='30000'>{2} min</span>";
+		private const string m_DISTANCE = "<span {0} {1} size='30000'>{2} km</span>";
 
 		private const string m_LAT = "<span {0} {1} size='14000'>Lat: {2}</span>";
 		private const string m_LON = "<span {0} {1} size='14000'>Lon: {2}</span>";

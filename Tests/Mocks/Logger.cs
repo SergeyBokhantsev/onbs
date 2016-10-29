@@ -27,5 +27,10 @@ namespace Tests.Mocks
         }
 
         public event LogEventHandlerDelegate LogEvent;
+
+        public DateTime LastWarningTime
+        {
+            get { return DateTime.MinValue; }
+        }
     }
 }

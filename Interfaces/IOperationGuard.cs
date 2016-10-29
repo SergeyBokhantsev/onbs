@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Interfaces
 {
     public interface IOperationGuard : IDisposable
     {
         bool ExecuteIfFree(Action action, Action<Exception> exceptionHandler = null);
+        Task<bool> ExecuteIfFreeAsync(Func<Task> taskAccessor, Action<Exception> exceptionHandler = null);
     }
 
     public class InterlockedGuard : IOperationGuard
@@ -20,6 +22,40 @@ namespace Interfaces
             {
                 return waitHandler.WaitHandle;
             }
+        }
+
+        public async Task<bool> ExecuteIfFreeAsync(Func<Task> taskAccessor, Action<Exception> exceptionHandler = null)
+        {
+            if (!disposed && Interlocked.Exchange(ref busy, 1) == 0)
+            {
+                try
+                {
+                    waitHandler.Reset();
+                    await taskAccessor();
+                }
+                catch (AggregateException ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        var inner = ex.Flatten();
+                        exceptionHandler(inner);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                        exceptionHandler(ex);
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref busy, 0);
+                    waitHandler.Set();
+                }
+
+                return true;
+            }
+            else
+                return false;
         }
 
         public bool ExecuteIfFree(Action action, Action<Exception> exceptionHandler = null)
@@ -57,6 +93,7 @@ namespace Interfaces
     public class TimedGuard : IOperationGuard
     {
         private readonly TimeSpan minInterval;
+        private readonly object locker = new object();
 
         private DateTime lastExecutionTime;
         private bool disposed;
@@ -64,6 +101,39 @@ namespace Interfaces
         public TimedGuard(TimeSpan minInterval)
         {
             this.minInterval = minInterval;
+        }
+
+        public async Task<bool> ExecuteIfFreeAsync(Func<Task> taskAccessor, Action<Exception> exceptionHandler = null)
+        {
+            lock (locker)
+            {
+                if (!disposed && DateTime.Now - lastExecutionTime >= minInterval)
+                {
+                    lastExecutionTime = DateTime.Now;
+                }
+                else
+                    return false;
+            }
+
+            try
+            {
+                await taskAccessor();
+            }
+            catch (AggregateException ex)
+            {
+                if (exceptionHandler != null)
+                {
+                    var inner = ex.Flatten();
+                    exceptionHandler(inner);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (exceptionHandler != null)
+                    exceptionHandler(ex);
+            }
+
+            return true;
         }
 
         public bool ExecuteIfFree(Action action, Action<Exception> exceptionHandler = null)
@@ -101,6 +171,36 @@ namespace Interfaces
         public void Reset()
         {
             Interlocked.Exchange(ref busy, 0);
+        }
+
+        public async Task<bool> ExecuteIfFreeAsync(Func<Task> taskAccessor, Action<Exception> exceptionHandler = null)
+        {
+            if (!disposed && Interlocked.Exchange(ref busy, 1) == 0)
+            {
+                try
+                {
+                    await taskAccessor();
+                }
+                catch (AggregateException ex)
+                {
+                    if (exceptionHandler != null)
+                    {
+                        var inner = ex.Flatten();
+                        exceptionHandler(inner);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (exceptionHandler != null)
+                        exceptionHandler(ex);
+
+                    Reset();
+                }
+
+                return true;
+            }
+            else
+                return false;
         }
 
         public bool ExecuteIfFree(Action action, Action<Exception> exceptionHandler = null)
