@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProcessRunner;
+using System.Linq;
 
 namespace Tests
 {
@@ -370,6 +371,90 @@ namespace Tests
 
             //ASSERT
             Assert.IsTrue(pr.HasExited);
+        }
+
+        [TestMethod]
+        public void LoopbackLong()
+        {
+            //INIT
+            var pr1 = ProcessRunnerImplNew.ForTool("StdInOutTester", null);
+            pr1.RedirectStandardInpit = true;
+
+            var data = new byte[1024 * 10];
+
+            for (int i = 0; i < data.Length; ++i)
+            {
+                data[i] = (byte)i;
+            }
+
+            //ACT
+            int received = 0;
+
+            pr1.StdOut += (byte[] buffer, int offset, int count) => received += count;
+            
+            pr1.Run();
+            
+            for (int i = 0; i < data.Length; ++i)
+            {
+                if (!pr1.SendToStandardInput(data[i]))
+                    i--;
+            }
+
+            while (received != data.Length)
+                Thread.Sleep(10);
+
+            pr1.Exit();
+            pr1.WaitForExit(1000);
+
+            byte[] receivedData = null;
+        
+            pr1.ReadStdOut(ms => receivedData = ms.ToArray());
+
+            Assert.IsTrue(data.SequenceEqual(receivedData));
+
+            Assert.IsTrue(pr1.HasExited);
+        }
+
+        [TestMethod]
+        public void CrossLoopback()
+        {
+            var pr1 = ProcessRunnerImplNew.ForTool("StdInOutTester", null);
+            pr1.RedirectStandardInpit = true;
+
+            var pr2 = ProcessRunnerImplNew.ForTool("StdInOutTester", null);
+            pr2.RedirectStandardInpit = true;
+
+            pr1.Run();
+            pr2.Run();
+
+            pr1.SendToStandardInput((byte)'A');
+            pr2.SendToStandardInput((byte)'1');
+
+            pr1.SendToStandardInput((byte)'B');
+            pr2.SendToStandardInput((byte)'2');
+
+            pr1.SendToStandardInput((byte)'C');
+            pr2.SendToStandardInput((byte)'3');
+
+            Thread.Sleep(1000);
+
+            pr1.Exit();
+            pr1.WaitForExit(1000);
+
+            pr2.Exit();
+            pr2.WaitForExit(1000);
+
+            string str1 = null;
+            string str2 = null;
+
+            pr1.ReadStdOut(ms => str1 = Encoding.UTF8.GetString(ms.ToArray()));
+            pr2.ReadStdOut(ms => str2 = Encoding.UTF8.GetString(ms.ToArray()));
+
+            Assert.AreEqual("ABC", str1);
+            Assert.AreEqual("123", str2);
+
+            Assert.IsTrue(pr1.HasExited);
+            Assert.IsTrue(pr2.HasExited);
         }
     }
 }

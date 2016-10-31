@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,47 @@ namespace ProcessRunner
 {
     public class ProcessRunnerImplNew
     {
+        private class LineBuffer
+        {
+            private const int size = 1024;
+
+            private readonly byte[] buffer = new byte[size];
+
+            private readonly byte[] clientBuffer = new byte[size];
+
+            private int len;
+
+            public int Length
+            {
+                get { return len; }
+            }
+
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            public bool Add(byte b)
+            {
+                if (len < size)
+                {
+                    buffer[len++] = b;
+                    return true;
+                }
+                else
+                    return false;
+            }
+
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            public void Get(out byte[] data, out int count)
+            {
+                data = clientBuffer;
+                count = len;
+
+                if (count > 0)
+                {
+                    Array.Copy(buffer, 0, data, 0, count);
+                    len = 0;
+                }
+            }
+        }
+
         private class Boxed<T>
         {
             private T value;
@@ -78,6 +120,7 @@ namespace ProcessRunner
 
         private MemoryStream stdOut;
         private MemoryStream stdError;
+        private readonly LineBuffer stdInBuffer = new LineBuffer();
 
         private bool runCalled;
         private bool exitCalled;
@@ -87,6 +130,19 @@ namespace ProcessRunner
         private Boxed<bool> exitedEventFired = new Boxed<bool>(false);
 
         public bool SendCloseWindowSignalWhenExit { get; set; }
+
+        public bool RedirectStandardInpit 
+        {
+            set
+            {
+                if (!runCalled)
+                {
+                    psi.RedirectStandardInput = value;
+                }
+                else
+                    throw new InvalidOperationException("Run is already called!");
+            }
+        }
 
         /// <summary>
         /// Timeout in ms after CloseMainWindow signal sent and before Kill signal
@@ -163,6 +219,7 @@ namespace ProcessRunner
         {
             bool ro = psi.RedirectStandardOutput;
             bool re = psi.RedirectStandardError;
+            bool ri = psi.RedirectStandardInput;
 
             if (!ro && !re)
                 outReadingCompleted.Set();
@@ -172,6 +229,9 @@ namespace ProcessRunner
 
             Task<int> roTask = null;
             Task<int> reTask = null;
+            Task riTask = null;
+
+            var cts = new CancellationTokenSource();
 
             int cycleReaded = -1;
 
@@ -179,11 +239,20 @@ namespace ProcessRunner
             {
                 cycleReaded = -1;
 
+                if (exitCalled)
+                    cts.Cancel();
+
                 if (ro && roTask == null)
                     roTask = proc.StandardOutput.BaseStream.ReadAsync(roBuffer, 0, roBuffer.Length);
 
                 if (re && reTask == null)
                     reTask = proc.StandardError.BaseStream.ReadAsync(reBuffer, 0, reBuffer.Length);
+
+                if (null != riTask && riTask.IsCompleted)
+                    riTask = null;
+
+                if (ri && riTask == null && !exitCalled && stdInBuffer.Length > 0)
+                    riTask = WriteToStdInput(proc.StandardInput.BaseStream, cts.Token);
 
                 if (ro && roTask.IsCompleted)
                 {
@@ -197,13 +266,28 @@ namespace ProcessRunner
                     reTask = null;
                 }
 
-                if (cycleReaded == -1)
+                if (cycleReaded == -1 && null != riTask)
                     Thread.Sleep(100);
             }
+
+            cts.Cancel();
 
             outReadingCompleted.Set();
 
             OnExited();
+        }
+
+        private async Task WriteToStdInput(Stream stream, CancellationToken ct) 
+        {
+            byte[] data;
+            int count;
+            stdInBuffer.Get(out data, out count);
+
+            if (count > 0)
+            {
+                await stream.WriteAsync(data, 0, count, ct);
+                await stream.FlushAsync();
+            }
         }
 
         private int OnOutTaskCompleted(Task<int> task, byte[] buffer, IncomingDataEventHandler handler)
@@ -240,14 +324,9 @@ namespace ProcessRunner
                 handler(!exitCalled);
         }
 
-        public void SendToStandardInput(string message)
+        public bool SendToStandardInput(byte b)
         {
-            throw new NotImplementedException();
-        }
-
-        public void SendToStandardInput(char c)
-        {
-            throw new NotImplementedException();
+            return stdInBuffer.Add(b);
         }
 
         public bool WaitForExit(int timeoutMilliseconds)
