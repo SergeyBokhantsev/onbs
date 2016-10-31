@@ -1,5 +1,6 @@
 ﻿using Interfaces;
 using Interfaces.UI;
+using ProcessRunnerNamespace;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -66,19 +67,10 @@ namespace UIModels
 			page.Run ();
         }
 
-        private IProcessRunner CreateProcessRunner(string romFilePath)
+        private ProcessRunner CreateProcessRunner(string romFilePath)
         {
-            var config = new ProcessConfig
-            {
-                ExePath = hc.Config.GetString(ConfigNames.ZXEmulatorExe),
-                Args = string.Format(hc.Config.GetString(ConfigNames.ZXEmulatorArgs), romFilePath),
-                WaitForUI = true,
-				RedirectStandardInput = false,
-				RedirectStandardOutput = false,
-				Silent = false
-            };
-
-            return hc.ProcessRunnerFactory.Create(config);
+            return ProcessRunner.ForInteractiveApp(hc.Config.GetString(ConfigNames.ZXEmulatorExe),
+                string.Format(hc.Config.GetString(ConfigNames.ZXEmulatorArgs), romFilePath));
         }
 
         protected override IList<ListItem<string>> QueryItems(int skip, int take)

@@ -1,7 +1,9 @@
 ﻿using Interfaces;
 using Interfaces.UI;
+using ProcessRunnerNamespace;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace UIModels
 {
@@ -15,7 +17,7 @@ namespace UIModels
         private const string WebcamControlContrast = "WebcamControlContrast";
 		private const string WebcamControlBright = "WebcamControlBright";
 
-        private readonly object locker = new object();
+        private readonly IOperationGuard guard = new InterlockedGuard();
 
         private bool configDirty;
 
@@ -74,10 +76,10 @@ namespace UIModels
 		}
 
         public WebCamPage(string viewName, IHostController hc, MappedPage pageDescriptor)
-            : base(viewName, hc, pageDescriptor, hc.ProcessRunnerFactory.Create(hc.ProcessRunnerFactory.CreateConfig("cam")))
+            : base(viewName, hc, pageDescriptor, ProcessRunner.ForInteractiveApp(hc.Config.GetString("cam_exe"), hc.Config.GetString("cam_args")))
         {
             this.Disposing += WebCamPageDisposing;
-			Run ();
+			Run();
         }
 
         public override bool Run()
@@ -85,8 +87,9 @@ namespace UIModels
             if (base.Run())
             {
                 Thread.Sleep(3000);
-                UpdateColor();
-                UpdateContrast();
+                UpdateColor(0).Wait();
+                UpdateContrast(0).Wait();
+                UpdateBright(0).Wait();
                 return true;
             }
             else
@@ -95,103 +98,76 @@ namespace UIModels
 
         void WebCamPageDisposing(object sender, EventArgs e)
         {
-            lock (locker)
+            if (!guard.ExecuteIfFree(() =>
+                {
+                    if (configDirty)
+                        hc.Config.Save();
+                }))
             {
-                if (configDirty)
-                    hc.Config.Save();
+                Thread.Sleep(1000);
+                WebCamPageDisposing(null, null);
             }
         }
 
-        private void UpdateColor()
+        private async Task ExecuteWebCamCommand(string args)
         {
-            var processConfig = new ProcessConfig
-            {
-                ExePath = hc.Config.GetString(WebcamControlCommand),
-                Args = string.Format(hc.Config.GetString(WebcamControlColorArgs), Color),
-            };
-
-            hc.ProcessRunnerFactory.Create(processConfig).Run();
-            Thread.Sleep(300);
+            await ProcessRunner.ExecuteToolAsync("UpdateColor", str => null as string, 3000, hc.Config.GetString(WebcamControlCommand), args);
         }
 
-        private void UpdateContrast()
+        private async Task UpdateColor(int delta)
         {
-            var processConfig = new ProcessConfig
-            {
-                ExePath = hc.Config.GetString(WebcamControlCommand),
-                Args = string.Format(hc.Config.GetString(WebcamControlContrastArgs), Contrast),
-            };
+            if (delta > 0)
+                Color = Color + delta;
 
-            hc.ProcessRunnerFactory.Create(processConfig).Run();
-            Thread.Sleep(300);
+            await ExecuteWebCamCommand(string.Format(hc.Config.GetString(WebcamControlColorArgs), Color));
         }
 
-		private void UpdateBright()
+        private async Task UpdateContrast(int delta)
+        {
+            if (delta > 0)
+                Contrast = Contrast + delta;
+
+            await ExecuteWebCamCommand(string.Format(hc.Config.GetString(WebcamControlContrastArgs), Contrast));
+        }
+
+		private async Task UpdateBright(int delta)
 		{
-            var processConfig = new ProcessConfig
-            {
-                ExePath = hc.Config.GetString(WebcamControlCommand),
-                Args = string.Format(hc.Config.GetString(WebcamControlBrightArgs), Bright),
-            };
+            if (delta > 0)
+                Bright = Bright + delta;
 
-			hc.ProcessRunnerFactory.Create(processConfig).Run();
-			Thread.Sleep(300);
+            await ExecuteWebCamCommand(string.Format(hc.Config.GetString(WebcamControlBrightArgs), Bright));
 		}
 
-        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
+        protected override async Task DoAction(string name, PageModelActionEventArgs actionArgs)
         {
             switch(name)
             {
                 case "Color+":
-                    lock (locker)
-                    {
-                        Color = Color + 10;
-                        UpdateColor();
-                    }
+                    await guard.ExecuteIfFreeAsync(() => UpdateColor(10));
                     break;
 
                 case "Color-":
-                    lock (locker)
-                    {
-                        Color = Color - 10;
-                        UpdateColor();
-                    }
+                    await guard.ExecuteIfFreeAsync(() => UpdateColor(-10));
                     break;
 
                 case "Contrast+":
-                    lock (locker)
-                    {
-                        Contrast = Contrast + 10;
-                        UpdateContrast();
-                    }
+                    await guard.ExecuteIfFreeAsync(() => UpdateContrast(10));
                     break;
 
                 case "Contrast-":
-                    lock (locker)
-                    {
-                        Contrast = Contrast - 10;
-                        UpdateContrast();
-                    }
+                    await guard.ExecuteIfFreeAsync(() => UpdateContrast(-10));
                     break;
 
                 case "Bright+":
-                    lock (locker)
-                    {
-                        Bright = Bright + 10;
-                        UpdateBright();
-                    }
+                    await guard.ExecuteIfFreeAsync(() => UpdateBright(10));
                     break;
 
                 case "Bright-":
-                    lock (locker)
-                    {
-                        Bright = Bright - 10;
-                        UpdateBright();
-                    }
+                    await guard.ExecuteIfFreeAsync(() => UpdateBright(-10));
                     break;
 
                 default:
-                    base.DoAction(name, actionArgs);
+                    await base.DoAction(name, actionArgs);
                     break;
             }
         }

@@ -16,10 +16,11 @@ using Implementation.MiniDisplay;
 using System.Threading.Tasks;
 using Interfaces.GPS;
 using System.Collections.Generic;
+using ProcessRunnerNamespace;
 
 namespace HostController
 {
-    public class HostController : IHostController, IProcessRunnerFactory
+    public class HostController : IHostController
 	{
         private string logFolder;
         
@@ -70,14 +71,6 @@ namespace HostController
             get
             {
                 return syncContext;
-            }
-        }
-
-        public IProcessRunnerFactory ProcessRunnerFactory
-        {
-            get
-            {
-                return this;
             }
         }
 
@@ -170,7 +163,7 @@ namespace HostController
                     break;
 
                 case Environments.RPi:
-                    configResolver = new RPiConfigResolver(this);
+                    configResolver = new RPiConfigResolver();
                     break;
 
                 default:
@@ -258,11 +251,11 @@ namespace HostController
         {
             ServicePointManager.ServerCertificateValidationCallback = (s1, s2, s3, s4) => true;
 
-            this.speakService = new SpeakService(Logger, Config, this);
+            this.speakService = new SpeakService(Logger, Config);
 
 			this.remoteStorageService = new DropboxService.DropboxService();
 
-            netKeeper = new InternetConnectionKeeper(Config, Logger, this);
+            netKeeper = new InternetConnectionKeeper(Config, Logger);
             netKeeper.InternetConnectionStatus += OnInternetConnectionStatus;
             netKeeper.InternetTime += CheckSystemTimeFromInternet;
             netKeeper.RestartNeeded += InetKeeperRestartNeeded;
@@ -450,7 +443,7 @@ namespace HostController
 					return;
 				}
 
-                if (new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(time))
+                if (new SystemTimeCorrector(Config, Logger).IsSystemTimeValid(time))
                 {
                     config.IsSystemTimeValid = true;
 					appliedTimeProviderPriority = 1;
@@ -476,7 +469,7 @@ namespace HostController
 					return;
 				}
 
-                if (new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(gprmc.Time))
+                if (new SystemTimeCorrector(Config, Logger).IsSystemTimeValid(gprmc.Time))
                 {
                     config.IsSystemTimeValid = true;
                     DisconnectSystemTimeChecking();
@@ -503,7 +496,7 @@ namespace HostController
 					return;
 				}
 
-                if (new SystemTimeCorrector(Config, ProcessRunnerFactory, Logger).IsSystemTimeValid(inetTime))
+                if (new SystemTimeCorrector(Config, Logger).IsSystemTimeValid(inetTime))
                 {
                     config.IsSystemTimeValid = true;
                     DisconnectSystemTimeChecking();
@@ -630,6 +623,8 @@ namespace HostController
 
                 await Task.Delay(500);
 
+                speakService.Shutdown();
+
                 await arduController.Beep(100);
 
                 showLine("Stopping timers");
@@ -644,85 +639,57 @@ namespace HostController
                 mode = HostControllerShutdownModes.UnhandledException;
             }
 
-            syncContext.Stop();
-
             switch (mode)
             {
                 case HostControllerShutdownModes.Update:
                     {
-                        var processConfig = new ProcessConfig
+                        try
                         {
-                            ExePath = Config.GetString(ConfigNames.SystemUpdateCommand),
-                            Args = string.Format(Config.GetString(ConfigNames.SystemUpdateArg), Config.DataFolder),
-                            RedirectStandardOutput = false,
-                            RedirectStandardInput = false
-                        };
-
-                        ProcessRunnerFactory.Create(processConfig).Run();
+                            await ProcessRunner.ExecuteToolAsync("launch update tool", (string str) => null as string, 10000,
+                                Config.GetString(ConfigNames.SystemUpdateCommand),
+                                string.Format(Config.GetString(ConfigNames.SystemUpdateArg), Config.DataFolder));
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Log (this, ex);
+                        }
                     }
                     break;
 
                 case HostControllerShutdownModes.Restart:
                     {
-                        var processConfig = new ProcessConfig
+                        try
                         {
-                            ExePath = Config.GetString(ConfigNames.SystemRestartCommand),
-                            Args = Config.GetString(ConfigNames.SystemRestartArg),
-                            RedirectStandardOutput = false,
-                            RedirectStandardInput = false
-                        };
-
-						try
-						{
-	                        ProcessRunnerFactory.Create(processConfig).Run();
-						}
-						catch (Exception ex)
-						{
-						Logger.Log (this, ex);
-						}
+                            await ProcessRunner.ExecuteToolAsync("restart", (string str) => null as string, 10000,
+                                Config.GetString(ConfigNames.SystemRestartCommand),
+                                Config.GetString(ConfigNames.SystemRestartArg));
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Log (this, ex);
+                        }
                     }
                     break;
 
                 case HostControllerShutdownModes.Shutdown:
                     {
-                        var processConfig = new ProcessConfig
+                        try
                         {
-                            ExePath = Config.GetString(ConfigNames.SystemShutdownCommand),
-                            Args = Config.GetString(ConfigNames.SystemShutdownArg),
-                            RedirectStandardOutput = false,
-                            RedirectStandardInput = false
-                        };
-
-                        ProcessRunnerFactory.Create(processConfig).Run();
+                            await ProcessRunner.ExecuteToolAsync("shutdown", (string str) => null as string, 10000,
+                                Config.GetString(ConfigNames.SystemShutdownCommand),
+                                Config.GetString(ConfigNames.SystemShutdownArg));
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Log(this, ex);
+                        }
                     }
                     break;
             }
-        }
 
-		public ProcessConfig CreateConfig(string appKey, object[] argumentParameters = null)
-        {
-			var args = Config.GetString (string.Concat (appKey, "_args"));
+            Logger.Flush();
 
-			if (argumentParameters != null)
-				args = string.Format (args, argumentParameters);
-
-            var processConfig = new ProcessConfig
-            {
-                ExePath = Config.GetString(string.Concat(appKey, "_exe")),
-                Args = args,
-                WaitForUI = Config.GetBool(string.Concat(appKey, "_wait_UI")),
-				Silent = true
-            };
-
-            return processConfig;
-        }
-
-        public IProcessRunner Create(ProcessConfig processConfig)
-        {
-            if (Logger == null)
-                throw new InvalidOperationException("Unable to create ProcessRunner before logger will be fully initialized");
-
-            return new ProcessRunner.ProcessRunnerImpl(processConfig, Logger);
+            syncContext.Stop();
         }
 
         public IHostTimer CreateTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly, string name)

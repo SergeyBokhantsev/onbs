@@ -128,7 +128,7 @@ namespace UIModels
 			}
 		}
 
-        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
+        protected override async Task DoAction(string name, PageModelActionEventArgs actionArgs)
         {
             switch (name)
             {
@@ -137,7 +137,7 @@ namespace UIModels
                     break;
 
                 default:
-                    base.DoAction(name, actionArgs);
+                    await base.DoAction(name, actionArgs);
                     break;
             }
         }
@@ -264,18 +264,15 @@ namespace UIModels
         {
             if (!Disposed)
             {
-                await Task.Run(() =>
-                {
-                    var cpuSpeed = NixHelpers.CPUInfo.GetCPUSpeed(hc.ProcessRunnerFactory);
-                    var cpuTemp = NixHelpers.CPUInfo.GetCPUTemp(hc.ProcessRunnerFactory);
+                var cpuSpeed = await NixHelpers.CPUInfo.GetCPUSpeed();
+                var cpuTemp = await NixHelpers.CPUInfo.GetCPUTemp();
 
-                    string info = string.Format("{0} Mhz ({1}°)",
-                        cpuSpeed.HasValue ? cpuSpeed.Value.ToString() : "-",
-                        cpuTemp.HasValue ? cpuTemp.Value.ToString("0.0") : "-");
+                string info = string.Format("{0} Mhz ({1}°)",
+                    cpuSpeed.HasValue ? cpuSpeed.Value.ToString() : "-",
+                    cpuTemp.HasValue ? cpuTemp.Value.ToString("0.0") : "-");
 
-                    if (!Disposed)
-                        SetProperty("cpu_info", info);
-                });
+                if (!Disposed)
+                    SetProperty("cpu_info", info);
             }
         }
 

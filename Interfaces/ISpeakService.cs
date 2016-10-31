@@ -9,5 +9,7 @@ namespace Interfaces
     public interface ISpeakService
     {
         Task Speak(string phrase);
+
+        void Shutdown();
     }
 }

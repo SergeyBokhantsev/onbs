@@ -1,6 +1,8 @@
 ﻿using Interfaces;
+using ProcessRunnerNamespace;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -12,18 +14,16 @@ namespace HostController
     {
         private readonly ILogger logger;
         private readonly IConfig config;
-        private readonly IProcessRunnerFactory prf;
         private readonly object locker = new object();
 
-        private IProcessRunner speaker;
+        private ProcessRunner speaker;
         private int exceptionsCount;
         private const int maxExceptionsCount = 5;
 
-        public SpeakService(ILogger logger, IConfig config, IProcessRunnerFactory prf)
+        public SpeakService(ILogger logger, IConfig config)
         {
             this.logger = Ensure.ArgumentIsNotNull(logger);
             this.config = Ensure.ArgumentIsNotNull(config);
-            this.prf = Ensure.ArgumentIsNotNull(prf);
         }
 
         public async Task Speak(string phrase)
@@ -44,7 +44,7 @@ namespace HostController
                         logger.Log(this, "Cannot initiate Speak process", LogLevels.Warning);
                     }
 
-					Thread.Sleep(1500);
+                    Thread.Sleep(1500);
                 }
             });
         }
@@ -55,15 +55,15 @@ namespace HostController
             {
                 try
                 {
-                    var pc = new ProcessConfig
+                    var psi = new ProcessStartInfo
                     {
-                        ExePath = config.GetString(ConfigNames.SpeakerExe),
-                        Args = config.GetString(ConfigNames.SpeakerArgs),
+                        FileName = config.GetString(ConfigNames.SpeakerExe),
+                        Arguments = config.GetString(ConfigNames.SpeakerArgs),
                         RedirectStandardInput = true,
-                        RedirectStandardOutput = false
+                        UseShellExecute = false
                     };
 
-                    speaker = prf.Create(pc);
+                    speaker = new ProcessRunner(psi, false, false);
                     speaker.Run();
                     exceptionsCount = 0;
                 }
@@ -82,6 +82,12 @@ namespace HostController
             }
 
             return !speaker.HasExited;
+        }
+
+        public void Shutdown()
+        {
+            if (null != speaker && !speaker.HasExited)
+                speaker.Exit();
         }
     }
 }

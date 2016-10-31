@@ -7,14 +7,11 @@ namespace HostController.Lin
 {
     public class RPiConfigResolver : ConfigValuesResolver
     {
-        private readonly IProcessRunnerFactory processRunnerFactory;
         private readonly Dictionary<string, object> cache = new Dictionary<string, object>();
         private readonly Dictionary<string, Func<string>> resolvers;
 
-        public RPiConfigResolver(IProcessRunnerFactory processRunnerFactory)
+        public RPiConfigResolver()
         {
-            this.processRunnerFactory = processRunnerFactory;
-
             resolvers = new Dictionary<string, Func<string>>
             {
                 { ConfigNames.Placeholder_Elm327Port, GetElm327Port },
@@ -42,7 +39,7 @@ namespace HostController.Lin
 
             try
             {
-                var device = NixHelpers.DmesgFinder.FindUSBDevice(vid, pid, processRunnerFactory);
+                var device = NixHelpers.DmesgFinder.FindUSBDevice(vid, pid);
 
                 if (device != null && device.AttachedTo.Any())
                 {

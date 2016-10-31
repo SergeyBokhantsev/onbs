@@ -1,4 +1,5 @@
 ﻿using Interfaces;
+using ProcessRunnerNamespace;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,7 +24,7 @@ namespace DashCamController
         private readonly AutoResetEvent monitorEvent = new AutoResetEvent(true);
         private readonly FileManager fileManager;
 
-        private IProcessRunner cameraProcess;
+        private ProcessRunner cameraProcess;
 
         private bool protectCurrent;
 
@@ -130,14 +131,16 @@ namespace DashCamController
 
             try
             {
-                var processConfig = CreatePictureProcessConfig(width, height);
-
-                cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);
+                cameraProcess = CreatePictureProcessRunner(width, height);
+                
                 cameraProcess.Run();
 
-                bool result = cameraProcess.WaitForExit(15000, out ms);
-
-                if (!result)
+                if (cameraProcess.WaitForExit(8000))
+                {
+                    if (!cameraProcess.ReadStdOut(stream => ms = stream) || null == ms)
+                        throw new Exception("Error accessing camera process stream");
+                }
+                else
                 {
                     hc.Logger.Log(this, "Timeout while taking picture", LogLevels.Warning);
                     ms = null;
@@ -180,14 +183,11 @@ namespace DashCamController
                 monitorEvent.Set();
         }
 
-        protected virtual ProcessConfig CreatePictureProcessConfig(int width, int height)
+        protected virtual ProcessRunner CreatePictureProcessRunner(int width, int height)
         {
             var dim = hc.Config.IsDimLighting;
 
-            return new ProcessConfig
-            {
-                ExePath = pictureExe,
-                Args = string.Format(pictureArg,
+            var args = string.Format(pictureArg,
                 width, //0
                 height, //1
                 hc.Config.GetString("DashCamRecorderOpacity"), //2
@@ -205,22 +205,16 @@ namespace DashCamController
                 hc.Config.GetString("DashCamRecorderDRC"), //14
                 hc.Config.GetString("DashCamRecorderAnnotate"), //15
                 hc.Config.GetBool(ConfigNames.DashCamRecorderPreviewEnabled) ? string.Empty : "--nopreview" //16
-                ),
-                WaitForUI = false,
-                RedirectStandardOutput = true,
-                RedirectStandardInput = false,
-                Silent = true
-            };
+                );
+
+            return ProcessRunner.ForTool(pictureExe, args);
         }
 
-        protected virtual ProcessConfig CreateRecordProcessConfig(string fileName)
+        protected virtual ProcessRunner CreateRecordProcessRunner(string fileName)
         {
             var dim = hc.Config.IsDimLighting;
 
-            return new ProcessConfig
-            {
-                ExePath = recordingExe,
-                Args = string.Format(recordingArg,
+            var args = string.Format(recordingArg,
                 recordingLenSec * 1000, //0
                 hc.Config.GetString("DashCamRecorderOpacity"), //1
                 hc.Config.GetString("DashCamRecorderSharpness"), //2
@@ -240,13 +234,9 @@ namespace DashCamController
                 hc.Config.GetInt("DashCamRecorderBitrate") * 1000000, //16
                 hc.Config.GetBool("DashCamRecorderStab") ? "--vstab" : string.Empty, // 17
                 hc.Config.GetBool(ConfigNames.DashCamRecorderPreviewEnabled) ? string.Empty : "--nopreview" //18
-                ), 
-                Silent = true,
-                WaitForUI = false,
-                AliveMonitoringInterval = 200,
-                RedirectStandardInput = false, 
-                RedirectStandardOutput = false
-            };
+                );
+
+            return ProcessRunner.ForTool(recordingExe, args);
         }
 
         private void DoRecord()
@@ -257,8 +247,7 @@ namespace DashCamController
             try
             {
                 var fileName = fileManager.GetNextFileName();
-                var processConfig = CreateRecordProcessConfig(fileName);
-                cameraProcess = hc.ProcessRunnerFactory.Create(processConfig);
+                cameraProcess = CreateRecordProcessRunner(fileName);
                 cameraProcess.Exited += isUnexpected =>
                 {
                     monitorEvent.Set();
@@ -319,33 +308,37 @@ namespace DashCamController
             }
         }
 
-        public FileInfo GetMP4File(FileInfo fileInfo)
+        public async Task<FileInfo> GetMP4File(FileInfo fileInfo)
         {
-            var coFiles = fileManager.GetWithCoFiles(fileInfo.FullName);
+            var coFiles = await Task.Run(() => fileManager.GetWithCoFiles(fileInfo.FullName));
             var coFile = coFiles.FirstOrDefault(f => Path.GetExtension(f).Equals(".mp4", StringComparison.InvariantCultureIgnoreCase));
 
             if (coFile != null)
                 return new FileInfo(coFile);
             else
-                return ConvertToMP4(fileInfo.FullName);
+                return await ConvertToMP4(fileInfo.FullName);
         }
 
-        private FileInfo ConvertToMP4(string fileName)
+        private async Task<FileInfo> ConvertToMP4(string fileName)
         {
             var mp4FilePath = Path.Combine(Path.GetDirectoryName(fileName), string.Concat(Path.GetFileNameWithoutExtension(fileName), ".mp4"));
 
-            var config = new ProcessConfig
+            try
             {
-                ExePath = hc.Config.GetString(ConfigNames.DashCamConvertToMP4Exe),
-                Args = string.Format(hc.Config.GetString(ConfigNames.DashCamConvertToMP4Arg), fileName, mp4FilePath),
-                WaitForUI = false,
-                RedirectStandardInput = false,
-                RedirectStandardOutput = false
-            };
+                await ProcessRunner.ExecuteToolAsync("ConvertToMP4", str => { hc.Logger.Log(this, str, LogLevels.Info); return str; },
+                    120000,
+                    hc.Config.GetString(ConfigNames.DashCamConvertToMP4Exe),
+                    string.Format(hc.Config.GetString(ConfigNames.DashCamConvertToMP4Arg), fileName, mp4FilePath));
+            }
+            catch (AggregateException ex)
+            {
+                hc.Logger.Log(this, ex.Flatten().InnerException ?? ex);
+            }
+            catch (Exception ex)
+            {
+                hc.Logger.Log(this, ex);
+            }
 
-            var pr = hc.ProcessRunnerFactory.Create(config);
-            pr.Run();
-            pr.WaitForExit(120000);
             return new FileInfo(mp4FilePath);
         }
 

@@ -8,9 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Interfaces;
 
-namespace ProcessRunner
+namespace ProcessRunnerNamespace
 {
-    public class ProcessRunnerImplNew
+    public class ProcessRunner
     {
         private class Boxed<T>
         {
@@ -32,7 +32,7 @@ namespace ProcessRunner
             }
         }
 
-        public static ProcessRunnerImplNew ForTool(string exeName, string args)
+        public static ProcessRunner ForTool(string exeName, string args)
         {
             var psi = new ProcessStartInfo
             {
@@ -44,10 +44,10 @@ namespace ProcessRunner
                 RedirectStandardOutput = true
             };
 
-            return new ProcessRunnerImplNew(psi, true, true) { SendCloseWindowSignalWhenExit = false };
+            return new ProcessRunner(psi, true, true) { SendCloseWindowSignalWhenExit = false };
         }
 
-        public static ProcessRunnerImplNew ForInteractiveApp(string exeName, string args)
+        public static ProcessRunner ForInteractiveApp(string exeName, string args)
         {
             var psi = new ProcessStartInfo
             {
@@ -57,7 +57,131 @@ namespace ProcessRunner
                 UseShellExecute = false
             };
 
-            return new ProcessRunnerImplNew(psi, false, false) { SendCloseWindowSignalWhenExit = true };
+            return new ProcessRunner(psi, false, false) { SendCloseWindowSignalWhenExit = true };
+        }
+
+        public static T ExecuteTool<T>(string description, Func<string, T> action, int timeout, string exe, string args = null)
+        {
+            ProcessRunner pr = null;
+
+            try
+            {
+                pr = ProcessRunner.ForTool(exe, args);
+
+                pr.Run();
+
+                if (pr.WaitForExit(timeout))
+                {
+                    string output = null;
+
+                    if (pr.ReadStdOut(ms => output = ms.GetString()))
+                    {
+                        return action(output);
+                    }
+                    else if (pr.ReadStdError(ms => output = ms.GetString()))
+                    {
+                        throw new Exception(output);
+                    }
+                    else
+                        throw new Exception("Problem accessing out data");
+                }
+                else
+                    throw new Exception(string.Format("Timeout ({0} ms) for process", timeout));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Exception in {0}: {1}", description, ex.Message), ex);
+            }
+            finally
+            {
+                if (null != pr && !pr.HasExited)
+                    pr.Exit();
+            }
+        }
+
+        public static async Task<T> ExecuteToolAsync<T>(string description, Func<string, T> action, int timeout, string exe, string args = null)
+        {
+            ProcessRunner pr = null;
+
+            try
+            {
+                pr = ProcessRunner.ForTool(exe, args);
+
+                await pr.RunAsync();
+
+                if (await pr.WaitForExitAsync(timeout))
+                {
+                    string output = null;
+
+                    if (await pr.ReadStdErrorAsync(ms => Task.Run(() => output = ms.GetString())))
+                    {
+                        return action(output);
+                    }
+                    else if (await pr.ReadStdErrorAsync(ms => Task.Run(() => output = ms.GetString())))
+                    {
+                        throw new Exception(output);
+                    }
+                    else
+                        throw new Exception("Problem accessing out data");
+                }
+                else
+                    throw new Exception(string.Format("Timeout ({0} ms) for process", timeout));
+            }
+            catch (AggregateException ex)
+            {
+                var exception = ex.Flatten().InnerException ?? ex;
+
+                throw new Exception(string.Format("Exception in {0}: {1}", description, exception.Message), exception);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Exception in {0}: {1}", description, ex.Message), ex);
+            }
+            finally
+            {
+                if (null != pr && !pr.HasExited)
+                    pr.Exit();
+            }
+        }
+
+        public static T ExecuteTool<T>(string description, Func<MemoryStream, T> action, int timeout, string exe, string args = null)
+        {
+            ProcessRunner pr = null;
+
+            try
+            {
+                pr = ProcessRunner.ForTool(exe, args);
+
+                pr.Run();
+
+                if (pr.WaitForExit(timeout))
+                {
+                    T result = default(T);
+                    string error = null;
+
+                    if (pr.ReadStdOut(ms => result = action(ms)))
+                    {
+                        return result;
+                    }
+                    else if (pr.ReadStdError(ms => error = ms.GetString()))
+                    {
+                        throw new Exception(error);
+                    }
+                    else
+                        throw new Exception("Problem accessing out data");
+                }
+                else
+                    throw new Exception(string.Format("Timeout ({0} ms) for process", timeout));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Exception in {0}: {1}", description, ex.Message), ex);
+            }
+            finally
+            {
+                if (null != pr && !pr.HasExited)
+                    pr.Exit();
+            }
         }
 
         public event ExitedEventHandler Exited;
@@ -93,9 +217,9 @@ namespace ProcessRunner
         /// </summary>
         public int TimeoutBeforeKill { get; set; }
 
-        public bool HasExited { get { return proc.HasExited; } }
+        public bool HasExited { get { return proc != null && proc.HasExited; } }
 
-        public ProcessRunnerImplNew(ProcessStartInfo psi, bool collectOutput, bool collectError)
+        public ProcessRunner(ProcessStartInfo psi, bool collectOutput, bool collectError)
         {
             if (null == psi)
                 throw new ArgumentNullException("psi");
@@ -242,12 +366,12 @@ namespace ProcessRunner
 
         public void SendToStandardInput(string message)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void SendToStandardInput(char c)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public bool WaitForExit(int timeoutMilliseconds)
@@ -270,20 +394,23 @@ namespace ProcessRunner
         {
             exitCalled = true;
 
-            ThreadPool.QueueUserWorkItem(state =>
+            if (proc != null && !proc.HasExited)
             {
-                if (proc != null && !proc.HasExited)
+                ThreadPool.QueueUserWorkItem(state =>
                 {
-                    if (SendCloseWindowSignalWhenExit && TimeoutBeforeKill > 0)
+                    if (proc != null && !proc.HasExited)
                     {
-                        proc.CloseMainWindow();
-                        proc.WaitForExit(TimeoutBeforeKill);
-                    }
+                        if (SendCloseWindowSignalWhenExit && TimeoutBeforeKill > 0)
+                        {
+                            proc.CloseMainWindow();
+                            proc.WaitForExit(TimeoutBeforeKill);
+                        }
 
-                    if (!proc.HasExited)
-                        proc.Kill();
-                }
-            });
+                        if (!proc.HasExited)
+                            proc.Kill();
+                    }
+                });
+            }
         }
 
         public bool ReadStdOut(Action<MemoryStream> accessor)

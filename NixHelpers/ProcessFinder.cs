@@ -3,55 +3,26 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using Interfaces;
+using ProcessRunnerNamespace;
 
 namespace NixHelpers
 {
     public static class ProcessFinder
     {
-        public static IEnumerable<string> EnumerateProcesses(IProcessRunnerFactory prf)
+        public static IEnumerable<string> EnumerateProcesses()
         {
-			IProcessRunner pr = null;
-
-            try
-            {
-                Ensure.ArgumentIsNotNull(prf);
-
-                var cfg = prf.CreateConfig("ps");
-                cfg.RedirectStandardInput = false;
-                cfg.RedirectStandardOutput = true;
-
-                pr = prf.Create(cfg);
-
-                pr.Run();
-
-                MemoryStream outputStream;
-                
-				if(!pr.WaitForExit(5000, out outputStream))
-				{
-					throw new Exception("Enumerate processes timeout");
-				}
-
-				var output = outputStream.GetString();
-
-                return output.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(string.Format("Exception in NixHelpers.ProcessFinder.EnumerateProcesses: {0}", ex.Message), ex);
-            }
-			finally {
-				if(null != pr && !pr.HasExited)
-					pr.Exit();
-			}
+            return ProcessRunner.ExecuteTool("EnumerateProcesses",
+                o => o.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries),
+                5000, "ps", "ax");
         }
 
-        public static int FindProcess(string name, IProcessRunnerFactory prf)
+        public static int FindProcess(string name)
         {
             try
             {
                 var regex = new Regex(string.Format("(\\S+).+({0})", name));
 
-                foreach (var p in EnumerateProcesses(prf))
+                foreach (var p in EnumerateProcesses())
                 {
                     var match = regex.Match(p);
 

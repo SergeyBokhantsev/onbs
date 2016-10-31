@@ -4,6 +4,8 @@ using System.Net;
 using System.Threading;
 using Interfaces;
 using System.IO;
+using ProcessRunnerNamespace;
+using System.Diagnostics;
 
 //$ ls -al /sys/class/tty/ttyUSB0//device/driver
 //lrwxrwxrwx 1 root root 0 sep  6 21:28 /sys/class/tty/ttyUSB0//device/driver -> ../../../bus/platform/drivers/usbseria
@@ -27,14 +29,13 @@ namespace HostController.Lin
 
         private bool disposed;
 
-        public InternetConnectionKeeper(IConfig config, ILogger logger, IProcessRunnerFactory prf)
+        public InternetConnectionKeeper(IConfig config, ILogger logger)
         {
             this.config = Ensure.ArgumentIsNotNull(config);
             this.logger = Ensure.ArgumentIsNotNull(logger);
-            Ensure.ArgumentIsNotNull(prf);
 
-            modemSwitcher = new ModemSwitcher(logger, config, prf);
-            dialer = new Dialer(logger, config, prf);
+            modemSwitcher = new ModemSwitcher(logger, config);
+            dialer = new Dialer(logger, config);
 
             checkFolder = config.GetString(ConfigNames.InetKeeperCheckFolder);
 
@@ -261,13 +262,11 @@ namespace HostController.Lin
 
         private readonly ILogger logger;
         private readonly IConfig config;
-        private readonly IProcessRunnerFactory prf;
 
-        public ModemSwitcher(ILogger logger, IConfig config, IProcessRunnerFactory prf)
+        public ModemSwitcher(ILogger logger, IConfig config)
         {
             this.logger = Ensure.ArgumentIsNotNull(logger);
             this.config = Ensure.ArgumentIsNotNull(config);
-            this.prf = Ensure.ArgumentIsNotNull(prf);
         }
 
         public bool CheckAndSwitch()
@@ -324,7 +323,7 @@ namespace HostController.Lin
                     return;
             }
 
-            var modemDevice = NixHelpers.LsUsb.EnumerateDevices(prf).FirstOrDefault(d => d.VID == deviceVid && d.PID == devicePid);
+            var modemDevice = NixHelpers.LsUsb.EnumerateDevices().FirstOrDefault(d => d.VID == deviceVid && d.PID == devicePid);
 
             if (null == modemDevice)
             {
@@ -332,31 +331,47 @@ namespace HostController.Lin
                 return;
             }
 
-            var cfg = new ProcessConfig
+            ProcessRunner pr = null;
+
+            try
             {
-                AliveMonitoringInterval = 1000,
-                ExePath = "sudo",
-                Args = Path.Combine(config.DataFolder, string.Format("usbreset /dev/bus/usb/{0}/{1}", modemDevice.Bus, modemDevice.Device)),
-                Silent = false,
-                RedirectStandardInput = false,
-                RedirectStandardOutput = true,
-                WaitForUI = false
-            };
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "sudo",
+                    Arguments = Path.Combine(config.DataFolder, string.Format("usbreset /dev/bus/usb/{0}/{1}", modemDevice.Bus, modemDevice.Device)),
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
 
-            var pr = prf.Create(cfg);
+                pr = new ProcessRunner(psi, true, true);
 
-            MemoryStream stream;
-            pr.Run();
+                pr.Run();
 
-            if (pr.WaitForExit(30000, out stream))
-            {
-                var outStr = stream.GetString();
+                if (pr.WaitForExit(30000))
+                {
+                    string outStr = null;
 
-                logger.Log(this, string.Format("Device {0}:{1} seems was reset successfully: {2}", modemDevice.PID, modemDevice.VID, outStr), LogLevels.Info);
+                    pr.ReadStdOut(ms => outStr = ms.GetString());
+
+                    if (null != outStr)
+                        logger.Log(this, string.Format("Device {0}:{1} seems was reset successfully: {2}", modemDevice.PID, modemDevice.VID, outStr), LogLevels.Info);
+                    else
+                        logger.Log(this, string.Format("Device {0}:{1} seems was not reset successfully", modemDevice.PID, modemDevice.VID), LogLevels.Warning);
+                }
+                else
+                {
+                    logger.Log(this, string.Format("Timeout resetting Device {0}:{1}.", modemDevice.VID, modemDevice.PID), LogLevels.Warning);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                logger.Log(this, string.Format("There was some trouble resetting Device {0}:{1}.", modemDevice.VID, modemDevice.PID), LogLevels.Warning);
+                logger.Log(this, ex);
+            }
+            finally
+            {
+                if (null != pr && !pr.HasExited)
+                    pr.Exit();
             }
         }
 
@@ -379,44 +394,79 @@ namespace HostController.Lin
                     return;
             }
 
+            ProcessRunner pr = null;
 
-            var cfg = prf.CreateConfig("modeswitch_reset", new object[] { deviceVid, devicePid });
-            cfg.RedirectStandardOutput = false;
-            cfg.RedirectStandardInput = false;
-
-            var pr = prf.Create(cfg);
-            pr.Run();
-            pr.WaitForExit(60000);
-
-            if (pr.HasExited)
+            try
             {
-                logger.Log(this, "Device {0}:{1} was reset successfully", LogLevels.Info);
+                var psi = new ProcessStartInfo
+                {
+                    FileName = config.GetString("modeswitch_reset_exe"),
+                    Arguments = string.Format(config.GetString("modeswitch_reset_args"), deviceVid, devicePid),
+                    UseShellExecute = false
+                };
+
+                pr = new ProcessRunner(psi, false, false);
+                pr.Run();
+
+                if (pr.WaitForExit(60000))
+                {
+                    logger.Log(this, "Device {0}:{1} was reset successfully", LogLevels.Info);
+                }
+                else
+                {
+                    logger.Log(this, "There was some truoble resetting Device {0}:{1}. The Reset process still not finished after 60 seconds.", LogLevels.Warning);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                logger.Log(this, "There was some truoble resetting Device {0}:{1}. The Reset process still not finished after 60 seconds.", LogLevels.Warning);
+                logger.Log(this, ex);
+            }
+            finally
+            {
+                if (null != pr && !pr.HasExited)
+                    pr.Exit();
             }
         }
 
         private bool SwitchToModem()
         {
-			IProcessRunner pr = null;
+			ProcessRunner pr = null;
 
             try
             {
                 var modemSwitchConfigFilePath = Path.Combine(config.DataFolder, "12d1_1446.cfg");
-                var cfg = prf.CreateConfig("modeswitch", new object[] { modemSwitchConfigFilePath });
-                cfg.RedirectStandardInput = false;
-                cfg.RedirectStandardOutput = true;
-                pr = prf.Create(cfg);
+
+                var psi = new ProcessStartInfo
+                {
+                    FileName = config.GetString("modeswitch_exe"),
+                    Arguments = string.Format(config.GetString("modeswitch_args"), modemSwitchConfigFilePath),
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+
+                pr = new ProcessRunner(psi, true, true);
                 pr.Run();
 
-                MemoryStream outputStream;
+                if (!pr.WaitForExit(30000))
+                {
+                    logger.Log(this, "Modemswitch tool timeout", LogLevels.Warning);
+                    return false;
+                }
 
-				if(!pr.WaitForExit(30000, out outputStream))
-					return false;
+                string output = null;
 
-                var output = outputStream.GetString();
+                if (!pr.ReadStdOut(ms => output = ms.GetString()))
+                {
+                    logger.Log(this, "Modeswitch tool return no data", LogLevels.Warning);
+
+                    if (pr.ReadStdError(ms => output = ms.GetString()) && !string.IsNullOrWhiteSpace(output))
+                    {
+                        logger.Log(this, output, LogLevels.Warning);
+                    }
+                    
+                    return false;
+                }
 
                 var result = output.Contains("Mode switch succeeded");
 
@@ -446,7 +496,7 @@ namespace HostController.Lin
                 var modemPid_storageMode = config.GetString(ConfigNames.Modem_storagemode_pid);
 
                 //foreach (var dev in NixHelpers.DmesgFinder.EnumerateUSBDevices(prf))
-                foreach (var dev in NixHelpers.LsUsb.EnumerateDevices(prf))
+                foreach (var dev in NixHelpers.LsUsb.EnumerateDevices())
                 {
                     if (dev.VID == modemVid)
                     {
@@ -471,18 +521,16 @@ namespace HostController.Lin
     {
         private readonly ILogger logger;
         private readonly IConfig config;
-        private readonly IProcessRunnerFactory prf;
 
         private NixHelpers.USBDevice modemDevice;
 
-        public Dialer(ILogger logger, IConfig config, IProcessRunnerFactory prf)
+        public Dialer(ILogger logger, IConfig config)
         {
             this.logger = Ensure.ArgumentIsNotNull(logger);
             this.config = Ensure.ArgumentIsNotNull(config);
-            this.prf = Ensure.ArgumentIsNotNull(prf);
         }
 
-        public IProcessRunner CheckAndRun()
+        public ProcessRunner CheckAndRun()
         {
             try
             {
@@ -497,7 +545,7 @@ namespace HostController.Lin
             }
         }
 
-        private IProcessRunner RunDialer()
+        private ProcessRunner RunDialer()
         {
             if (null == modemDevice)
             {
@@ -505,7 +553,7 @@ namespace HostController.Lin
 
                 var modemVid = config.GetString(ConfigNames.Modem_vid);
                 var modemPid_modemMode = config.GetString(ConfigNames.Modem_modemmode_pid);
-                modemDevice = NixHelpers.DmesgFinder.FindUSBDevice(modemVid, modemPid_modemMode, prf);
+                modemDevice = NixHelpers.DmesgFinder.FindUSBDevice(modemVid, modemPid_modemMode);
 
                 if (modemDevice == null)
                     throw new Exception(string.Format("No {0}:{1} USB device found", modemVid, modemPid_modemMode));
@@ -532,10 +580,14 @@ namespace HostController.Lin
 
             logger.Log(this, string.Format("Running Dialer for {0}, config file created in {1}", usbPort, dialConfigPath), LogLevels.Info);
 
-			var dialerProcCfg = prf.CreateConfig("dialer", new object[] { dialConfigPath });
-            dialerProcCfg.RedirectStandardInput = false;
-            dialerProcCfg.RedirectStandardOutput = false;
-            var dialer = prf.Create(dialerProcCfg);
+            var psi = new ProcessStartInfo
+            {
+                FileName = config.GetString("dialer_exe"),
+                Arguments = string.Format(config.GetString("dialer_args"), dialConfigPath),
+                UseShellExecute = false
+            };
+
+            var dialer = new ProcessRunner(psi, false, false);
             dialer.Run();
 
 			if (dialer.WaitForExit(10000))
@@ -552,20 +604,30 @@ namespace HostController.Lin
 			var dialerAppName = config.GetString("dialer_exe");
 
 			int dialerPID;
+            int killTries = 0;
 
-			while ((dialerPID = NixHelpers.ProcessFinder.FindProcess(dialerAppName, prf)) !=-1)
+			while ((dialerPID = NixHelpers.ProcessFinder.FindProcess(dialerAppName)) !=-1)
             {
-                var processConfig = new ProcessConfig
+                if (++killTries > 10)
                 {
-                    ExePath = "sudo",
-					Args = "kill " + dialerPID.ToString(),
-                    RedirectStandardInput = false,
-                    RedirectStandardOutput = false
-                };
+                    logger.Log(this, string.Format("Cannot kill running dealer PID {0}", dialerPID), LogLevels.Error);
+                    return;
+                }
 
                 logger.Log(this, string.Format("Another dialler instance found, pid {0}, trying to kill...", dialerPID), LogLevels.Info);
 
-                prf.Create(processConfig).Run();
+                ProcessRunner pr = null;
+
+                try
+                {
+                    pr = ProcessRunner.ForTool("sudo", "kill " + dialerPID.ToString());
+                    pr.Run();
+                }
+                finally
+                {
+                    if (null != pr && !pr.HasExited)
+                        pr.Exit();
+                }
 
 				Thread.Sleep (2000);
             }

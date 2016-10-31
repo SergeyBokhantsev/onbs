@@ -77,6 +77,7 @@ namespace GtkApplication
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();
 			this.hbox1.HeightRequest = 35;
+			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			this.hbox1.BorderWidth = ((uint)(5));
 			this.vbox1.Add(this.hbox1);

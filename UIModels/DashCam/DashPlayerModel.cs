@@ -1,5 +1,6 @@
 ﻿using Interfaces;
 using Interfaces.UI;
+using ProcessRunnerNamespace;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,28 +15,29 @@ namespace UIModels
 		private bool onExiting;
 
         public DashPlayerModel(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
-            : base(viewName, hc, pageDescriptor, arg as IProcessRunner)
+            : base(viewName, hc, pageDescriptor, arg as ProcessRunner)
         {
         }
 
-		protected override void DoAction (string name, PageModelActionEventArgs actionArgs)
+		protected override Task DoAction (string name, PageModelActionEventArgs actionArgs)
 		{
-			switch (name)
-			{
-			case "Exit":
-				if (onExiting || Runner.HasExited) {
-					hc.GetController<IUIController> ()
-						.ShowPage ("DashFileOptions", null, null);
-				} else {
-					Runner.SendToStandardInput ((char)27);
-					onExiting = true;
-				}
-				break;
+            switch (name)
+            {
+                case "Exit":
+                    if (onExiting || Runner.HasExited)
+                    {
+                        hc.GetController<IUIController>()
+                            .ShowPage("DashFileOptions", null, null);
+                    }
+                    else
+                    {
+                        Runner.SendToStandardInput((char)27);
+                        onExiting = true;
+                    }
+                    break;
+            }
 
-			default:
-				base.DoAction (name, actionArgs);
-				break;
-			}
+            return base.DoAction(name, actionArgs);
 		}
     }
 }

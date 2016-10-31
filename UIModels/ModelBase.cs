@@ -5,6 +5,7 @@ using Interfaces;
 using Interfaces.Input;
 using Interfaces.UI;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace UIModels
 {
@@ -52,9 +53,10 @@ namespace UIModels
             this.hc = hc;
         }
 
-        protected virtual void DoAction(string name, PageModelActionEventArgs actionArgs)
+        protected virtual Task DoAction(string name, PageModelActionEventArgs actionArgs)
         {
 			hc.Logger.Log(this, string.Format("No '{0}' action exists to execute for button {1}, state {2}.", name, actionArgs.ActionName, actionArgs.State), LogLevels.Debug);
+            return Task.FromResult(0);
         }
 
         public T GetProperty<T>(string name)
@@ -174,7 +176,7 @@ namespace UIModels
 
             if (mappedAction != null)
             {
-                hc.SyncContext.Post(o =>
+                hc.SyncContext.Post(async o =>
                 {
                     var pageAction = o as MappedPageAction;
                     
@@ -195,7 +197,7 @@ namespace UIModels
                             || (customAction.ActionBehavior == MappedActionBehaviors.PressOrHold && actionArgs.State == ButtonStates.Press)
                             || (customAction.ActionBehavior == MappedActionBehaviors.PressOrHold && actionArgs.State == ButtonStates.Hold)))
                         {
-                            DoAction(customAction.CustomActionName, actionArgs);
+                            await DoAction(customAction.CustomActionName, actionArgs);
                         }
                     }
 
@@ -203,7 +205,7 @@ namespace UIModels
             }
             else
             {
-                hc.SyncContext.Post(o => DoAction(ModelNames.UnmappedAction, actionArgs), null, string.Concat("ModelBase.UnmappedAction, action = ", actionArgs.ActionName));
+                hc.SyncContext.Post(async o => await DoAction(ModelNames.UnmappedAction, actionArgs), null, string.Concat("ModelBase.UnmappedAction, action = ", actionArgs.ActionName));
             }
         }
 

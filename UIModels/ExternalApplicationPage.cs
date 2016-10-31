@@ -1,20 +1,23 @@
 ﻿using Interfaces;
 using Interfaces.UI;
+using ProcessRunnerNamespace;
 using System;
 
 namespace UIModels
 {
     public abstract class ExternalApplicationPage : ModelBase
     {
-		protected IProcessRunner Runner
+		protected ProcessRunner Runner
         {
             get;
 			private set;
         }
 
-        protected ExternalApplicationPage(string viewName, IHostController hc, MappedPage pageDescriptor, IProcessRunner runner)
+        protected ExternalApplicationPage(string viewName, IHostController hc, MappedPage pageDescriptor, ProcessRunner runner)
             : base(viewName, hc, pageDescriptor)
         {
+            this.Disposing += ExternalApplicationPage_Disposing;
+
             NoDialogsAllowed = true;
 
             Runner = runner;
@@ -35,6 +38,12 @@ namespace UIModels
             }
 
             SetProperty("button_exit_label", "Close and back");
+        }
+
+        void ExternalApplicationPage_Disposing(object sender, EventArgs e)
+        {
+            if (null != Runner && !Runner.HasExited)
+                Runner.Exit();
         }
 
         void RunnerExited(bool unexpected)

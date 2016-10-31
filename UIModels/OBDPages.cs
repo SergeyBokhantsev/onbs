@@ -7,6 +7,7 @@ using Interfaces.UI;
 using System.Diagnostics;
 using System.IO;
 using UIModels.Dialogs;
+using System.Threading.Tasks;
 
 namespace UIModels
 {
@@ -254,7 +255,7 @@ namespace UIModels
             }, null);
         }
 
-        protected async override void DoAction(string name, PageModelActionEventArgs actionArgs)
+        protected override async Task DoAction(string name, PageModelActionEventArgs actionArgs)
         {
             switch (name)
             {
@@ -277,7 +278,7 @@ namespace UIModels
                     break;
 
                 default:
-                    base.DoAction(name, actionArgs);
+                    await base.DoAction(name, actionArgs);
                     break;
             }
         }

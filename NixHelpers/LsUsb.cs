@@ -1,4 +1,5 @@
 ﻿using Interfaces;
+using ProcessRunnerNamespace;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -54,29 +55,16 @@ namespace NixHelpers
 
     public static class LsUsb
     {
-        public static IEnumerable<USBBusDevice> EnumerateDevices(IProcessRunnerFactory prf)
+        public static IEnumerable<USBBusDevice> EnumerateDevices()
         {
-            var cfg = new ProcessConfig
+            try
             {
-                AliveMonitoringInterval = 1000,
-                ExePath = "lsusb",
-                Args = null,
-                RedirectStandardOutput = true,
-                RedirectStandardInput = false,
-                Silent = true,
-                WaitForUI = false
-            };
-
-            var pr = prf.Create(cfg);
-
-            MemoryStream stream;
-            pr.Run();
-			if (pr.WaitForExit (10000, out stream)) {
-				return USBBusDevice.Parse (stream);
-			} else {
-				pr.Exit ();
-				return new USBBusDevice[0];
-			}
+                return ProcessRunner.ExecuteTool("EnumerateDevices", ms => USBBusDevice.Parse(ms), 10000, "lsusb");
+            }
+            catch
+            {
+                return Enumerable.Empty<USBBusDevice>();
+            }
         }
     }
 }

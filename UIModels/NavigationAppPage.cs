@@ -1,7 +1,9 @@
 ﻿using Interfaces;
 using Interfaces.UI;
+using ProcessRunnerNamespace;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using UIModels.MiniDisplay;
 
 namespace UIModels
@@ -45,7 +47,7 @@ namespace UIModels
             base.Initialize();
         }
         
-        private static IProcessRunner CreateProcessRunner(IHostController hc)
+        private static ProcessRunner CreateProcessRunner(IHostController hc)
         {
             try
             {
@@ -75,16 +77,7 @@ namespace UIModels
 
                 navitConfig.WriteConfig(templatePath, outFile);
 
-                var processConfig = new ProcessConfig
-                {
-                    ExePath = config.GetString(ConfigNames.NavitExe),
-                    Args = string.Format(config.GetString(ConfigNames.NavitArgs), outFile),
-                    WaitForUI = true,
-					RedirectStandardOutput = false,
-					RedirectStandardInput = false
-                };
-
-                return hc.ProcessRunnerFactory.Create(processConfig);
+                return ProcessRunner.ForInteractiveApp(config.GetString(ConfigNames.NavitExe), string.Format(config.GetString(ConfigNames.NavitArgs), outFile));
             }
             catch (Exception ex)
             {
@@ -94,48 +87,48 @@ namespace UIModels
             }
         }
 
-        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
+        protected override async Task DoAction(string name, PageModelActionEventArgs actionArgs)
         {
             switch(name)
             { 
 			case "WheelUp":
-				automation.MouseClick (AutomationMouseClickTypes.WheelUp);
+				await automation.MouseClick (AutomationMouseClickTypes.WheelUp);
 				break;
 
 			case "WheelDown":
-				automation.MouseClick (AutomationMouseClickTypes.WheelDown);
+				await automation.MouseClick (AutomationMouseClickTypes.WheelDown);
 				break;
 
                 case "+":
-                    automation.Key(AutomationKeys.Control, AutomationKeys.plus);
+                    await automation.Key(AutomationKeys.Control, AutomationKeys.plus);
                     break;
 
                 case "-":
-                    automation.Key(AutomationKeys.Control, AutomationKeys.minus);
+                    await automation.Key(AutomationKeys.Control, AutomationKeys.minus);
                     break;
 
                 case "Up":
-                    automation.Key(AutomationKeys.Up);
+                    await automation.Key(AutomationKeys.Up);
                     break;
 
                 case "Down":
-                    automation.Key(AutomationKeys.Down);
+                    await automation.Key(AutomationKeys.Down);
                     break;
 
                 case "Left":
-                    automation.Key(AutomationKeys.Left);
+                    await automation.Key(AutomationKeys.Left);
                     break;
 
                 case "Right":
-                    automation.Key(AutomationKeys.Right);
+                    await automation.Key(AutomationKeys.Right);
                     break;
 
                 case "a":
-                    automation.Key(AutomationKeys.a);
+                    await automation.Key(AutomationKeys.a);
                     break;
 
                 case "d":
-                    automation.Key(AutomationKeys.d);
+                    await automation.Key(AutomationKeys.d);
                     break;
 
                 case "GPSPause":
@@ -144,7 +137,7 @@ namespace UIModels
                     break;
 
                 default:
-                    base.DoAction(name, actionArgs);
+                    await base.DoAction(name, actionArgs);
                     break;
             }
         }

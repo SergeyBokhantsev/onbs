@@ -302,7 +302,7 @@ namespace UIModels
             return rotaryItems.Skip(skip).Take(take).ToList();
         }
 
-        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
+        protected override async Task DoAction(string name, PageModelActionEventArgs actionArgs)
         {
             if (name.StartsWith("SaveAndReturn"))
             {
@@ -332,12 +332,12 @@ namespace UIModels
                 }
                 else
                 {
-                    base.DoAction(name, actionArgs);
+                    await base.DoAction(name, actionArgs);
                 } 
             }
             else
             {
-                base.DoAction(name, actionArgs);
+                await base.DoAction(name, actionArgs);
             }           
         }
     }

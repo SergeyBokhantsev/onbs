@@ -51,6 +51,10 @@
       <Project>{3F066CD9-3523-4248-B37C-3378B44C426A}</Project>
       <Name>Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ProcessRunner\ProcessRunner.csproj">
+      <Project>{34176ec8-ab7f-4e25-9f04-b6c07eb71cfb}</Project>
+      <Name>ProcessRunner</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

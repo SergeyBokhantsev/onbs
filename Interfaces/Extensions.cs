@@ -23,7 +23,12 @@ namespace Interfaces
 
         public static string GetString(this MemoryStream ms)
         {
-            return Encoding.Default.GetString(ms.ToArray());
+            return Encoding.UTF8.GetString(ms.ToArray());
+        }
+
+        public static string GetString(this byte[] data)
+        {
+            return Encoding.UTF8.GetString(data);
         }
     }
 }

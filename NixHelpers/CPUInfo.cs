@@ -5,59 +5,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using ProcessRunnerNamespace;
 
 namespace NixHelpers
 {
     public static class CPUInfo
     {
-        public static double? GetCPUTemp(IProcessRunnerFactory prf)
+        public static async Task<double?> GetCPUTemp()
         {
-            var cfg = prf.CreateConfig("cputemp");
-            cfg.RedirectStandardInput = false;
-            cfg.RedirectStandardOutput = true;
-
-            var pr = prf.Create(cfg);
-
-            pr.Run();
-
-            MemoryStream outputStream;
-			if (!pr.WaitForExit (5000, out outputStream)) {
-				pr.Exit ();
-				return null;
-			}
-            var output = outputStream.GetString();
-
-            int rawValue = 0;
-            if (int.TryParse(output, out rawValue))
-                return (double)rawValue / 1000;
-            else
-                return null; 
+            try
+            {
+                return await ProcessRunner.ExecuteToolAsync("GetCPUTemp", o => double.Parse(o) / 1000, 3000, "cat", "/sys/class/thermal/thermal_zone0/temp");
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public static int? GetCPUSpeed(IProcessRunnerFactory prf)
+        public static async Task<int?> GetCPUSpeed()
         {
-            var cfg = prf.CreateConfig("cpuspeed");
-            cfg.RedirectStandardOutput = true;
-            cfg.RedirectStandardInput = false;
-
-            var pr = prf.Create(cfg);
-
-            pr.Run();
-
-            MemoryStream outputStream;
-            
-			if (!pr.WaitForExit (5000, out outputStream)) {
-				pr.Exit ();
-				return null;
-			}
-            
-			var output = outputStream.GetString();
-
-            int rawValue = 0;
-            if (int.TryParse(output, out rawValue))
-                return rawValue / 1000;
-            else
+            try
+            {
+                return await ProcessRunner.ExecuteToolAsync("GetCPUTemp", o => int.Parse(o) / 1000, 3000, "cat", "/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
+            }
+            catch
+            {
                 return null;
+            }
         }
     }
 }

@@ -195,7 +195,7 @@ namespace UIModels.MultipurposeModels
             SetProperty(itemsSourceName, linkedList.ToArray());
         }
 
-        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
+        protected override Task DoAction(string name, PageModelActionEventArgs actionArgs)
         {
 			if (name == ModelNames.UnmappedAction && actionArgs.State == Interfaces.Input.ButtonStates.Press)
             {
@@ -212,10 +212,12 @@ namespace UIModels.MultipurposeModels
                         SelectItem();
                         break;
                 }
+
+                return Task.FromResult(0);
             }
             else
             {
-                base.DoAction(name, actionArgs);
+                return base.DoAction(name, actionArgs);
             }
         }
 

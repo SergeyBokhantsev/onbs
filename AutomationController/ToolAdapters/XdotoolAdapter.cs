@@ -1,6 +1,8 @@
 ﻿using Interfaces;
+using ProcessRunnerNamespace;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,70 +11,58 @@ namespace AutomationController.ToolAdapters
 {
     public class XdotoolAdapter : IAutomationToolAdapter
     {
-        private readonly IProcessRunnerFactory processRunnerFactory;
         private readonly ILogger logger;
 
         private const string automationTool = "xdotool";
         private readonly bool waitForUI = false;
 
-        public XdotoolAdapter(IProcessRunnerFactory processRunnerFactory, ILogger logger)
+        public XdotoolAdapter(ILogger logger)
         {
-            if (processRunnerFactory == null
-                || logger == null)
-                throw new ArgumentNullException("arguments");
+            if (logger == null)
+                throw new ArgumentNullException("logger");
 
-            this.processRunnerFactory = processRunnerFactory;
             this.logger = logger;
         }
 
-        public void Key(params Interfaces.AutomationKeys[] key)
+        private async Task ExecuteRunner(string args)
         {
-            CreateRunner(key).Run();
-        }
+            ProcessRunner pr = null;
 
-        private IProcessRunner CreateRunner(params AutomationKeys[] key)
-        {
-            var args = string.Concat("key ", string.Join("+", key));
-            var config = new ProcessConfig 
-            { 
-                ExePath = automationTool, 
-                Args = args, 
-                WaitForUI = waitForUI, 
-                Silent = true, 
-                RedirectStandardInput = false,
-                RedirectStandardOutput = false
-            };
-            return processRunnerFactory.Create(config);
-        }
-
-        public void MouseMove(int x, int y)
-        {
-            var args = string.Format("mousemove {0} {1}", x, y);
-            var config = new ProcessConfig
+            try
             {
-                ExePath = automationTool,
-                Args = args,
-                WaitForUI = waitForUI,
-                Silent = true,
-                RedirectStandardInput = false,
-                RedirectStandardOutput = false
-            };
-            processRunnerFactory.Create(config).Run();
+                var psi = new ProcessStartInfo
+                {
+                    FileName = automationTool,
+                    Arguments = args
+                };
+
+                pr = new ProcessRunner(psi, false, false);
+
+                await pr.RunAsync();
+            }
+            catch (AggregateException ex)
+            {
+                logger.Log(this, ex.Flatten().InnerException ?? ex);
+            }
+            catch (Exception ex)
+            {
+                logger.Log(this, ex);
+            }
         }
 
-		public void MouseClick(AutomationMouseClickTypes type)
+        public async Task Key(params Interfaces.AutomationKeys[] key)
+        {
+            await ExecuteRunner(string.Concat("key ", string.Join("+", key)));
+        }
+
+        public async Task MouseMove(int x, int y)
+        {
+            await ExecuteRunner(string.Format("mousemove {0} {1}", x, y));
+        }
+
+		public async Task MouseClick(AutomationMouseClickTypes type)
 		{
-			var args = string.Format("click {0}", (int)type);
-            var config = new ProcessConfig
-            {
-                ExePath = automationTool,
-                Args = args,
-                WaitForUI = waitForUI,
-                Silent = true,
-                RedirectStandardInput = false,
-                RedirectStandardOutput = false
-            };
-			processRunnerFactory.Create(config).Run();
+            await ExecuteRunner(string.Format("click {0}", (int)type));
 		}
     }
 }

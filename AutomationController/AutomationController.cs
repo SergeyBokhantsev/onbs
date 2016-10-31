@@ -18,7 +18,7 @@ namespace AutomationController
             switch (automationTool)
             {
                 case "xdotool":
-                    tool = new ToolAdapters.XdotoolAdapter(hostController.ProcessRunnerFactory, hostController.Logger);
+                    tool = new ToolAdapters.XdotoolAdapter(hostController.Logger);
                     break;
 
                 case "stub":
@@ -30,19 +30,19 @@ namespace AutomationController
             }
         }
 
-        public void Key(params AutomationKeys[] key)
+        public async Task Key(params AutomationKeys[] key)
         {
-            tool.Key(key);
+            await tool.Key(key);
         }
 
-        public void MouseMove(int x, int y)
+        public async Task MouseMove(int x, int y)
         {
-            tool.MouseMove(x, y);
+            await tool.MouseMove(x, y);
         }
 
-		public void MouseClick(AutomationMouseClickTypes type)
+        public async Task MouseClick(AutomationMouseClickTypes type)
 		{
-			tool.MouseClick(type);
+		 	await tool.MouseClick(type);
 		}
     }
 }

@@ -1,4 +1,5 @@
-﻿namespace Interfaces
+﻿using System.Threading.Tasks;
+namespace Interfaces
 {
     /// <summary>
     /// http://wiki.linuxquestions.org/wiki/List_of_keysyms
@@ -30,8 +31,8 @@
 
     public interface IAutomationController : IController
     {
-        void Key(params AutomationKeys[] key);
-        void MouseMove(int x, int y);
-		void MouseClick(AutomationMouseClickTypes type);
+        Task Key(params AutomationKeys[] key);
+        Task MouseMove(int x, int y);
+        Task MouseClick(AutomationMouseClickTypes type);
     }
 }

@@ -9,8 +9,8 @@ namespace AutomationController
 {
     internal interface IAutomationToolAdapter
     {
-        void Key(params AutomationKeys[] key);
-        void MouseMove(int x, int y);
-		void MouseClick(AutomationMouseClickTypes type);
+        Task Key(params AutomationKeys[] key);
+        Task MouseMove(int x, int y);
+		Task MouseClick(AutomationMouseClickTypes type);
     }
 }

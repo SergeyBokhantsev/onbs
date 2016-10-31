@@ -114,6 +114,10 @@
       <Project>{EAE855E8-89E1-4F2F-8947-39187B7C9F51}</Project>
       <Name>OBD</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ProcessRunner\ProcessRunner.csproj">
+      <Project>{34176ec8-ab7f-4e25-9f04-b6c07eb71cfb}</Project>
+      <Name>ProcessRunner</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UIController\UIController.csproj">
       <Project>{1E7B884F-479A-4562-BB89-445786FEC998}</Project>
       <Name>UIController</Name>

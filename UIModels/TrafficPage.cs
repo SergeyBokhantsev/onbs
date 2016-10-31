@@ -3,6 +3,7 @@ using Interfaces.UI;
 using System;
 using YandexServicesProvider;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace UIModels
 {
@@ -22,7 +23,7 @@ namespace UIModels
             SetProperty("daisy_path", Path.Combine(hc.Config.DataFolder, "loader_small.gif"));
         }
 
-        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
+        protected override Task DoAction(string name, PageModelActionEventArgs actionArgs)
         {
             switch (name)
             {
@@ -37,9 +38,10 @@ namespace UIModels
                     break;
 
                 default:
-                    base.DoAction(name, actionArgs);
-                    break;
+                    return base.DoAction(name, actionArgs);
             }
+
+            return Task.FromResult(0);
         }
 
         protected override void OnSecondaryTimer(IHostTimer timer)

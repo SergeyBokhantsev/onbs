@@ -1,5 +1,6 @@
 ﻿using Interfaces;
 using Interfaces.UI;
+using ProcessRunnerNamespace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace UIModels
     public class ZXEmulatorModel : ExternalApplicationPage
     {
         public ZXEmulatorModel(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
-            : base(viewName, hc, pageDescriptor, arg as IProcessRunner)
+            : base(viewName, hc, pageDescriptor, arg as ProcessRunner)
         {
         }
     }

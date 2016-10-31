@@ -75,6 +75,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Sep_kmh.png" />
     <EmbeddedResource Include="Resources\Sep_empty.png" />
+    <EmbeddedResource Include="Resources\Sep_route.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\HorizontalCarousel.cs" />

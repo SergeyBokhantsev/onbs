@@ -36,7 +36,7 @@ namespace UIModels
             return items.Skip(skip).Take(take).ToList();
         }
 
-        protected override void DoAction(string name, PageModelActionEventArgs actionArgs)
+        protected override async Task DoAction(string name, PageModelActionEventArgs actionArgs)
         {
             if (name == "Cancel")
             {
@@ -51,7 +51,7 @@ namespace UIModels
             }
             else
             {
-                base.DoAction(name, actionArgs);
+                await base.DoAction(name, actionArgs);
             }
         }
 
@@ -67,7 +67,7 @@ namespace UIModels
                 var drivePath = ((ListItem<string>)sender).Value;
 
                 UpdateInfo("Converting to MP4 file...");
-                var mp4FileInfo = await Task.Run(() => hc.GetController<IDashCamController>().GetMP4File(fileInfo));
+                var mp4FileInfo = await hc.GetController<IDashCamController>().GetMP4File(fileInfo);
                 
                 destinationFilePath = Path.Combine(drivePath, mp4FileInfo.Name);
 

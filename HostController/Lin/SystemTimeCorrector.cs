@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Interfaces;
+using ProcessRunnerNamespace;
 
 namespace HostController.Lin
 {
@@ -10,17 +11,15 @@ namespace HostController.Lin
         private readonly string setTimeCommand;
         private readonly string setTimeArgs;
         private readonly string setTimeSetFormat;
-        private readonly IProcessRunnerFactory processRunnerFactory;
         private readonly ILogger logger;
 
         private static readonly object locker = new object();
 
-        public SystemTimeCorrector(IConfig config, IProcessRunnerFactory processRunnerFactory, ILogger logger)
+        public SystemTimeCorrector(IConfig config, ILogger logger)
         {
-            if (processRunnerFactory == null || logger == null)
-                throw new ArgumentNullException("processRunnerFactory OR logger");
+            if (logger == null)
+                throw new ArgumentNullException("logger");
 
-            this.processRunnerFactory = processRunnerFactory;
             this.logger = logger;
 
             minTimeDifference = config.GetDouble(ConfigNames.SystemTimeMinDifference);
@@ -56,15 +55,7 @@ namespace HostController.Lin
 
                     try
                     {
-                        var processConfig = new ProcessConfig
-                        {
-                            ExePath = setTimeCommand,
-							Args = string.Format(setTimeArgs, proposedTime.ToLocalTime().ToString(setTimeSetFormat)),
-                            RedirectStandardOutput = false,
-                            RedirectStandardInput = false
-                        };
-
-                        var pr = processRunnerFactory.Create(processConfig);
+                        var pr = ProcessRunner.ForTool(setTimeCommand, string.Format(setTimeArgs, proposedTime.ToLocalTime().ToString(setTimeSetFormat)));
                         pr.Run();
                         pr.WaitForExit(5000);
 

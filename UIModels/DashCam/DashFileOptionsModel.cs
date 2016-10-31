@@ -8,6 +8,7 @@ using Interfaces;
 using Interfaces.UI;
 using UIModels.Dialogs;
 using UIModels.MultipurposeModels;
+using ProcessRunnerNamespace;
 
 namespace UIModels
 {
@@ -73,7 +74,7 @@ namespace UIModels
                 case "ViewNormal":
                     {
                         SetInprogress(true);
-                        var mp4FileInfo = await Task.Run(() => hc.GetController<IDashCamController>().GetMP4File(fileInfo));
+                        var mp4FileInfo = await hc.GetController<IDashCamController>().GetMP4File(fileInfo);
                         SetInprogress(false);
                         if (!Disposed)
                         {
@@ -116,18 +117,10 @@ namespace UIModels
             SetProperty("file_props", string.Concat(((double)fileInfo.Length / 1000000d).ToString("0 Mb"), " Created: ", fileInfo.CreationTime));
         }
 
-        private IProcessRunner CreatePlayerProcessRunner(string filePath)
+        private ProcessRunner CreatePlayerProcessRunner(string filePath)
         {
-            var config = new ProcessConfig
-            {
-                ExePath = hc.Config.GetString(ConfigNames.DashCamPlayerExe),
-                Args = string.Format(hc.Config.GetString(ConfigNames.DashCamPlayerArg), filePath),
-                WaitForUI = false,
-                RedirectStandardInput = true,
-                RedirectStandardOutput = false
-            };
-
-            return hc.ProcessRunnerFactory.Create(config);
+            return ProcessRunner.ForInteractiveApp(hc.Config.GetString(ConfigNames.DashCamPlayerExe),
+                                string.Format(hc.Config.GetString(ConfigNames.DashCamPlayerArg), filePath));
         }
 
         protected override IList<RotaryListModel<string>.ListItem<string>> QueryItems(int skip, int take)

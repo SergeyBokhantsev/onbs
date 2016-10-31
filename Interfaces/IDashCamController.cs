@@ -19,7 +19,7 @@ namespace Interfaces
         /// </summary>
         FileInfo[] GetVideoFilesInfo();
 
-        FileInfo GetMP4File(FileInfo fileInfo);
+        Task<FileInfo> GetMP4File(FileInfo fileInfo);
 
         /// <summary>
         /// Removes all files by fileName.* pattern

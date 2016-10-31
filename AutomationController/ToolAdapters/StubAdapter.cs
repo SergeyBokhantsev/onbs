@@ -9,16 +9,19 @@ namespace AutomationController.ToolAdapters
 {
     public class StubAdapter : IAutomationToolAdapter
     {
-        public void Key(params Interfaces.AutomationKeys[] key)
+        public Task Key(params Interfaces.AutomationKeys[] key)
         {
+            return Task.FromResult(0);
         }
 
-        public void MouseMove(int x, int y)
+        public Task MouseMove(int x, int y)
         {
+            return Task.FromResult(0);
         }
 
-		public void MouseClick(AutomationMouseClickTypes type)
+		public Task MouseClick(AutomationMouseClickTypes type)
 		{
+            return Task.FromResult(0);
 		}
     }
 }
