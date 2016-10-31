@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DropboxService", "DropboxSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpService", "HttpService\HttpService.csproj", "{5C3D21B7-7E5B-45E5-822C-F35112E58FA7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StdInOutTester", "StdInOutTester\StdInOutTester.csproj", "{C4BF794E-1D0F-4FCA-9434-7FE5104A2ABB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -178,6 +180,12 @@ Global
 		{5C3D21B7-7E5B-45E5-822C-F35112E58FA7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5C3D21B7-7E5B-45E5-822C-F35112E58FA7}.Windows|Any CPU.ActiveCfg = Release|Any CPU
 		{5C3D21B7-7E5B-45E5-822C-F35112E58FA7}.Windows|Any CPU.Build.0 = Release|Any CPU
+		{C4BF794E-1D0F-4FCA-9434-7FE5104A2ABB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4BF794E-1D0F-4FCA-9434-7FE5104A2ABB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4BF794E-1D0F-4FCA-9434-7FE5104A2ABB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4BF794E-1D0F-4FCA-9434-7FE5104A2ABB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4BF794E-1D0F-4FCA-9434-7FE5104A2ABB}.Windows|Any CPU.ActiveCfg = Release|Any CPU
+		{C4BF794E-1D0F-4FCA-9434-7FE5104A2ABB}.Windows|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
