@@ -24,7 +24,9 @@ namespace GtkApplication
 
 			var binder = new ModelBinder (model, logger);
 
-			binder.BindLabelMarkup (label_title, ModelNames.PageTitle, o => string.Format("<span foreground='#d6d6d6' size='12000'>{0}</span>", o));
+            binder.BindCustomAction<int>(fontSize => textview_log.ModifyFont(new Pango.FontDescription() { Size = fontSize }), "font_size");
+
+			binder.BindLabelMarkup (label_title, ModelNames.PageTitle, o => string.Format("<span foreground='#d6d6d6' size='20000'>{0}</span>", o));
 
             binder.BindCustomAction<object>(o => textview_log.Buffer.Clear(), "clear");
 

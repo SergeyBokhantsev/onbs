@@ -31,22 +31,40 @@ namespace HostController
             if (exceptionsCount >= maxExceptionsCount)
                 return;
 
-            await Task.Run(() =>
-            {
-                lock (locker)
-                {
-                    if (exceptionsCount < maxExceptionsCount && EnsureSpeakProcess())
-                    {
-                        speaker.SendToStandardInput(phrase);
-                    }
-                    else
-                    {
-                        logger.Log(this, "Cannot initiate Speak process", LogLevels.Warning);
-                    }
+            var cts = new CancellationTokenSource(10000);
 
-                    Thread.Sleep(1500);
-                }
-            });
+            try
+            {
+                await Task.Run(() =>
+                {
+                    lock (locker)
+                    {
+                        if (exceptionsCount < maxExceptionsCount && EnsureSpeakProcess())
+                        {
+                            var data = Encoding.UTF8.GetBytes(phrase);
+
+                            for (int i = 0; i < data.Length; ++i)
+                            {
+                                if (!speaker.SendToStandardInput(data[i]))
+                                {
+                                    i--;
+                                    Thread.Sleep(100);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            logger.Log(this, "Cannot initiate Speak process", LogLevels.Warning);
+                        }
+
+                        Thread.Sleep(1500);
+                    }
+                }, cts.Token);
+            }
+            catch (TaskCanceledException)
+            {
+                logger.Log(this, "Speak method timeout", LogLevels.Warning);
+            }
         }
 
         private bool EnsureSpeakProcess()

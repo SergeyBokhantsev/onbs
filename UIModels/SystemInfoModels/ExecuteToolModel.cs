@@ -17,13 +17,17 @@ namespace UIModels
         {
             this.Disposing += ExecuteToolModel_Disposing;
 
+            SetProperty(ModelNames.PageTitle, toolExe);
+
             try
             {
                 var psi = new ProcessStartInfo
                 {
                     FileName = toolExe,
                     Arguments = args,
-                    UseShellExecute = useShell
+                    UseShellExecute = useShell,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
                 };
 
                 pr = new ProcessRunner(psi, true, true);
@@ -34,6 +38,36 @@ namespace UIModels
             {
                 hc.Logger.Log(this, ex);
             }
+        }
+
+        protected override void Initialize()
+        {
+            if (null != pr)
+                hc.SyncContext.Post(async state =>
+                    {
+                        try
+                        {
+                            await pr.RunAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            FontSize = 12000;
+
+                            AddLine(ex.Message);
+                            AddLine("----------");
+                            if (!string.IsNullOrEmpty(ex.StackTrace))
+                            {
+                                foreach(var line in ex.StackTrace.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
+                                {
+                                    AddLine(line);
+                                }
+                            }
+
+                            throw;
+                        }
+                    }, null, "Running tool");
+
+            base.Initialize();
         }
 
         void pr_Exited(bool unexpected)

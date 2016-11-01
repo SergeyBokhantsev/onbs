@@ -31,7 +31,7 @@ namespace UIModels
                     }
                     else
                     {
-                        Runner.SendToStandardInput((char)27);
+                        Runner.SendToStandardInput((byte)27);
                         onExiting = true;
                     }
                     break;

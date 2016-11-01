@@ -8,6 +8,7 @@ namespace UIModels
         public LsUsbModel(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor, "lsusb", null, false)
         {
+            FontSize = 20000;
         }
     }
 }
