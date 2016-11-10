@@ -56,7 +56,6 @@ namespace GtkApplication
 			this.vbox3.Add(this.eventbox_message);
 			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox3[this.eventbox_message]));
 			w4.Position = 1;
-			w4.Expand = false;
 			w4.Fill = false;
 			// Container child vbox3.Gtk.Box+BoxChild
 			this.hbox1 = new global::Gtk.HBox();

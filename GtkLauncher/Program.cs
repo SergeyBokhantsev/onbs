@@ -12,7 +12,7 @@ namespace GtkLauncher
 		{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-			app.ShowPage(GetDrivePage());
+			app.ShowPage(GetOBD_DTCPage());
 
 				app.Run(false);
 
@@ -40,11 +40,11 @@ namespace GtkLauncher
 
 		private static IPageModel GetExternalAppPage()
 		{
-			var page = new EmptyPageModel ("ExternalApplicationPage");
+			var page = new EmptyPageModel("ExternalApplicationPage");
 
-			page.SetProperty ("is_error", "1");
-			page.SetProperty ("button_exit_label", "Exit");
-			page.SetProperty ("label_launch_info", "var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());");
+			page.SetProperty("is_error", "1");
+			page.SetProperty("button_exit_label", "Exit");
+			page.SetProperty("label_launch_info", "var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());var app = new GtkApplication.App (new ConsoleLogger ());");
 
 			return page;
 		}
@@ -239,7 +239,8 @@ namespace GtkLauncher
 					"P0116: Выход сигнала датчика температуры охлаждающей жидкости за допустимый диапазон"
 				}));
 
-			page.SetProperty (ModelNames.ButtonF8Label, "Clear codes");
+			page.SetProperty (ModelNames.ButtonAcceptLabel, "Refresh");
+			page.SetProperty(ModelNames.ButtonF1Label, "Clear");
 			page.SetProperty (ModelNames.ButtonCancelLabel, "Back");
 
 			return page;

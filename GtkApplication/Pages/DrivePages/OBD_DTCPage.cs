@@ -21,29 +21,13 @@ namespace GtkApplication
 
 			var binder = new ModelBinder (model, logger);
 
-			binder.BindLabelMarkup(label_codes, "codes", v => CommonBindings.CreateMarkup(m_Codes, CommonBindings.m_FG_BLUE, v != null ? v.ToString() : "None"));
+			binder.BindCustomAction<string>(content => label_codes.Markup = CommonBindings.CreateMarkup(m_Codes, CommonBindings.m_FG_YELLOW, content), "codes");
 
-			label_buttons.UseMarkup = true;
-			label_buttons.Markup = CommonBindings.CreateMarkup (m_Buttons, CommonBindings.m_FG_GRAY, CreateButtonsList (model));
+			binder.InitializeButton(style, eventbox_refresh, style.CommonButton, ModelNames.ButtonAccept, TextAligment.CenterMiddle);
+			binder.InitializeButton(style, eventbox_reset, style.CommonButton, ModelNames.ButtonF1, TextAligment.CenterMiddle);
+			binder.InitializeButton(style, eventbox_back, style.CancelButton, ModelNames.ButtonCancel, TextAligment.CenterMiddle);
 
 			binder.UpdateBindings();
-		}
-
-		private string CreateButtonsList(IPageModel model)
-		{
-			var result = new StringBuilder ();
-
-			foreach (var buttonNamePair in ModelNames.GetButtonAndLabelNames()) 
-			{
-				var bCaption = model.GetProperty<object> (buttonNamePair.Value);
-
-				if (bCaption != null) 
-				{
-					result.AppendFormat ("{0}: {1}        ", buttonNamePair.Key, bCaption);
-				}
-			}
-
-			return result.ToString ();
 		}
 	}
 }

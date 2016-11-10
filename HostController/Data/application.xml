@@ -60,9 +60,8 @@
     </page>
     <page name="OBD_DTC" model="OBD_DTCPage" default_view="OBD_DTCPage">
       <Cancel name="OBDMenu" caption="Back"/>
-      <Select action="Refresh"/>
-      <F1 action="Refresh" caption="Refresh"/>
-      <F2 action="Clear" caption="Clear errors"/>
+      <Accept action="Refresh" caption="Refresh"/>
+      <F1 action="Clear" caption="Clear errors"/>
     </page>
     <page name="Main" model="MainPage" default_view="MainPage">
       <Cancel name="Drive1" caption="Drive"/>

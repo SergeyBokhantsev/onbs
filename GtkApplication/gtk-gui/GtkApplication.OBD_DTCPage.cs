@@ -12,7 +12,13 @@ namespace GtkApplication
 
 		private global::Gtk.EventBox eventbox_buttons;
 
-		private global::Gtk.Label label_buttons;
+		private global::Gtk.HBox hbox1;
+
+		private global::Gtk.EventBox eventbox_refresh;
+
+		private global::Gtk.EventBox eventbox_reset;
+
+		private global::Gtk.EventBox eventbox_back;
 
 		protected virtual void Build()
 		{
@@ -41,18 +47,37 @@ namespace GtkApplication
 			w2.Position = 0;
 			// Container child vbox1.Gtk.Box+BoxChild
 			this.eventbox_buttons = new global::Gtk.EventBox();
+			this.eventbox_buttons.HeightRequest = 60;
 			this.eventbox_buttons.Name = "eventbox_buttons";
 			// Container child eventbox_buttons.Gtk.Container+ContainerChild
-			this.label_buttons = new global::Gtk.Label();
-			this.label_buttons.Name = "label_buttons";
-			this.label_buttons.LabelProp = global::Mono.Unix.Catalog.GetString("label1");
-			this.eventbox_buttons.Add(this.label_buttons);
-			this.vbox1.Add(this.eventbox_buttons);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.eventbox_buttons]));
+			this.hbox1 = new global::Gtk.HBox();
+			this.hbox1.HeightRequest = 0;
+			this.hbox1.Name = "hbox1";
+			this.hbox1.Spacing = 6;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.eventbox_refresh = new global::Gtk.EventBox();
+			this.eventbox_refresh.Name = "eventbox_refresh";
+			this.hbox1.Add(this.eventbox_refresh);
+			global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.eventbox_refresh]));
+			w3.Position = 0;
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.eventbox_reset = new global::Gtk.EventBox();
+			this.eventbox_reset.Name = "eventbox_reset";
+			this.hbox1.Add(this.eventbox_reset);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.eventbox_reset]));
 			w4.Position = 1;
-			w4.Expand = false;
-			w4.Fill = false;
-			w4.Padding = ((uint)(10));
+			// Container child hbox1.Gtk.Box+BoxChild
+			this.eventbox_back = new global::Gtk.EventBox();
+			this.eventbox_back.Name = "eventbox_back";
+			this.hbox1.Add(this.eventbox_back);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.eventbox_back]));
+			w5.Position = 2;
+			this.eventbox_buttons.Add(this.hbox1);
+			this.vbox1.Add(this.eventbox_buttons);
+			global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.eventbox_buttons]));
+			w7.Position = 1;
+			w7.Expand = false;
+			w7.Padding = ((uint)(10));
 			this.Add(this.vbox1);
 			if ((this.Child != null))
 			{

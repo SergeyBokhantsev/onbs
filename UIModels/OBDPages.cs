@@ -232,12 +232,14 @@ namespace UIModels
             var elm327 = hc.GetController<IElm327Controller>();
             obd = new OBDProcessor(elm327);
 
-            Refresh();
+            hc.SyncContext.Post(async o => await Refresh(), null, "OBD DTC refresh");
         }
 
-        private void Refresh()
+        private async Task Refresh()
         {
-            ThreadPool.QueueUserWorkItem(o =>
+            SetProperty("codes", "Refreshing...");
+
+            await Task.Run(() =>
             {
                 try
                 {
@@ -246,13 +248,15 @@ namespace UIModels
 
                     var tcodes = obd.GetTroubleCodes().Select(tc => string.Format("{0}: {1}", tc, dtcDescriptor.GetDescription(tc)));
 
-                    SetProperty("codes", string.Join("\r\n", tcodes));
+                    var content = string.Join("\r\n", tcodes);
+
+                    SetProperty("codes", !string.IsNullOrWhiteSpace(content) ? content : "None");
                 }
                 catch (Exception ex)
                 {
                     hc.Logger.Log(this, ex);
                 }
-            }, null);
+            });
         }
 
         protected override async Task DoAction(string name, PageModelActionEventArgs actionArgs)
@@ -265,6 +269,7 @@ namespace UIModels
                     {
                         hc.Logger.Log(this, "Performing DTC resetting...", LogLevels.Warning);
                         var resetResult = obd.ResetTroubleCodes();
+                        SetProperty("codes", resetResult ? "Reset successfull" : "Cannot reset");
                         hc.Logger.Log(this, string.Format("DTC resetting result: {0}", resetResult ? "SUCCESS" : "FAIL"), LogLevels.Warning);
                     }
                     else
@@ -273,8 +278,8 @@ namespace UIModels
                     }
                     break;
 
-                case "Refresh":
-                    Refresh();
+                case "Refresh":                    
+                    await Refresh();
                     break;
 
                 default:
