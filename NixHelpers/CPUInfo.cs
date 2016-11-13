@@ -27,9 +27,9 @@ namespace NixHelpers
         {
             try
             {
-                return await ProcessRunner.ExecuteToolAsync("GetCPUTemp", o => int.Parse(o) / 1000, 3000, "cat", "/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
+				return await ProcessRunner.ExecuteToolAsync("GetCPUTemp", (string o) => int.Parse(o) / 1000, 3000, "cat", "/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");			
             }
-            catch
+			catch (Exception ex)
             {
                 return null;
             }

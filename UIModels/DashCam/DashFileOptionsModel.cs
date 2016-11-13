@@ -9,6 +9,7 @@ using Interfaces.UI;
 using UIModels.Dialogs;
 using UIModels.MultipurposeModels;
 using ProcessRunnerNamespace;
+using System.Diagnostics;
 
 namespace UIModels
 {
@@ -119,8 +120,15 @@ namespace UIModels
 
         private ProcessRunner CreatePlayerProcessRunner(string filePath)
         {
-            return ProcessRunner.ForInteractiveApp(hc.Config.GetString(ConfigNames.DashCamPlayerExe),
-                                string.Format(hc.Config.GetString(ConfigNames.DashCamPlayerArg), filePath));
+			var psi = new ProcessStartInfo
+			{
+				FileName = hc.Config.GetString(ConfigNames.DashCamPlayerExe),
+			    Arguments = string.Format(hc.Config.GetString(ConfigNames.DashCamPlayerArg), filePath),
+				UseShellExecute = false,
+				RedirectStandardInput = true,
+			};
+
+			return new ProcessRunner(psi, false, false) { SendCloseWindowSignalWhenExit = true };
         }
 
         protected override IList<RotaryListModel<string>.ListItem<string>> QueryItems(int skip, int take)

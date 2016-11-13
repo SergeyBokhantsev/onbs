@@ -23,36 +23,35 @@ namespace UIModels
             SetProperty("daisy_path", Path.Combine(hc.Config.DataFolder, "loader_small.gif"));
         }
 
-        protected override Task DoAction(string name, PageModelActionEventArgs actionArgs)
+		protected override async Task DoAction(string name, PageModelActionEventArgs actionArgs)
         {
             switch (name)
             {
                 case "Scale":
                     if (++scale == scales.Length) scale = 0;
                     SetProperty("traffic_image_stream", null);
-                    RefreshTraffic();
+					await RefreshTraffic();
                     break;
 
                 case "Refresh":
-                    RefreshTraffic();
+					await RefreshTraffic();
                     break;
 
-                default:
-                    return base.DoAction(name, actionArgs);
+			default:
+				await base.DoAction (name, actionArgs);
+				break;
             }
-
-            return Task.FromResult(0);
         }
 
         protected override void OnSecondaryTimer(IHostTimer timer)
         {
-            RefreshTraffic();
+			hc.SyncContext.Post (async (object state) => await RefreshTraffic (), null);
             base.OnSecondaryTimer(timer);
         }
 
-        private void RefreshTraffic()
+		private async Task RefreshTraffic()
         {
-            downloadOperationScope.ExecuteIfFree(BeginDownload, OnDownloadException);
+			await downloadOperationScope.ExecuteIfFreeAsync(() => BeginDownload(), OnDownloadException);
         }
 
         private void OnDownloadException(Exception ex)
@@ -61,7 +60,7 @@ namespace UIModels
             hc.Logger.Log(this, ex);
         }
 
-        private async void BeginDownload()
+        private async Task BeginDownload()
         {
             if (hc.Config.IsInternetConnected)
             {

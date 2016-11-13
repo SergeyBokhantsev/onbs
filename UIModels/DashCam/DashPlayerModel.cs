@@ -27,7 +27,7 @@ namespace UIModels
                     if (onExiting || Runner.HasExited)
                     {
                         hc.GetController<IUIController>()
-                            .ShowPage("DashFileOptions", null, null);
+						.ShowPage("DashFileOptions", null, null);
                     }
                     else
                     {

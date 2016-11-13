@@ -89,7 +89,7 @@ namespace ProcessRunnerNamespace
             return new ProcessRunner(psi, true, true) { SendCloseWindowSignalWhenExit = false };
         }
 
-        public static ProcessRunner ForInteractiveApp(string exeName, string args)
+		public static ProcessRunner ForInteractiveApp(string exeName, string args)
         {
             var psi = new ProcessStartInfo
             {
@@ -155,7 +155,7 @@ namespace ProcessRunnerNamespace
                 {
                     string output = null;
 
-                    if (await pr.ReadStdErrorAsync(ms => Task.Run(() => output = ms.GetString())))
+					if (await pr.ReadStdOutAsync(ms => Task.Run(() => output = ms.GetString())))
                     {
                         return action(output);
                     }
@@ -390,8 +390,10 @@ namespace ProcessRunnerNamespace
                     reTask = null;
                 }
 
-                if (cycleReaded == -1 && null != riTask)
-                    Thread.Sleep(100);
+				if (cycleReaded == -1 && null == riTask)
+					Thread.Sleep (300);
+				else
+					Thread.Sleep (10);
             }
 
             cts.Cancel();
@@ -420,7 +422,7 @@ namespace ProcessRunnerNamespace
             {
                 var count = task.Result;
 
-                if (count > 0 && null != handler)
+                if (null != handler)
                     handler(buffer, 0, count);
 
                 return count;
@@ -473,10 +475,14 @@ namespace ProcessRunnerNamespace
         {
             exitCalled = true;
 
+			try
+			{
             if (proc != null && !proc.HasExited)
             {
                 ThreadPool.QueueUserWorkItem(state =>
                 {
+						try
+						{
                     if (proc != null && !proc.HasExited)
                     {
                         if (SendCloseWindowSignalWhenExit && TimeoutBeforeKill > 0)
@@ -484,12 +490,32 @@ namespace ProcessRunnerNamespace
                             proc.CloseMainWindow();
                             proc.WaitForExit(TimeoutBeforeKill);
                         }
+							}
+							}
+						catch (Exception ex)
+						{
+							//throw ex;
+						}
 
+						try
+						{
                         if (!proc.HasExited)
                             proc.Kill();
+						}
+						catch (Exception ex)
+						{
+							//throw ex;
+						}
                     }
-                });
+						
+                );
             }
+			}
+			catch (Exception ex)
+			{
+				//var e = ex;
+
+			}
         }
 
         public bool ReadStdOut(Action<MemoryStream> accessor)
@@ -498,6 +524,8 @@ namespace ProcessRunnerNamespace
 
             if (null != stdOut && null != accessor)
             {
+				stdOut.Seek (0, SeekOrigin.Begin);
+
                 accessor(stdOut);
 
                 return true;
@@ -512,6 +540,8 @@ namespace ProcessRunnerNamespace
 
             if (null != stdOut && null != accessorTask)
             {
+				stdOut.Seek (0, SeekOrigin.Begin);
+
                 await accessorTask(stdOut);
 
                 return true;
@@ -526,6 +556,8 @@ namespace ProcessRunnerNamespace
 
             if (null != stdError && null != accessor)
             {
+				stdError.Seek (0, SeekOrigin.Begin);
+
                 accessor(stdError);
 
                 return true;
@@ -540,6 +572,8 @@ namespace ProcessRunnerNamespace
 
             if (null != stdError && null != accessorTask)
             {
+				stdError.Seek (0, SeekOrigin.Begin);
+
                 await accessorTask(stdError);
 
                 return true;

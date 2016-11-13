@@ -616,20 +616,12 @@ namespace HostController.Lin
 
                 logger.Log(this, string.Format("Another dialler instance found, pid {0}, trying to kill...", dialerPID), LogLevels.Info);
 
-                ProcessRunner pr = null;
+				var result = ProcessRunner.ExecuteTool("kill dealers", (string str) => str, 2000, "sudo", "kill " + dialerPID.ToString());
 
-                try
-                {
-                    pr = ProcessRunner.ForTool("sudo", "kill " + dialerPID.ToString());
-                    pr.Run();
-                }
-                finally
-                {
-                    if (null != pr && !pr.HasExited)
-                        pr.Exit();
-                }
+				if (!string.IsNullOrEmpty(result))
+					logger.Log(this, string.Concat("Kill dialer unexpected output: ", result), LogLevels.Warning);
 
-				Thread.Sleep (2000);
+				Thread.Sleep (1000);
             }
         }
     }
