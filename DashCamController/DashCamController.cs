@@ -250,7 +250,16 @@ namespace DashCamController
                 cameraProcess = CreateRecordProcessRunner(fileName);
                 cameraProcess.Exited += isUnexpected =>
                 {
-                    monitorEvent.Set();
+					string error = null;
+
+					if (cameraProcess.ReadStdError(ms => error = ms.GetString())
+						&& !string.IsNullOrWhiteSpace(error))
+					{
+						hc.Logger.Log(this, string.Concat("DashCam recording error: ", error), LogLevels.Warning);
+						Thread.Sleep(10000);
+					}
+
+					monitorEvent.Set();
 
                     if (protectCurrent)
                     {

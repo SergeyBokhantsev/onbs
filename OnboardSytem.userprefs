@@ -1,12 +1,14 @@
 ﻿<Properties StartupItem="HostController/HostController.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="NixHelpers/CPUInfo.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/Lin/InternetConnectionKeeper.cs">
     <Files>
-      <File FileName="UIModels/DrivePage.cs" Line="260" Column="1" />
-      <File FileName="HostController/HostSynchronizationContext.cs" Line="46" Column="1" />
-      <File FileName="NixHelpers/CPUInfo.cs" Line="28" Column="16" />
-      <File FileName="ProcessRunner/ProcessRunnerImplNew.cs" Line="158" Column="34" />
-      <File FileName="Interfaces/Extensions.cs" Line="26" Column="1" />
+      <File FileName="UIModels/DrivePage.cs" Line="1" Column="1" />
+      <File FileName="HostController/HostSynchronizationContext.cs" Line="1" Column="1" />
+      <File FileName="ProcessRunner/ProcessRunnerImplNew.cs" Line="1" Column="1" />
+      <File FileName="Interfaces/Extensions.cs" Line="1" Column="1" />
+      <File FileName="DashCamController/DashCamController.cs" Line="1" Column="1" />
+      <File FileName="HostController/App.config" Line="163" Column="5" />
+      <File FileName="HostController/Lin/InternetConnectionKeeper.cs" Line="350" Column="5" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

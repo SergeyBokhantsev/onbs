@@ -295,7 +295,7 @@ namespace HostController.Lin
             {
                 case ModemModes.Modem:
                 case ModemModes.Storage:
-                    ResetDevice_new(mode);
+                    ResetDevice(mode);
                     break;
 
                 default:
@@ -394,37 +394,17 @@ namespace HostController.Lin
                     return;
             }
 
-            ProcessRunner pr = null;
-
             try
             {
-                var psi = new ProcessStartInfo
-                {
-                    FileName = config.GetString("modeswitch_reset_exe"),
-                    Arguments = string.Format(config.GetString("modeswitch_reset_args"), deviceVid, devicePid),
-                    UseShellExecute = false
-                };
+				var result = ProcessRunner.ExecuteTool("modem reset", (string output) => output, 15000, 
+					config.GetString("modeswitch_reset_exe"),
+					string.Format(config.GetString("modeswitch_reset_args"), deviceVid, devicePid));
 
-                pr = new ProcessRunner(psi, false, false);
-                pr.Run();
-
-                if (pr.WaitForExit(60000))
-                {
-                    logger.Log(this, "Device {0}:{1} was reset successfully", LogLevels.Info);
-                }
-                else
-                {
-                    logger.Log(this, "There was some truoble resetting Device {0}:{1}. The Reset process still not finished after 60 seconds.", LogLevels.Warning);
-                }
+				logger.Log(this, string.Concat("Device {0}:{1} reset output: ", result ?? "NULL"), LogLevels.Info);
             }
             catch (Exception ex)
             {
                 logger.Log(this, ex);
-            }
-            finally
-            {
-                if (null != pr && !pr.HasExited)
-                    pr.Exit();
             }
         }
 
