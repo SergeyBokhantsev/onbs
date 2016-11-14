@@ -6,18 +6,26 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Interfaces;
 
 namespace ProcessStateMachine
 {
     public abstract class StateMachine : IDisposable
     {
+		protected readonly ILogger logger;
+
         private ProcessRunner process;
 
         private StateDescriptor root;
         private StateDescriptor current;
 
-        private byte[] incoming = new byte[1024];
-        private int incomingLen;
+		private byte[] outBuffer = new byte[1024];
+		private int outLen;
+
+		private byte[] errBuffer = new byte[1024];
+		private int errLen;
+
+		protected bool disposed;
 
         public bool Active
         {
@@ -27,19 +35,31 @@ namespace ProcessStateMachine
             }
         }
 
-        public StateMachine (StateDescriptor root)
+        public StateMachine (StateDescriptor root, ILogger logger)
         {
+			if (null == root)
+				throw new ArgumentNullException ("root");
+
+			if (null == logger)
+				throw new ArgumentNullException ("logger");
+
             this.root = this.current = root;
+			this.logger = logger;
         }
 
-        public void Start()
+		public void Start()
         {
             lock (root)
             {
-                if (null != process)
-                    throw new InvalidOperationException("This state machine already rinning");
+				if (disposed)
+					return;
+
+				if (null != process)
+					return;
 
                 current = root;
+
+				OnStarting();
 
                 RunProcess();
             }
@@ -72,7 +92,11 @@ namespace ProcessStateMachine
 
             process.Exited += unexpected =>
             {
-                process = null;
+				lock(root)
+				{
+                	process = null;
+				}
+
                 OnProcessExited();
             };
 
@@ -84,40 +108,50 @@ namespace ProcessStateMachine
 
         private void ProcessStdOut(byte[] buffer, int offset, int count)
         {
-            try
-            {
-                if (count > 0)
-                {
-                    for (int i = 0; i < count; ++i)
-                    {
-                        byte b = buffer[i + offset];
-
-                        if (b == (byte)'\n' || b == (byte)'\r')
-                        {
-                            ProcessIncomingLine();
-
-                            incomingLen = 0;
-                        }
-                        else if (incomingLen == incoming.Length)
-                        {
-                            incomingLen = 0;
-                        }
-                        else
-                            incoming[incomingLen++] = b;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
+			ProcessData (buffer, offset, count, outBuffer, ref outLen);
         }
 
-        private void ProcessIncomingLine()
+		private void ProcessStdError(byte[] buffer, int offset, int count)
+		{
+			ProcessData (buffer, offset, count, errBuffer, ref errLen);
+		}
+
+		private void ProcessData(byte[] buffer, int offset, int count, byte[] thisBuffer, ref int thisLen)
+		{
+			try
+			{
+				if (count > 0)
+				{
+					for (int i = 0; i < count; ++i)
+					{
+						byte b = buffer[i + offset];
+
+						if (b == (byte)'\n' || b == (byte)'\r')
+						{
+							ProcessIncomingLine(thisBuffer, thisLen);
+
+							thisLen = 0;
+						}
+						else if (thisLen == thisBuffer.Length)
+						{
+							thisLen = 0;
+						}
+						else
+							thisBuffer[thisLen++] = b;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				logger.Log (this, ex);
+			}
+		}
+
+		private void ProcessIncomingLine(byte[] buffer, int count)
         {
-            if (incomingLen > 0)
+			if (count > 0)
             {
-                var line = Encoding.UTF8.GetString(incoming, 0, incomingLen);
+				var line = Encoding.UTF8.GetString(buffer, 0, count);
 
                 var newState = current.GetNextState(line);
 
@@ -126,17 +160,24 @@ namespace ProcessStateMachine
                     current = newState;
                     OnNewState(current, line);
                 }
+				else
+				{
+					OnUnrecognizedLine (line);
+				}
             }
-        }
+        }		       
 
-        private void ProcessStdError(byte[] buffer, int offset, int count)
-        {
-
-        }
+		protected virtual void OnStarting()
+		{
+		}
 
         protected virtual void OnProcessExited()
         {
         }
+
+		protected virtual void OnUnrecognizedLine(string line)
+		{
+		}
 
         protected abstract void GetProcessRunnerArguments(out string exeName, out string args);
 
@@ -144,7 +185,14 @@ namespace ProcessStateMachine
 
         public void Dispose()
         {
-            Stop();
+			lock (root) 
+			{
+				if (!disposed)
+				{
+					Stop ();
+					disposed = true;
+				}
+			}
         }
     }
 }

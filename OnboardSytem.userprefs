@@ -1,14 +1,10 @@
-﻿<Properties StartupItem="HostController/HostController.csproj">
+﻿<Properties StartupItem="ModemConnectionKeeperTester/ModemConnectionKeeperTester.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/Lin/InternetConnectionKeeper.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ProcessStateMachine/StateMachine.cs">
     <Files>
-      <File FileName="UIModels/DrivePage.cs" Line="1" Column="1" />
-      <File FileName="HostController/HostSynchronizationContext.cs" Line="1" Column="1" />
-      <File FileName="ProcessRunner/ProcessRunnerImplNew.cs" Line="1" Column="1" />
-      <File FileName="Interfaces/Extensions.cs" Line="1" Column="1" />
-      <File FileName="DashCamController/DashCamController.cs" Line="1" Column="1" />
-      <File FileName="HostController/App.config" Line="163" Column="5" />
-      <File FileName="HostController/Lin/InternetConnectionKeeper.cs" Line="350" Column="5" />
+      <File FileName="ModemConnectionKeeperTester/Program.cs" Line="15" Column="34" />
+      <File FileName="ModemConnectionKeeper/Pinger.cs" Line="37" Column="4" />
+      <File FileName="ProcessStateMachine/StateMachine.cs" Line="125" Column="18" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
