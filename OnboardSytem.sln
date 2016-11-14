@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GtkApplication", "GtkApplication\GtkApplication.csproj", "{C0FFA4A5-8B59-4386-9C03-B36AEACAA6E2}"
 EndProject
@@ -86,6 +86,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashCamController", "DashCamController\DashCamController.csproj", "{311A5749-DB14-4366-A32C-1045FCD2D0A6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpService", "HttpService\HttpService.csproj", "{5C3D21B7-7E5B-45E5-822C-F35112E58FA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessStateMachine", "ProcessStateMachine\ProcessStateMachine.csproj", "{124AA263-C6B0-4EED-A3C9-909824B8F1E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModemConnectionKeeper", "ModemConnectionKeeper\ModemConnectionKeeper.csproj", "{5E6634E6-3EF7-46A9-B5D1-52C97FB88340}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModemConnectionKeeperTester", "ModemConnectionKeeperTester\ModemConnectionKeeperTester.csproj", "{C7E01E52-F01A-4086-A1CA-AFAB67F0852D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -459,6 +465,36 @@ Global
 		{5C3D21B7-7E5B-45E5-822C-F35112E58FA7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{5C3D21B7-7E5B-45E5-822C-F35112E58FA7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{5C3D21B7-7E5B-45E5-822C-F35112E58FA7}.Release|x86.ActiveCfg = Release|Any CPU
+		{124AA263-C6B0-4EED-A3C9-909824B8F1E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{124AA263-C6B0-4EED-A3C9-909824B8F1E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{124AA263-C6B0-4EED-A3C9-909824B8F1E9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{124AA263-C6B0-4EED-A3C9-909824B8F1E9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{124AA263-C6B0-4EED-A3C9-909824B8F1E9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{124AA263-C6B0-4EED-A3C9-909824B8F1E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{124AA263-C6B0-4EED-A3C9-909824B8F1E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{124AA263-C6B0-4EED-A3C9-909824B8F1E9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{124AA263-C6B0-4EED-A3C9-909824B8F1E9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{124AA263-C6B0-4EED-A3C9-909824B8F1E9}.Release|x86.ActiveCfg = Release|Any CPU
+		{5E6634E6-3EF7-46A9-B5D1-52C97FB88340}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E6634E6-3EF7-46A9-B5D1-52C97FB88340}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E6634E6-3EF7-46A9-B5D1-52C97FB88340}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5E6634E6-3EF7-46A9-B5D1-52C97FB88340}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5E6634E6-3EF7-46A9-B5D1-52C97FB88340}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5E6634E6-3EF7-46A9-B5D1-52C97FB88340}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E6634E6-3EF7-46A9-B5D1-52C97FB88340}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E6634E6-3EF7-46A9-B5D1-52C97FB88340}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5E6634E6-3EF7-46A9-B5D1-52C97FB88340}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5E6634E6-3EF7-46A9-B5D1-52C97FB88340}.Release|x86.ActiveCfg = Release|Any CPU
+		{C7E01E52-F01A-4086-A1CA-AFAB67F0852D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7E01E52-F01A-4086-A1CA-AFAB67F0852D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7E01E52-F01A-4086-A1CA-AFAB67F0852D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C7E01E52-F01A-4086-A1CA-AFAB67F0852D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C7E01E52-F01A-4086-A1CA-AFAB67F0852D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C7E01E52-F01A-4086-A1CA-AFAB67F0852D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7E01E52-F01A-4086-A1CA-AFAB67F0852D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7E01E52-F01A-4086-A1CA-AFAB67F0852D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C7E01E52-F01A-4086-A1CA-AFAB67F0852D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C7E01E52-F01A-4086-A1CA-AFAB67F0852D}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -491,6 +527,9 @@ Global
 		{7F57B7A8-6743-4975-8491-900B4CC09DDC} = {08194974-F3C8-4166-97C8-6B5DF021468C}
 		{311A5749-DB14-4366-A32C-1045FCD2D0A6} = {08194974-F3C8-4166-97C8-6B5DF021468C}
 		{5C3D21B7-7E5B-45E5-822C-F35112E58FA7} = {74505182-02D1-42B6-9FCD-0B935F35E348}
+		{124AA263-C6B0-4EED-A3C9-909824B8F1E9} = {74505182-02D1-42B6-9FCD-0B935F35E348}
+		{5E6634E6-3EF7-46A9-B5D1-52C97FB88340} = {74505182-02D1-42B6-9FCD-0B935F35E348}
+		{C7E01E52-F01A-4086-A1CA-AFAB67F0852D} = {74505182-02D1-42B6-9FCD-0B935F35E348}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = HostController\HostController.csproj
