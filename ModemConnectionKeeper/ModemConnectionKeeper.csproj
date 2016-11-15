@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectionKeeper.cs" />
     <Compile Include="Pinger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Dialer.cs" />
@@ -47,6 +48,10 @@
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
       <Project>{3F066CD9-3523-4248-B37C-3378B44C426A}</Project>
       <Name>Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NixHelpers\NixHelpers.csproj">
+      <Project>{a822c3f5-f40f-4ded-b568-caeb1cf6a401}</Project>
+      <Name>NixHelpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProcessRunner\ProcessRunner.csproj">
       <Project>{34176EC8-AB7F-4E25-9F04-B6C07EB71CFB}</Project>

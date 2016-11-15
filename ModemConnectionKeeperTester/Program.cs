@@ -13,7 +13,7 @@ namespace ModemConnectionKeeperTester
 	{
 		public event LogEventHandlerDelegate LogEvent;
 
-		public DateTime LastWarningTime { get; }
+        public DateTime LastWarningTime { get; set; }
 
 		public void Log(object caller, string message, LogLevels level)
 		{
@@ -29,6 +29,103 @@ namespace ModemConnectionKeeperTester
 		{
 		}
 	}
+
+    public class Config : IConfig
+    {
+
+        public event Action<string> Changed;
+
+        public string GetString(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetInt(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public double GetDouble(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetBool(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Set<T>(string name, T value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Environments Environment
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public bool IsSystemTimeValid
+        {
+            get 
+            { 
+                throw new NotImplementedException(); 
+            }
+        }
+
+        public bool IsInternetConnected
+        {
+            get 
+            { 
+                throw new NotImplementedException(); 
+            }
+        }
+
+        public bool IsGPSLock
+        {
+            get 
+            { 
+                throw new NotImplementedException(); 
+            }
+        }
+
+        public bool IsMessagePending
+        {
+            get 
+            { 
+                throw new NotImplementedException(); 
+            }
+        }
+
+        public bool IsMessageShown
+        {
+            get 
+            { 
+                throw new NotImplementedException(); 
+            }
+        }
+
+        public bool IsDimLighting
+        {
+            get 
+            { 
+                throw new NotImplementedException(); 
+            }
+        }
+
+        public string DataFolder
+        {
+            get 
+            { 
+                throw new NotImplementedException(); 
+            }
+        }
+    }
 
     class Program
     {
@@ -46,16 +143,20 @@ namespace ModemConnectionKeeperTester
 //				Thread.Sleep (-1);
 //			}
 
-			using (var dialer = new Dialer ("/home/pi/onbs/_bin/Application/Data/_wd.conf", new Logger ())) 
-			{
-				dialer.StateChanged += (name, line) => Console.WriteLine ("STATE: " + name + " | " + line);
+            //using (var dialer = new Dialer ("/home/pi/onbs/_bin/Application/Data/_wd.conf", new Logger ())) 
+            //{
+            //    dialer.StateChanged += () => Console.WriteLine ("STATE: " + dialer.CurrentStateDescription);
 
-				dialer.DialerProcessExited += () => { Thread.Sleep(10000); dialer.Start(); };
+            //    dialer.DialerProcessExited += () => { Thread.Sleep(10000); dialer.Start(); };
 
-				dialer.Start ();
+            //    dialer.Start ();
 
-				Thread.Sleep (-1);
-			}
+            //    Thread.Sleep (-1);
+            //}
+
+            var keeper = new ConnectionKeeper(new Config(), new Logger());
+
+            Thread.Sleep(-1);
         }
     }
 }

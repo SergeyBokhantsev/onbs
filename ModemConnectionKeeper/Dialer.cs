@@ -18,7 +18,7 @@ namespace ModemConnectionKeeper
 			}
 		}
 
-		public event Action<string, string> StateChanged;
+		public event Action StateChanged;
 
 		public event Action DialerProcessExited;
 
@@ -28,6 +28,18 @@ namespace ModemConnectionKeeper
 
 		private const int criticalMaximum = 10;
 		private int criticalStatesCount;
+
+        public bool MaximumErrorsCountReached
+        {
+            get
+            {
+                return criticalStatesCount >= criticalMaximum;
+            }
+        }
+
+        public string CurrentStateDescription { get; private set; }
+
+        public ColoredStates State { get; private set; }
 
 		public Dialer (string configFilePath, ILogger logger)
 			:base(CreateRoot(), logger)
@@ -142,6 +154,9 @@ namespace ModemConnectionKeeper
 		protected override void OnStarting ()
 		{
 			criticalStatesCount = 0;
+
+            CurrentStateDescription = "Starting";
+            State = ColoredStates.Yellow;
 		}
 
 		protected override void OnNewState (StateDescriptor state, string line)
@@ -151,22 +166,46 @@ namespace ModemConnectionKeeper
 			if (null == dialerState)
 				throw new Exception ("Dialer state is null");
 
+            CurrentStateDescription = dialerState.Name;
+
 			if (dialerState.Status.HasValue) 
 			{
-				if (dialerState.Status.Value)
-					criticalStatesCount = 0;
-				else
-					criticalStatesCount++;		
+                if (dialerState.Status.Value)
+                {
+                    criticalStatesCount = 0;
+                    State = ColoredStates.Normal;
+                }
+                else
+                {
+                    criticalStatesCount++;
+                    State = ColoredStates.Red;
+                }
 			}
 
-			StateChanged (dialerState.Name, line);
+			OnStateChanged();
 
-			if (criticalStatesCount >= criticalMaximum) 
+			if (MaximumErrorsCountReached) 
 			{
 				logger.Log (this, "Maximum critical states reached, stopping.", LogLevels.Warning);
 				Stop ();
 			}
 		}
+
+        private void OnStateChanged()
+        {
+            var handler = StateChanged;
+            if (null != handler)
+            {
+                try
+                {
+                    handler();
+                }
+                catch (Exception ex)
+                {
+                    logger.Log(this, ex);
+                }
+            }
+        }
 
 		protected override void OnUnrecognizedLine (string line)
 		{
@@ -178,8 +217,17 @@ namespace ModemConnectionKeeper
 		{
 			var handler = DialerProcessExited;
 
-			if (null != handler)
-				handler ();
+            if (null != handler)
+            {
+                try
+                {
+                    handler();
+                }
+                catch (Exception ex)
+                {
+                    logger.Log(this, ex);
+                }
+            }
 		}
 	}
 }
