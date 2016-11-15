@@ -22,7 +22,7 @@ namespace ModemConnectionKeeperTester
 
 		public void Log(object caller, Exception ex)
 		{
-			Console.WriteLine (ex.Message);
+			Console.WriteLine ("EXCEPTION: " +  ex.Message);
 		}
 
 		public void Flush() 
@@ -37,7 +37,20 @@ namespace ModemConnectionKeeperTester
 
         public string GetString(string name)
         {
-            throw new NotImplementedException();
+			switch (name) 
+			{
+			case "Modem_vid":				
+				return "12d1";
+
+			case "Modem_storagemode_pid":
+				return "1446";
+
+			case "Modem_modemmode_pid":
+				return "1506";
+
+			default:
+				throw new NotImplementedException ();
+			}
         }
 
         public int GetInt(string name)
@@ -67,7 +80,10 @@ namespace ModemConnectionKeeperTester
 
         public Environments Environment
         {
-            get { throw new NotImplementedException(); }
+            get 
+			{ 
+				throw new NotImplementedException(); 
+			}
         }
 
         public bool IsSystemTimeValid
@@ -122,7 +138,7 @@ namespace ModemConnectionKeeperTester
         {
             get 
             { 
-                throw new NotImplementedException(); 
+				return "/home/pi/onbs/_bin/Application/Data";
             }
         }
     }

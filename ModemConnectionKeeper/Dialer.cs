@@ -99,7 +99,7 @@ namespace ModemConnectionKeeper
 			//var d_connect_time_summary = new StateDescriptor("11. Connect time summary", "--> Connect time \\S+ minutes.");
 
 			//--> Disconnecting at Mon Nov 14 12:54:10 2016
-			var d_disconnecting = new DialerState("11. Disconnecting", "--> Disconnecting at");
+			var d_disconnecting = new DialerState("11. Disconnecting", "--> Disconnecting at", false);
 
 			// Primary success sequence
 			root

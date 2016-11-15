@@ -46,7 +46,7 @@ namespace ModemConnectionKeeper
             dialer = new Dialer(wvDialConfigFile, logger);
 
             dialer.DialerProcessExited += DialerProcessExited;
-
+		
             dialer.StateChanged += StateChanged;
 
             (new Thread(Dial) { IsBackground = true }).Start();
@@ -54,6 +54,7 @@ namespace ModemConnectionKeeper
 
         void StateChanged()
         {
+			logger.Log (this, dialer.CurrentStateDescription, LogLevels.Info);
         }
 
         void DialerProcessExited()
@@ -80,6 +81,8 @@ namespace ModemConnectionKeeper
         {
             try
             {
+				logger.Log(this, "Starting ConnectionKeeper routine", LogLevels.Info);
+
                 KillOtherDialers();
 
                 var modem = CheckModem();
@@ -89,44 +92,73 @@ namespace ModemConnectionKeeper
                     ResetModem(modem);
                 }
 
+				PrepareConfig();
+
                 dialer.Start();
             }
             catch (Exception ex)
             {
+				logger.Log(this, "ConnectionKeeper routine interrupted with herror, restarting after 10 seconds...", LogLevels.Info);
                 logger.Log(this, ex);
                 Thread.Sleep(10000);
                 Dial();
             }
         }
 
+		private void PrepareConfig()
+		{
+			var ttyUsb = FindModem_ttyUSB();
+
+			var dialConfigTemplatePath = Path.Combine (config.DataFolder, "wvdial.conf");
+			var dialConfig = File.ReadAllText (dialConfigTemplatePath);
+			dialConfig = string.Format (dialConfig, ttyUsb);
+
+			var dialConfigPath = Path.Combine (config.DataFolder, "_wd.conf");
+			File.WriteAllText (dialConfigPath, dialConfig);
+
+			logger.Log (this, string.Concat ("Wvdial config file created for port: ", ttyUsb), LogLevels.Info);
+		}
+
+		private string FindModem_ttyUSB()
+		{
+			var ttyUsbFiles = Directory.GetFiles ("/dev", "ttyUSB*");
+
+			if (!ttyUsbFiles.Any ())
+				throw new Exception ("No any ttyUSB in the system");
+
+			foreach (var file in ttyUsbFiles) 
+			{
+				string output = ProcessRunner.ExecuteTool ("Probe ttyUSB", (string o) => o, 20000, 
+					"udevadm", 
+					string.Concat("info --query=all -n ", file));
+
+				if (null != output && output.Contains ("S: gsmmodem"))
+					return file;
+			}
+
+			throw new Exception (string.Concat ("No appropriate gsm modem device found in ttyUSB list: ", string.Join (", ", ttyUsbFiles)));
+		}
+
         private void KillOtherDialers()
         {
-            var counter = 0;
+			var psi = new ProcessStartInfo
+			{
+				FileName = "sudo",
+				Arguments = "pkill " + dialerExe,
+				UseShellExecute = false
+			};
 
-            while ((NixHelpers.ProcessFinder.FindProcess(dialerExe)) != -1)
-            {
-                if (++counter > 10)
-                    throw new Exception("Cannot kill other dealers after 10 retries");
+			var pr = new ProcessRunner(psi, false, false);
+			pr.Run();
 
-                var psi = new ProcessStartInfo
-                {
-                    FileName = "sudo",
-                    Arguments = "pkill " + dialerExe,
-                    UseShellExecute = false
-                };
-
-                var pr = new ProcessRunner(psi, false, false);
-                pr.Run();
-
-                Thread.Sleep(5000);
-            }
+			Thread.Sleep(5000);
         }
 
         private USBBusDevice GetModemDevice()
         {
             try
             {
-                return NixHelpers.LsUsb.EnumerateDevices().SingleOrDefault(d =>
+                return NixHelpers.LsUsb.EnumerateDevices().Single(d =>
                     d.VID.Equals(modemVid, StringComparison.InvariantCultureIgnoreCase)
                     && (d.PID.Equals(modemPid_modemMode, StringComparison.InvariantCultureIgnoreCase) ||
                         d.PID.Equals(modemPid_storageMode, StringComparison.InvariantCultureIgnoreCase)));
