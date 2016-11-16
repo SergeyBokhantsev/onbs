@@ -7,7 +7,7 @@ using Interfaces;
 using Interfaces.UI;
 using UIModels.MultipurposeModels;
 
-namespace UIModels.SystemInfoModels
+namespace UIModels
 {
     public class MetricsListModel : RotaryListModel<IMetricsProvider>
     {
@@ -25,7 +25,7 @@ namespace UIModels.SystemInfoModels
             var item = sender as RotaryListModel<IMetricsProvider>.ListItem<IMetricsProvider>;
             var provider = item.Value;
 
-
+            hc.GetController<IUIController>().ShowPage("MetricView", null, provider);
         }
 
         protected override IList<RotaryListModel<IMetricsProvider>.ListItem<IMetricsProvider>> QueryItems(int skip, int take)

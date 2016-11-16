@@ -89,6 +89,14 @@ namespace ModemConnectionKeeper
             return root;
         }
 
+        public new void Start()
+        {
+            ThreadPool.QueueUserWorkItem(state =>
+                {
+                    base.Start();
+                }, null);
+        }
+
         protected override void GetProcessRunnerArguments(out string exeName, out string args)
         {
             exeName = "sudo";

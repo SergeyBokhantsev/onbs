@@ -4,14 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Interfaces;
+using Interfaces.UI;
+using Interfaces.UI.Models;
 
-namespace UIModels.SystemInfoModels
+namespace UIModels
 {
-    public class MetricsModel : MultilineModel
+    public class MetricsModel : ModelBase
     {
         private readonly IMetricsProvider metricsProvider;
 
-        private string template
+        private readonly Dictionary<IMetric, int> indexMap = new Dictionary<IMetric, int>();
+
+        private readonly TextGrigDataModel grid;
 
         public MetricsModel(string viewName, IHostController hc, MappedPage pageDescriptor, object arg)
             :base(viewName, hc, pageDescriptor)
@@ -21,14 +25,24 @@ namespace UIModels.SystemInfoModels
             if (null == metricsProvider)
                 throw new ArgumentException("Argument is not of IMetricsProvider type");
 
-            metricsProvider.Metrics
+            metricsProvider.MetricUpdated += MetricUpdated;
 
-            metricsProvider.MetricUpdated += metricsProvider_MetricUpdated;
+            grid = new TextGrigDataModel("Metric", "Value");
+
+            int index = 0;
+            foreach(var m in metricsProvider.Metrics)
+            {
+                grid.AddRow(m.Name, m.ToString());
+                indexMap.Add(m, index++);
+            }
+
+            SetProperty("grid", grid);
         }
 
         private void MetricUpdated(IMetricsProvider sender, IEnumerable<IMetric> metrics)
         {
-            throw new NotImplementedException();
+            foreach (var m in metrics)
+                grid.Set(indexMap[m], 1, m.ToString());
         }
     }
 }

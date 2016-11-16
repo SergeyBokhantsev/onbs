@@ -20,7 +20,7 @@ namespace GPSController
         public GenericMetric<GeoPoint> Location = new GenericMetric<GeoPoint>("Location", new GeoPoint());
 
         public GPSMetricsProvider(ILogger logger)
-            : base(logger)
+            : base(logger, "GPS Controller")
         {
             Initialize(GPSFrames, NMEA, GPRMC, Location);
         }
@@ -36,6 +36,7 @@ namespace GPSController
         private readonly IConfig config;
         private readonly STPCodec codec;
         private readonly NmeaParser parser;
+        private readonly IMetricsService metricsService;
 
         private int gpsFramesCount;
         private int nmeaSentencesCount;
@@ -70,7 +71,7 @@ namespace GPSController
             }
         }
 
-        public GPSController(IConfig config, ONBSSyncContext syncContext, ILogger logger)
+        public GPSController(IConfig config, ONBSSyncContext syncContext, ILogger logger, IMetricsService metricsService)
         {
             if (config == null)
                 throw new ArgumentNullException("config");
@@ -78,14 +79,20 @@ namespace GPSController
             if (syncContext == null)
                 throw new ArgumentNullException("syncContext");
 
+            if (metricsService == null)
+                throw new ArgumentNullException("metricsService");
+
             if (logger == null)
                 throw new ArgumentNullException("logger");
 
             this.config = config;
             this.syncContext = syncContext;
             this.logger = logger;
+            this.metricsService = metricsService;
 
             metricsProvider = new GPSMetricsProvider(logger);
+            metricsService.RegisterProvider(metricsProvider);
+            
 
             codec = new STPCodec(
                 new byte[] { (byte)'$' },
@@ -213,6 +220,8 @@ namespace GPSController
         public void Shutdown()
         {
             shutdown = true;
+
+            metricsService.UnregisterProvider(metricsProvider);
 
             GPRMCReseived = null;
             NMEAReceived = null;

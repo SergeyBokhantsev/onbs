@@ -103,7 +103,15 @@ namespace ProcessStateMachine
             process.StdOut += ProcessStdOut;
             process.StdError += ProcessStdError;
 
-            process.Run();
+            try
+            {
+                process.Run();
+            }
+            catch
+            {
+                process = null;
+                OnProcessExited();
+            }
         }
 
         private void ProcessStdOut(byte[] buffer, int offset, int count)

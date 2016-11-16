@@ -317,7 +317,7 @@ namespace HostController
             miniDisplayController.Graphics.Brightness(255);
             await miniDisplayController.WaitQueueFlushes();
 
-            var gpsCtrl = new GPSController.GPSController(Config, SyncContext, Logger);
+            var gpsCtrl = new GPSController.GPSController(Config, SyncContext, Logger, MetricsService);
             gpsCtrl.GPRMCReseived += GPRMCReceived;
 
             arduController.RegisterFrameAcceptor(gpsCtrl);

@@ -100,12 +100,16 @@ namespace Interfaces
 
         public ColoredStates SummaryState { get; set; }
 
-        public MetricsProvider(ILogger logger)
+        public MetricsProvider(ILogger logger, string name)
         {
             if (null == logger)
                 throw new ArgumentNullException("logger");
 
+            if (null == name)
+                throw new ArgumentNullException("name");
+
             this.logger = logger;
+            this.Name = name;
 
             SummaryState = ColoredStates.Unknown;
         }

@@ -167,5 +167,8 @@
     <page name="MetricsList" model="MetricsListModel" default_view="CommonVertcalStackPage">
       <Cancel name="SystemInfoCatalog" caption="Back"/>
     </page>
+    <page name="MetricView" model="MetricsModel" default_view="GridPage">
+      <Cancel name="MetricsList" caption="Back"/>
+    </page>
   </pages>
 </app>

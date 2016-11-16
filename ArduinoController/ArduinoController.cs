@@ -21,7 +21,7 @@ namespace ArduinoController
         public GenericMetric<int> PendingPing = new GenericMetric<int>("Pending ping", 0);
 
         public ArduinoMetricsProvider(ILogger logger)
-            : base(logger)
+            : base(logger, "Arduino Controller")
         {
             Initialize(BytesReceived, FramesDecoded, ProcessTime, PendingPing);
         }
@@ -87,6 +87,7 @@ namespace ArduinoController
             this.logger = hc.Logger;
 
             metricsProvider = new ArduinoMetricsProvider(hc.Logger);
+            hc.MetricsService.RegisterProvider(metricsProvider);
 
             var frameBeginMarker = Encoding.UTF8.GetBytes(":<:");
             var frameEndMarker = Encoding.UTF8.GetBytes(":>:");

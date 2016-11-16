@@ -91,6 +91,7 @@
     <Compile Include="UI\IPageModel.cs" />
     <Compile Include="UI\IUIHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\Models\ITextGrigDataModel.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

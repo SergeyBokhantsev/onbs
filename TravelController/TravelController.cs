@@ -21,7 +21,7 @@ namespace TravelControllerNamespace
         public GenericMetric<int> BufferedPoints = new GenericMetric<int>("Buffered points", 0);
 
         public TravelMetricsProvider(ILogger logger)
-            : base(logger)
+            : base(logger, "Travel Controller")
         {
             Initialize(Travel, State, SendedPoints, BufferedPoints);
         }
@@ -95,6 +95,7 @@ namespace TravelControllerNamespace
             this.hc = hc;
 
             metricsProvider = new TravelMetricsProvider(hc.Logger);
+            hc.MetricsService.RegisterProvider(metricsProvider);
 
             exportBatchSize = hc.Config.GetInt(ConfigNames.TravelServiceExportBatchSize);
 
@@ -467,6 +468,8 @@ namespace TravelControllerNamespace
                 disposed = true;
                 hc.GetController<IGPSController>().GPRMCReseived -= GPRMCReseived;
                 timer.Dispose();
+
+                hc.MetricsService.UnregisterProvider(metricsProvider);
 
                 var lastKnownGprmc = logFilter.LastKnownLocation;
 

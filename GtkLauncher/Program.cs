@@ -10,11 +10,11 @@ namespace GtkLauncher
 	{
 		public static void Main(string[] args)
 		{
-				var app = new GtkApplication.App (new ConsoleLogger ());
+			var app = new GtkApplication.App (new ConsoleLogger ());
 
 			app.ShowPage(GetGridPageModel());
 
-				app.Run(false);
+			app.Run(false);
 
 			Console.ReadKey();
 		}
@@ -23,7 +23,32 @@ namespace GtkLauncher
 		{
 			var page = new EmptyPageModel("GridPage");
 
-			var timer = new Timer(new TimerCallback(o => page.SetProperty("val", DateTime.Now.ToString())), null, 500, 1000);
+			var dataModel = new Interfaces.UI.Models.TextGrigDataModel("A", "B", "C");
+
+			dataModel.AddRow("1a", "1b", "1c");
+			dataModel.AddRow("2a", "2b", "2c", "2d");
+			dataModel.AddRow("3a", "3b");
+			dataModel.AddRow("4a");
+
+			page.SetProperty("grid", dataModel);
+
+			int i = 0;
+
+			var timer = new Timer(new TimerCallback(o =>
+			{
+
+				dataModel.Set(0, 1, DateTime.Now.ToString());
+
+				i++;
+
+				dataModel.RemoveRow(2);
+
+				dataModel.InsertRow(1, i.ToString(), i.ToString(), i.ToString());
+
+				dataModel.UpdateRow(3, DateTime.Now.ToString(), DateTime.Now.ToString());
+
+
+			}), null, 500, 50);
 
 			return page;
 		}
