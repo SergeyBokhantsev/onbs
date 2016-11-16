@@ -2,7 +2,7 @@
 
 namespace Interfaces
 {
-    public interface ITravelController : IController, IMetricsProvider
+    public interface ITravelController : IController
     {
         int BufferedPoints { get; }
         int SendedPoints { get; }

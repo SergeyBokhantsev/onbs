@@ -11,7 +11,7 @@ namespace ModemConnectionKeeper
 {
     public class Pinger : StateMachine
     {
-        public event Action<string, string> State;
+        public event Action<bool> ConnectionStatus;
 
         private readonly string host;
 		private readonly int interval;
@@ -29,35 +29,34 @@ namespace ModemConnectionKeeper
 		{
 			var root = new StateDescriptor();
 
-			var pingCouldNotFineHost = new StateDescriptor("NoHost", "unknown host");
-			var pingNoNetwork = new StateDescriptor("NoNetwork", "Network is unreachable");
-			var pingStarted = new StateDescriptor("Started", "PING \\S+ \\(\\S+\\) 56\\(84\\) bytes of data.");
-			var pingGood = new StateDescriptor ("OK", "64 bytes from \\S+: icmp_seq=\\d+ ttl=\\d+ time=\\S+ ms");
-			var pingTimeout = new StateDescriptor("Timeout", "out");
-			var pingEnd = new StateDescriptor("End", "ping statistics");
+			var pingCouldNotFineHost = new StateDescriptor("NoHost", StateDescriptor.CreateSubstringPredicates("unknown host"));
+			var pingNoNetwork = new StateDescriptor("NoNetwork", StateDescriptor.CreateSubstringPredicates("Network is unreachable"));
+			var pingStarted = new StateDescriptor("Started", StateDescriptor.CreateRegexPredicates("PING \\S+ \\(\\S+\\) 56\\(84\\) bytes of data."));
+            var pingGood = new StateDescriptor("OK", StateDescriptor.CreateRegexPredicates("64 bytes from \\S+: icmp_seq=\\d+ ttl=\\d+ time=\\S+ ms")) { Tag = string.Empty };
+			var pingTimeout = new StateDescriptor("Timeout", StateDescriptor.CreateSubstringPredicates("out"));
+			var pingEnd = new StateDescriptor("End", StateDescriptor.CreateSubstringPredicates("ping statistics"));
 
+			root.Add(pingStarted);
+			root.Add(pingCouldNotFineHost);
 
-			root.Children.Add(pingStarted);
-			root.Children.Add(pingCouldNotFineHost);
+			pingStarted.Add(pingGood);
+			pingStarted.Add(pingTimeout);
+			pingStarted.Add(pingNoNetwork);
 
-			pingStarted.Children.Add(pingGood);
-			pingStarted.Children.Add(pingTimeout);
-			pingStarted.Children.Add(pingNoNetwork);
+			pingGood.Add(pingGood);
+			pingGood.Add(pingTimeout);
+			pingGood.Add(pingEnd);
+			pingGood.Add(pingNoNetwork);
 
-			pingGood.Children.Add(pingGood);
-			pingGood.Children.Add(pingTimeout);
-			pingGood.Children.Add(pingEnd);
-			pingGood.Children.Add(pingNoNetwork);
+			pingTimeout.Add(pingGood);
+			pingTimeout.Add(pingTimeout);
+			pingTimeout.Add(pingEnd);
+			pingTimeout.Add(pingNoNetwork);
 
-			pingTimeout.Children.Add(pingGood);
-			pingTimeout.Children.Add(pingTimeout);
-			pingTimeout.Children.Add(pingEnd);
-			pingTimeout.Children.Add(pingNoNetwork);
-
-			pingNoNetwork.Children.Add(pingGood);
-			pingNoNetwork.Children.Add(pingTimeout);
-			pingNoNetwork.Children.Add(pingNoNetwork);
-			pingNoNetwork.Children.Add(pingEnd);
+			pingNoNetwork.Add(pingGood);
+			pingNoNetwork.Add(pingTimeout);
+			pingNoNetwork.Add(pingNoNetwork);
+			pingNoNetwork.Add(pingEnd);
 
 			return root;
 		}
@@ -66,26 +65,26 @@ namespace ModemConnectionKeeper
         {
             var root = new StateDescriptor();
 
-            var pingCouldNotFineHost = new StateDescriptor("NoHost", "Ping request could not find host");
-            var pingStarted = new StateDescriptor("Started", "Pinging \\S+ \\[\\S+\\] with 32 bytes of data:");
-            var pingGood = new StateDescriptor("OK", "Reply from \\S+: bytes=\\S+ time=\\d+ms TTL=\\d+");
-            var pingTimeout = new StateDescriptor("Timeout", "Request timed out.");
-            var pingEnd = new StateDescriptor("End", "Ping statistics for \\S+:");
+            var pingCouldNotFineHost = new StateDescriptor("NoHost", StateDescriptor.CreateSubstringPredicates("Ping request could not find host"));
+            var pingStarted = new StateDescriptor("Started", StateDescriptor.CreateRegexPredicates("Pinging \\S+ \\[\\S+\\] with 32 bytes of data:"));
+            var pingGood = new StateDescriptor("OK", StateDescriptor.CreateRegexPredicates("Reply from \\S+: bytes=\\S+ time=\\d+ms TTL=\\d+")) { Tag = string.Empty };
+            var pingTimeout = new StateDescriptor("Timeout", StateDescriptor.CreateSubstringPredicates("Request timed out."));
+            var pingEnd = new StateDescriptor("End", StateDescriptor.CreateRegexPredicates("Ping statistics for \\S+:"));
 
 
-            root.Children.Add(pingStarted);
-            root.Children.Add(pingCouldNotFineHost);
+            root.Add(pingStarted);
+            root.Add(pingCouldNotFineHost);
 
-            pingStarted.Children.Add(pingGood);
-            pingStarted.Children.Add(pingTimeout);
+            pingStarted.Add(pingGood);
+            pingStarted.Add(pingTimeout);
 
-            pingGood.Children.Add(pingGood);
-            pingGood.Children.Add(pingTimeout);
-            pingGood.Children.Add(pingEnd);
+            pingGood.Add(pingGood);
+            pingGood.Add(pingTimeout);
+            pingGood.Add(pingEnd);
 
-            pingTimeout.Children.Add(pingGood);
-            pingTimeout.Children.Add(pingTimeout);
-            pingTimeout.Children.Add(pingEnd);
+            pingTimeout.Add(pingGood);
+            pingTimeout.Add(pingTimeout);
+            pingTimeout.Add(pingEnd);
 
             return root;
         }
@@ -98,12 +97,22 @@ namespace ModemConnectionKeeper
 
         protected override void OnNewState(StateDescriptor state, string line)
         {
-            State(state.Name, line);
+            OnConnectionStatus(null != state.Tag);
+        }
+
+        private void OnConnectionStatus(bool connected)
+        {
+            var handler = ConnectionStatus;
+
+            if (null != handler)
+            {
+                handler(connected);
+            }
         }
 
         protected override void OnProcessExited()
         {
-            Thread.Sleep(10000);
+            Thread.Sleep(5000);
 
             Start();
         }

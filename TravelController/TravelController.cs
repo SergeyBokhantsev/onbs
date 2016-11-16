@@ -11,15 +11,27 @@ using UIModels.Dialogs;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace TravelController
+namespace TravelControllerNamespace
 {
+    public class TravelMetricsProvider : MetricsProvider
+    {
+        public GenericMetric<string> Travel = new GenericMetric<string>("Travel name", "NO TRAVEL");
+        public GenericMetric<TravelController.States> State = new GenericMetric<TravelController.States>("State", TravelController.States.NotStarted);
+        public GenericMetric<int> SendedPoints = new GenericMetric<int>("Sended points", 0);
+        public GenericMetric<int> BufferedPoints = new GenericMetric<int>("Buffered points", 0);
+
+        public TravelMetricsProvider(ILogger logger)
+            : base(logger)
+        {
+            Initialize(Travel, State, SendedPoints, BufferedPoints);
+        }
+    }
+
     public class TravelController : ITravelController
     {
         private const string storedPointsFileName = "StoredTravelPoints.bin";
 
-        public event MetricsUpdatedEventHandler MetricsUpdated;
-
-        private enum States { NotStarted, FindingOpenedTravel, ToOpenNewTravel, CreatingNewTravel, ExportingPoints, Ready }
+        public enum States { NotStarted, FindingOpenedTravel, ToOpenNewTravel, CreatingNewTravel, ExportingPoints, Ready }
 
         private readonly IHostController hc;
         private readonly Client client;
@@ -40,6 +52,8 @@ namespace TravelController
         private volatile int metricsSendedPoints;
         private bool metricsError = true;
         private volatile int exportErrorCount;
+
+        private readonly TravelMetricsProvider metricsProvider;
 
         private double travelDistance;
         private GPRMC firstGprmc;
@@ -79,6 +93,8 @@ namespace TravelController
                 throw new ArgumentNullException("hc");
 
             this.hc = hc;
+
+            metricsProvider = new TravelMetricsProvider(hc.Logger);
 
             exportBatchSize = hc.Config.GetInt(ConfigNames.TravelServiceExportBatchSize);
 
@@ -260,16 +276,16 @@ namespace TravelController
 
         private void UpdateMetrics()
         {
-            var metrics = new Metrics("Travel Controller", 5);
-            metrics.Add(0, "", travel != null ? travel.Name : "NO TRAVEL");
-            metrics.Add(1, "State", state.Value);
-            metrics.Add(2, "Sended points", metricsSendedPoints);
-            metrics.Add(3, "Buffered points", metricsBufferedPoints);
-            metrics.Add(4, "_is_error", metricsError);
+            metricsProvider.OpenBatch();
 
-            var handler = MetricsUpdated;
-            if (handler != null)
-                handler(this, metrics);
+            metricsProvider.SummaryState = metricsError ? ColoredStates.Red : ColoredStates.Normal;
+
+            metricsProvider.Travel.Value = travel != null ? travel.Name : "NO TRAVEL";
+            metricsProvider.State.Value = state.Value;
+            metricsProvider.SendedPoints.Value = metricsSendedPoints;
+            metricsProvider.BufferedPoints.Value = metricsBufferedPoints;
+
+            metricsProvider.CommitBatch();
         }
 
         private async Task<bool> ExportPoints()

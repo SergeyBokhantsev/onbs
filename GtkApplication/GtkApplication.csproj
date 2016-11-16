@@ -86,8 +86,6 @@
     <Compile Include="Pages\ModelBinder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Pages\MainPage.cs" />
-    <Compile Include="gtk-gui\GtkApplication.MainPage.cs" />
     <Compile Include="Pages\ExternalApplicationPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.ExternalApplicationPage.cs" />
     <Compile Include="Controls\FlatButton.cs" />
@@ -117,6 +115,8 @@
     <Compile Include="gtk-gui\GtkApplication.FileOptionsPage.cs" />
     <Compile Include="Pages\LightSensorInfoPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.LightSensorInfoPage.cs" />
+    <Compile Include="Pages\DrivePages\GridPage.cs" />
+    <Compile Include="gtk-gui\GtkApplication.GridPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
@@ -139,7 +139,5 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

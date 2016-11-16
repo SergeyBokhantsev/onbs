@@ -63,9 +63,6 @@
       <Accept action="Refresh" caption="Refresh"/>
       <F1 action="Clear" caption="Clear errors"/>
     </page>
-    <page name="Main" model="MainPage" default_view="MainPage">
-      <Cancel name="Drive1" caption="Drive"/>
-    </page>
     <page name="DashCamMenu" model="DashMenuModel" default_view="CommonVertcalStackPage">
       <Cancel name="Drive1"/>
     </page>
@@ -150,6 +147,7 @@
       <RotaryItem_1 name="LastLogMsg" caption="Last log message"/>
       <RotaryItem_2 name="LsUsb" caption="lsusb (USB info)"/>
       <RotaryItem_3 name="LightSensorInfo" caption="Light sensors readings"/>
+      <RotaryItem_4 name="MetricsList" caption="Metrics"/>
     </page>
     <page name="LsUsb" model="LsUsbModel" default_view="MultilineView">
       <Cancel name="SystemInfoCatalog" caption="Back"/>
@@ -164,6 +162,9 @@
       <Cancel name="ZXGamesList" caption="Back"/>
     </page>
     <page name="LightSensorInfo" model="LightSensorInfoModel" default_view="LightSensorInfoPage">
+      <Cancel name="SystemInfoCatalog" caption="Back"/>
+    </page>
+    <page name="MetricsList" model="MetricsListModel" default_view="CommonVertcalStackPage">
       <Cancel name="SystemInfoCatalog" caption="Back"/>
     </page>
   </pages>

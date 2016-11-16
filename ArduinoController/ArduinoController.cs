@@ -13,21 +13,29 @@ using Interfaces.Relays;
 
 namespace ArduinoController
 {
+    public class ArduinoMetricsProvider : MetricsProvider
+    {
+        public GenericMetric<long> BytesReceived = new GenericMetric<long>("Bytes received", 0);
+        public GenericMetric<long> FramesDecoded = new GenericMetric<long>("Frames decoded", 0);
+        public GenericMetric<long> ProcessTime = new GenericMetric<long>("Process time", 0);
+        public GenericMetric<int> PendingPing = new GenericMetric<int>("Pending ping", 0);
+
+        public ArduinoMetricsProvider(ILogger logger)
+            : base(logger)
+        {
+            Initialize(BytesReceived, FramesDecoded, ProcessTime, PendingPing);
+        }
+    }
+
     public class ArduinoController : IArduinoController
     {
-        public event MetricsUpdatedEventHandler MetricsUpdated;
-
-        private const string metricReadedBytes = "Bytes received";
-        private const string metricDecodedFrames = "Frames decoded";
-        private const string metricElapsed = "Process time";
-		private const string metricPendingPing = "Pending ping";
-        private const string metricIsError = "_is_error";
-
         private readonly IPort port;
         private readonly ONBSSyncContext syncContext;
         private readonly ILogger logger;
 		private readonly IHostController hc;
         private readonly ISTPCodec codec;
+
+        private readonly ArduinoMetricsProvider metricsProvider;
 
         private readonly List<IFramesAcceptor> acceptors = new List<IFramesAcceptor>();
         private readonly List<IFrameProvider> providers = new List<IFrameProvider>();
@@ -77,6 +85,8 @@ namespace ArduinoController
             this.port = port;
             this.syncContext = hc.SyncContext;
             this.logger = hc.Logger;
+
+            metricsProvider = new ArduinoMetricsProvider(hc.Logger);
 
             var frameBeginMarker = Encoding.UTF8.GetBytes(":<:");
             var frameEndMarker = Encoding.UTF8.GetBytes(":>:");
@@ -318,25 +328,22 @@ namespace ArduinoController
             }
 
             sw.Stop();
+
             UpdateMetrics(sw.ElapsedMilliseconds);
         }
 
         private void UpdateMetrics(long elapsed)
         {
-            var handler = MetricsUpdated;
+            metricsProvider.OpenBatch();
 
-            if (handler != null)
-            {
-                var metrics = new Metrics("Arduino Controller", 5);
+            metricsProvider.SummaryState = IsCommunicationOk ? ColoredStates.Normal : ColoredStates.Red;
 
-                metrics.Add(0, metricReadedBytes, port.OverallReadedBytes);
-                metrics.Add(1, metricDecodedFrames, decodedFramesCount);
-                metrics.Add(2, metricElapsed, elapsed);
-				metrics.Add(3, metricPendingPing, ardPingPendings);
-                metrics.Add(4, metricIsError, !IsCommunicationOk);
+            metricsProvider.BytesReceived.Value = port.OverallReadedBytes;
+            metricsProvider.FramesDecoded.Value = decodedFramesCount;
+            metricsProvider.ProcessTime.Value = elapsed;
+            metricsProvider.PendingPing.Value = ardPingPendings;
 
-                syncContext.Post(o => handler(this, metrics), null, "ArdController.UpdateMetrics");
-            }
+            metricsProvider.CommitBatch();
         }
 
         public void RegisterFrameAcceptor(IFramesAcceptor acceptor)

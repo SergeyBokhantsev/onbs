@@ -22,7 +22,7 @@ namespace Interfaces
         LightSensorResponse = 111
     }
 
-    public interface IArduinoController : IController, IMetricsProvider
+    public interface IArduinoController : IController
     {
         IRelayService RelayService { get; }
         ILightSensorService LightSensorService  { get; }

@@ -12,22 +12,9 @@ namespace ProcessStateMachine
 			if (null == next)
 				throw new ArgumentNullException ("next");
 
-			if (!state.Children.Contains (next))
-				state.Children.Add (next);
+            state.Add(next);
 
 			return next;
-		}
-
-		public static void CouldGoToMe(this StateDescriptor child, params StateDescriptor[] parents)
-		{
-			if (null == child)
-				throw new ArgumentNullException ("child");
-
-			foreach (var parent in parents) 
-			{
-				if (!parent.Children.Contains (child))
-					parent.Children.Add (child);
-			}
 		}
 	}
 }

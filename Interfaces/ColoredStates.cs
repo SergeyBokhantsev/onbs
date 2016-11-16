@@ -8,6 +8,7 @@ namespace Interfaces
 {
     public enum ColoredStates
     {
+        Unknown,
         Normal,
         Red,
         Yellow,

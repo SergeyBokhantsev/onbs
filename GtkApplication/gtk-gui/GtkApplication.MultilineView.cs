@@ -5,58 +5,59 @@ namespace GtkApplication
 	public partial class MultilineView
 	{
 		private global::Gtk.VBox vbox1;
-		
+
 		private global::Gtk.EventBox eventbox_title;
-		
+
 		private global::Gtk.Label label_title;
-		
+
 		private global::Gtk.EventBox eventbox_log;
-		
+
 		private global::Gtk.TextView textview_log;
 
-		protected virtual void Build ()
+		protected virtual void Build()
 		{
-			global::Stetic.Gui.Initialize (this);
+			global::Stetic.Gui.Initialize(this);
 			// Widget GtkApplication.MultilineView
-			global::Stetic.BinContainer.Attach (this);
+			global::Stetic.BinContainer.Attach(this);
 			this.Name = "GtkApplication.MultilineView";
 			// Container child GtkApplication.MultilineView.Gtk.Container+ContainerChild
-			this.vbox1 = new global::Gtk.VBox ();
+			this.vbox1 = new global::Gtk.VBox();
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.eventbox_title = new global::Gtk.EventBox ();
+			this.eventbox_title = new global::Gtk.EventBox();
 			this.eventbox_title.Name = "eventbox_title";
 			// Container child eventbox_title.Gtk.Container+ContainerChild
-			this.label_title = new global::Gtk.Label ();
+			this.label_title = new global::Gtk.Label();
 			this.label_title.Name = "label_title";
-			this.label_title.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
+			this.label_title.LabelProp = global::Mono.Unix.Catalog.GetString("label1");
 			this.label_title.UseMarkup = true;
-			this.eventbox_title.Add (this.label_title);
-			this.vbox1.Add (this.eventbox_title);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox_title]));
+			this.eventbox_title.Add(this.label_title);
+			this.vbox1.Add(this.eventbox_title);
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.eventbox_title]));
 			w2.Position = 0;
 			w2.Expand = false;
 			w2.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.eventbox_log = new global::Gtk.EventBox ();
+			this.eventbox_log = new global::Gtk.EventBox();
 			this.eventbox_log.Name = "eventbox_log";
 			this.eventbox_log.BorderWidth = ((uint)(10));
 			// Container child eventbox_log.Gtk.Container+ContainerChild
-			this.textview_log = new global::Gtk.TextView ();
+			this.textview_log = new global::Gtk.TextView();
 			this.textview_log.CanFocus = true;
 			this.textview_log.Name = "textview_log";
 			this.textview_log.Editable = false;
-			this.eventbox_log.Add (this.textview_log);
-			this.vbox1.Add (this.eventbox_log);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox_log]));
+			this.eventbox_log.Add(this.textview_log);
+			this.vbox1.Add(this.eventbox_log);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.eventbox_log]));
 			w4.Position = 1;
 			w4.Padding = ((uint)(3));
-			this.Add (this.vbox1);
-			if ((this.Child != null)) {
-				this.Child.ShowAll ();
+			this.Add(this.vbox1);
+			if ((this.Child != null))
+			{
+				this.Child.ShowAll();
 			}
-			this.Hide ();
+			this.Hide();
 		}
 	}
 }

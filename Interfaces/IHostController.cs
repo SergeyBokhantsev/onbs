@@ -17,6 +17,7 @@ namespace Interfaces
         IHostTimer CreateTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly, string name);
         ISpeakService SpeakService { get; }
         IRemoteStorageService RemoteStorageService { get; }
+        IMetricsService MetricsService { get; }
     }
 
     public abstract class ONBSSyncContext : SynchronizationContext

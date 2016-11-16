@@ -12,11 +12,20 @@ namespace GtkLauncher
 		{
 				var app = new GtkApplication.App (new ConsoleLogger ());
 
-			app.ShowPage(GetOBD_DTCPage());
+			app.ShowPage(GetGridPageModel());
 
 				app.Run(false);
 
 			Console.ReadKey();
+		}
+
+		private static IPageModel GetGridPageModel()
+		{
+			var page = new EmptyPageModel("GridPage");
+
+			var timer = new Timer(new TimerCallback(o => page.SetProperty("val", DateTime.Now.ToString())), null, 500, 1000);
+
+			return page;
 		}
 
 		private static IPageModel GetMainPage()

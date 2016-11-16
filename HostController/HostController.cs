@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Interfaces.GPS;
 using System.Collections.Generic;
 using ProcessRunnerNamespace;
+using TravelControllerNamespace;
 
 namespace HostController
 {
@@ -25,7 +26,10 @@ namespace HostController
         private string logFolder;
         
         private GPSD.Net.GPSD gpsd;
-        private InternetConnectionKeeper netKeeper;
+        //private InternetConnectionKeeper netKeeper;
+
+        private ModemConnectionKeeper.ConnectionKeeper connectionKeeper;
+        private ModemConnectionKeeper.Pinger pinger;
 
         private readonly InterlockedGuard systemTimeCorrectorGuard = new InterlockedGuard();
 
@@ -35,7 +39,7 @@ namespace HostController
         private ArduinoController.ArduinoController arduController;
         private GPSController.GPSController gpsController;
         private IAutomationController automationController;
-        private TravelController.TravelController travelController;
+        private TravelController travelController;
         private Elm327Controller.Elm327Controller elm327Controller;
         private MiniDisplayController miniDisplayController;
         private DashCamController.DashCamController dashCamController;
@@ -50,6 +54,8 @@ namespace HostController
         private ISpeakService speakService;
 
         private DropboxService.DropboxService remoteStorageService;
+
+        private MetricsService metricsService;
 
         private List<object> jobs = new List<object>();
 
@@ -87,6 +93,14 @@ namespace HostController
             get
             {
                 return remoteStorageService;
+            }
+        }
+
+        public IMetricsService MetricsService
+        {
+            get
+            {
+                return metricsService;
             }
         }
 
@@ -251,15 +265,29 @@ namespace HostController
         {
             ServicePointManager.ServerCertificateValidationCallback = (s1, s2, s3, s4) => true;
 
+            metricsService = new MetricsService(Logger);
+
             this.speakService = new SpeakService(Logger, Config);
 
 			this.remoteStorageService = new DropboxService.DropboxService();
 
-            netKeeper = new InternetConnectionKeeper(Config, Logger);
-            netKeeper.InternetConnectionStatus += OnInternetConnectionStatus;
-            netKeeper.InternetTime += CheckSystemTimeFromInternet;
-            netKeeper.RestartNeeded += InetKeeperRestartNeeded;
-            netKeeper.StartChecking();
+            connectionKeeper = new ModemConnectionKeeper.ConnectionKeeper(Config, Logger);
+
+            pinger = new ModemConnectionKeeper.Pinger(
+                config.GetString("PingHost"),
+                config.GetInt("PingInterval"),
+                config.GetInt("PingRequestTimeout"),
+                Logger);
+
+            pinger.ConnectionStatus += OnInternetConnectionStatus;
+
+            pinger.Start();
+
+            //netKeeper = new InternetConnectionKeeper(Config, Logger);
+            //netKeeper.InternetConnectionStatus += OnInternetConnectionStatus;
+            //netKeeper.InternetTime += CheckSystemTimeFromInternet;
+            //netKeeper.RestartNeeded += InetKeeperRestartNeeded;
+            //netKeeper.StartChecking();
 
             inputController = new InputController.InputController(Logger);
 
@@ -299,7 +327,7 @@ namespace HostController
 
             automationController = new AutomationController.AutomationController(this);
 
-            travelController = new TravelController.TravelController(this);
+            travelController = new TravelController(this);
 
             var map = new ApplicationMap(Path.Combine(config.DataFolder, "application.xml"));
 
@@ -412,22 +440,22 @@ namespace HostController
             }
         }
 
-        private void InetKeeperRestartNeeded()
-        {
-            netKeeper.RestartNeeded -= InetKeeperRestartNeeded;
+        //private void InetKeeperRestartNeeded()
+        //{
+        //    netKeeper.RestartNeeded -= InetKeeperRestartNeeded;
 
-            var dialog = new UIModels.Dialogs.YesNoDialog("Restart", "Failed to get internet connection. Restart now?", "Yes", "No", this, 30000, DialogResults.Yes);
-            dialog.Closed += dr => 
-            {
-                if (dr == DialogResults.Yes)
-                {
-                    Logger.Log(this, "Begin restart because of Internet keeper request...", LogLevels.Warning);
-                    SyncContext.Post(async o => await Shutdown(HostControllerShutdownModes.Restart), null, "Shutdown");
-                }
-            };
+        //    var dialog = new UIModels.Dialogs.YesNoDialog("Restart", "Failed to get internet connection. Restart now?", "Yes", "No", this, 30000, DialogResults.Yes);
+        //    dialog.Closed += dr => 
+        //    {
+        //        if (dr == DialogResults.Yes)
+        //        {
+        //            Logger.Log(this, "Begin restart because of Internet keeper request...", LogLevels.Warning);
+        //            SyncContext.Post(async o => await Shutdown(HostControllerShutdownModes.Restart), null, "Shutdown");
+        //        }
+        //    };
 
-            uiController.ShowDialog(dialog);
-        }
+        //    uiController.ShowDialog(dialog);
+        //}
 
         private async Task CheckSystemTimeFromArduino(DateTime time)
         {
@@ -512,7 +540,7 @@ namespace HostController
         private void DisconnectSystemTimeChecking()
         {
             gpsController.GPRMCReseived -= CheckSystemTimeFromGPS;
-            netKeeper.InternetTime -= CheckSystemTimeFromInternet;
+            //netKeeper.InternetTime -= CheckSystemTimeFromInternet;
             Logger.Log(this, "SystemTimeCorrector has been disconnected.", LogLevels.Info);
         }
 
@@ -563,7 +591,8 @@ namespace HostController
                 await Task.Delay(200);
 
                 showLine("Disposing InetKeeper");
-                netKeeper.Dispose();
+                //netKeeper.Dispose();
+                pinger.Dispose();
                 await Task.Delay(200);
 
                 showLine("Stopping GPSD service");

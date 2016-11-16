@@ -63,11 +63,6 @@ namespace HostController.Lin
 
         private void CheckerThread()
         {
-
-        }
-
-        private void CheckerThread_old()
-        {
             int generalRetries = 0;
 
             while (!disposed)

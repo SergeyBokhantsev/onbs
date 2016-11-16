@@ -5,110 +5,111 @@ namespace GtkApplication
 	public partial class LightSensorInfoPage
 	{
 		private global::Gtk.VBox vbox1;
-		
+
 		private global::Gtk.EventBox eventbox2;
-		
+
 		private global::Gtk.Label l_message;
-		
+
 		private global::Gtk.HBox hbox1;
-		
+
 		private global::Gtk.EventBox eventbox3;
-		
+
 		private global::Gtk.Label l_sensor_a;
-		
+
 		private global::Gtk.EventBox eventbox4;
-		
+
 		private global::Gtk.Label l_separator;
-		
+
 		private global::Gtk.EventBox eventbox5;
-		
+
 		private global::Gtk.Label l_sensor_b;
-		
+
 		private global::Gtk.EventBox eventbox1;
 
-		protected virtual void Build ()
+		protected virtual void Build()
 		{
-			global::Stetic.Gui.Initialize (this);
+			global::Stetic.Gui.Initialize(this);
 			// Widget GtkApplication.LightSensorInfoPage
-			global::Stetic.BinContainer.Attach (this);
+			global::Stetic.BinContainer.Attach(this);
 			this.Name = "GtkApplication.LightSensorInfoPage";
 			// Container child GtkApplication.LightSensorInfoPage.Gtk.Container+ContainerChild
-			this.vbox1 = new global::Gtk.VBox ();
+			this.vbox1 = new global::Gtk.VBox();
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.eventbox2 = new global::Gtk.EventBox ();
+			this.eventbox2 = new global::Gtk.EventBox();
 			this.eventbox2.HeightRequest = 100;
 			this.eventbox2.Name = "eventbox2";
 			// Container child eventbox2.Gtk.Container+ContainerChild
-			this.l_message = new global::Gtk.Label ();
+			this.l_message = new global::Gtk.Label();
 			this.l_message.WidthRequest = 100;
 			this.l_message.Name = "l_message";
-			this.l_message.LabelProp = global::Mono.Unix.Catalog.GetString ("label3");
-			this.eventbox2.Add (this.l_message);
-			this.vbox1.Add (this.eventbox2);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox2]));
+			this.l_message.LabelProp = global::Mono.Unix.Catalog.GetString("label3");
+			this.eventbox2.Add(this.l_message);
+			this.vbox1.Add(this.eventbox2);
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.eventbox2]));
 			w2.Position = 0;
 			w2.Expand = false;
 			w2.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.hbox1 = new global::Gtk.HBox ();
+			this.hbox1 = new global::Gtk.HBox();
 			this.hbox1.Name = "hbox1";
 			this.hbox1.Spacing = 6;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.eventbox3 = new global::Gtk.EventBox ();
+			this.eventbox3 = new global::Gtk.EventBox();
 			this.eventbox3.Name = "eventbox3";
 			// Container child eventbox3.Gtk.Container+ContainerChild
-			this.l_sensor_a = new global::Gtk.Label ();
+			this.l_sensor_a = new global::Gtk.Label();
 			this.l_sensor_a.Name = "l_sensor_a";
-			this.l_sensor_a.LabelProp = global::Mono.Unix.Catalog.GetString ("label2");
+			this.l_sensor_a.LabelProp = global::Mono.Unix.Catalog.GetString("label2");
 			this.l_sensor_a.Justify = ((global::Gtk.Justification)(2));
-			this.eventbox3.Add (this.l_sensor_a);
-			this.hbox1.Add (this.eventbox3);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.eventbox3]));
+			this.eventbox3.Add(this.l_sensor_a);
+			this.hbox1.Add(this.eventbox3);
+			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.eventbox3]));
 			w4.Position = 0;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.eventbox4 = new global::Gtk.EventBox ();
+			this.eventbox4 = new global::Gtk.EventBox();
 			this.eventbox4.Name = "eventbox4";
 			// Container child eventbox4.Gtk.Container+ContainerChild
-			this.l_separator = new global::Gtk.Label ();
+			this.l_separator = new global::Gtk.Label();
 			this.l_separator.Name = "l_separator";
-			this.l_separator.LabelProp = global::Mono.Unix.Catalog.GetString ("<span size='60000'>|</span>");
+			this.l_separator.LabelProp = global::Mono.Unix.Catalog.GetString("<span size=\'60000\'>|</span>");
 			this.l_separator.UseMarkup = true;
-			this.eventbox4.Add (this.l_separator);
-			this.hbox1.Add (this.eventbox4);
-			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.eventbox4]));
+			this.eventbox4.Add(this.l_separator);
+			this.hbox1.Add(this.eventbox4);
+			global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.eventbox4]));
 			w6.Position = 1;
 			w6.Expand = false;
 			w6.Fill = false;
 			// Container child hbox1.Gtk.Box+BoxChild
-			this.eventbox5 = new global::Gtk.EventBox ();
+			this.eventbox5 = new global::Gtk.EventBox();
 			this.eventbox5.Name = "eventbox5";
 			// Container child eventbox5.Gtk.Container+ContainerChild
-			this.l_sensor_b = new global::Gtk.Label ();
+			this.l_sensor_b = new global::Gtk.Label();
 			this.l_sensor_b.Name = "l_sensor_b";
-			this.l_sensor_b.LabelProp = global::Mono.Unix.Catalog.GetString ("label2");
+			this.l_sensor_b.LabelProp = global::Mono.Unix.Catalog.GetString("label2");
 			this.l_sensor_b.Justify = ((global::Gtk.Justification)(2));
-			this.eventbox5.Add (this.l_sensor_b);
-			this.hbox1.Add (this.eventbox5);
-			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox1 [this.eventbox5]));
+			this.eventbox5.Add(this.l_sensor_b);
+			this.hbox1.Add(this.eventbox5);
+			global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.eventbox5]));
 			w8.Position = 2;
-			this.vbox1.Add (this.hbox1);
-			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox1]));
+			this.vbox1.Add(this.hbox1);
+			global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
 			w9.Position = 1;
 			w9.Expand = false;
 			w9.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.eventbox1 = new global::Gtk.EventBox ();
+			this.eventbox1 = new global::Gtk.EventBox();
 			this.eventbox1.Name = "eventbox1";
-			this.vbox1.Add (this.eventbox1);
-			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox1]));
+			this.vbox1.Add(this.eventbox1);
+			global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.eventbox1]));
 			w10.Position = 2;
-			this.Add (this.vbox1);
-			if ((this.Child != null)) {
-				this.Child.ShowAll ();
+			this.Add(this.vbox1);
+			if ((this.Child != null))
+			{
+				this.Child.ShowAll();
 			}
-			this.Hide ();
+			this.Hide();
 		}
 	}
 }

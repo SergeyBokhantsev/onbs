@@ -3,7 +3,7 @@ using Interfaces.GPS;
 
 namespace Interfaces
 {
-    public interface IGPSController : IController, IMetricsProvider
+    public interface IGPSController : IController
     {
         event Action<GPRMC> GPRMCReseived;
         event Action<string> NMEAReceived;

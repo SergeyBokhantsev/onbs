@@ -148,22 +148,6 @@ namespace GtkApplication.Pages
 		}
 	}
 
-    internal class MetricsBinding : Binding
-    {
-        private readonly Action<IMetrics> updater;
-
-        public MetricsBinding(Action<IMetrics> updater, string propertyName)
-            : base(propertyName)
-        {
-            this.updater = updater;
-        }
-
-        public override void Update(object value)
-        {
-			updater(value as IMetrics);
-        }
-    }
-
 	internal class CustomActionBinding<T> : Binding
 	{
 		private readonly Action<T> action;
@@ -359,12 +343,6 @@ namespace GtkApplication.Pages
             AddBinding(binding);
 			UpdateBinding(binding);
 		}
-
-        public void BindMetrics(Action<IMetrics> updater, string propName)
-        {
-            AssertDisposed();
-            AddBinding(new MetricsBinding(updater, propName));
-        }
 
 		public void BindCustomAction<T>(Action<T> action, string propName)
 		{

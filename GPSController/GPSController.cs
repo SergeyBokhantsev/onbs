@@ -12,12 +12,24 @@ using System.Diagnostics;
 
 namespace GPSController
 {
+    public class GPSMetricsProvider : MetricsProvider
+    {
+        public GenericMetric<int> GPSFrames = new GenericMetric<int>("GPS Frames", 0);
+        public GenericMetric<int> NMEA = new GenericMetric<int>("NMEA", 0);
+        public GenericMetric<int> GPRMC = new GenericMetric<int>("GPRMC", 0);
+        public GenericMetric<GeoPoint> Location = new GenericMetric<GeoPoint>("Location", new GeoPoint());
+
+        public GPSMetricsProvider(ILogger logger)
+            : base(logger)
+        {
+            Initialize(GPSFrames, NMEA, GPRMC, Location);
+        }
+    }
+
     public class GPSController : IGPSController, IFramesAcceptor
     {
         public event Action<Interfaces.GPS.GPRMC> GPRMCReseived;
         public event Action<string> NMEAReceived;
-
-        public event MetricsUpdatedEventHandler MetricsUpdated;
 
         private readonly ONBSSyncContext syncContext;
         private readonly ILogger logger;
@@ -34,6 +46,8 @@ namespace GPSController
 
         private readonly IdleMeter gpsCoordinateIdleMeter = new IdleMeter();
         private GeoPoint idleBasePoint;
+
+        private GPSMetricsProvider metricsProvider;
 
         public GeoPoint Location
         {
@@ -70,6 +84,8 @@ namespace GPSController
             this.config = config;
             this.syncContext = syncContext;
             this.logger = logger;
+
+            metricsProvider = new GPSMetricsProvider(logger);
 
             codec = new STPCodec(
                 new byte[] { (byte)'$' },
@@ -162,28 +178,16 @@ namespace GPSController
 
         private void UpdateMetrics(bool is_error)
         {
-            var handler = MetricsUpdated;
+            metricsProvider.OpenBatch();
 
-            if (handler != null && !shutdown)
-            {
-                var metrics = new Metrics("GPS Controller", 5);
+            metricsProvider.SummaryState = is_error ? ColoredStates.Red : ColoredStates.Normal;
 
-                metrics.Add(0, "GPS Frames", gpsFramesCount);
-                metrics.Add(1, "NMEA", nmeaSentencesCount);
-                metrics.Add(2, "GPRMC", gprmcCount);
-                metrics.Add(3, "Loc", lastGprmc.Location);
-                metrics.Add(4, "_is_error", is_error);
+            metricsProvider.GPSFrames.Value = gpsFramesCount;
+            metricsProvider.NMEA.Value = nmeaSentencesCount;
+            metricsProvider.GPRMC.Value = gprmcCount;
+            metricsProvider.Location.Value = lastGprmc.Location;
 
-                syncContext.Post(PostMetrics, metrics, "GPSController.UpdateMetrics");
-            }
-        }
-
-        private void PostMetrics(object state)
-        {
-            var handler = MetricsUpdated;
-
-            if (handler != null && !shutdown)
-                handler(this, state as Metrics);
+            metricsProvider.CommitBatch();
         }
 
         private void ReadLocation()
@@ -212,7 +216,6 @@ namespace GPSController
 
             GPRMCReseived = null;
             NMEAReceived = null;
-            MetricsUpdated = null;
 
             SaveLocation();
 
