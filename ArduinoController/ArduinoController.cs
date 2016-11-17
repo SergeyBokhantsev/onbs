@@ -330,7 +330,7 @@ namespace ArduinoController
 
             sw.Stop();
 
-            UpdateMetrics(sw.ElapsedMilliseconds);
+			UpdateMetrics(sw.ElapsedTicks);
         }
 
         private void UpdateMetrics(long elapsed)

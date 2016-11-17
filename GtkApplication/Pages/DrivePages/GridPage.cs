@@ -21,6 +21,8 @@ namespace GtkApplication
 
 		private readonly ManualResetEvent mre = new ManualResetEvent(true);
 
+		private readonly object locker = new object();
+
         public TextModelBinder(ITextGrigDataModel dataModel, Gtk.TreeView view)
         {
             if (null == dataModel)
@@ -32,34 +34,66 @@ namespace GtkApplication
             this.dataModel = dataModel;
             this.view = view;
 
-			dataModel.RowChanged += row => LockingInvoke(() => RowChanged(row));
-			dataModel.CellChanged += (arg1, arg2, arg3) => LockingInvoke(() => CellChanged(arg1, arg2, arg3));
-			dataModel.RowInserted += (obj) => LockingInvoke(() => RowInserted(obj));
-			dataModel.RowRemoved += (obj) => LockingInvoke(() => RowRemoved(obj));
+			dataModel.RowChanged += RowChangedHandler;
+			dataModel.CellChanged += CellChangedHandler;
+			//dataModel.RowInserted += (obj) => LockingInvoke(() => RowInserted(obj));
+			//dataModel.RowRemoved += (obj) => LockingInvoke(() => RowRemoved(obj));
 
             CreateModel();
         }
 
-		private void LockingInvoke(Action action)
+		public class TableChangedEventArgs : EventArgs
 		{
-			lock(mre)
-			{
-				if (!mre.WaitOne(5000))
-					return;
+			public int Row { get; set; }
+			public int Column { get; set; }
+			public string Value { get; set; }
+		}
 
+		private void RowChangedHandler(int row)
+		{
+			LockingInvoke (RowChangedHandlerInternal, new TableChangedEventArgs { Row = row });
+		}
+
+		private void RowChangedHandlerInternal(object sender, EventArgs args)
+		{
+			var rArgs = args as TableChangedEventArgs;
+
+			try
+			{
+				viewModel.SetValues(iters[rArgs.Row], dataModel.GetRowValues(rArgs.Row));
+			}
+			finally 
+			{
+				mre.Set();	
+			}
+		}
+
+		private void CellChangedHandler(int row, int column, string value)
+		{
+			LockingInvoke (RowChangedHandlerInternal, new TableChangedEventArgs { Row = row, Column = column, Value = value });
+		}
+
+		private void CellChangedHandlerInternal(object sender, EventArgs args)
+		{
+			var rArgs = args as TableChangedEventArgs;
+
+			try
+			{
+				viewModel.SetValue(iters[rArgs.Row], rArgs.Column, rArgs.Value);
+			}
+			finally 
+			{
+				mre.Set();	
+			}
+		}
+
+		private void LockingInvoke(EventHandler handler, EventArgs args)
+		{
+			lock(locker)
+			{
 				mre.Reset();
 
-				Gtk.Application.Invoke((sender, e) =>
-				{
-					try
-					{
-						action();
-					}
-					finally
-					{
-						mre.Set();
-					}
-				});
+				Gtk.Application.Invoke(this, args, handler);
 
 				mre.WaitOne();
 			}
@@ -113,16 +147,6 @@ namespace GtkApplication
         void RowInserted(int index)
         {
             iters.Insert(index, viewModel.InsertWithValues(index, dataModel.GetRowValues(index)));
-        }
-
-        void RowChanged(int row)
-        {
-            viewModel.SetValues(iters[row], dataModel.GetRowValues(row));
-        }
-
-        void CellChanged(int row, int column, string value)
-        {
-			viewModel.SetValue(iters[row], column, value);
         }
     }
 
