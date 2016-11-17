@@ -281,10 +281,10 @@ namespace TravelControllerNamespace
 
             metricsProvider.SummaryState = metricsError ? ColoredStates.Red : ColoredStates.Normal;
 
-            metricsProvider.Travel.Value = travel != null ? travel.Name : "NO TRAVEL";
-            metricsProvider.State.Value = state.Value;
-            metricsProvider.SendedPoints.Value = metricsSendedPoints;
-            metricsProvider.BufferedPoints.Value = metricsBufferedPoints;
+            metricsProvider.Travel.Set(travel != null ? travel.Name : "NO TRAVEL");
+            metricsProvider.State.Set(state.Value);
+            metricsProvider.SendedPoints.Set(metricsSendedPoints);
+            metricsProvider.BufferedPoints.Set(metricsBufferedPoints);
 
             metricsProvider.CommitBatch();
         }

@@ -370,8 +370,7 @@ namespace HostController.Lin
             }
             finally
             {
-                if (null != pr && !pr.HasExited)
-                    pr.Exit();
+                ProcessRunner.TryExitEndDispose(pr);
             }
         }
 
@@ -462,8 +461,7 @@ namespace HostController.Lin
             }
 			finally
 			{
-				if (null != pr && !pr.HasExited)
-					pr.Exit ();
+                ProcessRunner.TryExitEndDispose(pr);
 			}
         }
 

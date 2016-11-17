@@ -69,10 +69,13 @@ namespace HostController
 
         private bool EnsureSpeakProcess()
         {
-            if (speaker == null || speaker.HasExited)
+            if (speaker == null)
             {
                 try
                 {
+                    if (speaker.HasExited)
+                        ProcessRunner.TryExitEndDispose(speaker);
+
                     var psi = new ProcessStartInfo
                     {
                         FileName = config.GetString(ConfigNames.SpeakerExe),
@@ -95,6 +98,9 @@ namespace HostController
                         logger.Log(this, "Maximum exceptions count reached for Speaker service. Service will be disabled.", LogLevels.Error);
                     }
 
+                    ProcessRunner.TryExitEndDispose(speaker);
+                    speaker = null;
+
                     return false;
                 }
             }
@@ -104,8 +110,7 @@ namespace HostController
 
         public void Shutdown()
         {
-            if (null != speaker && !speaker.HasExited)
-                speaker.Exit();
+            ProcessRunner.TryExitEndDispose(speaker);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace ArduinoController
 {
     public class ArduinoMetricsProvider : MetricsProvider
     {
+        public GenericMetric<string> Message = new GenericMetric<string>("Message", String.Empty);
         public GenericMetric<long> BytesReceived = new GenericMetric<long>("Bytes received", 0);
         public GenericMetric<long> FramesDecoded = new GenericMetric<long>("Frames decoded", 0);
         public GenericMetric<long> ProcessTime = new GenericMetric<long>("Process time", 0);
@@ -23,7 +24,7 @@ namespace ArduinoController
         public ArduinoMetricsProvider(ILogger logger)
             : base(logger, "Arduino Controller")
         {
-            Initialize(BytesReceived, FramesDecoded, ProcessTime, PendingPing);
+            Initialize(Message, BytesReceived, FramesDecoded, ProcessTime, PendingPing);
         }
     }
 
@@ -122,6 +123,7 @@ namespace ArduinoController
                 {
                     var frameData = new byte[] { (byte)ArduinoComands.PingRequest };
                     Send(new STPFrame(frameData, STPFrame.Types.ArduCommand));
+                    MetricMessage("Send PING");
                 }
             }, true, true, "Arduino ping");
         }
@@ -130,6 +132,7 @@ namespace ArduinoController
             if (frame.Data.Length == 0)
             {
                 logger.Log(this, string.Concat("Invalid arduino command frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
+                MetricMessage("Invalid command received", ColoredStates.Yellow);
             }
             else
             {
@@ -142,10 +145,12 @@ namespace ArduinoController
                         {
                             int id = (frame.Data[1] << 8) + frame.Data[2];
                             outcomingQueue.ConfirmFrame((ushort)id);
+                            MetricMessage("Frame confirmation");
                         }
                         else
                         {
                             logger.Log(this, string.Concat("Invalid command confirmation frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
+                            MetricMessage("Frame confirmation invalid", ColoredStates.Yellow);
                         }
                         break;
 
@@ -158,26 +163,32 @@ namespace ArduinoController
                                 resultForFrameType, result, frame.ToString()), LogLevels.Warning);
 
                             LogDump();
+
+                            MetricMessage("Command failed", ColoredStates.Yellow);
                         }
                         else
                         {
                             logger.Log(this, string.Concat("Invalid command result frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
+                            MetricMessage("Invalid command result", ColoredStates.Yellow);
                         }
                         break;
 
                     case ArduinoComands.PingResponce:
                         Interlocked.Exchange(ref ardPingPendings, 0);
                         logger.LogIfDebug(this, "Arduino ping received");
+                        MetricMessage("PING response");
                         break;
 
                     case ArduinoComands.ShutdownSignal:
                         logger.Log(this, "Shutdown signal received from arduino", LogLevels.Info);
                         syncContext.Post(o => hc.Shutdown(HostControllerShutdownModes.Shutdown), null, "ArdController.ProcessArduinoCommand -> hc.Shutdown");
+                        MetricMessage("SHUTDOWN signal");
                         break;
 
                     case ArduinoComands.GetTimeResponse:
                         if (frame.Data.Length == 7)
                         {
+                            MetricMessage("GetTimeResponse");
                             var handler = GetArduinoTimeHandler;
                             logger.Log(this, string.Concat("Get time respone received, ", handler != null ? "handler exist" : "handler doesn't exist"), LogLevels.Info);
                             if (handler != null)
@@ -194,11 +205,13 @@ namespace ArduinoController
                         else
                         {
                             logger.Log(this, string.Concat("Get time respone invalid. Raw bytes: ", frame), LogLevels.Warning);
+                            MetricMessage("Invalid GetTimeResponse", ColoredStates.Yellow);
                         }
                         GetArduinoTimeHandler = null;
                         break;
 
                     case ArduinoComands.LightSensorResponse:
+                        MetricMessage("LightSensorResponse");
                         if (!((LightSensorService)LightSensorService).ProcessResponse(frame))
                         {
                             logger.Log(this, string.Concat("LightSensorResponse is invalid. Raw bytes: ", frame), LogLevels.Warning);
@@ -207,9 +220,15 @@ namespace ArduinoController
 
                     default:
                         logger.Log(this, string.Concat("Unexpected command frame was received. Raw frame: ", frame.ToString()), LogLevels.Warning);
+                        MetricMessage("Unexpected command received");
                         break;
                 }
             }
+        }
+
+        private void MetricMessage(string message, ColoredStates state = ColoredStates.Normal)
+        {
+            metricsProvider.Message.Set(message, state);
         }
 
         private void Send(STPFrame frame)
@@ -339,10 +358,10 @@ namespace ArduinoController
 
             metricsProvider.SummaryState = IsCommunicationOk ? ColoredStates.Normal : ColoredStates.Red;
 
-            metricsProvider.BytesReceived.Value = port.OverallReadedBytes;
-            metricsProvider.FramesDecoded.Value = decodedFramesCount;
-            metricsProvider.ProcessTime.Value = elapsed;
-            metricsProvider.PendingPing.Value = ardPingPendings;
+            metricsProvider.BytesReceived.Set(port.OverallReadedBytes);
+            metricsProvider.FramesDecoded.Set(decodedFramesCount);
+            metricsProvider.ProcessTime.Set(elapsed);
+            metricsProvider.PendingPing.Set(ardPingPendings);
 
             metricsProvider.CommitBatch();
         }

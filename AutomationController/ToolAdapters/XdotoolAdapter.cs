@@ -48,6 +48,10 @@ namespace AutomationController.ToolAdapters
             {
                 logger.Log(this, ex);
             }
+            finally
+            {
+                ProcessRunner.TryExitEndDispose(pr);
+            }
         }
 
         public async Task Key(params Interfaces.AutomationKeys[] key)

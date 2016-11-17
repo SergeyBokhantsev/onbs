@@ -109,6 +109,7 @@ namespace ProcessStateMachine
             }
             catch
             {
+                ProcessRunner.TryExitEndDispose(process);
                 process = null;
                 OnProcessExited();
             }

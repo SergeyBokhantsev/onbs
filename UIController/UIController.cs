@@ -212,15 +212,17 @@ namespace UIController
             return await Task.Run<DialogResults>(() =>
             {
                 var result = DialogResults.None;
-                var signal = new ManualResetEvent(false);
-                
-                model.Closed += dr => { result = dr; signal.Set(); };
 
-                ShowDialog(model);
+                using (var signal = new ManualResetEvent(false))
+                {
+                    model.Closed += dr => { result = dr; signal.Set(); };
 
-                signal.WaitOne();
+                    ShowDialog(model);
 
-                return result;
+                    signal.WaitOne();
+
+                    return result;
+                }
             });
         }
 

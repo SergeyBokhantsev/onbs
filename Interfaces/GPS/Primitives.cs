@@ -138,7 +138,7 @@ namespace Interfaces.GPS
 		}
     }
 
-    public struct GeoPoint
+    public struct GeoPoint : IComparable
     {
         public GeoCoordinate Lat;
         public GeoCoordinate Lon;
@@ -160,6 +160,20 @@ namespace Interfaces.GPS
         public override string ToString()
         {
             return String.Concat(Lat.Degrees.ToString("F4"), ", ", Lon.Degrees.ToString("F4"));
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (null == obj || !(obj is GeoPoint))
+                return 1;
+            
+            var other = (GeoPoint)obj;
+
+            if (Lat.Degrees == other.Lat.Degrees 
+                && Lon.Degrees == other.Lon.Degrees)
+                return 0;
+
+            return 1;
         }
     }
 

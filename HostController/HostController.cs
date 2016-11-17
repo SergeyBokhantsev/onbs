@@ -59,6 +59,8 @@ namespace HostController
 
         private List<object> jobs = new List<object>();
 
+        private ConsoleLoggerWrapper logger;
+
         public IConfig Config
         {
             get
@@ -69,8 +71,10 @@ namespace HostController
 
         public ILogger Logger
         {
-            get;
-            private set;
+            get
+            {
+                return logger;
+            }
         }
         public ONBSSyncContext SyncContext
         {
@@ -209,9 +213,9 @@ namespace HostController
 
             onlineLogger = new TravelsClient.OnlineLogger(Config, new Lazy<SynchronizationContext>(() => SyncContext));
             
-            Logger = new ConsoleLoggerWrapper(new ILogger[] { new GeneralLogger(Config), onlineLogger});
-            Logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
-            Logger.Log(this, string.Format("Environment: {0}", Config.Environment), LogLevels.Info);
+            logger = new ConsoleLoggerWrapper(new ILogger[] { new GeneralLogger(Config), onlineLogger});
+            logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
+            logger.Log(this, string.Format("Environment: {0}", Config.Environment), LogLevels.Info);
 
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
                 {
@@ -267,17 +271,26 @@ namespace HostController
 
             metricsService = new MetricsService(Logger);
 
+            //logger.Metrics = new LogMetrics("Warnings", LogLevels.Warning, 5);
+            //metricsService.RegisterProvider(logger.Metrics);
+
             this.speakService = new SpeakService(Logger, Config);
 
 			this.remoteStorageService = new DropboxService.DropboxService();
 
-            connectionKeeper = new ModemConnectionKeeper.ConnectionKeeper(Config, Logger);
+            var connectionMetrics = new ModemConnectionKeeper.ConnectionMetricsProvider(Logger);
+            MetricsService.RegisterProvider(connectionMetrics);
+
+            connectionKeeper = new ModemConnectionKeeper.ConnectionKeeper(Config, Logger) { Metrics = connectionMetrics };
 
             pinger = new ModemConnectionKeeper.Pinger(
                 config.GetString("PingHost"),
                 config.GetInt("PingInterval"),
                 config.GetInt("PingRequestTimeout"),
-                Logger);
+                Logger)
+                {
+                     Metrics = connectionMetrics
+                };
 
             pinger.ConnectionStatus += OnInternetConnectionStatus;
 

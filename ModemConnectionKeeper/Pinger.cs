@@ -17,6 +17,8 @@ namespace ModemConnectionKeeper
 		private readonly int interval;
 		private readonly int timeout;
 
+        public ConnectionMetricsProvider Metrics { get; set; }
+
 		public Pinger(string host, int interval, int timeout, ILogger logger)
 			:base(CreateRoot_Nix(), logger)
         {
@@ -106,6 +108,9 @@ namespace ModemConnectionKeeper
         protected override void OnNewState(StateDescriptor state, string line)
         {
             OnConnectionStatus(null != state.Tag);
+
+            if (null != Metrics)
+                Metrics.PingMessage.Set(line, ColoredStates.Normal);
         }
 
         private void OnConnectionStatus(bool connected)
@@ -120,6 +125,9 @@ namespace ModemConnectionKeeper
 
         protected override void OnProcessExited()
         {
+            if (null != Metrics)
+                Metrics.PingMessage.Set(string.Concat("EXITED at ", DateTime.Now.ToString()), ColoredStates.Yellow);
+
             Thread.Sleep(5000);
 
             Start();
@@ -128,6 +136,9 @@ namespace ModemConnectionKeeper
 		protected override void OnUnrecognizedLine (string line)
 		{
 			logger.Log (this, string.Concat ("Unrecognized line: ", line), LogLevels.Error);
+
+            if (null != Metrics)
+                Metrics.PingMessage.Set(line, ColoredStates.Red);
 		}
     }
 }

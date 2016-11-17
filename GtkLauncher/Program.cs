@@ -23,6 +23,8 @@ namespace GtkLauncher
 		{
 			var page = new EmptyPageModel("GridPage");
 
+			page.SetProperty(ModelNames.PageTitle, "Page Title");
+
 			var dataModel = new Interfaces.UI.Models.TextGrigDataModel("A", "B", "C");
 
 			dataModel.AddRow("1a", "1b", "1c");
