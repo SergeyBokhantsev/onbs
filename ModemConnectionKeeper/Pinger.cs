@@ -34,7 +34,7 @@ namespace ModemConnectionKeeper
 			var pingCouldNotFineHost = new StateDescriptor("NoHost", StateDescriptor.CreateSubstringPredicates("unknown host"));
 			var pingNoNetwork = new StateDescriptor("NoNetwork", StateDescriptor.CreateSubstringPredicates("Network is unreachable"));
 			var pingStarted = new StateDescriptor("Started", StateDescriptor.CreateRegexPredicates("PING \\S+ \\(\\S+\\) 56\\(84\\) bytes of data."));
-            var pingGood = new StateDescriptor("OK", StateDescriptor.CreateRegexPredicates("64 bytes from \\S+: icmp_seq=\\d+ ttl=\\d+ time=\\S+ ms")) { Tag = string.Empty };
+			var pingGood = new StateDescriptor("OK", StateDescriptor.CreateSubstringPredicates("64 bytes from")) { Tag = string.Empty };
 			var pingTimeout = new StateDescriptor("Timeout", StateDescriptor.CreateSubstringPredicates("out"));
 			var pingEnd = new StateDescriptor("End", StateDescriptor.CreateSubstringPredicates("ping statistics"));
 

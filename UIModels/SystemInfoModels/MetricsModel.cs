@@ -25,6 +25,8 @@ namespace UIModels
             if (null == metricsProvider)
                 throw new ArgumentException("Argument is not of IMetricsProvider type");
 
+			this.Disposing += MetricsModel_Disposing;
+
             metricsProvider.MetricUpdated += MetricUpdated;
             metricsProvider.SummaryStateUpdated += UpdateTitle;
 
@@ -40,6 +42,15 @@ namespace UIModels
             }
 
             SetProperty("grid", grid);
+        }
+
+        void MetricsModel_Disposing (object sender, EventArgs e)
+        {
+			if (null != metricsProvider) 
+			{
+				metricsProvider.MetricUpdated -= MetricUpdated;
+				metricsProvider.SummaryStateUpdated -= UpdateTitle;
+			}
         }
 
         private void UpdateTitle(ColoredStates state)

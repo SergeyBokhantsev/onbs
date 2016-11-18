@@ -67,10 +67,7 @@ namespace ProcessStateMachine
 
         public void Stop()
         {
-            var pr = process;
-
-            if (pr != null)
-                pr.Exit();
+			ProcessRunner.TryExitEndDispose (process);
         }
 
         private void RunProcess()

@@ -61,6 +61,8 @@ namespace HostController
 
         private ConsoleLoggerWrapper logger;
 
+		private bool shutdownRun;
+
         public IConfig Config
         {
             get
@@ -223,6 +225,8 @@ namespace HostController
                     var exceptionFileName = WriteUnhandledException(exception);
                     Logger.Log(this, exception);
                     Logger.Log(this, string.Format("Unhandled exception occured, terminating application. Exception details logged to '{0}'", exceptionFileName), LogLevels.Fatal);
+
+				if (!shutdownRun)
                     Shutdown(HostControllerShutdownModes.UnhandledException).Wait();
                 };
         }
@@ -559,6 +563,8 @@ namespace HostController
 
         public async Task Shutdown(HostControllerShutdownModes mode)
         {
+			shutdownRun = true;
+
             try
             {
                 arduController.RelayService.Enable(Relay.Relay3);
@@ -606,6 +612,7 @@ namespace HostController
                 showLine("Disposing InetKeeper");
                 //netKeeper.Dispose();
                 pinger.Dispose();
+				connectionKeeper.Abort();
                 await Task.Delay(200);
 
                 showLine("Stopping GPSD service");

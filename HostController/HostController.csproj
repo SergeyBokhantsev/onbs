@@ -18,6 +18,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -26,6 +27,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Windows|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -38,6 +40,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>HostController.EntryPoint</StartupObject>
@@ -53,6 +56,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -63,6 +67,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Windows|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -75,6 +80,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <WarningLevel>4</WarningLevel>
     <Optimize>false</Optimize>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -153,7 +159,7 @@
       <Name>MiniDisplayController</Name>
     </ProjectReference>
     <ProjectReference Include="..\ModemConnectionKeeper\ModemConnectionKeeper.csproj">
-      <Project>{5e6634e6-3ef7-46a9-b5d1-52c97fb88340}</Project>
+      <Project>{5E6634E6-3EF7-46A9-B5D1-52C97FB88340}</Project>
       <Name>ModemConnectionKeeper</Name>
     </ProjectReference>
     <ProjectReference Include="..\NixHelpers\NixHelpers.csproj">
@@ -165,7 +171,7 @@
       <Name>ProcessRunner</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProcessStateMachine\ProcessStateMachine.csproj">
-      <Project>{124aa263-c6b0-4eed-a3c9-909824b8f1e9}</Project>
+      <Project>{124AA263-C6B0-4EED-A3C9-909824B8F1E9}</Project>
       <Name>ProcessStateMachine</Name>
     </ProjectReference>
     <ProjectReference Include="..\SerialTransportProtocol\SerialTransportProtocol.csproj">

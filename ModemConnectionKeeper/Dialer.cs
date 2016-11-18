@@ -193,7 +193,7 @@ namespace ModemConnectionKeeper
             if (null != Metrics)
             {
                 Metrics.OpenBatch();
-                Metrics.PingMessage.Set(line);
+				Metrics.DialerMessage.Set(line);
                 Metrics.DialerCriticalErrors.Set(criticalStatesCount);
                 Metrics.CommitBatch();
             }

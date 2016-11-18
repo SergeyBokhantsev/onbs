@@ -116,8 +116,12 @@ namespace HostController
             this.loggers = loggers;
         }
 
+		private readonly object locker = new object();
+
         public void Log(object caller, string message, LogLevels level)
         {
+			lock (locker)
+			{
             if (caller != null && caller is UIModels.ModelBase)
                 WriteToConsole(string.Concat(DateTime.Now, " | ", level, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message));
 
@@ -128,20 +132,22 @@ namespace HostController
 
             OnLogEvent(caller, message, level);
 
-            if (null != Metrics)
-                Metrics.AcceptMessage(message, level);
+            //if (null != Metrics)
+               // Metrics.AcceptMessage(message, level);
+			}
         }
 
         public void Log(object caller, Exception ex)
         {
-            WriteToConsole(string.Concat(ex.Message, Environment.NewLine, ex.StackTrace));
+			lock (locker) {
+				WriteToConsole (string.Concat (ex.Message, Environment.NewLine, ex.StackTrace));
 
-            foreach (var logger in loggers)
-            {
-                logger.Log(caller, ex);
-            }
+				foreach (var logger in loggers) {
+					logger.Log (caller, ex);
+				}
 
-            OnLogEvent(caller, ex.Message, LogLevels.Error);
+				OnLogEvent (caller, ex.Message, LogLevels.Error);
+			}
         }
 
         private void OnLogEvent(object caller, string message, LogLevels level)

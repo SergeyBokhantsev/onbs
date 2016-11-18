@@ -376,7 +376,7 @@ namespace ProcessRunnerNamespace
             bool re = psi.RedirectStandardError;
             bool ri = psi.RedirectStandardInput;
 
-            if (!ro && !re)
+			if (!ro && !re && !disposed)
                 outReadingCompleted.Set();
 
             byte[] roBuffer = new byte[512];
@@ -429,7 +429,8 @@ namespace ProcessRunnerNamespace
 
             cts.Cancel();
 
-            outReadingCompleted.Set();
+			if (!disposed)
+				outReadingCompleted.Set();
 
             OnExited();
         }
@@ -647,8 +648,11 @@ namespace ProcessRunnerNamespace
         {
             if (!disposed)
             {
+				disposed = true;
+
                 if (null != outReadingCompleted)
                 {
+					outReadingCompleted.Set ();
                     outReadingCompleted.Dispose();
                     outReadingCompleted = null;
                 }
@@ -667,8 +671,6 @@ namespace ProcessRunnerNamespace
                         stdError = null;
                     }
                 }
-
-                disposed = true;
             }
         }
     }

@@ -13,6 +13,7 @@ namespace UIModels
     {
         private readonly ILightSensorService lss;
         private readonly LightSensorGuard lsg;
+		private readonly IHostTimer timer;
 
         public LightSensorInfoModel(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor)
@@ -25,7 +26,7 @@ namespace UIModels
 
             this.Disposing += LightSensorInfoModel_Disposing;
 
-            hc.CreateTimer(500, t => ReadSensors(), true, false, "Light sensors reading timer");
+			timer = hc.CreateTimer(500, t => ReadSensors(), true, false, "Light sensors reading timer");
 
             OnMessage("Working...");
         }
@@ -38,6 +39,9 @@ namespace UIModels
 
         private void LightSensorInfoModel_Disposing(object sender, EventArgs e)
         {
+			if (null != timer)
+				timer.Dispose ();
+
             if (lss != null)
                 lss.ReadResult -= Lss_ReadResult;
 

@@ -69,13 +69,16 @@ namespace HostController
 
         private bool EnsureSpeakProcess()
         {
+			if (null != speaker) 
+			{
+				ProcessRunner.TryExitEndDispose (speaker);
+				speaker = null;
+			}
+
             if (speaker == null)
             {
                 try
                 {
-                    if (speaker.HasExited)
-                        ProcessRunner.TryExitEndDispose(speaker);
-
                     var psi = new ProcessStartInfo
                     {
                         FileName = config.GetString(ConfigNames.SpeakerExe),
