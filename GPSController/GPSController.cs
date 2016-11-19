@@ -192,7 +192,7 @@ namespace GPSController
             metricsProvider.GPSFrames.Set(gpsFramesCount);
             metricsProvider.NMEA.Set(nmeaSentencesCount);
             metricsProvider.GPRMC.Set(gprmcCount);
-            metricsProvider.Location.Set(lastGprmc.Location);
+			metricsProvider.Location.Set(lastGprmc.Location, lastGprmc.Active ? ColoredStates.Normal : ColoredStates.Red);
 
             metricsProvider.CommitBatch();
         }

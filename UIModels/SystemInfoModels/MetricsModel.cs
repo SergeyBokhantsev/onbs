@@ -60,8 +60,11 @@ namespace UIModels
 
         private void MetricUpdated(IMetricsProvider sender, IEnumerable<IMetric> metrics)
         {
-            foreach (var m in metrics)
-                grid.Set(indexMap[m], 1, m.ToString());
+			foreach (var m in metrics) 
+			{
+				grid.Set (indexMap [m], 1, m.ToString ());
+				grid.Set (indexMap [m], 2, GetStateText(m.State));
+			}
         }
 
         private string GetStateText(ColoredStates state)

@@ -193,8 +193,8 @@ namespace ModemConnectionKeeper
             if (null != Metrics)
             {
                 Metrics.OpenBatch();
-				Metrics.DialerMessage.Set(line);
-                Metrics.DialerCriticalErrors.Set(criticalStatesCount);
+				Metrics.DialerMessage.Set(line, State);
+				Metrics.DialerCriticalErrors.Set(criticalStatesCount, criticalStatesCount == 0 ? ColoredStates.Normal : ColoredStates.Red);
                 Metrics.CommitBatch();
             }
 

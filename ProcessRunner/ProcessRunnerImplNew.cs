@@ -296,6 +296,8 @@ namespace ProcessRunnerNamespace
 
             this.psi = psi;
 
+			Console.WriteLine ("!!!!!!!!! >> " + psi.FileName + " " + psi.Arguments);
+
             SendCloseWindowSignalWhenExit = true;
             TimeoutBeforeKill = 5000;
 
@@ -424,7 +426,7 @@ namespace ProcessRunnerNamespace
 				if (cycleReaded == -1 && null == riTask)
 					Thread.Sleep (300);
 				else
-					Thread.Sleep (10);
+					Thread.Sleep (1);
             }
 
             cts.Cancel();
