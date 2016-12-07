@@ -304,7 +304,7 @@ namespace TravelControllerNamespace
             {
                 if (bufferedPoints.Any())
                 {
-                    int batchSize = Math.Min(5, bufferedPoints.Count);
+                    int batchSize = Math.Min(10, bufferedPoints.Count);
                     pointsToExport.AddRange(bufferedPoints.Take(batchSize));
                     bufferedPoints.RemoveRange(0, batchSize);
                     metricsBufferedPoints = bufferedPoints.Count;
