@@ -34,6 +34,9 @@ namespace GtkApplication
 
 			CommonBindings.CreateStatusbar (binder, hbox1, style);
 
+			//ENGINE TEMP GAUGE
+			var engTempGauge = new CircularGauge(eventbox_eng_temp, style);
+
 			//CommonBindings.CreateTaskbarButtons (binder, hbox5, style);
             var carousel = new HorizontalCarousel(binder, hbox5, style, model.GetProperty<string>("items_source_prop_name"));
 
@@ -73,9 +76,11 @@ namespace GtkApplication
                 label_air_temp.Markup = CB.CreateMarkup(m_AIR_TEMP, CB.m_FG_WHITE, CB.m_BG_EMPTY, gear)
                 , "gear");
 
-			binder.BindCustomAction<int>(eng_temp =>
-                label_eng_temp.Markup = CB.CreateMarkup(m_ENG_TEMP, CB.m_FG_GRAY_DARK, CB.m_BG_EMPTY, eng_temp > int.MinValue ? string.Concat(eng_temp, "° C") : "NA")
-				, "eng_temp");
+			//binder.BindCustomAction<int>(eng_temp =>
+			//  label_eng_temp.Markup = CB.CreateMarkup(m_ENG_TEMP, CB.m_FG_GRAY_DARK, CB.m_BG_EMPTY, eng_temp > int.MinValue ? string.Concat(eng_temp, "° C") : "NA")
+			//, "eng_temp");
+
+			binder.BindCustomAction<int>(eng_temp => engTempGauge.Value = eng_temp, "eng_temp");
 
 			binder.BindCustomAction<string>(info =>
 				label_cpu_info.Markup = CB.CreateMarkup(m_CPUINFO, CB.m_FG_GRAY_DARK, CB.m_BG_EMPTY, info)

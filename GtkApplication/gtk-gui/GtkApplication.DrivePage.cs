@@ -56,7 +56,7 @@ namespace GtkApplication
 
 		private global::Gtk.Image image_oil_temp;
 
-		private global::Gtk.Label label_eng_temp;
+		private global::Gtk.EventBox eventbox_eng_temp;
 
 		private global::Gtk.HSeparator hseparator1;
 
@@ -320,15 +320,13 @@ namespace GtkApplication
 			global::Gtk.Box.BoxChild w22 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.image_oil_temp]));
 			w22.Position = 0;
 			// Container child hbox2.Gtk.Box+BoxChild
-			this.label_eng_temp = new global::Gtk.Label();
-			this.label_eng_temp.HeightRequest = 50;
-			this.label_eng_temp.Name = "label_eng_temp";
-			this.label_eng_temp.Xalign = 0F;
-			this.label_eng_temp.LabelProp = "<span size=\'14000\'>0 C</span>";
-			this.label_eng_temp.UseMarkup = true;
-			this.hbox2.Add(this.label_eng_temp);
-			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.label_eng_temp]));
+			this.eventbox_eng_temp = new global::Gtk.EventBox();
+			this.eventbox_eng_temp.HeightRequest = 150;
+			this.eventbox_eng_temp.Name = "eventbox_eng_temp";
+			this.hbox2.Add(this.eventbox_eng_temp);
+			global::Gtk.Box.BoxChild w23 = ((global::Gtk.Box.BoxChild)(this.hbox2[this.eventbox_eng_temp]));
 			w23.Position = 1;
+			w23.Expand = false;
 			this.vbox2.Add(this.hbox2);
 			global::Gtk.Box.BoxChild w24 = ((global::Gtk.Box.BoxChild)(this.vbox2[this.hbox2]));
 			w24.Position = 5;

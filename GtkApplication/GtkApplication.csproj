@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -41,6 +40,7 @@
     <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Cairo, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="gtk-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <SpecificVersion>False</SpecificVersion>
@@ -107,6 +107,7 @@
     <Compile Include="gtk-gui\GtkApplication.OBDEngineAndFuel.cs" />
     <Compile Include="Pages\ErrorPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.ErrorPage.cs" />
+    <Compile Include="Pages\DrivePages\GridPage.cs" />
     <Compile Include="Pages\DrivePages\OBD_DTCPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.OBD_DTCPage.cs" />
     <Compile Include="Pages\MultilineView.cs" />
@@ -115,8 +116,8 @@
     <Compile Include="gtk-gui\GtkApplication.FileOptionsPage.cs" />
     <Compile Include="Pages\LightSensorInfoPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.LightSensorInfoPage.cs" />
-    <Compile Include="Pages\DrivePages\GridPage.cs" />
     <Compile Include="gtk-gui\GtkApplication.GridPage.cs" />
+    <Compile Include="Controls\CircularGauge.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">

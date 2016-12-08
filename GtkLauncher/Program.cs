@@ -12,7 +12,7 @@ namespace GtkLauncher
 		{
 			var app = new GtkApplication.App (new ConsoleLogger ());
 
-			app.ShowPage(GetGridPageModel());
+			app.ShowPage(GetDrivePage());
 
 			app.Run(false);
 
@@ -150,6 +150,8 @@ namespace GtkLauncher
 
 				page.SetProperty("travel_span", speed);
 				page.SetProperty("distance", speed * 1000);
+
+				page.SetProperty("eng_temp", DateTime.Now.Millisecond);
 
 				page.SetProperty("location", new GeoPoint(50.56897 + speed/1000, 30.76539 + speed/1000));
 

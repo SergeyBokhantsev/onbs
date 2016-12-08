@@ -646,16 +646,17 @@
                       </packing>
                     </child>
                     <child>
-                      <widget class="Gtk.Label" id="label_eng_temp">
+                      <widget class="Gtk.EventBox" id="eventbox_eng_temp">
                         <property name="MemberName" />
-                        <property name="HeightRequest">50</property>
-                        <property name="Xalign">0</property>
-                        <property name="LabelProp">&lt;span size='14000'&gt;0 C&lt;/span&gt;</property>
-                        <property name="UseMarkup">True</property>
+                        <property name="HeightRequest">150</property>
+                        <child>
+                          <placeholder />
+                        </child>
                       </widget>
                       <packing>
                         <property name="Position">1</property>
                         <property name="AutoSize">False</property>
+                        <property name="Expand">False</property>
                       </packing>
                     </child>
                   </widget>
@@ -2227,6 +2228,13 @@
           <placeholder />
         </child>
       </widget>
+    </child>
+  </widget>
+  <widget class="Gtk.Bin" id="GtkApplication.CircularGauge" design-size="300 300">
+    <property name="MemberName" />
+    <property name="Visible">False</property>
+    <child>
+      <placeholder />
     </child>
   </widget>
 </stetic-interface>
