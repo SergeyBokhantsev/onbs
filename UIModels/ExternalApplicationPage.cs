@@ -26,8 +26,6 @@ namespace UIModels
             {
                 Runner.Exited += RunnerExited;
 
-                this.Disposing += (s, e) => Runner.Exit();
-
                 SetProperty("label_launch_info", string.Format("Launching {0}...", Runner.ToString()));
                 SetProperty("is_error", "0");
             }
@@ -42,8 +40,7 @@ namespace UIModels
 
         void ExternalApplicationPage_Disposing(object sender, EventArgs e)
         {
-            if (null != Runner && !Runner.HasExited)
-                Runner.Exit();
+            ProcessRunner.TryExitEndDispose(Runner);
         }
 
         void RunnerExited(bool unexpected)

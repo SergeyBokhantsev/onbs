@@ -164,17 +164,19 @@ namespace HostController
         /// </summary>
         public override void Send(SendOrPostCallback action, object state)
         {
-            using (var resetEvent = new AutoResetEvent(false))
-            {
-                var item = new SynchronousWorkItem(action, state, resetEvent, null);
-                pumpItems.Enqueue(item);
-                pumpResetEvent.Set();
+			if (!disposed) 
+			{
+				using (var resetEvent = new AutoResetEvent (false)) {
+					var item = new SynchronousWorkItem (action, state, resetEvent, null);
+					pumpItems.Enqueue (item);
+					pumpResetEvent.Set ();
 
-                resetEvent.WaitOne();
+					resetEvent.WaitOne ();
 
-                if (item.Exception != null && Thread.CurrentThread != ownerThread)
-                    throw item.Exception;
-            }
+					if (item.Exception != null && Thread.CurrentThread != ownerThread)
+						throw item.Exception;
+				}
+			}
         }
 
         /// <summary>
@@ -192,13 +194,18 @@ namespace HostController
 
         public override void Post(SendOrPostCallback action, object state, string details)
         {
-			if (action == null) {
-				logger.Log (this, string.Format("NULL '{0}' action provided to POST", details), LogLevels.Error);
-				return;
-			}
+			if (!disposed) 
+			{
+				if (action == null) {
+					logger.Log (this, string.Format ("NULL '{0}' action provided to POST", details), LogLevels.Error);
+					return;
+				}
 
-            pumpItems.Enqueue(new AsynchronousWorkItem(action, state, details));
-            pumpResetEvent.Set();
+				pumpItems.Enqueue (new AsynchronousWorkItem (action, state, details));
+
+				if (!disposed)
+					pumpResetEvent.Set ();
+			}
         }
 
         public void Stop()

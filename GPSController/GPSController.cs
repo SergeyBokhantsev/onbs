@@ -189,10 +189,10 @@ namespace GPSController
 
             metricsProvider.SummaryState = is_error ? ColoredStates.Red : ColoredStates.Normal;
 
-            metricsProvider.GPSFrames.Value = gpsFramesCount;
-            metricsProvider.NMEA.Value = nmeaSentencesCount;
-            metricsProvider.GPRMC.Value = gprmcCount;
-            metricsProvider.Location.Value = lastGprmc.Location;
+            metricsProvider.GPSFrames.Set(gpsFramesCount);
+            metricsProvider.NMEA.Set(nmeaSentencesCount);
+            metricsProvider.GPRMC.Set(gprmcCount);
+			metricsProvider.Location.Set(lastGprmc.Location, lastGprmc.Active ? ColoredStates.Normal : ColoredStates.Red);
 
             metricsProvider.CommitBatch();
         }

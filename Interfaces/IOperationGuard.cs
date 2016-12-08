@@ -14,15 +14,6 @@ namespace Interfaces
     {
         private int busy;
         private bool disposed;
-        private readonly ManualResetEventSlim waitHandler = new ManualResetEventSlim(true);
-
-        public WaitHandle WaitHandle
-        {
-            get
-            {
-                return waitHandler.WaitHandle;
-            }
-        }
 
         public async Task<bool> ExecuteIfFreeAsync(Func<Task> taskAccessor, Action<Exception> exceptionHandler = null)
         {
@@ -30,7 +21,6 @@ namespace Interfaces
             {
                 try
                 {
-                    waitHandler.Reset();
                     await taskAccessor();
                 }
                 catch (AggregateException ex)
@@ -49,7 +39,6 @@ namespace Interfaces
                 finally
                 {
                     Interlocked.Exchange(ref busy, 0);
-                    waitHandler.Set();
                 }
 
                 return true;
@@ -64,7 +53,6 @@ namespace Interfaces
             {
                 try
                 {
-                    waitHandler.Reset();
                     action();
                 }
                 catch (Exception ex)
@@ -75,7 +63,6 @@ namespace Interfaces
                 finally
                 {
                     Interlocked.Exchange(ref busy, 0);
-                    waitHandler.Set();
                 }
 
                 return true;

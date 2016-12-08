@@ -5,56 +5,63 @@ namespace GtkApplication
 	public partial class GridPage
 	{
 		private global::Gtk.VBox vbox1;
-
+		
 		private global::Gtk.EventBox eventbox1;
-
+		
 		private global::Gtk.Label label1;
-
+		
+		private global::Gtk.EventBox eventbox2;
+		
 		private global::Gtk.ScrolledWindow GtkScrolledWindow;
-
+		
 		private global::Gtk.TreeView treeview1;
 
-		protected virtual void Build()
+		protected virtual void Build ()
 		{
-			global::Stetic.Gui.Initialize(this);
+			global::Stetic.Gui.Initialize (this);
 			// Widget GtkApplication.GridPage
-			global::Stetic.BinContainer.Attach(this);
+			global::Stetic.BinContainer.Attach (this);
 			this.Name = "GtkApplication.GridPage";
 			// Container child GtkApplication.GridPage.Gtk.Container+ContainerChild
-			this.vbox1 = new global::Gtk.VBox();
+			this.vbox1 = new global::Gtk.VBox ();
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.eventbox1 = new global::Gtk.EventBox();
+			this.eventbox1 = new global::Gtk.EventBox ();
 			this.eventbox1.Name = "eventbox1";
 			// Container child eventbox1.Gtk.Container+ContainerChild
-			this.label1 = new global::Gtk.Label();
+			this.label1 = new global::Gtk.Label ();
 			this.label1.Name = "label1";
-			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("label1");
-			this.eventbox1.Add(this.label1);
-			this.vbox1.Add(this.eventbox1);
-			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.eventbox1]));
+			this.label1.LabelProp = global::Mono.Unix.Catalog.GetString ("label1");
+			this.label1.UseMarkup = true;
+			this.eventbox1.Add (this.label1);
+			this.vbox1.Add (this.eventbox1);
+			global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox1]));
 			w2.Position = 0;
 			w2.Expand = false;
 			w2.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow();
+			this.eventbox2 = new global::Gtk.EventBox ();
+			this.eventbox2.Name = "eventbox2";
+			// Container child eventbox2.Gtk.Container+ContainerChild
+			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow ();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
 			this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
 			// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
-			this.treeview1 = new global::Gtk.TreeView();
+			this.treeview1 = new global::Gtk.TreeView ();
 			this.treeview1.CanFocus = true;
 			this.treeview1.Name = "treeview1";
-			this.GtkScrolledWindow.Add(this.treeview1);
-			this.vbox1.Add(this.GtkScrolledWindow);
-			global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.GtkScrolledWindow]));
-			w4.Position = 1;
-			this.Add(this.vbox1);
-			if ((this.Child != null))
-			{
-				this.Child.ShowAll();
+			this.treeview1.EnableSearch = false;
+			this.GtkScrolledWindow.Add (this.treeview1);
+			this.eventbox2.Add (this.GtkScrolledWindow);
+			this.vbox1.Add (this.eventbox2);
+			global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.eventbox2]));
+			w5.Position = 1;
+			this.Add (this.vbox1);
+			if ((this.Child != null)) {
+				this.Child.ShowAll ();
 			}
-			this.Hide();
+			this.Hide ();
 		}
 	}
 }

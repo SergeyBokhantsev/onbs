@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Interfaces;
+using ProcessRunnerNamespace;
 
 namespace ModemConnectionKeeperTester
 {
@@ -170,9 +171,36 @@ namespace ModemConnectionKeeperTester
             //    Thread.Sleep (-1);
             //}
 
-            var keeper = new ConnectionKeeper(new Config(), new Logger());
+            //var keeper = new ConnectionKeeper(new Config(), new Logger());
 
-            Thread.Sleep(-1);
+            //Thread.Sleep(-1);
+
+			ThreadStart action = () => {
+
+				var pr = ProcessRunner.ForTool ("sudo", "lsusb");
+				pr.Run();
+				pr.WaitForExit(15000);
+
+			};
+
+			var objs = Enumerable.Range (0, 30000).Select (i => new object ()).ToArray ();
+
+
+			 Enumerable.Range (0, 30).ToList ().ForEach (i => { 
+				new Thread (action).Start ();
+
+			});
+
+			objs = null;
+
+			Enumerable.Range (0, 30).ToList ().ForEach (i => { 
+				new Thread (action).Start ();
+
+			});
+
+			GC.Collect (2, GCCollectionMode.Forced, true);
+
+			Thread.Sleep (100000);
         }
     }
 }

@@ -1,23 +1,28 @@
-﻿<Properties StartupItem="ModemConnectionKeeperTester/ModemConnectionKeeperTester.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ModemConnectionKeeper/ConnectionKeeper.cs">
+﻿<Properties StartupItem="HostController/HostController.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|Mixed Platforms" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="HostController/HostSynchronizationContext.cs">
     <Files>
-      <File FileName="ModemConnectionKeeperTester/Program.cs" Line="22" Column="3" />
-      <File FileName="ModemConnectionKeeper/Pinger.cs" Line="1" Column="1" />
-      <File FileName="ProcessStateMachine/StateMachine.cs" Line="64" Column="1" />
-      <File FileName="ModemConnectionKeeper/Dialer.cs" Line="104" Column="31" />
-      <File FileName="HostController/App.config" Line="160" Column="3" />
-      <File FileName="ModemConnectionKeeper/ConnectionKeeper.cs" Line="92" Column="39" />
-      <File FileName="NixHelpers/LsUsb.cs" Line="52" Column="1" />
-      <File FileName="NixHelpers/ProcessFinder.cs" Line="33" Column="1" />
-      <File FileName="ProcessRunner/ProcessRunnerImplNew.cs" Line="531" Column="1" />
-      <File FileName="HostController/Lin/InternetConnectionKeeper.cs" Line="565" Column="1" />
-      <File FileName="NixHelpers/DmesgFinder.cs" Line="14" Column="92" />
+      <File FileName="GtkApplication/Pages/DrivePages/GridPage.cs" Line="1" Column="1" />
+      <File FileName="ArduinoController/ArduinoController.cs" Line="1" Column="1" />
+      <File FileName="Elm327Controller/Elm327Controller.cs" Line="1" Column="1" />
+      <File FileName="ArduinoController/CommunicationQueue.cs" Line="1" Column="1" />
+      <File FileName="ProcessRunner/ProcessRunnerImplNew.cs" Line="344" Column="4" />
+      <File FileName="ModemConnectionKeeper/Dialer.cs" Line="1" Column="1" />
+      <File FileName="HostController/HostController.cs" Line="1" Column="1" />
+      <File FileName="DashCamController/DashCamController.cs" Line="1" Column="1" />
+      <File FileName="Interfaces/UI/Models/ITextGrigDataModel.cs" Line="1" Column="1" />
+      <File FileName="UIModels/SystemInfoModels/MetricsModel.cs" Line="1" Column="1" />
+      <File FileName="UIModels/SystemInfoModels/MetricsListModel.cs" Line="1" Column="1" />
+      <File FileName="ModemConnectionKeeper/ConnectionKeeper.cs" Line="1" Column="1" />
+      <File FileName="ModemConnectionKeeper/ConnectionMetricsProvider.cs" Line="1" Column="1" />
+      <File FileName="ModemConnectionKeeperTester/Program.cs" Line="1" Column="1" />
+      <File FileName="HostController/HostSynchronizationContext.cs" Line="203" Column="5" />
+      <File FileName="GPSController/GPSController.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/home/pi/onbs/ModemConnectionKeeperTester/Program.cs" line="52" column="1" />
+      <Breakpoint file="/home/pi/onbs/ModemConnectionKeeperTester/Program.cs" line="53" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches>

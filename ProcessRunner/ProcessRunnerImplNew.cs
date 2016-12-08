@@ -11,7 +11,7 @@ using Interfaces;
 
 namespace ProcessRunnerNamespace
 {
-    public class ProcessRunner
+    public class ProcessRunner : IDisposable
     {
         private class LineBuffer
         {
@@ -136,8 +136,7 @@ namespace ProcessRunnerNamespace
             }
             finally
             {
-                if (null != pr && !pr.HasExited)
-                    pr.Exit();
+                TryExitEndDispose(pr);
             }
         }
 
@@ -181,8 +180,7 @@ namespace ProcessRunnerNamespace
             }
             finally
             {
-                if (null != pr && !pr.HasExited)
-                    pr.Exit();
+                TryExitEndDispose(pr);
             }
         }
 
@@ -221,8 +219,22 @@ namespace ProcessRunnerNamespace
             }
             finally
             {
-                if (null != pr && !pr.HasExited)
-                    pr.Exit();
+                TryExitEndDispose(pr);
+            }
+        }
+
+        public static void TryExitEndDispose(ProcessRunner pr)
+        {
+            if (null != pr)
+            {
+                try
+                {
+                    if (!pr.HasExited)
+                        pr.Exit();
+                }
+                catch { }
+
+                pr.Dispose();
             }
         }
 
@@ -249,7 +261,9 @@ namespace ProcessRunnerNamespace
         private bool runCalled;
         private bool exitCalled;
 
-        private readonly ManualResetEvent outReadingCompleted = new ManualResetEvent(false);
+        private bool disposed;
+
+        private ManualResetEvent outReadingCompleted = new ManualResetEvent(false);
 
         private Boxed<bool> exitedEventFired = new Boxed<bool>(false);
 
@@ -282,6 +296,8 @@ namespace ProcessRunnerNamespace
 
             this.psi = psi;
 
+			Console.WriteLine ("!!!!!!!!! >> " + psi.FileName + " " + psi.Arguments);
+
             SendCloseWindowSignalWhenExit = true;
             TimeoutBeforeKill = 5000;
 
@@ -302,16 +318,27 @@ namespace ProcessRunnerNamespace
             }
         }
 
-        void CollectStdError(byte[] buffer, int offset, int count)
+        ~ProcessRunner()
         {
+            Dispose(false);
+        }
+
+        private void CollectStdError(byte[] buffer, int offset, int count)
+        {
+            if (disposed)
+                return;
+
  	        if (null == stdError)
                 stdError = new MemoryStream();
 
             stdError.Write(buffer, offset, count);
         }
 
-        void CollectStdOut(byte[] buffer, int offset, int count)
+        private void CollectStdOut(byte[] buffer, int offset, int count)
         {
+            if (disposed)
+                return;
+
  	        if (null == stdOut)
                 stdOut = new MemoryStream();
 
@@ -320,6 +347,9 @@ namespace ProcessRunnerNamespace
 
         public void Run()
         {
+            if (disposed)
+                throw new ObjectDisposedException("ProcessRunner");
+
             if (runCalled)
                 throw new InvalidOperationException("Process runner already ran");
 
@@ -333,6 +363,9 @@ namespace ProcessRunnerNamespace
 
         public async Task RunAsync()
         {
+            if (disposed)
+                throw new ObjectDisposedException("ProcessRunner");
+
             if (runCalled)
                 throw new InvalidOperationException("Process runner already ran");
 
@@ -345,7 +378,7 @@ namespace ProcessRunnerNamespace
             bool re = psi.RedirectStandardError;
             bool ri = psi.RedirectStandardInput;
 
-            if (!ro && !re)
+			if (!ro && !re && !disposed)
                 outReadingCompleted.Set();
 
             byte[] roBuffer = new byte[512];
@@ -393,12 +426,13 @@ namespace ProcessRunnerNamespace
 				if (cycleReaded == -1 && null == riTask)
 					Thread.Sleep (300);
 				else
-					Thread.Sleep (10);
+					Thread.Sleep (1);
             }
 
             cts.Cancel();
 
-            outReadingCompleted.Set();
+			if (!disposed)
+				outReadingCompleted.Set();
 
             OnExited();
         }
@@ -452,11 +486,17 @@ namespace ProcessRunnerNamespace
 
         public bool SendToStandardInput(byte b)
         {
+            if (disposed)
+                throw new ObjectDisposedException("ProcessRunner");
+
             return stdInBuffer.Add(b);
         }
 
         public bool WaitForExit(int timeoutMilliseconds)
         {
+            if (disposed)
+                throw new ObjectDisposedException("ProcessRunner");
+
             if (proc == null)
                 throw new InvalidOperationException("Process is null");
 
@@ -465,6 +505,9 @@ namespace ProcessRunnerNamespace
 
         public async Task<bool> WaitForExitAsync(int timeoutMilliseconds)
         {
+            if (disposed)
+                throw new ObjectDisposedException("ProcessRunner");
+
             if (proc == null)
                 throw new InvalidOperationException("Process is null");
 
@@ -473,6 +516,9 @@ namespace ProcessRunnerNamespace
 
         public void Exit()
         {
+            if (disposed)
+                throw new ObjectDisposedException("ProcessRunner");
+
             exitCalled = true;
 
 			try
@@ -520,6 +566,9 @@ namespace ProcessRunnerNamespace
 
         public bool ReadStdOut(Action<MemoryStream> accessor)
         {
+            if (disposed)
+                throw new ObjectDisposedException("ProcessRunner");
+
             outReadingCompleted.WaitOne();
 
             if (null != stdOut && null != accessor)
@@ -536,6 +585,9 @@ namespace ProcessRunnerNamespace
 
         public async Task<bool> ReadStdOutAsync(Func<MemoryStream, Task> accessorTask)
         {
+            if (disposed)
+                throw new ObjectDisposedException("ProcessRunner");
+
             await Task.Run(() => outReadingCompleted.WaitOne());
 
             if (null != stdOut && null != accessorTask)
@@ -552,6 +604,9 @@ namespace ProcessRunnerNamespace
 
         public bool ReadStdError(Action<MemoryStream> accessor)
         {
+            if (disposed)
+                throw new ObjectDisposedException("ProcessRunner");
+
             outReadingCompleted.WaitOne();
 
             if (null != stdError && null != accessor)
@@ -568,6 +623,9 @@ namespace ProcessRunnerNamespace
 
         public async Task<bool> ReadStdErrorAsync(Func<MemoryStream, Task> accessorTask)
         {
+            if (disposed)
+                throw new ObjectDisposedException("ProcessRunner");
+
             await Task.Run(() => outReadingCompleted.WaitOne());
 
             if (null != stdError && null != accessorTask)
@@ -580,6 +638,42 @@ namespace ProcessRunnerNamespace
             }
 
             return false;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+				disposed = true;
+
+                if (null != outReadingCompleted)
+                {
+					outReadingCompleted.Set ();
+                    outReadingCompleted.Dispose();
+                    outReadingCompleted = null;
+                }
+
+                if (disposing)
+                {
+                    if (null != stdOut)
+                    {
+                        stdOut.Dispose();
+                        stdOut = null;
+                    }
+
+                    if (null != stdError)
+                    {
+                        stdError.Dispose();
+                        stdError = null;
+                    }
+                }
+            }
         }
     }
 }

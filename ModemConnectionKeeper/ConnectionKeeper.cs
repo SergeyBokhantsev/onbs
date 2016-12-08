@@ -26,6 +26,14 @@ namespace ModemConnectionKeeper
 
         private readonly string wvDialConfigFile;
 
+		private Thread routineThread;
+
+        public ConnectionMetricsProvider Metrics
+        {
+            get { return dialer.Metrics; }
+            set { dialer.Metrics = value; }
+        }
+
         public ConnectionKeeper(IConfig config, ILogger logger)
         {
             if (null == logger)
@@ -49,10 +57,24 @@ namespace ModemConnectionKeeper
 		
             dialer.StateChanged += StateChanged;
 
-            (new Thread(Dial) { IsBackground = true }).Start();
+			StartDial (0);
         }
 
-        void StateChanged()
+		public void Abort()
+		{
+			if (routineThread != null)
+				routineThread.Abort ();
+
+			dialer.Dispose ();
+		}
+
+		private void StartDial(int delay)
+		{
+			routineThread = new Thread (Dial) { IsBackground = true, Name = "Dial thread" };
+			routineThread.Start(delay);
+		}
+
+		private void StateChanged()
         {
 			logger.Log (this, dialer.CurrentStateDescription, LogLevels.Info);
         }
@@ -60,14 +82,13 @@ namespace ModemConnectionKeeper
         void DialerProcessExited()
         {
             logger.Log(this, "Dialer exited, restarting after 10 seconds...", LogLevels.Info);
-
-            Thread.Sleep(10000);
-
-            Dial();
+			StartDial (10000);
         }
 
         private void ResetModem(USBBusDevice modem)
         {
+            MetricMessage("ResetModem()");
+
             var output = ProcessRunner.ExecuteTool("Reset modem", (string o) => o,
                           15000, 
                           "sudo",
@@ -77,11 +98,20 @@ namespace ModemConnectionKeeper
                 throw new Exception(string.Concat("Unable to reset modem: ", output));
         }
 
-        private void Dial()
+        private void MetricMessage(string message, ColoredStates state = ColoredStates.Normal)
+        {
+            if (null != Metrics)
+                Metrics.KeeperMessage.Set(message, state);
+        }
+
+        private void Dial(object arg)
         {
             try
             {
+				Thread.Sleep((int)arg);
+
 				logger.Log(this, "Starting ConnectionKeeper routine", LogLevels.Info);
+                MetricMessage("Dial()");
 
                 KillOtherDialers();
 
@@ -94,19 +124,29 @@ namespace ModemConnectionKeeper
 
 				PrepareConfig();
 
+                MetricMessage("dialer.Start()");
                 dialer.Start();
             }
+			catch (ThreadAbortException)
+			{
+			}
+			catch (TaskCanceledException) 
+			{
+				StartDial (3 * 60000);
+			}
             catch (Exception ex)
             {
+				MetricMessage(string.Concat("EXCEPTION", Environment.NewLine, ex.Message), ColoredStates.Red);
 				logger.Log(this, "ConnectionKeeper routine interrupted with herror, restarting after 10 seconds...", LogLevels.Info);
                 logger.Log(this, ex);
-                Thread.Sleep(10000);
-                Dial();
+				StartDial (10000);
             }
         }
 
 		private void PrepareConfig()
 		{
+            MetricMessage("PrepareConfig()");
+
 			var ttyUsb = FindModem_ttyUSB();
 
 			var dialConfigTemplatePath = Path.Combine (config.DataFolder, "wvdial.conf");
@@ -141,6 +181,8 @@ namespace ModemConnectionKeeper
 
         private void KillOtherDialers()
         {
+            MetricMessage("KillOtherDialers()");
+
 			var psi = new ProcessStartInfo
 			{
 				FileName = "sudo",
@@ -148,17 +190,20 @@ namespace ModemConnectionKeeper
 				UseShellExecute = false
 			};
 
-			var pr = new ProcessRunner(psi, false, false);
-			pr.Run();
-
-			Thread.Sleep(5000);
+            using (var pr = new ProcessRunner(psi, false, false))
+            {
+                pr.Run();
+                pr.WaitForExit(15000);
+            }
         }
 
         private USBBusDevice GetModemDevice()
         {
+			USBBusDevice result;
+
             try
             {
-                return NixHelpers.LsUsb.EnumerateDevices().Single(d =>
+				result = NixHelpers.LsUsb.EnumerateDevices().FirstOrDefault(d =>
                     d.VID.Equals(modemVid, StringComparison.InvariantCultureIgnoreCase)
                     && (d.PID.Equals(modemPid_modemMode, StringComparison.InvariantCultureIgnoreCase) ||
                         d.PID.Equals(modemPid_storageMode, StringComparison.InvariantCultureIgnoreCase)));
@@ -167,10 +212,21 @@ namespace ModemConnectionKeeper
             {
                 throw new Exception(string.Concat("Unable to locate modem device: ", ex.Message), ex);
             }
+
+			if (null == result)
+			{
+				logger.Log (this, "Modem not found", LogLevels.Warning);
+				MetricMessage ("Modem not found", ColoredStates.Red);
+				throw new TaskCanceledException();
+			}
+
+			return result;
         }
 
         private USBBusDevice CheckModem()
         {
+            MetricMessage("CheckModem()");
+
             USBBusDevice modem = null;
 
             int counter = 0;
@@ -242,8 +298,7 @@ namespace ModemConnectionKeeper
             }
             finally
             {
-                if (null != pr && !pr.HasExited)
-                    pr.Exit();
+                ProcessRunner.TryExitEndDispose(pr);
             }
         }
     }

@@ -42,6 +42,8 @@ namespace ModemConnectionKeeper
 
         public ColoredStates State { get; private set; }
 
+        public ConnectionMetricsProvider Metrics { get; set; }
+
 		public Dialer (string configFilePath, ILogger logger)
 			:base(CreateRoot(), logger)
 		{
@@ -187,6 +189,14 @@ namespace ModemConnectionKeeper
 			}
 
 			OnStateChanged();
+
+            if (null != Metrics)
+            {
+                Metrics.OpenBatch();
+				Metrics.DialerMessage.Set(line, State);
+				Metrics.DialerCriticalErrors.Set(criticalStatesCount, criticalStatesCount == 0 ? ColoredStates.Normal : ColoredStates.Red);
+                Metrics.CommitBatch();
+            }
 
 			if (MaximumErrorsCountReached) 
 			{

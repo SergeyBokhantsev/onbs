@@ -281,10 +281,10 @@ namespace TravelControllerNamespace
 
             metricsProvider.SummaryState = metricsError ? ColoredStates.Red : ColoredStates.Normal;
 
-            metricsProvider.Travel.Value = travel != null ? travel.Name : "NO TRAVEL";
-            metricsProvider.State.Value = state.Value;
-            metricsProvider.SendedPoints.Value = metricsSendedPoints;
-            metricsProvider.BufferedPoints.Value = metricsBufferedPoints;
+            metricsProvider.Travel.Set(travel != null ? travel.Name : "NO TRAVEL");
+            metricsProvider.State.Set(state.Value);
+            metricsProvider.SendedPoints.Set(metricsSendedPoints);
+            metricsProvider.BufferedPoints.Set(metricsBufferedPoints);
 
             metricsProvider.CommitBatch();
         }
@@ -304,7 +304,7 @@ namespace TravelControllerNamespace
             {
                 if (bufferedPoints.Any())
                 {
-                    int batchSize = Math.Min(5, bufferedPoints.Count);
+                    int batchSize = Math.Min(10, bufferedPoints.Count);
                     pointsToExport.AddRange(bufferedPoints.Take(batchSize));
                     bufferedPoints.RemoveRange(0, batchSize);
                     metricsBufferedPoints = bufferedPoints.Count;

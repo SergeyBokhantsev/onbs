@@ -21,7 +21,7 @@ namespace DashCamController
         private readonly string pictureExe;
         private readonly string pictureArg;
 
-        private readonly AutoResetEvent monitorEvent = new AutoResetEvent(true);
+        private AutoResetEvent monitorEvent = new AutoResetEvent(true);
         private readonly FileManager fileManager;
 
         private ProcessRunner cameraProcess;
@@ -60,7 +60,7 @@ namespace DashCamController
 
         void Config_Changed(string name)
         {
-            if (name == ConfigNames.DashCamRecorderEnabled)
+			if (name == ConfigNames.DashCamRecorderEnabled && !disposed)
                 monitorEvent.Set();
         }
 
@@ -74,6 +74,9 @@ namespace DashCamController
             while (!disposed)
             {
                 monitorEvent.WaitOne();
+
+				if (disposed)
+					return;
 
                 if (cameraProcess == null || cameraProcess.HasExited)
                 {
@@ -108,7 +111,8 @@ namespace DashCamController
                 pictureOrders.Add(new Tuple<int, int, OrderPictureCallback>(width, height, callback));
             }
 
-            monitorEvent.Set();
+			if (!disposed)
+            	monitorEvent.Set();
         }
 
         private void DoPicture()
@@ -179,7 +183,7 @@ namespace DashCamController
                 }, ms, "Take picture callback");
             }
 
-            if (moreOrders)
+			if (moreOrders && !disposed)
                 monitorEvent.Set();
         }
 
@@ -259,6 +263,9 @@ namespace DashCamController
 						Thread.Sleep(10000);
 					}
 
+					if (disposed)
+						return;
+
 					monitorEvent.Set();
 
                     if (protectCurrent)
@@ -283,7 +290,9 @@ namespace DashCamController
             {
                 hc.Logger.Log(this, ex);
                 Thread.Sleep(5000);
-                monitorEvent.Set();
+
+				if (!disposed)
+                	monitorEvent.Set();
             }
         }
 
@@ -294,8 +303,12 @@ namespace DashCamController
                 disposed = true;
                 hc.Config.Changed -= Config_Changed;
 
-				if (cameraProcess != null && !cameraProcess.HasExited)
-					cameraProcess.Exit();
+				ProcessRunner.TryExitEndDispose (cameraProcess);
+				cameraProcess = null;
+
+				monitorEvent.Set ();
+				monitorEvent.Dispose ();
+				monitorEvent = null;
             }
         }
 

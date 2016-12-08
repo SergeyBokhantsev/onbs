@@ -94,8 +94,7 @@ namespace UIModels
 
         void ExecuteToolModel_Disposing(object sender, EventArgs e)
         {
-            if (null != pr && !pr.HasExited)
-                pr.Exit();
+            ProcessRunner.TryExitEndDispose(pr);
         }
     }
 }

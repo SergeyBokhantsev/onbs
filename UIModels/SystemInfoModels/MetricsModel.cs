@@ -25,24 +25,71 @@ namespace UIModels
             if (null == metricsProvider)
                 throw new ArgumentException("Argument is not of IMetricsProvider type");
 
-            metricsProvider.MetricUpdated += MetricUpdated;
+			this.Disposing += MetricsModel_Disposing;
 
-            grid = new TextGrigDataModel("Metric", "Value");
+            metricsProvider.MetricUpdated += MetricUpdated;
+            metricsProvider.SummaryStateUpdated += UpdateTitle;
+
+            UpdateTitle(metricsProvider.SummaryState);
+
+            grid = new TextGrigDataModel("Metric", "Value", "State");
 
             int index = 0;
             foreach(var m in metricsProvider.Metrics)
             {
-                grid.AddRow(m.Name, m.ToString());
+                grid.AddRow(m.Name, m.ToString(), GetStateText(m.State));
                 indexMap.Add(m, index++);
             }
 
             SetProperty("grid", grid);
         }
 
+        void MetricsModel_Disposing (object sender, EventArgs e)
+        {
+			if (null != metricsProvider) 
+			{
+				metricsProvider.MetricUpdated -= MetricUpdated;
+				metricsProvider.SummaryStateUpdated -= UpdateTitle;
+			}
+        }
+
+        private void UpdateTitle(ColoredStates state)
+        {
+            SetProperty(ModelNames.PageTitle, string.Concat(metricsProvider.Name, " - ", GetStateText(state)));
+        }
+
         private void MetricUpdated(IMetricsProvider sender, IEnumerable<IMetric> metrics)
         {
-            foreach (var m in metrics)
-                grid.Set(indexMap[m], 1, m.ToString());
+			foreach (var m in metrics) 
+			{
+				grid.Set (indexMap [m], 1, m.ToString ());
+				grid.Set (indexMap [m], 2, GetStateText(m.State));
+			}
+        }
+
+        private string GetStateText(ColoredStates state)
+        {
+            switch (state)
+            {
+                case ColoredStates.Normal:
+                    return "OK";
+                case ColoredStates.Red:
+                    return "ERROR";
+                case ColoredStates.Yellow:
+                    return "WARN";
+                case ColoredStates.Blue:
+                    return "Blue";
+                case ColoredStates.DarkGrey:
+                    return "Dark Grey";
+                case ColoredStates.Green:
+                    return "Green";
+                case ColoredStates.Grey:
+                    return "Grey";
+                case ColoredStates.Unknown:
+                    return "Unknown state";
+                default:
+                    return state.ToString();
+            }
         }
     }
 }

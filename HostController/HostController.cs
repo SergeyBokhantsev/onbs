@@ -59,6 +59,10 @@ namespace HostController
 
         private List<object> jobs = new List<object>();
 
+        private ConsoleLoggerWrapper logger;
+
+		private bool shutdownRun;
+
         public IConfig Config
         {
             get
@@ -69,8 +73,10 @@ namespace HostController
 
         public ILogger Logger
         {
-            get;
-            private set;
+            get
+            {
+                return logger;
+            }
         }
         public ONBSSyncContext SyncContext
         {
@@ -209,9 +215,9 @@ namespace HostController
 
             onlineLogger = new TravelsClient.OnlineLogger(Config, new Lazy<SynchronizationContext>(() => SyncContext));
             
-            Logger = new ConsoleLoggerWrapper(new ILogger[] { new GeneralLogger(Config), onlineLogger});
-            Logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
-            Logger.Log(this, string.Format("Environment: {0}", Config.Environment), LogLevels.Info);
+            logger = new ConsoleLoggerWrapper(new ILogger[] { new GeneralLogger(Config), onlineLogger});
+            logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
+            logger.Log(this, string.Format("Environment: {0}", Config.Environment), LogLevels.Info);
 
             AppDomain.CurrentDomain.UnhandledException += (s, e) =>
                 {
@@ -219,6 +225,8 @@ namespace HostController
                     var exceptionFileName = WriteUnhandledException(exception);
                     Logger.Log(this, exception);
                     Logger.Log(this, string.Format("Unhandled exception occured, terminating application. Exception details logged to '{0}'", exceptionFileName), LogLevels.Fatal);
+
+				if (!shutdownRun)
                     Shutdown(HostControllerShutdownModes.UnhandledException).Wait();
                 };
         }
@@ -267,17 +275,26 @@ namespace HostController
 
             metricsService = new MetricsService(Logger);
 
+            //logger.Metrics = new LogMetrics("Warnings", LogLevels.Warning, 5);
+            //metricsService.RegisterProvider(logger.Metrics);
+
             this.speakService = new SpeakService(Logger, Config);
 
 			this.remoteStorageService = new DropboxService.DropboxService();
 
-            connectionKeeper = new ModemConnectionKeeper.ConnectionKeeper(Config, Logger);
+            var connectionMetrics = new ModemConnectionKeeper.ConnectionMetricsProvider(Logger);
+            MetricsService.RegisterProvider(connectionMetrics);
+
+            connectionKeeper = new ModemConnectionKeeper.ConnectionKeeper(Config, Logger) { Metrics = connectionMetrics };
 
             pinger = new ModemConnectionKeeper.Pinger(
                 config.GetString("PingHost"),
                 config.GetInt("PingInterval"),
                 config.GetInt("PingRequestTimeout"),
-                Logger);
+                Logger)
+                {
+                     Metrics = connectionMetrics
+                };
 
             pinger.ConnectionStatus += OnInternetConnectionStatus;
 
@@ -546,6 +563,8 @@ namespace HostController
 
         public async Task Shutdown(HostControllerShutdownModes mode)
         {
+			shutdownRun = true;
+
             try
             {
                 arduController.RelayService.Enable(Relay.Relay3);
@@ -593,6 +612,7 @@ namespace HostController
                 showLine("Disposing InetKeeper");
                 //netKeeper.Dispose();
                 pinger.Dispose();
+				connectionKeeper.Abort();
                 await Task.Delay(200);
 
                 showLine("Stopping GPSD service");
