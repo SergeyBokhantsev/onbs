@@ -607,13 +607,7 @@ namespace HostController
 
                 showLine("Disposing Travel Controller");
                 await travelController.ShutdownAsync();
-                await Task.Delay(200);
-
-                showLine("Disposing InetKeeper");
-                //netKeeper.Dispose();
-                pinger.Dispose();
-				connectionKeeper.Abort();
-                await Task.Delay(200);
+                await Task.Delay(200);             
 
                 showLine("Stopping GPSD service");
                 gpsd.Stop();
@@ -650,6 +644,12 @@ namespace HostController
                 showLine("Flushing online log");
 
                 await onlineLogger.DisableAndUpload(30000);
+
+                showLine("Disposing InetKeeper");
+                //netKeeper.Dispose();
+                pinger.Dispose();
+                connectionKeeper.Abort();
+                await Task.Delay(200);
 
                 showLine("Stopping UI...");
 
