@@ -12,8 +12,8 @@ public partial class MainWindow
 		this.Name = "MainWindow";
 		this.Title = global::Mono.Unix.Catalog.GetString("MainWindow");
 		this.WindowPosition = ((global::Gtk.WindowPosition)(4));
-		this.DefaultWidth = 800;
-		this.DefaultHeight = 480;
+		this.DefaultWidth = 1280;
+		this.DefaultHeight = 800;
 		if ((this.Child != null))
 		{
 			this.Child.ShowAll();

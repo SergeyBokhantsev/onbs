@@ -6,6 +6,8 @@ using GtkApplication.Pages;
 using Interfaces.GPS;
 using CB = GtkApplication.CommonBindings;
 using GtkApplication.Controls;
+using System.IO;
+using Gdk;
 
 namespace GtkApplication
 {
@@ -25,6 +27,8 @@ namespace GtkApplication
 		private const string m_HEADING = "<span {0} {1} size='20000'>{2}</span>";
 		private const string m_AIR_TEMP = "<span {0} {1} size='34000'>{2}</span>";
 		private const string m_ENG_TEMP = "<span {0} {1} size='14000'>{2}</span>";
+
+		private const string m_MESSAGE = "<span {0} {1} font_style='italic' font_weight='bold' size='14000'>{2}</span>";
 
 		public DrivePage (IPageModel model, Style style, ILogger logger)
 		{
@@ -89,6 +93,35 @@ namespace GtkApplication
 			binder.BindCustomAction<string>(icon_path => image_weather_icon.File = icon_path, "weather_icon");
 
 			binder.BindCustomAction<string>(icon_path => image_oil_temp.File = icon_path, "oil_temp_icon");
+
+			binder.BindCustomAction<object>(message =>
+				label_last_message.Markup = CB.CreateMarkup(m_MESSAGE, CB.m_FG_GRAY, CB.m_BG_EMPTY, message)
+				, "message");
+
+			binder.BindCustomAction<Stream>(imageStream =>
+			   {
+				   try
+				   {
+					   //ONLY MEMORY STREAMS IMPL.
+					   var stream = imageStream as MemoryStream;
+
+					   if (stream != null)
+					   {
+						   var loader = new PixbufLoader();
+						   loader.Write(stream.ToArray());
+						   loader.Close();
+						   image_map.Pixbuf = loader.Pixbuf;
+					   }
+					   else
+					   {
+						   image_map.Clear();
+					   }
+				   }
+				   catch (Exception ex)
+				   {
+					   model.SetProperty("message", ex.Message);
+				   }
+			   }, "map_image_stream");
 
 			binder.UpdateBindings ();
 		}

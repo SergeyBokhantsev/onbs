@@ -18,13 +18,13 @@ namespace UIModels
             this.weather = new WeatherProvider(hc.Logger, hc.Config.DataFolder);
         }
 
-        protected override void OnSecondaryTimer(IHostTimer timer)
+        protected override Task OnSecondaryTimer()
         {
             UpdateWeatherForecast();
-            base.OnSecondaryTimer(timer);
+            return base.OnSecondaryTimer();
         }
 
-        private async void UpdateWeatherForecast()
+        private void UpdateWeatherForecast()
         {
             //forecast f = null;
 

@@ -12,6 +12,7 @@ using System.IO;
 using UIModels.MultipurposeModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using HttpServiceNamespace;
 
 namespace UIModels
 {
@@ -64,6 +65,8 @@ namespace UIModels
 
         private static int focusedItemIndex;
 
+        private readonly ILogger logger;
+
         private readonly ITravelController tc;
 
         private readonly WeatherProvider weather;
@@ -75,6 +78,7 @@ namespace UIModels
         private readonly IOperationGuard engineCoolantTempGuard = new TimedGuard(new TimeSpan(0, 0, 30));
         private readonly IOperationGuard minidisplayGuard = new TimedGuard(new TimeSpan(0, 0, 2));
         private readonly IOperationGuard cpuInfoGuard = new TimedGuard(new TimeSpan(0, 0, 10));
+        private readonly IOperationGuard mapDownloadGuard = new TimedGuard(new TimeSpan(0, 1, 0));
 
         private readonly DriveMiniDisplayModel miniDisplayModel;
 
@@ -83,13 +87,19 @@ namespace UIModels
 
         private readonly DriveStatusReporter reporter;
 
+        private readonly StaticMapProvider mapProvider;
+
         public DrivePage(string viewName, IHostController hc, MappedPage pageDescriptor)
             : base(viewName, hc, pageDescriptor, focusedItemIndex)
         {
+            this.mapProvider = new StaticMapProvider();
+
             elm = hc.GetController<IElm327Controller>();
             obdProcessor = new OBDProcessor(elm);
 
             miniDisplayModel = new DriveMiniDisplayModel(hc, pageDescriptor.Name);
+
+            this.logger = hc.Logger;
 
             this.tc = hc.GetController<ITravelController>();
 
@@ -103,18 +113,31 @@ namespace UIModels
             gpsController.GPRMCReseived += GPRMCReseived;
 
             reporter = new DriveStatusReporter(hc.Logger, hc.SpeakService);
+
+            logger.LogEvent += Logger_LogEvent;
         }
 
-        protected override void OnSecondaryTimer(IHostTimer timer)
+        void Logger_LogEvent(object caller, string message, LogLevels level)
+        {
+            if (level < LogLevels.Info)
+                SetProperty("message", string.Concat(null != caller 
+                                                         ? string.Concat(caller.GetType(), ": ")
+                                                         : null, 
+                                                     message));
+        }
+
+        protected override Task OnSecondaryTimer()
         {
             if (!Disposed)
             {
                 //weatherGuard.ExecuteIfFreeAsync(UpdateWeatherForecast);
             }
 
+
+
 			//hc.GetController<IDashCamController> ().ScheduleTakePicture (pict);
 
-            base.OnSecondaryTimer(timer);
+            return base.OnSecondaryTimer();
         }
 
 		void pict(MemoryStream p)
@@ -139,6 +162,27 @@ namespace UIModels
                 default:
                     await base.DoAction(name, actionArgs);
                     break;
+            }
+        }
+
+        private async Task UpdateMap()
+        {
+            if (hc.Config.IsInternetConnected)
+            {
+                var location = hc.GetController<IGPSController>().Location;
+                SetProperty("status", "Loading...");
+                SetProperty("map_image_stream", null);
+
+                var result = await mapProvider.GetMapAsync(location, 540, 330, 16, MapLayers.sat | MapLayers.skl);
+
+                if (result.Success)
+                {
+                    SetProperty("map_image_stream", result.Value);
+                }
+                else
+                {
+                    hc.Logger.Log(this, result.ErrorMessage, LogLevels.Warning);
+                }
             }
         }
 
@@ -244,7 +288,7 @@ namespace UIModels
             miniDisplayModel.Draw();
         }
 
-        protected override void OnPrimaryTick(IHostTimer timer)
+        protected override async Task OnPrimaryTick()
         {
             if (!Disposed)
             {
@@ -252,12 +296,16 @@ namespace UIModels
                 SetProperty("travel_span", tc.TravelTime.TotalMinutes);
                 SetProperty("distance", tc.TravelDistance);
 
-                obdGuard.ExecuteIfFreeAsync(async () => await UpdateOBD());
-                minidisplayGuard.ExecuteIfFree(UpdateMiniDisplay);
-                cpuInfoGuard.ExecuteIfFreeAsync(async () => await UpdateCpuInfo(), ex => SetProperty("cpu_info", "Error"));
+                await Task.WhenAll(
+                    obdGuard.ExecuteIfFreeAsync(async () => await UpdateOBD()),
+                    cpuInfoGuard.ExecuteIfFreeAsync(async () => await UpdateCpuInfo(), ex => SetProperty("cpu_info", "Error")),
+                    mapDownloadGuard.ExecuteIfFreeAsync(async () => await UpdateMap())
+                    );
+
+                minidisplayGuard.ExecuteIfFree(UpdateMiniDisplay);                
             }
 
-            base.OnPrimaryTick(timer);
+            await base.OnPrimaryTick();
         }
 
         private async Task UpdateCpuInfo()
@@ -278,10 +326,17 @@ namespace UIModels
 
         protected override void OnDisposing(object sender, EventArgs e)
         {
+            logger.LogEvent -= Logger_LogEvent;
+
             focusedItemIndex = SelectedIndexAbsolute;
 
             weatherGuard.Dispose();
             geocoderGuard.Dispose();
+            obdGuard.Dispose();
+            engineCoolantTempGuard.Dispose();
+            minidisplayGuard.Dispose();
+            cpuInfoGuard.Dispose();
+            mapDownloadGuard.Dispose();
 
             gpsController.GPRMCReseived -= GPRMCReseived;
             base.OnDisposing(sender, e);

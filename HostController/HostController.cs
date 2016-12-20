@@ -269,6 +269,11 @@ namespace HostController
             }
         }
 
+        private void InitConnectionKeeper()
+        {
+
+        }
+
         private async Task Initialize()
         {
             ServicePointManager.ServerCertificateValidationCallback = (s1, s2, s3, s4) => true;
@@ -296,7 +301,14 @@ namespace HostController
                      Metrics = connectionMetrics
                 };
 
-            pinger.ConnectionStatus += OnInternetConnectionStatus;
+            if (Config.Environment == Environments.RPi)
+            {
+                pinger.ConnectionStatus += OnInternetConnectionStatus;
+            }
+            else
+            {
+                OnInternetConnectionStatus(true);
+            }
 
             pinger.Start();
 

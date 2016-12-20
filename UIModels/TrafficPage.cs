@@ -43,10 +43,10 @@ namespace UIModels
             }
         }
 
-        protected override void OnSecondaryTimer(IHostTimer timer)
+        protected override async Task OnSecondaryTimer()
         {
-			hc.SyncContext.Post (async (object state) => await RefreshTraffic (), null);
-            base.OnSecondaryTimer(timer);
+            await RefreshTraffic();
+            await base.OnSecondaryTimer();
         }
 
 		private async Task RefreshTraffic()

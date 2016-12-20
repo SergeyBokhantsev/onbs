@@ -12,8 +12,8 @@
     <property name="HeightRequest">480</property>
     <property name="Title" translatable="yes">MainWindow</property>
     <property name="WindowPosition">CenterOnParent</property>
-    <property name="DefaultWidth">800</property>
-    <property name="DefaultHeight">480</property>
+    <property name="DefaultWidth">1280</property>
+    <property name="DefaultHeight">800</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>
       <placeholder />
@@ -319,6 +319,20 @@
           </packing>
         </child>
         <child>
+          <widget class="Gtk.Label" id="label_last_message">
+            <property name="MemberName" />
+            <property name="HeightRequest">54</property>
+            <property name="LabelProp" translatable="yes">No message</property>
+            <property name="UseMarkup">True</property>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <widget class="Gtk.HBox" id="hbox4">
             <property name="MemberName" />
             <property name="Spacing">6</property>
@@ -410,6 +424,17 @@
                   </widget>
                   <packing>
                     <property name="Position">2</property>
+                    <property name="AutoSize">True</property>
+                    <property name="Expand">False</property>
+                    <property name="Fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="Gtk.Image" id="image_map">
+                    <property name="MemberName" />
+                  </widget>
+                  <packing>
+                    <property name="Position">3</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>
@@ -518,7 +543,7 @@
                   </widget>
                   <packing>
                     <property name="PackType">End</property>
-                    <property name="Position">3</property>
+                    <property name="Position">4</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>
@@ -531,7 +556,7 @@
                   </widget>
                   <packing>
                     <property name="PackType">End</property>
-                    <property name="Position">4</property>
+                    <property name="Position">5</property>
                     <property name="AutoSize">True</property>
                     <property name="Expand">False</property>
                     <property name="Fill">False</property>
@@ -677,7 +702,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">2</property>
+            <property name="Position">3</property>
             <property name="AutoSize">False</property>
           </packing>
         </child>
@@ -686,7 +711,7 @@
             <property name="MemberName" />
           </widget>
           <packing>
-            <property name="Position">3</property>
+            <property name="Position">4</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -704,7 +729,7 @@
           </widget>
           <packing>
             <property name="PackType">End</property>
-            <property name="Position">4</property>
+            <property name="Position">5</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
           </packing>

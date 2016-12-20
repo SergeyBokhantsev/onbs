@@ -3,6 +3,7 @@ using Interfaces.UI;
 using Interfaces;
 using System.Threading;
 using Interfaces.GPS;
+using System.IO;
 
 namespace GtkLauncher
 {
@@ -136,6 +137,11 @@ namespace GtkLauncher
 			var page = new EmptyPageModel ("DrivePage");
             
 			double speed = 0;
+
+			page.SetProperty("message", "Working with File Permissions on Your Raspberry Pi - dummies" + Environment.NewLine  +
+			                 "www.dummies.com/.../raspberry-pi/working-with-file-permi...");
+
+			page.SetProperty("map_image_stream", new MemoryStream(File.ReadAllBytes("Data\\sample_map.png")));
 
 			var timer = new Timer (new TimerCallback (o =>
 			{

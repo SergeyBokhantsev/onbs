@@ -42,7 +42,7 @@ namespace GtkApplication
                         var loader = new PixbufLoader();
                         loader.Write(stream.ToArray());
                         loader.Close();
-                        image_traffic.Pixbuf = loader.Pixbuf;
+                        image_traffic.Pixbuf = loader.Pixbuf.ScaleSimple((int)((double)image_traffic.Allocation.Width * 0.8), image_traffic.Allocation.Height, InterpType.Bilinear);
                     }
                     else if (daisy != null)
                     {
