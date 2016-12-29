@@ -81,7 +81,7 @@ namespace HostController
         private class TimerInfo
         {
             public HostTimer Timer;
-            public DateTime LastExecutionTime;
+            public int LastExecutionTime;
             public string Details;
         }
 
@@ -120,7 +120,7 @@ namespace HostController
             lock(timers)
             {
                 timers.Add(new TimerInfo { Timer = timer, 
-                                           LastExecutionTime = firstEventImmidiatelly ? DateTime.MinValue : DateTime.Now,
+                                           LastExecutionTime = firstEventImmidiatelly ? int.MinValue : Environment.TickCount,
                                            Details = details });
             }
 
@@ -134,10 +134,10 @@ namespace HostController
 
             while (!disposed)
             {
-                if (waitTime != 0)
+                if (waitTime > 0)
                     schedulerSignal.WaitOne(waitTime);
 
-                var now = DateTime.Now;
+                var now = Environment.TickCount;
 
                 lock (timers)
                 {
@@ -151,7 +151,7 @@ namespace HostController
                         {
                             int nextExecutionSpan;
 
-                            if (info.LastExecutionTime.AddMilliseconds(info.Timer.Span) <= now)
+                            if (info.LastExecutionTime + info.Timer.Span <= now)
                             {
                                 syncContext.Post(PostTimerExecution, info.Timer, info.Details);
                                 info.LastExecutionTime = now;
@@ -159,7 +159,7 @@ namespace HostController
                             }
                             else
                             {
-                                nextExecutionSpan = Math.Max(0, info.Timer.Span - (int)(now - info.LastExecutionTime).TotalMilliseconds);
+                                nextExecutionSpan = Math.Max(0, info.Timer.Span - (now - info.LastExecutionTime));
                             }
 
                             if (waitTime == -1 || waitTime > nextExecutionSpan)

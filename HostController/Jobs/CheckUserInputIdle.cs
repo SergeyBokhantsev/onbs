@@ -13,7 +13,7 @@ namespace HostController.Jobs
     {
         private readonly IHostController hc;
 
-        private IOperationGuard locker = new InterlockedGuard();
+        private ManualResetGuard locker = new ManualResetGuard();
 
         public CheckUserInputIdle(IHostController hc)
         {
@@ -25,11 +25,20 @@ namespace HostController.Jobs
         {
             var maxIdleTime = hc.Config.GetInt(ConfigNames.TurnOffAftrerInputIdleMinutes);
 
-            if (hc.GetController<IInputController>().IddleMinutes >= maxIdleTime
-                && hc.GetController<IUIController>().UserIdleMinutes >= maxIdleTime
-                && hc.GetController<IGPSController>().IdleMinutes >= maxIdleTime)
+            var inputIdleMinutes = hc.GetController<IInputController>().IddleMinutes;
+            var uiIdleMinutes = hc.GetController<IUIController>().UserIdleMinutes;
+            var gpsIdleMinutes = hc.GetController<IGPSController>().IdleMinutes;
+
+            if ( inputIdleMinutes >= maxIdleTime
+                && uiIdleMinutes >= maxIdleTime
+                && gpsIdleMinutes >= maxIdleTime)
             {
+                hc.Logger.Log(this, string.Format("System idling detected. Input idle for {0} minutes, UI idle for {1} minutes, GPS idle for {2} minutes", inputIdleMinutes, uiIdleMinutes, gpsIdleMinutes), LogLevels.Info);
                 hc.SyncContext.Post(async state => await ShowDialog(state), maxIdleTime, "CheckUserInputIdle Showdialog call");
+            }
+            else
+            {
+                locker.Reset();
             }
         }
 
@@ -43,6 +52,10 @@ namespace HostController.Jobs
             {
                 hc.Logger.Log(this, string.Format("Turning off system because of user's inactivity for {0} minutes", iddleTime), LogLevels.Info);
                 hc.SyncContext.Post(o => hc.Shutdown(HostControllerShutdownModes.Shutdown), null, "Shutdown call from CheckUserInputIddle");
+            }
+            else
+            {
+                locker.Reset();
             }
         }
     }
