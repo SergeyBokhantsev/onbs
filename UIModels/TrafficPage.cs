@@ -11,7 +11,7 @@ namespace UIModels
     {
         private readonly StaticMapProvider provider;
 
-        private readonly ManualResetGuard downloadOperationScope = new ManualResetGuard();
+        private readonly ManualResetGuard downloadOperationScope;
         private readonly int[] scales = new[] { 13, 12, 8 }; 
         private int scale;
 
@@ -21,6 +21,9 @@ namespace UIModels
             this.provider = new StaticMapProvider();
 
             SetProperty("daisy_path", Path.Combine(hc.Config.DataFolder, "loader_small.gif"));
+
+            downloadOperationScope = CreateDisposable(() => new ManualResetGuard());
+            StartTimer(30000, RefreshTraffic, true, "RefreshTraffic");
         }
 
 		protected override async Task DoAction(string name, PageModelActionEventArgs actionArgs)
@@ -30,11 +33,11 @@ namespace UIModels
                 case "Scale":
                     if (++scale == scales.Length) scale = 0;
                     SetProperty("traffic_image_stream", null);
-					await RefreshTraffic();
+					RefreshTraffic(null);
                     break;
 
                 case "Refresh":
-					await RefreshTraffic();
+					RefreshTraffic(null);
                     break;
 
 			default:
@@ -43,15 +46,29 @@ namespace UIModels
             }
         }
 
-        protected override async Task OnSecondaryTimer()
+		private void RefreshTraffic(IHostTimer timer)
         {
-            await RefreshTraffic();
-            await base.OnSecondaryTimer();
-        }
-
-		private async Task RefreshTraffic()
-        {
-			await downloadOperationScope.ExecuteIfFreeAsync(() => BeginDownload(), OnDownloadException);
+            downloadOperationScope.ExecuteIfFree(() =>
+            {
+                if (!Disposed)
+                {
+                    hc.SyncContext.Post(async (state) =>
+                    {
+                        try
+                        {
+                            await BeginDownload();
+                        }
+                        catch (Exception ex)
+                        {
+                            hc.Logger.Log(this, ex);
+                        }
+                        finally
+                        {
+                            downloadOperationScope.Reset();
+                        }
+                    }, null, "RefreshTraffic");
+                }
+            }, ex => hc.Logger.Log(this, ex));
         }
 
         private void OnDownloadException(Exception ex)
@@ -62,7 +79,7 @@ namespace UIModels
 
         private async Task BeginDownload()
         {
-            if (hc.Config.IsInternetConnected)
+            if (!Disposed && hc.Config.IsInternetConnected)
             {
                 var location = hc.GetController<IGPSController>().Location;
                 SetProperty("status", "Loading...");
@@ -80,8 +97,6 @@ namespace UIModels
                     SetProperty("status", result.ErrorMessage);
                     SetProperty("traffic_image_stream", new MemoryStream(File.ReadAllBytes(Path.Combine(hc.Config.DataFolder, "error.png"))));
                 }
-
-                downloadOperationScope.Reset();
             }
         }
     }

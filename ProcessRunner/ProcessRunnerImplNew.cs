@@ -296,8 +296,6 @@ namespace ProcessRunnerNamespace
 
             this.psi = psi;
 
-			Console.WriteLine ("!!!!!!!!! >> " + psi.FileName + " " + psi.Arguments);
-
             SendCloseWindowSignalWhenExit = true;
             TimeoutBeforeKill = 5000;
 

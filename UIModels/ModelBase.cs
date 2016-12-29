@@ -17,6 +17,8 @@ namespace UIModels
 
         public event EventHandler Disposing;
 
+        private List<IDisposable> disposables = new List<IDisposable>(10);
+
         private readonly Dictionary<string, object> properties = new Dictionary<string, object>();
 
         protected readonly IHostController hc;
@@ -168,6 +170,19 @@ namespace UIModels
         {            
         }
 
+        protected T CreateDisposable<T>(Func<T> constructor)
+            where T : IDisposable
+        {
+            var obj = constructor();
+            disposables.Add(obj);
+            return obj;
+        }
+
+        protected void StartTimer(int span, Action<IHostTimer> action, bool firstEventImmidiatelly, string name)
+        {
+            CreateDisposable(() => hc.CreateTimer(span, action, true, firstEventImmidiatelly, name));
+        }
+
         public void Action(PageModelActionEventArgs actionArgs)
         {
             hc.Logger.LogIfDebug(this, string.Format("Performing PageModel action '{0}'", actionArgs.ActionName));
@@ -214,6 +229,8 @@ namespace UIModels
             if (!Disposed)
             {
                 Disposed = true;
+
+                disposables.ForEach(d => d.Dispose());
 
                 hc.Logger.LogIfDebug(this, string.Format("Performing PageModel disposing: '{0}'", this.GetType().Name));
 
