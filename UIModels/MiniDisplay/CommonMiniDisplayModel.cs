@@ -41,6 +41,7 @@ namespace UIModels.MiniDisplay
 
             var g = mdc.Graphics;
 
+            g.Invert(false);
             g.Cls();
 
            // DrawTick(g);

@@ -289,6 +289,8 @@ namespace ProcessRunnerNamespace
 
         public bool HasExited { get { return proc != null && proc.HasExited; } }
 
+        public ILogger Logger { get; set; }
+
         public ProcessRunner(ProcessStartInfo psi, bool collectOutput, bool collectError)
         {
             if (null == psi)
@@ -386,11 +388,24 @@ namespace ProcessRunnerNamespace
             }
         }
 
+        [Conditional("DEBUG")]
+        private void Log(string message)
+        {
+            var logger = Logger;
+
+            if (null != logger)
+            {
+                logger.Log(this, message, LogLevels.Info);
+            }
+        }
+
         private void Monitor()
         {
             bool ro = psi.RedirectStandardOutput;
             bool re = psi.RedirectStandardError;
             bool ri = psi.RedirectStandardInput;
+
+            Log(string.Format("PR MONITOR: Starting. RedirectStandardOutput = {0}, RedirectStandardError = {1}, RedirectStandardInput = {2}", ro, re, ri));
 
 			if (!ro && !re)
                 TrySetOutReadingCompleted();
@@ -411,29 +426,46 @@ namespace ProcessRunnerNamespace
                 cycleReaded = -1;
 
                 if (exitCalled)
+                {
                     cts.Cancel();
+                    Log("PR MONITOR: Exit called. Cancelling tasks.");
+                }
 
                 if (ro && roTask == null)
+                {
+                    Log("PR MONITOR: Starting Std OUT read task");
                     roTask = proc.StandardOutput.BaseStream.ReadAsync(roBuffer, 0, roBuffer.Length);
+                }
 
                 if (re && reTask == null)
+                {
+                    Log("PR MONITOR: Starting Std ERROR read task");
                     reTask = proc.StandardError.BaseStream.ReadAsync(reBuffer, 0, reBuffer.Length);
+                }
 
                 if (null != riTask && riTask.IsCompleted)
                     riTask = null;
 
                 if (ri && riTask == null && !exitCalled && stdInBuffer.Length > 0)
+                {
+                    Log(string.Concat("PR MONITOR: Starting Std IN write task. Buffered bytes: ", stdInBuffer.Length));
                     riTask = WriteToStdInput(proc.StandardInput.BaseStream, cts.Token);
+                }
 
                 if (ro && roTask.IsCompleted)
                 {
+                    Log("PR MONITOR: Std OUT read task completed");
                     cycleReaded = OnOutTaskCompleted(roTask, roBuffer, StdOut);
+                    Log(string.Concat("PR MONITOR: Std OUT readed bytes: ", cycleReaded));
                     roTask = null;
                 }
 
                 if (re && reTask.IsCompleted)
                 {
-                    cycleReaded += OnOutTaskCompleted(reTask, reBuffer, StdError);
+                    Log("PR MONITOR: Std ERROR read task completed");
+                    var errorReaded = OnOutTaskCompleted(reTask, reBuffer, StdError);
+                    Log(string.Concat("PR MONITOR: Std ERROR readed bytes: ", errorReaded));
+                    cycleReaded += errorReaded;
                     reTask = null;
                 }
 
@@ -443,11 +475,15 @@ namespace ProcessRunnerNamespace
 					Thread.Sleep (1);
             }
 
+            Log("PR MONITOR: Exiting");
+
             cts.Cancel();
 
             TrySetOutReadingCompleted();
 
             OnExited();
+
+            Log("PR MONITOR: Exited");
         }
 
         private async Task WriteToStdInput(Stream stream, CancellationToken ct) 

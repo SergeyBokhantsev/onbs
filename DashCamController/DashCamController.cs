@@ -136,7 +136,9 @@ namespace DashCamController
             try
             {
                 cameraProcess = CreatePictureProcessRunner(width, height);
-                
+
+                cameraProcess.Logger = hc.Logger;
+
                 cameraProcess.Run();
 
                 if (cameraProcess.WaitForExit(8000))
