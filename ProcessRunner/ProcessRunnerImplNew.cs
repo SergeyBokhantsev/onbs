@@ -372,14 +372,30 @@ namespace ProcessRunnerNamespace
             await Task.Run(() => Run());
         }
 
+        private void TrySetOutReadingCompleted()
+        {
+            var mre = outReadingCompleted;
+
+            if (null != mre)
+            {
+                lock (mre)
+                {
+                    if (!disposed)
+                    {
+                        mre.Set();
+                    }
+                }
+            }
+        }
+
         private void Monitor()
         {
             bool ro = psi.RedirectStandardOutput;
             bool re = psi.RedirectStandardError;
             bool ri = psi.RedirectStandardInput;
 
-			if (!ro && !re && !disposed)
-                outReadingCompleted.Set();
+			if (!ro && !re)
+                TrySetOutReadingCompleted();
 
             byte[] roBuffer = new byte[512];
             byte[] reBuffer = new byte[512];
@@ -431,8 +447,7 @@ namespace ProcessRunnerNamespace
 
             cts.Cancel();
 
-			if (!disposed)
-				outReadingCompleted.Set();
+            TrySetOutReadingCompleted();
 
             OnExited();
         }
@@ -652,11 +667,16 @@ namespace ProcessRunnerNamespace
             {
 				disposed = true;
 
-                if (null != outReadingCompleted)
+                var mre = outReadingCompleted;
+
+                if (null != mre)
                 {
-					outReadingCompleted.Set ();
-                    outReadingCompleted.Dispose();
-                    outReadingCompleted = null;
+                    lock (mre)
+                    {
+                        mre.Set();
+                        mre.Dispose();
+                        outReadingCompleted = null;
+                    }
                 }
 
                 if (disposing)

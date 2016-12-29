@@ -165,75 +165,75 @@ namespace UIModels
             }
         }
 
-        private async Task UpdateMap()
+        private void UpdateMap()
         {
-            if (hc.Config.IsInternetConnected)
+            hc.SyncContext.Post(async (state) =>
             {
-                var location = hc.GetController<IGPSController>().Location;
-                SetProperty("status", "Loading...");
-                SetProperty("map_image_stream", null);
-
-                var result = await mapProvider.GetMapAsync(location, 540, 330, 16, MapLayers.sat | MapLayers.skl);
-
-                if (result.Success)
+                if (hc.Config.IsInternetConnected)
                 {
-                    SetProperty("map_image_stream", result.Value);
+                    var location = hc.GetController<IGPSController>().Location;
+                    SetProperty("status", "Loading...");
+                    SetProperty("map_image_stream", null);
+
+                    var result = await mapProvider.GetMapAsync(location, 540, 330, 16, MapLayers.sat | MapLayers.skl);
+
+                    if (result.Success)
+                    {
+                        SetProperty("map_image_stream", result.Value);
+                    }
+                    else
+                    {
+                        hc.Logger.Log(this, result.ErrorMessage, LogLevels.Warning);
+                    }
                 }
-                else
-                {
-                    hc.Logger.Log(this, result.ErrorMessage, LogLevels.Warning);
-                }
-            }
+            }, null, "Update Map");
         }
 
-        private async Task UpdateOBD()
+        private void UpdateOBD()
         {
             if (!Disposed)
             {
-                await Task.Run(() =>
-                    {
-                        engineCoolantTempGuard.ExecuteIfFree(() =>
-                        {
-                             var engineTemp = obdProcessor.GetCoolantTemp() ?? int.MinValue;
-                             miniDisplayModel.EngineTemp = engineTemp;
-                             SetProperty("eng_temp", engineTemp);
-                        });
+                engineCoolantTempGuard.ExecuteIfFree(() =>
+                {
+                    var engineTemp = obdProcessor.GetCoolantTemp() ?? int.MinValue;
+                    miniDisplayModel.EngineTemp = engineTemp;
+                    SetProperty("eng_temp", engineTemp);
+                });
 
-                        var speed = obdProcessor.GetSpeed();
-                        var rpm = obdProcessor.GetRPM();
+                var speed = obdProcessor.GetSpeed();
+                var rpm = obdProcessor.GetRPM();
 
-                        if (speed.HasValue && rpm.HasValue && speed.Value > 0)
-                        {
-                            var ratio = ((double)rpm.Value / (double)speed.Value);
-                            var gear = "-";
+                if (speed.HasValue && rpm.HasValue && speed.Value > 0)
+                {
+                    var ratio = ((double)rpm.Value / (double)speed.Value);
+                    var gear = "-";
 
-                            if (ratio >= 100)
-                                gear = "1";
-                            else if (ratio >= 67 && ratio < 100)
-                                gear = "2";
-                            else if (ratio >= 47 && ratio < 67)
-                                gear = "3";
-                            else if (ratio >= 35 && ratio < 47)
-                                gear = "4";
-                            else
-                                gear = "5";
+                    if (ratio >= 100)
+                        gear = "1";
+                    else if (ratio >= 67 && ratio < 100)
+                        gear = "2";
+                    else if (ratio >= 47 && ratio < 67)
+                        gear = "3";
+                    else if (ratio >= 35 && ratio < 47)
+                        gear = "4";
+                    else
+                        gear = "5";
 
-                            SetProperty("gear", gear);
-                        }
-                        else
-                        {
-                            SetProperty("gear", "-");
-                        }
+                    SetProperty("gear", gear);
+                }
+                else
+                {
+                    SetProperty("gear", "-");
+                }
 
-                        if (speed.HasValue)
-                            reporter.SetSpeed((double)speed.Value);
+                if (speed.HasValue)
+                    reporter.SetSpeed((double)speed.Value);
 
-                        if (rpm.HasValue)
-                            reporter.SetRPM(rpm.Value);
+                if (rpm.HasValue)
+                    reporter.SetRPM(rpm.Value);
 
-                        if (!string.IsNullOrEmpty(elm.Error))
-                            elm.Reset();
-                    });
+                if (!string.IsNullOrEmpty(elm.Error))
+                    elm.Reset();
             }
         }
 
@@ -290,38 +290,41 @@ namespace UIModels
 
         protected override async Task OnPrimaryTick()
         {
+            await base.OnPrimaryTick();
+
             if (!Disposed)
             {
+                minidisplayGuard.ExecuteIfFree(UpdateMiniDisplay);
+
                 SetProperty("exported_points", string.Format("{0}/{1}", tc.BufferedPoints, tc.SendedPoints));
                 SetProperty("travel_span", tc.TravelTime.TotalMinutes);
                 SetProperty("distance", tc.TravelDistance);
 
-                await Task.WhenAll(
-                    obdGuard.ExecuteIfFreeAsync(async () => await UpdateOBD()),
-                    cpuInfoGuard.ExecuteIfFreeAsync(async () => await UpdateCpuInfo(), ex => SetProperty("cpu_info", "Error")),
-                    mapDownloadGuard.ExecuteIfFreeAsync(async () => await UpdateMap())
-                    );
+                obdGuard.ExecuteIfFreeDedicatedThread(UpdateOBD);
 
-                minidisplayGuard.ExecuteIfFree(UpdateMiniDisplay);                
+                cpuInfoGuard.ExecuteIfFreeDedicatedThread(UpdateCpuInfo, ex => SetProperty("cpu_info", "Error"));
+
+                mapDownloadGuard.ExecuteIfFreeDedicatedThread(UpdateMap);
             }
-
-            await base.OnPrimaryTick();
         }
 
-        private async Task UpdateCpuInfo()
+        private void UpdateCpuInfo()
         {
-            if (!Disposed)
-            {
-                var cpuSpeed = await NixHelpers.CPUInfo.GetCPUSpeed();
-                var cpuTemp = await NixHelpers.CPUInfo.GetCPUTemp();
+            hc.SyncContext.Post(async (state) => 
+                {
+                    if (!Disposed)
+                    {
+                        var cpuSpeed = await NixHelpers.CPUInfo.GetCPUSpeed();
+                        var cpuTemp = await NixHelpers.CPUInfo.GetCPUTemp();
 
-                string info = string.Format("{0} Mhz ({1}°)",
-                    cpuSpeed.HasValue ? cpuSpeed.Value.ToString() : "-",
-                    cpuTemp.HasValue ? cpuTemp.Value.ToString("0.0") : "-");
+                        string info = string.Format("{0} Mhz ({1}°)",
+                            cpuSpeed.HasValue ? cpuSpeed.Value.ToString() : "-",
+                            cpuTemp.HasValue ? cpuTemp.Value.ToString("0.0") : "-");
 
-                if (!Disposed)
-                    SetProperty("cpu_info", info);
-            }
+                        if (!Disposed)
+                            SetProperty("cpu_info", info);
+                    }
+                }, null, "Update OBD");
         }
 
         protected override void OnDisposing(object sender, EventArgs e)
