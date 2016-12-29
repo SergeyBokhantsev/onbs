@@ -24,6 +24,8 @@ namespace TravelsClient
         private int logId = -1;
         private int logSize;
 
+        private readonly int startTime;
+
         private int busy;
 
         private bool disabled;
@@ -36,6 +38,8 @@ namespace TravelsClient
 
         public OnlineLogger(IConfig config, Lazy<SynchronizationContext> syncContextAccessor)
         {
+            this.startTime = Environment.TickCount;
+
             if (null == config)
                 throw new ArgumentNullException("config");
 
@@ -62,8 +66,19 @@ namespace TravelsClient
             {
                 string className = caller != null ? caller.GetType().ToString() : "NULL";
 
-                AddLine(string.Concat(DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff"), " | ", level, " | ", className, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message, Environment.NewLine));
+                AddLine(string.Concat(GetTimestamp(), " | ", level, " | ", className, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message, Environment.NewLine));
             }
+        }
+
+        private string GetTimestamp()
+        {
+            int ticks = Environment.TickCount - startTime;
+            int minutes = ticks / 60000;
+            ticks -= minutes * 60000;
+            int seconds = ticks / 1000;
+            ticks -= seconds * 1000;
+            int milliseconds = ticks;
+            return string.Concat(minutes, ":", seconds, ".", milliseconds);
         }
 
         private void AddLine(string p)

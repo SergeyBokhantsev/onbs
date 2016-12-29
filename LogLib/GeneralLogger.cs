@@ -16,6 +16,8 @@ namespace LogLib
 
         public event LogEventHandlerDelegate LogEvent;
 
+        private readonly int startTime;
+
         public LogLevels Level
         {
             get;
@@ -37,6 +39,8 @@ namespace LogLib
         public GeneralLogger(IConfig config)
             :base(20)
         {
+            this.startTime = Environment.TickCount;
+
             var assemblyLocation = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
             logFolder = Path.Combine(assemblyLocation, config.GetString(ConfigNames.LogFolder));
 
@@ -55,9 +59,20 @@ namespace LogLib
 
                 if (caller == null || !AllowedClassNames.Any() || AllowedClassNames.Contains(className))
                 {
-					Add(string.Concat(DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff"), " | ", level, " | ", className, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message, Environment.NewLine));
+					Add(string.Concat(GetTimestamp(), " | ", level, " | ", className, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message, Environment.NewLine));
                 }
             }
+        }
+
+        private string GetTimestamp()
+        {
+            int ticks = Environment.TickCount - startTime;
+            int minutes = ticks / 60000;
+            ticks -= minutes * 60000;
+            int seconds = ticks / 1000;
+            ticks -= seconds * 1000;
+            int milliseconds = ticks;
+            return string.Concat(minutes, ":", seconds, ".", milliseconds);
         }
 
         public void Log(object caller, Exception ex)

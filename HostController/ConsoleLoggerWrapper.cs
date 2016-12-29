@@ -101,6 +101,8 @@ namespace HostController
 
         private readonly ILogger[] loggers;
 
+        private readonly int startTime;
+
         public DateTime LastWarningTime
         {
             get { return loggers.Max(l => l.LastWarningTime); }
@@ -114,6 +116,8 @@ namespace HostController
                 throw new ArgumentNullException("loggers");
 
             this.loggers = loggers;
+
+            this.startTime = Environment.TickCount;
         }
 
 		private readonly object locker = new object();
@@ -123,7 +127,7 @@ namespace HostController
 			lock (locker)
 			{
             if (caller != null && caller is UIModels.ModelBase)
-                WriteToConsole(string.Concat(DateTime.Now, " | ", level, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message));
+                WriteToConsole(string.Concat(GetTimestamp(), " | ", level, " | ", Thread.CurrentThread.ManagedThreadId, " | ", message));
 
             foreach (var logger in loggers)
             {
@@ -137,10 +141,21 @@ namespace HostController
 			}
         }
 
+        private string GetTimestamp()
+        {
+            int ticks = Environment.TickCount - startTime;
+            int minutes = ticks / 60000;
+            ticks -= minutes * 60000;
+            int seconds = ticks / 1000;
+            ticks -= seconds * 1000;
+            int milliseconds = ticks;
+            return string.Concat(minutes, ":", seconds, ".", milliseconds);
+        }
+
         public void Log(object caller, Exception ex)
         {
 			lock (locker) {
-				WriteToConsole (string.Concat (ex.Message, Environment.NewLine, ex.StackTrace));
+				WriteToConsole (string.Concat(GetTimestamp(), " | ", ex.Message, Environment.NewLine, ex.StackTrace));
 
 				foreach (var logger in loggers) {
 					logger.Log (caller, ex);
