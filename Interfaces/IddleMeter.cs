@@ -8,6 +8,7 @@ namespace Interfaces
 {
     public class IdleMeter
     {
+        private readonly ISessionConfig config;
         private volatile int lastActivityTime;
 
         public int IdleMinutes
@@ -30,18 +31,23 @@ namespace Interfaces
         {
             get
             {
-                return Environment.TickCount - lastActivityTime;
+                return config.Uptime - lastActivityTime;
             }
         }
 
-        public IdleMeter()
+        public IdleMeter(ISessionConfig config)
         {
+            if (null == config)
+                throw new ArgumentNullException("config");
+
+            this.config = config;
+
             Reset();
         }
 
         public void Reset()
         {
-            lastActivityTime = Environment.TickCount;
+            lastActivityTime = config.Uptime;
         }
     }
 }

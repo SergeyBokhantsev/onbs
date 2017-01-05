@@ -7,11 +7,12 @@ namespace HostController
 {
     public class HostTimer : IHostTimer
     {
-        private readonly EventWaitHandle schedulerSignal;
         private readonly Action<IHostTimer> action;
 
-        private int span;
         private bool enabled;
+
+        private int iterations;
+        private int remainingIterations;
 
         public bool Disposed
         {
@@ -23,18 +24,35 @@ namespace HostController
         {
             get
             {
-                return span;
+                return iterations * HostTimersController.TIMER_RESOLUTION;
             }
             set
             {
-                if (span > 0)
+                if (value > 0)
                 {
-                    span = value;
-                    schedulerSignal.Set();
+                    remainingIterations = iterations = (int)Math.Ceiling((double)value / (double)HostTimersController.TIMER_RESOLUTION);
                 }
                 else
                     throw new ArgumentException("Span must be positive!");
             }
+        }
+
+        public string Details
+        {
+            get;
+            set;
+        }
+
+        public bool Decrement()
+        {
+            remainingIterations--;
+
+            var result = remainingIterations < 0;
+
+            if (result)
+                remainingIterations = iterations;
+
+            return result;
         }
 
         public bool IsEnabled
@@ -46,20 +64,16 @@ namespace HostController
             set
             {
                 enabled = value;
-                schedulerSignal.Set();
             }
         }
 
-        public HostTimer(EventWaitHandle schedulerSignal, int span, Action<IHostTimer> action, bool isEnabled)
+        public HostTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly)
         {
-            if (schedulerSignal == null)
-                throw new ArgumentNullException("schedulerSignal");
+            Span = span;
 
-            if (span <= 0)
-                throw new ArgumentException("Span must be positive!");
+            if (firstEventImmidiatelly)
+                remainingIterations = 0;
 
-            this.schedulerSignal = schedulerSignal;
-            this.span = span;
             this.action = action;
             this.enabled = isEnabled;
         }
@@ -78,26 +92,25 @@ namespace HostController
 
     internal class HostTimersController : IDisposable
     {
-        private class TimerInfo
-        {
-            public HostTimer Timer;
-            public int LastExecutionTime;
-            public string Details;
-        }
+        public const int TIMER_RESOLUTION = 100;
 
         private Thread schedulerThread;
-        private readonly List<TimerInfo> timers = new List<TimerInfo>();
+        private readonly List<HostTimer> timers = new List<HostTimer>();
         private readonly ONBSSyncContext syncContext;
-        private readonly AutoResetEvent schedulerSignal = new AutoResetEvent(false);
+        private readonly Configuration config;
 
         private bool disposed;
 
-        public HostTimersController(ONBSSyncContext syncContext)
+        public HostTimersController(ONBSSyncContext syncContext, Configuration config)
         {
             if (syncContext == null)
                 throw new ArgumentNullException("syncContext");
 
+            if (config == null)
+                throw new ArgumentNullException("config");
+
             this.syncContext = syncContext;
+            this.config = config;
         }
 
         public void Start()
@@ -115,58 +128,48 @@ namespace HostController
 
         public HostTimer CreateTimer(int span, Action<IHostTimer> action, bool isEnabled, bool firstEventImmidiatelly, string details)
         {
-            var timer = new HostTimer(schedulerSignal, span, action, isEnabled);
+            var timer = new HostTimer(span, action, isEnabled, firstEventImmidiatelly);
+
+            timer.Details = details;
 
             lock(timers)
             {
-                timers.Add(new TimerInfo { Timer = timer, 
-                                           LastExecutionTime = firstEventImmidiatelly ? int.MinValue : Environment.TickCount,
-                                           Details = details });
+                timers.Add(timer);
             }
 
-            schedulerSignal.Set();
             return timer;
         }
 
         private void Scheduler()
         {
-            int waitTime = -1;
-
             while (!disposed)
             {
-                if (waitTime > 0)
-                    schedulerSignal.WaitOne(waitTime);
-
-                var now = Environment.TickCount;
+                bool cleanupTimers = false;
 
                 lock (timers)
                 {
-                    timers.RemoveAll(t => t.Timer.Disposed);
-
-                    waitTime = -1; 
-
-                    foreach (var info in timers)
+                    foreach(var timer in timers)
                     {
-                        if (info.Timer.IsEnabled)
+                        if (!timer.Disposed)
                         {
-                            int nextExecutionSpan;
-
-                            if (info.LastExecutionTime + info.Timer.Span <= now)
+                            if (timer.IsEnabled && timer.Decrement())
                             {
-                                syncContext.Post(PostTimerExecution, info.Timer, info.Details);
-                                info.LastExecutionTime = now;
-                                nextExecutionSpan = info.Timer.Span;
+                                syncContext.Post(PostTimerExecution, timer, timer.Details);
                             }
-                            else
-                            {
-                                nextExecutionSpan = Math.Max(0, info.Timer.Span - (now - info.LastExecutionTime));
-                            }
-
-                            if (waitTime == -1 || waitTime > nextExecutionSpan)
-                                waitTime = nextExecutionSpan;
+                        }
+                        else
+                        {
+                            cleanupTimers = true;
                         }
                     }
+
+                    if (cleanupTimers)
+                        timers.RemoveAll(t => t.Disposed);
                 }
+
+                Thread.Sleep(TIMER_RESOLUTION);
+
+                config.uptime += TIMER_RESOLUTION;
             }
         }
 
@@ -174,7 +177,7 @@ namespace HostController
         {
             var timer = state as HostTimer;
 
-            if (timer != null && timer.IsEnabled)
+            if (timer != null && !timer.Disposed && timer.IsEnabled)
                 timer.Execute();
         }
 

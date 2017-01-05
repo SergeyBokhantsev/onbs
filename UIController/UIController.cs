@@ -105,8 +105,8 @@ namespace UIController
         {
             var assembly = Assembly.LoadFrom(uiHostAssemblyPath);
             var appType = assembly.GetType(uiHostClassName);
-            var appConstructor = appType.GetConstructor(new Type[] { typeof(ILogger) });
-            uiHost = appConstructor.Invoke(new object[] { logger }) as IUIHost;
+            var appConstructor = appType.GetConstructor(new Type[] { typeof(ILogger), typeof(ISessionConfig) });
+            uiHost = appConstructor.Invoke(new object[] { logger, hostController.Config }) as IUIHost;
             hostWaiter.Set();
             uiHost.Run(hostController.Config.GetBool(ConfigNames.UIFullscreen));
             logger.Log(this, "UI Host has exited", LogLevels.Info);

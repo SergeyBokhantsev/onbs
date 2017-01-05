@@ -14,6 +14,8 @@ namespace LogLib
     {
         private readonly string logFolder;
 
+        private readonly IConfig config;
+
         public event LogEventHandlerDelegate LogEvent;
 
         private readonly int startTime;
@@ -39,7 +41,12 @@ namespace LogLib
         public GeneralLogger(IConfig config)
             :base(20)
         {
-            this.startTime = Environment.TickCount;
+            if (null == config)
+                throw new ArgumentNullException("config");
+
+            this.config = config;
+
+            this.startTime = config.Uptime;
 
             var assemblyLocation = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location);
             logFolder = Path.Combine(assemblyLocation, config.GetString(ConfigNames.LogFolder));
@@ -66,7 +73,7 @@ namespace LogLib
 
         private string GetTimestamp()
         {
-            int ticks = Environment.TickCount - startTime;
+            int ticks = config.Uptime - startTime;
             int minutes = ticks / 60000;
             ticks -= minutes * 60000;
             int seconds = ticks / 1000;

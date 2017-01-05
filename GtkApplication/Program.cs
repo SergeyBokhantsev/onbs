@@ -9,7 +9,7 @@ namespace GtkApplication
 {
 	public class App : IUIHost
 	{
-        private readonly IdleMeter idleMeter = new IdleMeter();
+        private readonly IdleMeter idleMeter;
 
         public int UserIdleMinutes
         {
@@ -44,11 +44,13 @@ namespace GtkApplication
 
 		private readonly Style style;
 
-		public App(ILogger logger)
+		public App(ILogger logger, ISessionConfig config)
         {
             this.logger = logger;
 
-			style = GetStyle ();
+            idleMeter = new IdleMeter(config);
+
+			style = GetStyle();
         }
 
 		private Style GetStyle()

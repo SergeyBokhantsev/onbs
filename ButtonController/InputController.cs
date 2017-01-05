@@ -18,7 +18,7 @@ namespace InputController
         private readonly ILogger logger;
         private readonly STPCodec codec;
 
-        private readonly IdleMeter iddleMeter = new IdleMeter();
+        private readonly IdleMeter idleMeter;
 
         public STPFrame.Types FrameType
         {
@@ -32,13 +32,15 @@ namespace InputController
         {
             get
             {
-                return iddleMeter.IdleMinutes;
+                return idleMeter.IdleMinutes;
             }
         }
 
-        public InputController(ILogger logger)
+        public InputController(ILogger logger, ISessionConfig config)
         {
             this.logger = logger;
+
+            idleMeter = new IdleMeter(config);
 
             codec = new STPCodec(Encoding.ASCII.GetBytes("[<]"), Encoding.ASCII.GetBytes("[>]"), true);
         }
@@ -48,7 +50,7 @@ namespace InputController
             var buttonFrames = codec.Decode(transportFrames);
             if (buttonFrames != null)
             {
-                iddleMeter.Reset();
+                idleMeter.Reset();
 
                 foreach (var frame in buttonFrames)
                 {

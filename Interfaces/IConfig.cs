@@ -5,6 +5,10 @@ namespace Interfaces
 
     public interface ISessionConfig
     {
+        /// <summary>
+        /// Application uptime in milliseconds
+        /// </summary>
+        int Uptime { get; }
         Environments Environment { get; }
         bool IsSystemTimeValid { get; }
         bool IsInternetConnected { get; }

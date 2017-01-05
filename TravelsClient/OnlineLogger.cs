@@ -38,7 +38,7 @@ namespace TravelsClient
 
         public OnlineLogger(IConfig config, Lazy<SynchronizationContext> syncContextAccessor)
         {
-            this.startTime = Environment.TickCount;
+            this.startTime = config.Uptime;
 
             if (null == config)
                 throw new ArgumentNullException("config");
@@ -72,7 +72,7 @@ namespace TravelsClient
 
         private string GetTimestamp()
         {
-            int ticks = Environment.TickCount - startTime;
+            int ticks = config.Uptime - startTime;
             int minutes = ticks / 60000;
             ticks -= minutes * 60000;
             int seconds = ticks / 1000;

@@ -45,7 +45,7 @@ namespace GPSController
         private LockingProperty<GeoPoint> location = new LockingProperty<GeoPoint>();
         private bool shutdown;
 
-        private readonly IdleMeter gpsCoordinateIdleMeter = new IdleMeter();
+        private readonly IdleMeter gpsCoordinateIdleMeter;
         private GeoPoint idleBasePoint;
 
         private GPSMetricsProvider metricsProvider;
@@ -89,6 +89,8 @@ namespace GPSController
             this.syncContext = syncContext;
             this.logger = logger;
             this.metricsService = metricsService;
+
+            gpsCoordinateIdleMeter = new IdleMeter(config);
 
             metricsProvider = new GPSMetricsProvider(logger);
             metricsService.RegisterProvider(metricsProvider);

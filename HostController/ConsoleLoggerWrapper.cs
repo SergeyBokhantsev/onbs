@@ -101,6 +101,8 @@ namespace HostController
 
         private readonly ILogger[] loggers;
 
+        private readonly ISessionConfig config;
+
         private readonly int startTime;
 
         public DateTime LastWarningTime
@@ -110,14 +112,18 @@ namespace HostController
 
         public LogMetrics Metrics { get; set; }
 
-        internal ConsoleLoggerWrapper(ILogger[] loggers)
+        internal ConsoleLoggerWrapper(ILogger[] loggers, ISessionConfig config)
         {
             if (null == loggers)
                 throw new ArgumentNullException("loggers");
 
-            this.loggers = loggers;
+            if (null == config)
+                throw new ArgumentNullException("config");
 
-            this.startTime = Environment.TickCount;
+            this.loggers = loggers;
+            this.config = config;
+
+            this.startTime = config.Uptime;
         }
 
 		private readonly object locker = new object();
@@ -143,7 +149,7 @@ namespace HostController
 
         private string GetTimestamp()
         {
-            int ticks = Environment.TickCount - startTime;
+            int ticks = config.Uptime - startTime;
             int minutes = ticks / 60000;
             ticks -= minutes * 60000;
             int seconds = ticks / 1000;

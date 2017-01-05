@@ -49,8 +49,15 @@ namespace HostController
         private readonly ConfigValuesResolver valuesResolver;
         private readonly System.Configuration.Configuration cfg;
         private string dataFolder;
+        public volatile int uptime;
 
         #region SESSION CONFIG
+
+        public int Uptime 
+        {
+            get { return uptime; }
+            set { uptime = value; }
+        }
 
         public Environments Environment
         {

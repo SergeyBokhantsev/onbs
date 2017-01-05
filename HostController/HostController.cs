@@ -140,7 +140,7 @@ namespace HostController
 
             syncContext = new HostSynchronizationContext(Logger);
 
-            timersController = new HostTimersController(syncContext);
+            timersController = new HostTimersController(syncContext, config);
 
             syncContext.Post(o => TryInitialize(), null, "HostController.TryInitialize()");
             syncContext.Pump();
@@ -215,7 +215,7 @@ namespace HostController
 
             onlineLogger = new TravelsClient.OnlineLogger(Config, new Lazy<SynchronizationContext>(() => SyncContext));
             
-            logger = new ConsoleLoggerWrapper(new ILogger[] { new GeneralLogger(Config), onlineLogger});
+            logger = new ConsoleLoggerWrapper(new ILogger[] { new GeneralLogger(Config), onlineLogger}, Config);
             logger.Log(this, "--- Logging initiated ---", LogLevels.Info);
             logger.Log(this, string.Format("Environment: {0}", Config.Environment), LogLevels.Info);
 
@@ -318,7 +318,7 @@ namespace HostController
             //netKeeper.RestartNeeded += InetKeeperRestartNeeded;
             //netKeeper.StartChecking();
 
-            inputController = new InputController.InputController(Logger);
+            inputController = new InputController.InputController(Logger, Config);
 
             StartJob(typeof(Jobs.CheckUserInputIdle), new object[] { this as IHostController });
 
